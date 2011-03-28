@@ -1,0 +1,1 @@
+﻿bool Main() !false && !(false || false) && !(false && true)

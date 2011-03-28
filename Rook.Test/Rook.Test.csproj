@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1F93496B-9601-4EA7-86A7-B1615E5847A9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Rook</RootNamespace>
+    <AssemblyName>Rook.Test</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\nunit\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Compiling\CodeGeneration\CodeWriterSpec.cs" />
+    <Compile Include="Compiling\CompilerResultSpec.cs" />
+    <Compile Include="Compiling\CompilerSpec.cs" />
+    <Compile Include="Compiling\CSharpCompilerSpec.cs" />
+    <Compile Include="Compiling\Fail.cs" />
+    <Compile Include="Compiling\InterpreterResultSpec.cs" />
+    <Compile Include="Compiling\InterpreterSpec.cs" />
+    <Compile Include="Compiling\RookCompilerSpec.cs" />
+    <Compile Include="Compiling\CodeGeneration\CSharpTranslatorSpec.cs" />
+    <Compile Include="Compiling\Syntax\LambdaSpec.cs" />
+    <Compile Include="Core\Collections\ArrayVectorSpec.cs" />
+    <Compile Include="Core\Collections\SliceVectorSpec.cs" />
+    <Compile Include="Core\Collections\VectorSpec.cs" />
+    <Compile Include="Core\IdentitySpec.cs" />
+    <Compile Include="Core\NullableSpec.cs" />
+    <Compile Include="Serializer.cs" />
+    <Compile Include="Compiling\EnvironmentSpec.cs" />
+    <Compile Include="Integration\IntegrationTests.cs" />
+    <Compile Include="Compiling\Syntax\VectorLiteralSpec.cs" />
+    <Compile Include="Compiling\Syntax\BlockSpec.cs" />
+    <Compile Include="Compiling\Syntax\CallSpec.cs" />
+    <Compile Include="Compiling\Syntax\ExpressionSpec.cs" />
+    <Compile Include="Compiling\Syntax\FunctionSpec.cs" />
+    <Compile Include="Compiling\Syntax\IfSpec.cs" />
+    <Compile Include="Compiling\Syntax\LiteralSpec.cs" />
+    <Compile Include="Compiling\Syntax\NameSpec.cs" />
+    <Compile Include="Compiling\Syntax\OperatorPrecedenceSpec.cs" />
+    <Compile Include="Compiling\Syntax\ParentheticalSpec.cs" />
+    <Compile Include="Compiling\Syntax\SyntaxTreeSpec.cs" />
+    <Compile Include="Compiling\Syntax\ProgramSpec.cs" />
+    <Compile Include="Compiling\Syntax\TokenParserSpec.cs" />
+    <Compile Include="Compiling\Syntax\TypeNameParserSpec.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Compiling\Types\NamedTypeSpec.cs" />
+    <Compile Include="Compiling\Types\TypeNormalizerSpec.cs" />
+    <Compile Include="Compiling\Types\TypeVariableSpec.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Parsley.Test\Parsley.Test.csproj">
+      <Project>{B701DB7C-EE1A-4A32-B12F-B8EEFA86DF08}</Project>
+      <Name>Parsley.Test</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Parsley\Parsley.csproj">
+      <Project>{DFDC9B30-8B69-4D65-8881-7903C16C5845}</Project>
+      <Name>Parsley</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Rook.Compiling\Rook.Compiling.csproj">
+      <Project>{DD4E13B5-E96D-4DBF-9821-9908839ECDD4}</Project>
+      <Name>Rook.Compiling</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Rook.Core\Rook.Core.csproj">
+      <Project>{646BF299-17FE-4B59-BC83-5D28AF7D5A48}</Project>
+      <Name>Rook.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Samples\BooleanExpression.rook">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\BooleanExpression.rook.out">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Samples\ArithmeticExpression.rook">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\ArithmeticExpression.rook.out">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\BlockExpression.rook">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\BlockExpression.rook.out">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\Closure.rook">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\Closure.rook.out">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\FunctionCall.rook">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\FunctionCall.rook.out">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\MutualRecursion.rook">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\MutualRecursion.rook.out">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\Nullable.rook">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\Nullable.rook.out">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\Recursion.rook">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\Recursion.rook.out">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\Enumerable.rook">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\Enumerable.rook.out">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\Vector.rook">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\Vector.rook.out">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\Void.rook">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\Void.rook.out">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

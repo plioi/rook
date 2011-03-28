@@ -1,0 +1,27 @@
+﻿bool AnyTrue(bool? first, bool? second, bool? third)
+	(first??false) || (second??false) || (third??false)
+
+int Sum(int? first, int? second, int? third)
+	(first??0) + (second??0) + (third??0)
+
+int SumFirstItems(int[]? first, int[]? second, int[]? third)
+	First(Each(first??[0])) + First(Each(second??[0])) + First(Each(third??[0]))
+
+void Main()
+{
+	int a = 1
+	int? b = Nullable(2)
+	int? c = null
+
+	bool x = false
+	bool? y = Nullable(true)
+	bool? z = null
+
+	int[] v1 = [2]
+	int[]? v2 = Nullable([3])
+	int[]? v3 = null
+
+	Print(Sum(Nullable(a), b, c))
+	Print(AnyTrue(Nullable(x), y, z))
+	Print(SumFirstItems(Nullable(v1), v2, v3))
+}

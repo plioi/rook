@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parsley", "Parsley\Parsley.csproj", "{DFDC9B30-8B69-4D65-8881-7903C16C5845}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parsley.Test", "Parsley.Test\Parsley.Test.csproj", "{B701DB7C-EE1A-4A32-B12F-B8EEFA86DF08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rook.Test", "Rook.Test\Rook.Test.csproj", "{1F93496B-9601-4EA7-86A7-B1615E5847A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rook.Compiling", "Rook.Compiling\Rook.Compiling.csproj", "{DD4E13B5-E96D-4DBF-9821-9908839ECDD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rook", "Rook\Rook.csproj", "{D9281C30-6B30-4148-9051-9E74A8C7DF20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rook.Core", "Rook.Core\Rook.Core.csproj", "{646BF299-17FE-4B59-BC83-5D28AF7D5A48}"
+EndProject
+Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DFDC9B30-8B69-4D65-8881-7903C16C5845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFDC9B30-8B69-4D65-8881-7903C16C5845}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFDC9B30-8B69-4D65-8881-7903C16C5845}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFDC9B30-8B69-4D65-8881-7903C16C5845}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B701DB7C-EE1A-4A32-B12F-B8EEFA86DF08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B701DB7C-EE1A-4A32-B12F-B8EEFA86DF08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B701DB7C-EE1A-4A32-B12F-B8EEFA86DF08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B701DB7C-EE1A-4A32-B12F-B8EEFA86DF08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F93496B-9601-4EA7-86A7-B1615E5847A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F93496B-9601-4EA7-86A7-B1615E5847A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F93496B-9601-4EA7-86A7-B1615E5847A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F93496B-9601-4EA7-86A7-B1615E5847A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD4E13B5-E96D-4DBF-9821-9908839ECDD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD4E13B5-E96D-4DBF-9821-9908839ECDD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD4E13B5-E96D-4DBF-9821-9908839ECDD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD4E13B5-E96D-4DBF-9821-9908839ECDD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9281C30-6B30-4148-9051-9E74A8C7DF20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9281C30-6B30-4148-9051-9E74A8C7DF20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9281C30-6B30-4148-9051-9E74A8C7DF20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9281C30-6B30-4148-9051-9E74A8C7DF20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{646BF299-17FE-4B59-BC83-5D28AF7D5A48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{646BF299-17FE-4B59-BC83-5D28AF7D5A48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{646BF299-17FE-4B59-BC83-5D28AF7D5A48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{646BF299-17FE-4B59-BC83-5D28AF7D5A48}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
