@@ -1,16 +1,16 @@
 ﻿bool Equal(int* a, int* b)
 {
-	if (!Any(a))
-		!Any(b)
-	else
-		Count(a) == Count(b) && First(a) == First(b) && Equal(Skip(a, 1), Skip(b, 1))
+    if (!Any(a))
+        !Any(b)
+    else
+        Count(a) == Count(b) && First(a) == First(b) && Equal(Skip(a, 1), Skip(b, 1))
 }
 
 void Main()
 {
-	int quantity = 5;
-	int* digits = Each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-	int* offsets = Select(digits, fn (int x) x + quantity)
+    int quantity = 5;
+    int* digits = Each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+    int* offsets = Select(digits, fn (int x) x + quantity)
 
-	Print(Equal(Each([5, 6, 7, 8, 9, 10, 11, 12, 13, 14]), offsets))
+    Print(Equal(Each([5, 6, 7, 8, 9, 10, 11, 12, 13, 14]), offsets))
 }

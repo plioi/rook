@@ -21,7 +21,7 @@ namespace Rook.Compiling.Syntax
         protected void AssertTree(string expectedSyntaxTree, string source)
         {
             AssertTree(expectedSyntaxTree, source, new Serializer());
-	     
+         
             //Although not strictly necessary, we perform the same test using the serialized tree as the input source code.
             //This is simply a sanity check that the serializer is producing code that is equivalent to source.
             //This has also been useful in discovering ambiguity in the grammar.

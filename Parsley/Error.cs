@@ -3,17 +3,17 @@
 namespace Parsley
 {
     public sealed class Error<T> : Parsed<T>
-	{
+    {
         public Error(Text unparsedText)
-			: this(unparsedText, null)
-		{
-		}
+            : this(unparsedText, null)
+        {
+        }
 
-		public Error(Text unparsedText, string expectation)
-		{
-			UnparsedText = unparsedText;
-			Expectation = expectation;
-		}
+        public Error(Text unparsedText, string expectation)
+        {
+            UnparsedText = unparsedText;
+            Expectation = expectation;
+        }
 
         public T Value
         {
@@ -40,5 +40,5 @@ namespace Parsley
         {
             return String.Format("({0}, {1}): {2}", UnparsedText.Line, UnparsedText.Column, Message);
         }
-	}
+    }
 }
