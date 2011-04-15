@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using NUnit.Framework;
 using Parsley;
+using Text = Parsley.Text;
 using Rook.Compiling.Syntax;
 
 namespace Rook.Compiling.CodeGeneration
