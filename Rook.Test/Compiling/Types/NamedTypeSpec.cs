@@ -10,50 +10,48 @@ namespace Rook.Compiling.Types
         [Test]
         public void HasAName()
         {
-            Assert.AreEqual("A", Create("A").Name);
-            Assert.AreEqual("B", Create("B", Create("A")).Name);
+            Create("A").Name.ShouldEqual("A");
+            Create("B", Create("A")).Name.ShouldEqual("B");
         }
 
         [Test]
         public void HasZeroOrMoreInnerTypes()
         {
-            Assert.AreEqual(0, Create("A").InnerTypes.Count());
+            Create("A").InnerTypes.Count().ShouldEqual(0);
 
-            Assert.AreEqual(new[] {Create("A")},
-                            Create("B", Create("A")).InnerTypes.ToArray());
+            Create("B", Create("A")).InnerTypes.ShouldList(Create("A"));
 
-            Assert.AreEqual(new[] {Create("B", Create("A"))},
-                            Create("C", Create("B", Create("A"))).InnerTypes.ToArray());
+            Create("C", Create("B", Create("A"))).InnerTypes.ShouldList(Create("B", Create("A")));
         }
 
         [Test]
         public void HasAStringRepresentation()
         {
-            Assert.AreEqual("A", Create("A").ToString());
-            Assert.AreEqual("A<B>", Create("A", Create("B")).ToString());
-            Assert.AreEqual("A<B<C, D>>", Create("A", Create("B", Create("C"), Create("D"))).ToString());
+            Create("A").ToString().ShouldEqual("A");
+            Create("A", Create("B")).ToString().ShouldEqual("A<B>");
+            Create("A", Create("B", Create("C"), Create("D"))).ToString().ShouldEqual("A<B<C, D>>");
         }
 
         [Test]
         public void IsCreatedLazilyWithMemoization()
         {
-            Assert.AreSame(Create("A"), Create("A"));
-            Assert.AreSame(Create("B", Create("A")), Create("B", Create("A")));
+            Create("A").ShouldBeTheSameAs(Create("A"));
+            Create("B", Create("A")).ShouldBeTheSameAs(Create("B", Create("A")));
         }
 
         [Test]
         public void CanBeCreatedFromConvenienceFactories()
         {
-            Assert.AreSame(Create("dynamic"), NamedType.Dynamic);
-            Assert.AreSame(Create("Rook.Core.Void"), NamedType.Void);
-            Assert.AreSame(Create("int"), NamedType.Integer);
-            Assert.AreSame(Create("bool"), NamedType.Boolean);
-            Assert.AreSame(Create("System.Collections.Generic.IEnumerable", Create("int")), NamedType.Enumerable(NamedType.Integer));
-            Assert.AreSame(Create("Rook.Core.Collections.Vector", Create("int")), NamedType.Vector(NamedType.Integer));
-            Assert.AreSame(Create("Rook.Core.Nullable", Create("int")), NamedType.Nullable(NamedType.Integer));
-            Assert.AreSame(Create("System.Func", Create("int")), NamedType.Function(NamedType.Integer));
-            Assert.AreSame(Create("System.Func", Create("bool"), Create("System.Collections.Generic.IEnumerable", Create("bool")), Create("int")),
-                           NamedType.Function(new[] { NamedType.Boolean, NamedType.Enumerable(NamedType.Boolean) }, NamedType.Integer));
+            NamedType.Dynamic.ShouldBeTheSameAs(Create("dynamic"));
+            NamedType.Void.ShouldBeTheSameAs(Create("Rook.Core.Void"));
+            NamedType.Integer.ShouldBeTheSameAs(Create("int"));
+            NamedType.Boolean.ShouldBeTheSameAs(Create("bool"));
+            NamedType.Enumerable(NamedType.Integer).ShouldBeTheSameAs(Create("System.Collections.Generic.IEnumerable", Create("int")));
+            NamedType.Vector(NamedType.Integer).ShouldBeTheSameAs(Create("Rook.Core.Collections.Vector", Create("int")));
+            NamedType.Nullable(NamedType.Integer).ShouldBeTheSameAs(Create("Rook.Core.Nullable", Create("int")));
+            NamedType.Function(NamedType.Integer).ShouldBeTheSameAs(Create("System.Func", Create("int")));
+            NamedType.Function(new[] { NamedType.Boolean, NamedType.Enumerable(NamedType.Boolean) }, NamedType.Integer)
+                .ShouldBeTheSameAs(Create("System.Func", Create("bool"), Create("System.Collections.Generic.IEnumerable", Create("bool")), Create("int")));
         }
 
         [Test]
@@ -61,9 +59,9 @@ namespace Rook.Compiling.Types
         {
             var x = new TypeVariable(12345);
 
-            Assert.IsFalse(Create("A").Contains(x));
-            Assert.IsTrue(Create("A", x).Contains(x));
-            Assert.IsTrue(Create("A", Create("B", x)).Contains(x));
+            Create("A").Contains(x).ShouldBeFalse();
+            Create("A", x).Contains(x).ShouldBeTrue();
+            Create("A", Create("B", x)).Contains(x).ShouldBeTrue();
         }
 
         [Test]
@@ -73,10 +71,10 @@ namespace Rook.Compiling.Types
             var y = new TypeVariable(1);
             var z = new TypeVariable(2);
 
-            Assert.AreEqual(new TypeVariable[] {}, Create("A").FindTypeVariables().ToArray());
-            Assert.AreEqual(new TypeVariable[] {}, Create("A", Create("B")).FindTypeVariables().ToArray());
-            Assert.AreEqual(new[] { x, y, z },  Create("A", x, y, z).FindTypeVariables().ToArray());
-            Assert.AreEqual(new[] { x, y, z },  Create("A", Create("B", x, y), Create("C", y, z)).FindTypeVariables().ToArray());
+            Create("A").FindTypeVariables().ShouldBeEmpty();
+            Create("A", Create("B")).FindTypeVariables().ShouldBeEmpty();
+            Create("A", x, y, z).FindTypeVariables().ShouldList(x, y, z);
+            Create("A", Create("B", x, y), Create("C", y, z)).FindTypeVariables().ShouldList(x, y, z);
         }
 
         [Test]
@@ -95,20 +93,20 @@ namespace Rook.Compiling.Types
                 new Dictionary<TypeVariable, DataType> { { a, NamedType.Integer }, { b, a } };
 
             DataType concrete = Create("A", Create("B"));
-            Assert.AreSame(concrete, concrete.ReplaceTypeVariables(replaceAWithInteger));
-            Assert.AreSame(concrete, concrete.ReplaceTypeVariables(replaceBWithA));
-            Assert.AreSame(concrete, concrete.ReplaceTypeVariables(replaceBoth));
+            concrete.ReplaceTypeVariables(replaceAWithInteger).ShouldBeTheSameAs(concrete);
+            concrete.ReplaceTypeVariables(replaceBWithA).ShouldBeTheSameAs(concrete);
+            concrete.ReplaceTypeVariables(replaceBoth).ShouldBeTheSameAs(concrete);
 
-            Assert.AreSame(Create("A", NamedType.Integer, b, NamedType.Integer), Create("A", a, b, a).ReplaceTypeVariables(replaceAWithInteger));
-            Assert.AreSame(Create("B", b, NamedType.Integer, b), Create("B", b, a, b).ReplaceTypeVariables(replaceAWithInteger));
+            Create("A", a, b, a).ReplaceTypeVariables(replaceAWithInteger).ShouldBeTheSameAs(Create("A", NamedType.Integer, b, NamedType.Integer));
+            Create("B", b, a, b).ReplaceTypeVariables(replaceAWithInteger).ShouldBeTheSameAs(Create("B", b, NamedType.Integer, b));
 
-            Assert.AreSame(Create("A", a, a, a), Create("A", a, b, a).ReplaceTypeVariables(replaceBWithA));
-            Assert.AreSame(Create("B", a, a, a), Create("B", b, a, b).ReplaceTypeVariables(replaceBWithA));
+            Create("A", a, b, a).ReplaceTypeVariables(replaceBWithA).ShouldBeTheSameAs(Create("A", a, a, a));
+            Create("B", b, a, b).ReplaceTypeVariables(replaceBWithA).ShouldBeTheSameAs(Create("B", a, a, a));
             
             //Unlike the type unification/normlization substitutions, these substitutions are ignorant of
             //chains like { b -> a, a -> int }.
-            Assert.AreSame(Create("A", NamedType.Integer, a, NamedType.Integer), Create("A", a, b, a).ReplaceTypeVariables(replaceBoth));
-            Assert.AreSame(Create("B", a, NamedType.Integer, a), Create("B", b, a, b).ReplaceTypeVariables(replaceBoth));
+            Create("A", a, b, a).ReplaceTypeVariables(replaceBoth).ShouldBeTheSameAs(Create("A", NamedType.Integer, a, NamedType.Integer));
+            Create("B", b, a, b).ReplaceTypeVariables(replaceBoth).ShouldBeTheSameAs(Create("B", a, NamedType.Integer, a));
         }
 
         private static DataType Create(string name, params DataType[] innerTypes)

@@ -33,7 +33,7 @@ namespace Rook.Compiling
         {
             Build("int Main() 123;");
             AssertErrors(0);
-            Assert.AreEqual(123, ExecuteMain());
+            ExecuteMain().ShouldEqual(123);
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace Rook.Compiling
             Program program = Grammar.Program(new Text("int Main() 123;")).Value;
             Build(program);
             AssertErrors(0);
-            Assert.AreEqual(123, ExecuteMain());
+            ExecuteMain().ShouldEqual(123);
         }
 
         protected void Build(Program program)

@@ -13,19 +13,19 @@ namespace Rook.Compiling
             Assembly assembly = Assembly.GetExecutingAssembly();
             var result = new CompilerResult(assembly);
 
-            Assert.AreEqual(assembly, result.CompiledAssembly);
-            Assert.AreEqual(0, result.Errors.Count());
+            result.CompiledAssembly.ShouldEqual(assembly);
+            result.Errors.Count().ShouldEqual(0);
         }
 
         [Test]
         public void ShouldDescribeFailedCompilation()
         {
-            CompilerError errorA = new CompilerError(1, 10, "Error A");
-            CompilerError errorB = new CompilerError(2, 20, "Error B");
+            var errorA = new CompilerError(1, 10, "Error A");
+            var errorB = new CompilerError(2, 20, "Error B");
             var result = new CompilerResult(errorA, errorB);
 
-            Assert.IsNull(result.CompiledAssembly);
-            Assert.AreEqual(new[] { errorA, errorB }, result.Errors.ToArray());
+            result.CompiledAssembly.ShouldBeNull();
+            result.Errors.ShouldList(errorA, errorB);
         }
     }
 }

@@ -69,6 +69,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssertionExtensions.cs" />
     <Compile Include="Compiling\CodeGeneration\CodeWriterSpec.cs" />
     <Compile Include="Compiling\CompilerResultSpec.cs" />
     <Compile Include="Compiling\CompilerSpec.cs" />

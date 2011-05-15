@@ -68,29 +68,29 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void CanCreateFullyTypedInstance()
         {
-            Block node = (Block)Parse("{ int x = y; int z = 0; xz = x>z; x; z; xz; }");
-            Assert.AreSame(Integer, node.VariableDeclarations.ElementAt(0).Type);
-            Assert.IsNull(node.VariableDeclarations.ElementAt(0).Value.Type);
-            Assert.AreSame(Integer, node.VariableDeclarations.ElementAt(1).Type);
-            Assert.AreSame(Integer, node.VariableDeclarations.ElementAt(1).Value.Type);//Integer constants are always typed.
-            Assert.IsNull(node.VariableDeclarations.ElementAt(2).Type);//Implicitly typed.
-            Assert.IsNull(node.VariableDeclarations.ElementAt(2).Value.Type);
-            Assert.IsNull(node.InnerExpressions.ElementAt(0).Type);
-            Assert.IsNull(node.InnerExpressions.ElementAt(1).Type);
-            Assert.IsNull(node.InnerExpressions.ElementAt(2).Type);
-            Assert.IsNull(node.Type);
+            var node = (Block)Parse("{ int x = y; int z = 0; xz = x>z; x; z; xz; }");
+            node.VariableDeclarations.ElementAt(0).Type.ShouldBeTheSameAs(Integer);
+            node.VariableDeclarations.ElementAt(0).Value.Type.ShouldBeNull();
+            node.VariableDeclarations.ElementAt(1).Type.ShouldBeTheSameAs(Integer);
+            node.VariableDeclarations.ElementAt(1).Value.Type.ShouldBeTheSameAs(Integer);//Integer constants are always typed.
+            node.VariableDeclarations.ElementAt(2).Type.ShouldBeNull();//Implicitly typed.
+            node.VariableDeclarations.ElementAt(2).Value.Type.ShouldBeNull();
+            node.InnerExpressions.ElementAt(0).Type.ShouldBeNull();
+            node.InnerExpressions.ElementAt(1).Type.ShouldBeNull();
+            node.InnerExpressions.ElementAt(2).Type.ShouldBeNull();
+            node.Type.ShouldBeNull();
 
-            Block typedNode = (Block)node.WithTypes(Environment(y => Integer)).Syntax;
-            Assert.AreSame(Integer, typedNode.VariableDeclarations.ElementAt(0).Type);
-            Assert.AreSame(Integer, typedNode.VariableDeclarations.ElementAt(0).Value.Type);
-            Assert.AreSame(Integer, typedNode.VariableDeclarations.ElementAt(1).Type);
-            Assert.AreSame(Integer, typedNode.VariableDeclarations.ElementAt(1).Value.Type);
-            Assert.AreSame(Boolean, typedNode.VariableDeclarations.ElementAt(2).Type);
-            Assert.AreSame(Boolean, typedNode.VariableDeclarations.ElementAt(2).Value.Type);
-            Assert.AreSame(Integer, typedNode.InnerExpressions.ElementAt(0).Type);
-            Assert.AreSame(Integer, typedNode.InnerExpressions.ElementAt(1).Type);
-            Assert.AreSame(Boolean, typedNode.InnerExpressions.ElementAt(2).Type);
-            Assert.AreSame(Boolean, typedNode.Type);
+            var typedNode = (Block)node.WithTypes(Environment(y => Integer)).Syntax;
+            typedNode.VariableDeclarations.ElementAt(0).Type.ShouldBeTheSameAs(Integer);
+            typedNode.VariableDeclarations.ElementAt(0).Value.Type.ShouldBeTheSameAs(Integer);
+            typedNode.VariableDeclarations.ElementAt(1).Type.ShouldBeTheSameAs(Integer);
+            typedNode.VariableDeclarations.ElementAt(1).Value.Type.ShouldBeTheSameAs(Integer);
+            typedNode.VariableDeclarations.ElementAt(2).Type.ShouldBeTheSameAs(Boolean);
+            typedNode.VariableDeclarations.ElementAt(2).Value.Type.ShouldBeTheSameAs(Boolean);
+            typedNode.InnerExpressions.ElementAt(0).Type.ShouldBeTheSameAs(Integer);
+            typedNode.InnerExpressions.ElementAt(1).Type.ShouldBeTheSameAs(Integer);
+            typedNode.InnerExpressions.ElementAt(2).Type.ShouldBeTheSameAs(Boolean);
+            typedNode.Type.ShouldBeTheSameAs(Boolean);
         }
 
         [Test]

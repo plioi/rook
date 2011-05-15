@@ -10,12 +10,12 @@ namespace Rook.Compiling.Syntax
         
         protected void AssertType(DataType expectedType, string source, params TypeMapping[] symbols)
         {
-            Assert.AreEqual(expectedType, TypeCheck(source, symbols).Syntax.Type);
+            TypeCheck(source, symbols).Syntax.Type.ShouldEqual(expectedType);
         }
 
         protected void AssertType(DataType expectedType, string source, Environment environment)
         {
-            Assert.AreEqual(expectedType, TypeCheck(source, environment).Syntax.Type);
+            TypeCheck(source, environment).Syntax.Type.ShouldEqual(expectedType);
         }
 
         protected void AssertTypeCheckError(int line, int column, string expectedMessage, string source, params TypeMapping[] symbols)

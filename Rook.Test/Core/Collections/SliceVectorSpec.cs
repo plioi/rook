@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using NUnit.Framework;
 
 namespace Rook.Core.Collections
@@ -10,9 +9,9 @@ namespace Rook.Core.Collections
         [Test]
         public void ShouldProvideItemCount()
         {
-            Assert.AreEqual(0, SliceDigits(0, 0).Count);
-            Assert.AreEqual(5, SliceDigits(0, 5).Count);
-            Assert.AreEqual(3, SliceDigits(7, 10).Count);
+            SliceDigits(0, 0).Count.ShouldEqual(0);
+            SliceDigits(0, 5).Count.ShouldEqual(5);
+            SliceDigits(7, 10).Count.ShouldEqual(3);
         }
 
         [Test]
@@ -21,41 +20,41 @@ namespace Rook.Core.Collections
             Vector<int> empty = SliceDigits(0, 0);
             Vector<int> nonempty = SliceDigits(0, 10);
 
-            Assert.AreEqual(new int[] { }, empty.ToArray());
-            Assert.AreEqual(new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, nonempty.ToArray());
+            empty.ShouldBeEmpty();
+            nonempty.ShouldList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
         }
 
         [Test]
         public void ShouldSliceFromStartIndexInclusiveToEndIndexExclusive()
         {
-            AssertEmpty(SliceDigits(0, 0));
-            AssertEmpty(SliceDigits(5, 5));
-            AssertEmpty(SliceDigits(9, 9));
+            SliceDigits(0, 0).ShouldBeEmpty();
+            SliceDigits(5, 5).ShouldBeEmpty();
+            SliceDigits(9, 9).ShouldBeEmpty();
             
-            AssertContents(SliceDigits(0, 1), 0);
-            AssertContents(SliceDigits(0, 2), 0, 1);
-            AssertContents(SliceDigits(0, 9), 0, 1, 2, 3, 4, 5, 6, 7, 8);
-            AssertContents(SliceDigits(0, 10), 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+            SliceDigits(0, 1).ShouldList(0);
+            SliceDigits(0, 2).ShouldList(0, 1);
+            SliceDigits(0, 9).ShouldList(0, 1, 2, 3, 4, 5, 6, 7, 8);
+            SliceDigits(0, 10).ShouldList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
-            AssertContents(SliceDigits(5, 6), 5);
-            AssertContents(SliceDigits(5, 7), 5, 6);
-            AssertContents(SliceDigits(5, 9), 5, 6, 7, 8);
-            AssertContents(SliceDigits(5, 10), 5, 6, 7, 8, 9);
+            SliceDigits(5, 6).ShouldList(5);
+            SliceDigits(5, 7).ShouldList(5, 6);
+            SliceDigits(5, 9).ShouldList(5, 6, 7, 8);
+            SliceDigits(5, 10).ShouldList(5, 6, 7, 8, 9);
         }
 
         [Test]
         public void ShouldGetItemsByIndex()
         {
             Vector<int> start = SliceDigits(0, 2);
-            Assert.AreEqual(0, start[0]);
-            Assert.AreEqual(1, start[1]);
+            start[0].ShouldEqual(0);
+            start[1].ShouldEqual(1);
 
             Vector<int> end = SliceDigits(5, 10);
-            Assert.AreEqual(5, end[0]);
-            Assert.AreEqual(6, end[1]);
-            Assert.AreEqual(7, end[2]);
-            Assert.AreEqual(8, end[3]);
-            Assert.AreEqual(9, end[4]);
+            end[0].ShouldEqual(5);
+            end[1].ShouldEqual(6);
+            end[2].ShouldEqual(7);
+            end[3].ShouldEqual(8);
+            end[4].ShouldEqual(9);
         }
 
         [Test]
@@ -64,14 +63,14 @@ namespace Rook.Core.Collections
             Vector<int> interiorSlice = SliceDigits(1, 4);
             Vector<int> tailSlice = SliceDigits(7, 10);
 
-            AssertContents(interiorSlice, 1, 2, 3);
-            AssertContents(tailSlice, 7, 8, 9);
+            interiorSlice.ShouldList(1, 2, 3);
+            tailSlice.ShouldList(7, 8, 9);
 
-            AssertContents(interiorSlice.Append(-1), 1, 2, 3, -1);
-            AssertContents(tailSlice.Append(-1), 7, 8, 9, -1);
+            interiorSlice.Append(-1).ShouldList(1, 2, 3, -1);
+            tailSlice.Append(-1).ShouldList(7, 8, 9, -1);
 
-            AssertContents(interiorSlice, 1, 2, 3);
-            AssertContents(tailSlice, 7, 8, 9);
+            interiorSlice.ShouldList(1, 2, 3);
+            tailSlice.ShouldList(7, 8, 9);
         }
 
         [Test]
@@ -80,19 +79,19 @@ namespace Rook.Core.Collections
             Vector<int> interiorSlice = SliceDigits(1, 4);
             Vector<int> tailSlice = SliceDigits(7, 10);
 
-            AssertContents(interiorSlice, 1, 2, 3);
-            AssertContents(tailSlice, 7, 8, 9);
+            interiorSlice.ShouldList(1, 2, 3);
+            tailSlice.ShouldList(7, 8, 9);
 
-            AssertContents(interiorSlice.With(0, 0), 0, 2, 3);
-            AssertContents(interiorSlice.With(1, 0), 1, 0, 3);
-            AssertContents(interiorSlice.With(2, 0), 1, 2, 0);
+            interiorSlice.With(0, 0).ShouldList(0, 2, 3);
+            interiorSlice.With(1, 0).ShouldList(1, 0, 3);
+            interiorSlice.With(2, 0).ShouldList(1, 2, 0);
 
-            AssertContents(tailSlice.With(0, 0), 0, 8, 9);
-            AssertContents(tailSlice.With(1, 0), 7, 0, 9);
-            AssertContents(tailSlice.With(2, 0), 7, 8, 0);
+            tailSlice.With(0, 0).ShouldList(0, 8, 9);
+            tailSlice.With(1, 0).ShouldList(7, 0, 9);
+            tailSlice.With(2, 0).ShouldList(7, 8, 0);
 
-            AssertContents(interiorSlice, 1, 2, 3);
-            AssertContents(tailSlice, 7, 8, 9);
+            interiorSlice.ShouldList(1, 2, 3);
+            tailSlice.ShouldList(7, 8, 9);
         }
 
         [Test]
@@ -101,8 +100,8 @@ namespace Rook.Core.Collections
             Vector<int> sliceOfInteriorSlice = SliceDigits(2, 9).Slice(1, 4);
             Vector<int> sliceOfTailSlice = SliceDigits(3, 10).Slice(1, 4);
 
-            AssertContents(sliceOfInteriorSlice, 3, 4, 5);
-            AssertContents(sliceOfTailSlice, 4, 5, 6);
+            sliceOfInteriorSlice.ShouldList(3, 4, 5);
+            sliceOfTailSlice.ShouldList(4, 5, 6);
         }
 
         [Test]
@@ -141,7 +140,7 @@ namespace Rook.Core.Collections
 
             Vector<int> empty = new ArrayVector<int>();
 
-            AssertEmpty(empty.Slice(0, 0));
+            empty.Slice(0, 0).ShouldBeEmpty();
         }
 
         [Test]
@@ -158,7 +157,7 @@ namespace Rook.Core.Collections
 
         private static Vector<int> SliceDigits(int startIndexInclusive, int endIndexExclusive)
         {
-            ArrayVector<int> digits = new ArrayVector<int>(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+            var digits = new ArrayVector<int>(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
             return digits.Slice(startIndexInclusive, endIndexExclusive);
         }
     }

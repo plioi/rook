@@ -38,7 +38,7 @@ namespace Rook.Compiling.Syntax
             NamedType expectedTypeAfterLookup = NamedType.Create("A", new TypeVariable(17), new TypeVariable(2), NamedType.Create("B", new TypeVariable(17), new TypeVariable(2)));
             NamedType definedType = NamedType.Create("A", new TypeVariable(1), new TypeVariable(2), NamedType.Create("B", new TypeVariable(1), new TypeVariable(2)));
 
-            Environment environment = new Environment();
+            var environment = new Environment();
             environment.TreatAsNonGeneric(new[] { new TypeVariable(2) });
             environment["foo"] = definedType;
 
@@ -48,11 +48,11 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void CanCreateFullyTypedInstance()
         {
-            Name node = (Name)Parse("foo");
-            Assert.IsNull(node.Type);
+            var node = (Name)Parse("foo");
+            node.Type.ShouldBeNull();
 
-            Name typedNode = (Name)node.WithTypes(Environment(foo => Boolean)).Syntax;
-            Assert.AreSame(Boolean, typedNode.Type);
+            var typedNode = (Name)node.WithTypes(Environment(foo => Boolean)).Syntax;
+            typedNode.Type.ShouldBeTheSameAs(Boolean);
         }
 
         [Test]

@@ -35,19 +35,19 @@ namespace Rook.Compiling.Syntax
             var typeCheckedProgram = program.WithTypes();
             var typedProgram = typeCheckedProgram.Syntax;
 
-            Assert.IsNull(program.Functions.ElementAt(0).Type);
-            Assert.IsNull(((If)program.Functions.ElementAt(0).Body).Type);
-            Assert.IsNull(program.Functions.ElementAt(1).Type);
-            Assert.IsNull(((If)program.Functions.ElementAt(1).Body).Type);
-            Assert.IsNull(program.Functions.ElementAt(2).Type);
-            Assert.IsNull(((If)program.Functions.ElementAt(2).Body).Type);
+            program.Functions.ElementAt(0).Type.ShouldBeNull();
+            ((If)program.Functions.ElementAt(0).Body).Type.ShouldBeNull();
+            program.Functions.ElementAt(1).Type.ShouldBeNull();
+            ((If)program.Functions.ElementAt(1).Body).Type.ShouldBeNull();
+            program.Functions.ElementAt(2).Type.ShouldBeNull();
+            ((If)program.Functions.ElementAt(2).Body).Type.ShouldBeNull();
 
-            Assert.AreEqual("System.Func<int, bool>", typedProgram.Functions.ElementAt(0).Type.ToString());
-            Assert.AreEqual(Boolean, ((If)typedProgram.Functions.ElementAt(0).Body).Type);
-            Assert.AreEqual("System.Func<int, bool>", typedProgram.Functions.ElementAt(1).Type.ToString());
-            Assert.AreEqual(Boolean, ((If)typedProgram.Functions.ElementAt(1).Body).Type);
-            Assert.AreEqual("System.Func<int>", typedProgram.Functions.ElementAt(2).Type.ToString());
-            Assert.AreEqual(Integer, ((If)typedProgram.Functions.ElementAt(2).Body).Type);
+            typedProgram.Functions.ElementAt(0).Type.ToString().ShouldEqual("System.Func<int, bool>");
+            ((If)typedProgram.Functions.ElementAt(0).Body).Type.ShouldEqual(Boolean);
+            typedProgram.Functions.ElementAt(1).Type.ToString().ShouldEqual("System.Func<int, bool>");
+            ((If)typedProgram.Functions.ElementAt(1).Body).Type.ShouldEqual(Boolean);
+            typedProgram.Functions.ElementAt(2).Type.ToString().ShouldEqual("System.Func<int>");
+            ((If)typedProgram.Functions.ElementAt(2).Body).Type.ShouldEqual(Integer);
         }
 
         [Test]

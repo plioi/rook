@@ -54,15 +54,15 @@ namespace Rook.Compiling
         [Test]
         public void ProvidesContainmentPredicate()
         {
-            Assert.IsTrue(ab.Contains("a"));
-            Assert.IsTrue(ab.Contains("b"));
-            Assert.IsFalse(ab.Contains("c"));
-            Assert.IsFalse(ab.Contains("z"));
+            ab.Contains("a").ShouldBeTrue();
+            ab.Contains("b").ShouldBeTrue();
+            ab.Contains("c").ShouldBeFalse();
+            ab.Contains("z").ShouldBeFalse();
 
-            Assert.IsTrue(bc.Contains("a"));
-            Assert.IsTrue(bc.Contains("b"));
-            Assert.IsTrue(bc.Contains("c"));
-            Assert.IsFalse(bc.Contains("z"));
+            bc.Contains("a").ShouldBeTrue();
+            bc.Contains("b").ShouldBeTrue();
+            bc.Contains("c").ShouldBeTrue();
+            bc.Contains("z").ShouldBeFalse();
         }
 
         [Test]
@@ -104,27 +104,27 @@ namespace Rook.Compiling
         [Test]
         public void ProvidesStreamOfUniqueTypeVariables()
         {
-            Assert.AreEqual(new TypeVariable(17), root.CreateTypeVariable());
-            Assert.AreEqual(new TypeVariable(18), root.CreateTypeVariable());
-            Assert.AreEqual(new TypeVariable(19), ab.CreateTypeVariable());
-            Assert.AreEqual(new TypeVariable(20), bc.CreateTypeVariable());
-            Assert.AreEqual(new TypeVariable(21), ab.CreateTypeVariable());
-            Assert.AreEqual(new TypeVariable(22), bc.CreateTypeVariable());
+            root.CreateTypeVariable().ShouldEqual(new TypeVariable(17));
+            root.CreateTypeVariable().ShouldEqual(new TypeVariable(18));
+            ab.CreateTypeVariable().ShouldEqual(new TypeVariable(19));
+            bc.CreateTypeVariable().ShouldEqual(new TypeVariable(20));
+            ab.CreateTypeVariable().ShouldEqual(new TypeVariable(21));
+            bc.CreateTypeVariable().ShouldEqual(new TypeVariable(22));
         }
 
         [Test]
         public void ProvidesTypeNormalizerSharedWithAllLocalEnvironments()
         {
-            Assert.AreSame(root.TypeNormalizer, ab.TypeNormalizer);
-            Assert.AreSame(ab.TypeNormalizer, bc.TypeNormalizer);
-            Assert.AreNotSame(root.TypeNormalizer, new Environment().TypeNormalizer);
+            ab.TypeNormalizer.ShouldBeTheSameAs(root.TypeNormalizer);
+            bc.TypeNormalizer.ShouldBeTheSameAs(ab.TypeNormalizer);
+            new Environment().TypeNormalizer.ShouldNotBeTheSameAs(root.TypeNormalizer);
         }
 
         [Test]
         public void CanBePopulatedWithAUniqueBinding()
         {
-            Assert.IsTrue(root.TryIncludeUniqueBinding(new Parameter(null, Integer, "a")));
-            Assert.IsTrue(root.TryIncludeUniqueBinding(new Parameter(null, Boolean, "b")));
+            root.TryIncludeUniqueBinding(new Parameter(null, Integer, "a")).ShouldBeTrue();
+            root.TryIncludeUniqueBinding(new Parameter(null, Boolean, "b")).ShouldBeTrue();
             AssertType(Integer, root, "a");
             AssertType(Boolean, root, "b");
         }
@@ -132,9 +132,9 @@ namespace Rook.Compiling
         [Test]
         public void DemandsUniqueBindingsWhenIncludingUniqueBindings()
         {
-            Assert.IsTrue(root.TryIncludeUniqueBinding(new Parameter(null, Integer, "a")));
-            Assert.IsFalse(root.TryIncludeUniqueBinding(new Parameter(null, Integer, "a")));
-            Assert.IsFalse(root.TryIncludeUniqueBinding(new Parameter(null, Boolean, "a")));
+            root.TryIncludeUniqueBinding(new Parameter(null, Integer, "a")).ShouldBeTrue();
+            root.TryIncludeUniqueBinding(new Parameter(null, Integer, "a")).ShouldBeFalse();
+            root.TryIncludeUniqueBinding(new Parameter(null, Boolean, "a")).ShouldBeFalse();
             AssertType(Integer, root, "a");
         }
 
@@ -149,21 +149,21 @@ namespace Rook.Compiling
             root.TreatAsNonGeneric(new[] {var0});
             ab.TreatAsNonGeneric(new[] {var1, var2});
             bc.TreatAsNonGeneric(new[] {var3});
-            
-            Assert.IsFalse(root.IsGeneric(var0));
-            Assert.IsTrue(root.IsGeneric(var1));
-            Assert.IsTrue(root.IsGeneric(var2));
-            Assert.IsTrue(root.IsGeneric(var3));
 
-            Assert.IsFalse(ab.IsGeneric(var0));
-            Assert.IsFalse(ab.IsGeneric(var1));
-            Assert.IsFalse(ab.IsGeneric(var2));
-            Assert.IsTrue(ab.IsGeneric(var3));
+            root.IsGeneric(var0).ShouldBeFalse();
+            root.IsGeneric(var1).ShouldBeTrue();
+            root.IsGeneric(var2).ShouldBeTrue();
+            root.IsGeneric(var3).ShouldBeTrue();
 
-            Assert.IsFalse(bc.IsGeneric(var0));
-            Assert.IsFalse(bc.IsGeneric(var1));
-            Assert.IsFalse(bc.IsGeneric(var2));
-            Assert.IsFalse(bc.IsGeneric(var3));
+            ab.IsGeneric(var0).ShouldBeFalse();
+            ab.IsGeneric(var1).ShouldBeFalse();
+            ab.IsGeneric(var2).ShouldBeFalse();
+            ab.IsGeneric(var3).ShouldBeTrue();
+
+            bc.IsGeneric(var0).ShouldBeFalse();
+            bc.IsGeneric(var1).ShouldBeFalse();
+            bc.IsGeneric(var2).ShouldBeFalse();
+            bc.IsGeneric(var3).ShouldBeFalse();
         }
 
         private static void AssertType(DataType expectedType, Environment environment, string key)
@@ -171,7 +171,7 @@ namespace Rook.Compiling
             DataType value;
 
             if (environment.TryGet(key, out value))
-                Assert.AreSame(expectedType, value);
+                value.ShouldBeTheSameAs(expectedType);
             else
                 Assert.Fail();
         }
@@ -181,7 +181,7 @@ namespace Rook.Compiling
             DataType value;
 
             if (environment.TryGet(key, out value))
-                Assert.AreEqual(expectedType, value.ToString());
+                expectedType.ShouldEqual(value.ToString());
             else
                 Assert.Fail();
         }

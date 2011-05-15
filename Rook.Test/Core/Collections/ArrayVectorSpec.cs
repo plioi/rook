@@ -10,10 +10,10 @@ namespace Rook.Core.Collections
         public void ShouldProvideItemCount()
         {
             Vector<int> empty = new ArrayVector<int>();
-            Assert.AreEqual(0, empty.Count);
+            empty.Count.ShouldEqual(0);
 
             Vector<int> single = new ArrayVector<int>(0);
-            Assert.AreEqual(1, single.Count);
+            single.Count.ShouldEqual(1);
         }
 
         [Test]
@@ -22,50 +22,50 @@ namespace Rook.Core.Collections
             int[] source = new[] {1, 2};
             Vector<int> vector = new ArrayVector<int>(source);
             
-            AssertContents(vector, 1, 2);
+            vector.ShouldList(1, 2);
 
             source[0] = -1;
             source[1] = -2;
 
-            AssertContents(vector, 1, 2);
+            vector.ShouldList(1, 2);
         }
 
         [Test]
         public void ShouldCreateNewVectorWithNewValueAppended()
         {
             Vector<int> original = new ArrayVector<int>(1, 2, 3);
-            AssertContents(original, 1, 2, 3);
+            original.ShouldList(1, 2, 3);
 
             Vector<int> appended = original.Append(4);
-            AssertContents(original, 1, 2, 3);
-            AssertContents(appended, 1, 2, 3, 4);
+            original.ShouldList(1, 2, 3);
+            appended.ShouldList(1, 2, 3, 4);
         }
 
         [Test]
         public void ShouldCreateNewVectorWithAlteredCell()
         {
             Vector<int> original = new ArrayVector<int>(1, 2, 3);
-            AssertContents(original, 1, 2, 3);
-            AssertContents(original.With(0, 10), 10, 2, 3);
-            AssertContents(original.With(1, 20), 1, 20, 3);
-            AssertContents(original.With(2, 30), 1, 2, 30);
-            AssertContents(original, 1, 2, 3);
+            original.ShouldList(1, 2, 3);
+            original.With(0, 10).ShouldList(10, 2, 3);
+            original.With(1, 20).ShouldList(1, 20, 3);
+            original.With(2, 30).ShouldList(1, 2, 30);
+            original.ShouldList(1, 2, 3);
         }
 
         [Test]
         public void ShouldGetItemsByIndex()
         {
             Vector<int> vector = new ArrayVector<int>(1, 2, 3);
-            Assert.AreEqual(1, vector[0]);
-            Assert.AreEqual(2, vector[1]);
-            Assert.AreEqual(3, vector[2]);
+            vector[0].ShouldEqual(1);
+            vector[1].ShouldEqual(2);
+            vector[2].ShouldEqual(3);
         }
 
         [Test]
         public void ShouldCreateSlices()
         {
             Vector<int> slice = new ArrayVector<int>(0, 1, 2, 3, 4, 5, 6).Slice(1, 6);
-            AssertContents(slice, 1, 2, 3, 4, 5);
+            slice.ShouldList(1, 2, 3, 4, 5);
         }
 
         [Test]
@@ -86,8 +86,8 @@ namespace Rook.Core.Collections
             Vector<int> empty = new ArrayVector<int>();
             Vector<int> nonempty = new ArrayVector<int>(1, 2, 3);
 
-            Assert.AreEqual(new int[] {}, empty.ToArray());
-            Assert.AreEqual(new[] {1, 2, 3}, nonempty.ToArray());
+            empty.ShouldBeEmpty();
+            nonempty.ShouldList(1, 2, 3);
         }
     }
 }

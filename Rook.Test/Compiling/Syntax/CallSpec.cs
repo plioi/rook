@@ -135,17 +135,17 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void CanCreateFullyTypedInstance()
         {
-            Call node = (Call)Parse("func(yes, zero)");
-            Assert.IsNull(node.Callable.Type);
-            Assert.IsNull(node.Arguments.ElementAt(0).Type);
-            Assert.IsNull(node.Arguments.ElementAt(1).Type);
-            Assert.IsNull(node.Type);
+            var node = (Call)Parse("func(yes, zero)");
+            node.Callable.Type.ShouldBeNull();
+            node.Arguments.ElementAt(0).Type.ShouldBeNull();
+            node.Arguments.ElementAt(1).Type.ShouldBeNull();
+            node.Type.ShouldBeNull();
 
-            Call typedNode = (Call)node.WithTypes(Environment(func => Function(new[] {Boolean, Integer}, Integer), yes => Boolean, zero => Integer)).Syntax;
-            Assert.AreSame(NamedType.Function(new[] {Boolean, Integer}, Integer), typedNode.Callable.Type);
-            Assert.AreSame(Boolean, typedNode.Arguments.ElementAt(0).Type);
-            Assert.AreSame(Integer, typedNode.Arguments.ElementAt(1).Type);
-            Assert.AreSame(Integer, typedNode.Type);
+            var typedNode = (Call)node.WithTypes(Environment(func => Function(new[] {Boolean, Integer}, Integer), yes => Boolean, zero => Integer)).Syntax;
+            typedNode.Callable.Type.ShouldBeTheSameAs(NamedType.Function(new[] {Boolean, Integer}, Integer));
+            typedNode.Arguments.ElementAt(0).Type.ShouldBeTheSameAs(Boolean);
+            typedNode.Arguments.ElementAt(1).Type.ShouldBeTheSameAs(Integer);
+            typedNode.Type.ShouldBeTheSameAs(Integer);
         }
 
         [Test]

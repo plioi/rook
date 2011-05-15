@@ -208,12 +208,12 @@ namespace Rook.Compiling.CodeGeneration
         private static void AssertTranslation<T>(string expectedCSharp, Parser<T> parse, string rookSource) 
             where T : SyntaxTree
         {
-            Assert.AreEqual(expectedCSharp, Translate(parse, rookSource));
+            Translate(parse, rookSource).ShouldEqual(expectedCSharp);
         }
 
         private void AssertTranslation<T>(Parser<T> parse, string rookSource) where T : SyntaxTree
         {
-            Assert.AreEqual(expectation.ToString().TrimEnd(), Translate(parse, rookSource).TrimEnd());
+            Translate(parse, rookSource).TrimEnd().ShouldEqual(expectation.ToString().TrimEnd());
         }
 
         private static string Translate<T>(Parser<T> parse, string rookSource)

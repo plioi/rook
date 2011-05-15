@@ -61,17 +61,17 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void CanCreateFullyTypedInstance()
         {
-            If node = (If)Parse("if (foo) bar else baz");
-            Assert.IsNull(node.Condition.Type);
-            Assert.IsNull(node.BodyWhenTrue.Type);
-            Assert.IsNull(node.BodyWhenFalse.Type);
-            Assert.IsNull(node.Type);
+            var node = (If)Parse("if (foo) bar else baz");
+            node.Condition.Type.ShouldBeNull();
+            node.BodyWhenTrue.Type.ShouldBeNull();
+            node.BodyWhenFalse.Type.ShouldBeNull();
+            node.Type.ShouldBeNull();
             
-            If typedNode = (If)node.WithTypes(Environment(foo => Boolean, bar => Boolean, baz => Boolean)).Syntax;
-            Assert.AreSame(Boolean, typedNode.Condition.Type);
-            Assert.AreSame(Boolean, typedNode.BodyWhenTrue.Type);
-            Assert.AreSame(Boolean, typedNode.BodyWhenFalse.Type);
-            Assert.AreSame(Boolean, typedNode.Type);
+            var typedNode = (If)node.WithTypes(Environment(foo => Boolean, bar => Boolean, baz => Boolean)).Syntax;
+            typedNode.Condition.Type.ShouldBeTheSameAs(Boolean);
+            typedNode.BodyWhenTrue.Type.ShouldBeTheSameAs(Boolean);
+            typedNode.BodyWhenFalse.Type.ShouldBeTheSameAs(Boolean);
+            typedNode.Type.ShouldBeTheSameAs(Boolean);
         }
     }
 }

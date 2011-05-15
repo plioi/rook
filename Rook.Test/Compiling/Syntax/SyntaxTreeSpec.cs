@@ -32,8 +32,8 @@ namespace Rook.Compiling.Syntax
         {
             const string expectedUnparsedSource = "";
             ParserUnderTest.AssertParse(source, expectedUnparsedSource,
-                                        parsedValue => Assert.AreEqual(expectedSyntaxTree, parsedValue.Visit(serializer)));
-            Assert.IsInstanceOfType(typeof(TSyntax), Parse(source));
+                                        parsedValue => parsedValue.Visit(serializer).ShouldEqual(expectedSyntaxTree));
+            Parse(source).ShouldBeInstanceOf<TSyntax>();
         }
 
         protected void AssertError(string source, string expectedUnparsedSource)
@@ -48,8 +48,8 @@ namespace Rook.Compiling.Syntax
 
         protected static void AssertTypeCheckError(TypeChecked<TSyntax> typeChecked, int line, int column, string expectedMessage)
         {
-            Assert.IsNull(typeChecked.Syntax, "Expected type check error but found type checked syntax.");
-            Assert.IsTrue(typeChecked.HasErrors);
+            typeChecked.Syntax.ShouldBeNull("Expected type check error but found type checked syntax.");
+            typeChecked.HasErrors.ShouldBeTrue();
             
             if (typeChecked.Errors.Count() != 1)
             {

@@ -33,7 +33,7 @@ namespace Rook.Integration
         {
             string testName = new StackTrace().GetFrame(1).GetMethod().Name;
 
-            Assert.AreEqual(ExpectedOutput(testName), ActualOutput(testName));
+            ActualOutput(testName).ShouldEqual(ExpectedOutput(testName));
         }
 
         private static string ExpectedOutput(string testName)

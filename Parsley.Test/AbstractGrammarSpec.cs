@@ -279,14 +279,14 @@ namespace Parsley
 
             start.AssertParse("ABC", "ABC", position =>
             {
-                Assert.AreEqual(1, position.Line);
-                Assert.AreEqual(1, position.Column);
+                position.Line.ShouldEqual(1);
+                position.Column.ShouldEqual(1);
             });
 
             afterLeadingWhiteSpace.AssertParse("  \r\n   \r\n   123!", "!", position =>
             {
-                Assert.AreEqual(3, position.Line);
-                Assert.AreEqual(4, position.Column);
+                position.Line.ShouldEqual(3);
+                position.Column.ShouldEqual(4);
             });
         }
     }

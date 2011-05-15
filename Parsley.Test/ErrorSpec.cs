@@ -18,13 +18,13 @@ namespace Parsley
         [Test]
         public void CanIndicateGenericErrors()
         {
-            Assert.AreEqual(null, new Error<object>(endOfInput).Expectation);
+            new Error<object>(endOfInput).Expectation.ShouldBeNull();
         }
 
         [Test]
         public void CanIndicateErrorsWithASpecificExpectation()
         {
-            Assert.AreEqual("statement", new Error<object>(endOfInput, "statement").Expectation);
+            new Error<object>(endOfInput, "statement").Expectation.ShouldEqual("statement");
         }
 
         [Test]
@@ -37,28 +37,28 @@ namespace Parsley
         [Test]
         public void ProvidesParseErrorMessage()
         {
-            Assert.AreEqual("Parse error.", new Error<object>(x).Message);
-            Assert.AreEqual("y expected", new Error<object>(x, "y").Message);
+            new Error<object>(x).Message.ShouldEqual("Parse error.");
+            new Error<object>(x, "y").Message.ShouldEqual("y expected");
         }
 
         [Test]
         public void ProvidesParseErrorMessageWithPositionAsToString()
         {
-            Assert.AreEqual("(1, 1): Parse error.", new Error<object>(x).ToString());
-            Assert.AreEqual("(1, 1): y expected", new Error<object>(x, "y").ToString());
+            new Error<object>(x).ToString().ShouldEqual("(1, 1): Parse error.");
+            new Error<object>(x, "y").ToString().ShouldEqual("(1, 1): y expected");
         }
 
         [Test]
         public void HasRemainingUnparsedText()
         {
-            Assert.AreSame(x, new Error<object>(x).UnparsedText);
-            Assert.AreSame(endOfInput, new Error<object>(endOfInput).UnparsedText);
+            new Error<object>(x).UnparsedText.ShouldEqual(x);
+            new Error<object>(endOfInput).UnparsedText.ShouldEqual(endOfInput);
         }
 
         [Test]
         public void ReportsErrorState()
         {
-            Assert.IsTrue(new Error<object>(x).IsError);
+            new Error<object>(x).IsError.ShouldBeTrue();
         }
 
         [Test]
@@ -67,9 +67,9 @@ namespace Parsley
             Parser<string> shouldNotBeCalled = tokens => { throw new Exception(); };
 
             Parsed<string> result = new Error<object>(x, "expectation!").ParseRest(o => shouldNotBeCalled);
-            Assert.IsTrue(result.IsError);
-            Assert.AreSame(x, result.UnparsedText);
-            Assert.AreEqual("expectation!", ((Error<string>) result).Expectation);
+            result.IsError.ShouldBeTrue();
+            result.UnparsedText.ShouldEqual(x);
+            ((Error<string>) result).Expectation.ShouldEqual("expectation!");
         }
     }
 }

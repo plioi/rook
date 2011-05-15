@@ -56,19 +56,19 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void CanCreateFullyTypedInstance()
         {
-            Lambda node = (Lambda)Parse("fn (x, int y, bool z) x+y>0 && z");
-            Assert.IsNull(node.Parameters.ElementAt(0).Type);
-            Assert.AreSame(Integer, node.Parameters.ElementAt(1).Type);
-            Assert.AreSame(Boolean, node.Parameters.ElementAt(2).Type);
-            Assert.IsNull(node.Body.Type);
-            Assert.IsNull(node.Type);
+            var node = (Lambda)Parse("fn (x, int y, bool z) x+y>0 && z");
+            node.Parameters.ElementAt(0).Type.ShouldBeNull();
+            node.Parameters.ElementAt(1).Type.ShouldBeTheSameAs(Integer);
+            node.Parameters.ElementAt(2).Type.ShouldBeTheSameAs(Boolean);
+            node.Body.Type.ShouldBeNull();
+            node.Type.ShouldBeNull();
 
-            Lambda typedNode = (Lambda)node.WithTypes(Environment()).Syntax;
-            Assert.AreSame(Integer, typedNode.Parameters.ElementAt(0).Type);
-            Assert.AreSame(Integer, typedNode.Parameters.ElementAt(1).Type);
-            Assert.AreSame(Boolean, typedNode.Parameters.ElementAt(2).Type);
-            Assert.AreSame(Boolean, typedNode.Body.Type);
-            Assert.AreSame(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean), typedNode.Type);
+            var typedNode = (Lambda)node.WithTypes(Environment()).Syntax;
+            typedNode.Parameters.ElementAt(0).Type.ShouldBeTheSameAs(Integer);
+            typedNode.Parameters.ElementAt(1).Type.ShouldBeTheSameAs(Integer);
+            typedNode.Parameters.ElementAt(2).Type.ShouldBeTheSameAs(Boolean);
+            typedNode.Body.Type.ShouldBeTheSameAs(Boolean);
+            typedNode.Type.ShouldBeTheSameAs(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean));
         }
 
         [Test]

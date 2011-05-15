@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractGrammarSpec.cs" />
+    <Compile Include="AssertionExtensions.cs" />
     <Compile Include="SuccessSpec.cs" />
     <Compile Include="ErrorSpec.cs" />
     <Compile Include="ParsingAssertions.cs" />

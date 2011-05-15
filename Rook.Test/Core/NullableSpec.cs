@@ -9,16 +9,16 @@ namespace Rook.Core
         [Test]
         public void CanWrapValueTypes()
         {
-            Nullable<int> zero = new Nullable<int>(0);
-            Assert.AreEqual(0, zero.Value);
+            var zero = new Nullable<int>(0);
+            zero.Value.ShouldEqual(0);
         }
 
         [Test]
         public void CanWrapReferenceTypes()
         {
-            object o = new object();
-            Nullable<object> nullable = new Nullable<object>(o);
-            Assert.AreSame(o, nullable.Value);
+            var o = new object();
+            var nullable = new Nullable<object>(o);
+            nullable.Value.ShouldBeTheSameAs(o);
         }
 
         [Test]

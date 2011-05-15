@@ -26,12 +26,12 @@ namespace Rook.Compiling
 
         protected void AssertErrors(int expectedErrorCount)
         {
-            Assert.AreEqual(expectedErrorCount, result.Errors.Count());
+            result.Errors.Count().ShouldEqual(expectedErrorCount);
 
             if (expectedErrorCount > 0)
-                Assert.IsNull(result.CompiledAssembly);
+                result.CompiledAssembly.ShouldBeNull();
             else
-                Assert.IsNotNull(result.CompiledAssembly);
+                result.CompiledAssembly.ShouldNotBeNull();
         }
 
         protected void AssertError(int line, int column, string expectedMessage)

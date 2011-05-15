@@ -12,19 +12,19 @@ namespace Rook.Compiling
             object value = 123;
             var result = new InterpreterResult(value);
 
-            Assert.AreEqual(value, result.Value);
-            Assert.AreEqual(0, result.Errors.Count());
+            result.Value.ShouldEqual(value);
+            result.Errors.Count().ShouldEqual(0);
         }
 
         [Test]
         public void ShouldDescribeFailedInterpretation()
         {
-            CompilerError errorA = new CompilerError(1, 10, "Error A");
-            CompilerError errorB = new CompilerError(2, 20, "Error B");
+            var errorA = new CompilerError(1, 10, "Error A");
+            var errorB = new CompilerError(2, 20, "Error B");
             var result = new InterpreterResult(errorA, errorB);
 
-            Assert.IsNull(result.Value);
-            Assert.AreEqual(new[] {errorA, errorB}, result.Errors.ToArray());
+            result.Value.ShouldBeNull();
+            result.Errors.ShouldList(errorA, errorB);
         }
     }
 }

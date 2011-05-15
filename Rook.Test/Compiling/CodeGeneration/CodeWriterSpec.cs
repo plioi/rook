@@ -20,7 +20,7 @@ namespace Rook.Compiling.CodeGeneration
             code.Literal("abc");
             code.Literal("def");
             code.Literal("ghi");
-            Assert.AreEqual("abcdefghi", code.ToString());
+            code.ToString().ShouldEqual("abcdefghi");
         }
 
         [Test]
@@ -31,7 +31,7 @@ namespace Rook.Compiling.CodeGeneration
             code.Literal("def");
             code.EndLine();
             code.Literal("ghi");
-            Assert.AreEqual("abc\r\ndef\r\nghi", code.ToString());
+            code.ToString().ShouldEqual("abc\r\ndef\r\nghi");
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace Rook.Compiling.CodeGeneration
         {
             code.Indentation();
             code.Literal("abc");
-            Assert.AreEqual("abc", code.ToString());
+            code.ToString().ShouldEqual("abc");
         }
 
         [Test]

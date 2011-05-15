@@ -8,21 +8,21 @@ namespace Rook.Core
         [Test]
         public void WrapsTheGivenValue()
         {
-            Identity<string> identity = new Identity<string>("value");
-            Assert.AreEqual("value", identity.Value);
+            var identity = new Identity<string>("value");
+            identity.Value.ShouldEqual("value");
         }
 
         [Test]
         public void AllowsMutationWhenGivenFunctionThatReturnsTheNextValue()
         {
-            Identity<int> identity = new Identity<int>(0);
-            Assert.AreEqual(0, identity.Value);
+            var identity = new Identity<int>(0);
+            identity.Value.ShouldEqual(0);
 
             identity.Update(i => i + 1);
-            Assert.AreEqual(1, identity.Value);
+            identity.Value.ShouldEqual(1);
 
             identity.Update(i => i + 2);
-            Assert.AreEqual(3, identity.Value);
+            identity.Value.ShouldEqual(3);
         }
     }
 }

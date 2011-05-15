@@ -19,32 +19,32 @@ namespace Rook.Compiling.Types
         [Test]
         public void HasAName()
         {
-            Assert.AreEqual("0", a.Name);
-            Assert.AreEqual("1", b.Name);
+            a.Name.ShouldEqual("0");
+            b.Name.ShouldEqual("1");
         }
 
         [Test]
         public void HasZeroInnerTypes()
         {
-            Assert.AreEqual(0, a.InnerTypes.Count());
-            Assert.AreEqual(0, b.InnerTypes.Count());
+            a.InnerTypes.Count().ShouldEqual(0);
+            b.InnerTypes.Count().ShouldEqual(0);
         }
 
         [Test]
         public void ContainsOnlyItself()
         {
-            Assert.IsTrue(a.Contains(a));
-            Assert.IsTrue(b.Contains(b));
+            a.Contains(a).ShouldBeTrue();
+            b.Contains(b).ShouldBeTrue();
 
-            Assert.IsFalse(a.Contains(b));
-            Assert.IsFalse(b.Contains(a));
+            a.Contains(b).ShouldBeFalse();
+            b.Contains(a).ShouldBeFalse();
         }
 
         [Test]
         public void YieldsOnlyItselfWhenAskedToFindTypeVariableOccurrences()
         {
-            Assert.AreEqual(new[] {a}, a.FindTypeVariables().ToArray());
-            Assert.AreEqual(new[] {b}, b.FindTypeVariables().ToArray());
+            a.FindTypeVariables().ShouldList(a);
+            b.FindTypeVariables().ShouldList(b);
         }
 
         [Test]
@@ -53,44 +53,44 @@ namespace Rook.Compiling.Types
             IDictionary<TypeVariable, DataType> replaceAWithInteger =
                 new Dictionary<TypeVariable, DataType> { { a, NamedType.Integer } };
 
-            Assert.AreSame(NamedType.Integer, a.ReplaceTypeVariables(replaceAWithInteger));
-            Assert.AreSame(b, b.ReplaceTypeVariables(replaceAWithInteger));
+            a.ReplaceTypeVariables(replaceAWithInteger).ShouldBeTheSameAs(NamedType.Integer);
+            b.ReplaceTypeVariables(replaceAWithInteger).ShouldBeTheSameAs(b);
         }
 
         [Test]
         public void ImplementsGetHashCodeAndEqualsBasedOnNameEquality()
         {
-            TypeVariable c = new TypeVariable(2);
-            TypeVariable a2 = new TypeVariable(0);
+            var c = new TypeVariable(2);
+            var a2 = new TypeVariable(0);
 
-            Assert.IsTrue(a.Equals(a));
-            Assert.IsTrue(b.Equals(b));
-            Assert.IsTrue(c.Equals(c));
-            Assert.IsTrue(a.Equals(a2));
-            Assert.IsFalse(a.Equals(b));
-            Assert.IsFalse(b.Equals(a));
-            Assert.IsFalse(a.Equals(null));
+            a.Equals(a).ShouldBeTrue();
+            b.Equals(b).ShouldBeTrue();
+            c.Equals(c).ShouldBeTrue();
+            a.Equals(a2).ShouldBeTrue();
+            a.Equals(b).ShouldBeFalse();
+            b.Equals(a).ShouldBeFalse();
+            a.Equals(null).ShouldBeFalse();
 
-            Assert.IsTrue(a == a);
-            Assert.IsTrue(b == b);
-            Assert.IsTrue(c == c);
-            Assert.IsTrue(a == a2);
-            Assert.IsFalse(a == b);
-            Assert.IsFalse(b == a);
-            Assert.IsFalse(a == null);
-            Assert.IsFalse(null == a);
+            (a == a).ShouldBeTrue();
+            (b == b).ShouldBeTrue();
+            (c == c).ShouldBeTrue();
+            (a == a2).ShouldBeTrue();
+            (a == b).ShouldBeFalse();
+            (b == a).ShouldBeFalse();
+            (a == null).ShouldBeFalse();
+            (null == a).ShouldBeFalse();
 
-            Assert.IsFalse(a != a);
-            Assert.IsFalse(b != b);
-            Assert.IsFalse(c != c);
-            Assert.IsFalse(a != a2);
-            Assert.IsTrue(a != b);
-            Assert.IsTrue(b != a);
-            Assert.IsTrue(a != null);
-            Assert.IsTrue(null != a);
+            (a != a).ShouldBeFalse();
+            (b != b).ShouldBeFalse();
+            (c != c).ShouldBeFalse();
+            (a != a2).ShouldBeFalse();
+            (a != b).ShouldBeTrue();
+            (b != a).ShouldBeTrue();
+            (a != null).ShouldBeTrue();
+            (null != a).ShouldBeTrue();
 
-            Assert.IsTrue(a.GetHashCode() == a2.GetHashCode());
-            Assert.IsFalse(a.GetHashCode() == b.GetHashCode());
+            (a.GetHashCode() == a2.GetHashCode()).ShouldBeTrue();
+            (a.GetHashCode() == b.GetHashCode()).ShouldBeFalse();
         }
     }
 }

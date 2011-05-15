@@ -10,122 +10,122 @@ namespace Parsley
         [Test]
         public void CanPeekAheadNCharacters()
         {
-            Text empty = new Text("");
-            Assert.AreEqual("", empty.Peek(0));
-            Assert.AreEqual("", empty.Peek(1));
+            var empty = new Text("");
+            empty.Peek(0).ShouldEqual("");
+            empty.Peek(1).ShouldEqual("");
 
-            Text abc = new Text("abc");
-            Assert.AreEqual("", abc.Peek(0));
-            Assert.AreEqual("a", abc.Peek(1));
-            Assert.AreEqual("ab", abc.Peek(2));
-            Assert.AreEqual("abc", abc.Peek(3));
-            Assert.AreEqual("abc", abc.Peek(4));
-            Assert.AreEqual("abc", abc.Peek(100));
+            var abc = new Text("abc");
+            abc.Peek(0).ShouldEqual("");
+            abc.Peek(1).ShouldEqual("a");
+            abc.Peek(2).ShouldEqual("ab");
+            abc.Peek(3).ShouldEqual("abc");
+            abc.Peek(4).ShouldEqual("abc");
+            abc.Peek(100).ShouldEqual("abc");
         }
 
         [Test]
         public void CanAdvanceAheadNCharacters()
         {
-            Text empty = new Text("");
-            Assert.AreEqual("", empty.Advance(0).ToString());
-            Assert.AreEqual("", empty.Advance(1).ToString());
+            var empty = new Text("");
+            empty.Advance(0).ToString().ShouldEqual("");
+            empty.Advance(1).ToString().ShouldEqual("");
 
-            Text abc = new Text("abc");
-            Assert.AreEqual("abc", abc.Advance(0).ToString());
-            Assert.AreEqual("bc", abc.Advance(1).ToString());
-            Assert.AreEqual("c", abc.Advance(2).ToString());
-            Assert.AreEqual("", abc.Advance(3).ToString());
-            Assert.AreEqual("", abc.Advance(4).ToString());
-            Assert.AreEqual("", abc.Advance(100).ToString());
+            var abc = new Text("abc");
+            abc.Advance(0).ToString().ShouldEqual("abc");
+            abc.Advance(1).ToString().ShouldEqual("bc");
+            abc.Advance(2).ToString().ShouldEqual("c");
+            abc.Advance(3).ToString().ShouldEqual("");
+            abc.Advance(4).ToString().ShouldEqual("");
+            abc.Advance(100).ToString().ShouldEqual("");
         }
 
         [Test]
         public void DetectsTheEndOfInput()
         {
-            Assert.IsFalse(new Text("!").EndOfInput);
-            Assert.IsTrue(new Text("").EndOfInput);
+            new Text("!").EndOfInput.ShouldBeFalse();
+            new Text("").EndOfInput.ShouldBeTrue();
         }
 
         [Test]
         public void CanCountLeadingCharactersSatisfyingAPredicate()
         {
-            Text empty = new Text("");
-            Assert.AreEqual(0, empty.Count(Char.IsLetter));
+            var empty = new Text("");
+            empty.Count(Char.IsLetter).ShouldEqual(0);
 
-            Text abc123 = new Text("abc123");
-            Assert.AreEqual(0, abc123.Count(Char.IsDigit));
-            Assert.AreEqual(3, abc123.Count(Char.IsLetter));
-            Assert.AreEqual(6, abc123.Count(Char.IsLetterOrDigit));
+            var abc123 = new Text("abc123");
+            abc123.Count(Char.IsDigit).ShouldEqual(0);
+            abc123.Count(Char.IsLetter).ShouldEqual(3);
+            abc123.Count(Char.IsLetterOrDigit).ShouldEqual(6);
 
-            Assert.AreEqual(0, abc123.Advance(2).Count(Char.IsDigit));
-            Assert.AreEqual(1, abc123.Advance(2).Count(Char.IsLetter));
-            Assert.AreEqual(4, abc123.Advance(2).Count(Char.IsLetterOrDigit));
+            abc123.Advance(2).Count(Char.IsDigit).ShouldEqual(0);
+            abc123.Advance(2).Count(Char.IsLetter).ShouldEqual(1);
+            abc123.Advance(2).Count(Char.IsLetterOrDigit).ShouldEqual(4);
 
-            Assert.AreEqual(3, abc123.Advance(3).Count(Char.IsDigit));
-            Assert.AreEqual(0, abc123.Advance(3).Count(Char.IsLetter));
-            Assert.AreEqual(3, abc123.Advance(3).Count(Char.IsLetterOrDigit));
+            abc123.Advance(3).Count(Char.IsDigit).ShouldEqual(3);
+            abc123.Advance(3).Count(Char.IsLetter).ShouldEqual(0);
+            abc123.Advance(3).Count(Char.IsLetterOrDigit).ShouldEqual(3);
 
-            Assert.AreEqual(0, abc123.Advance(6).Count(Char.IsDigit));
-            Assert.AreEqual(0, abc123.Advance(6).Count(Char.IsLetter));
-            Assert.AreEqual(0, abc123.Advance(6).Count(Char.IsLetterOrDigit));
+            abc123.Advance(6).Count(Char.IsDigit).ShouldEqual(0);
+            abc123.Advance(6).Count(Char.IsLetter).ShouldEqual(0);
+            abc123.Advance(6).Count(Char.IsLetterOrDigit).ShouldEqual(0);
         }
 
         [Test]
         public void CanGetCurrentLineNumber()
         {
-            Text empty = new Text("");
-            Assert.AreEqual(1, empty.Advance(0).Line);
-            Assert.AreEqual(1, empty.Advance(1).Line);
+            var empty = new Text("");
+            empty.Advance(0).Line.ShouldEqual(1);
+            empty.Advance(1).Line.ShouldEqual(1);
 
-            StringBuilder lines = new StringBuilder()
+            var lines = new StringBuilder()
                 .AppendLine("Line 1")//Index 0-5, \r\n
                 .AppendLine("Line 2")//Index 8-13, \r\n
                 .AppendLine("Line 3");//Index 16-21, \r\n
-            Text list = new Text(lines.ToString());
+            var list = new Text(lines.ToString());
            
-            Assert.AreEqual(1, list.Advance(0).Line);
-            Assert.AreEqual(1, list.Advance(5).Line);
-            Assert.AreEqual(1, list.Advance(7).Line);
+            list.Advance(0).Line.ShouldEqual(1);
+            list.Advance(5).Line.ShouldEqual(1);
+            list.Advance(7).Line.ShouldEqual(1);
 
-            Assert.AreEqual(2, list.Advance(8).Line);
-            Assert.AreEqual(2, list.Advance(13).Line);
-            Assert.AreEqual(2, list.Advance(15).Line);
+            list.Advance(8).Line.ShouldEqual(2);
+            list.Advance(13).Line.ShouldEqual(2);
+            list.Advance(15).Line.ShouldEqual(2);
 
-            Assert.AreEqual(3, list.Advance(16).Line);
-            Assert.AreEqual(3, list.Advance(21).Line);
-            Assert.AreEqual(3, list.Advance(23).Line);
+            list.Advance(16).Line.ShouldEqual(3);
+            list.Advance(21).Line.ShouldEqual(3);
+            list.Advance(23).Line.ShouldEqual(3);
 
-            Assert.AreEqual(4, list.Advance(24).Line);
-            Assert.AreEqual(4, list.Advance(1000).Line);
+            list.Advance(24).Line.ShouldEqual(4);
+            list.Advance(1000).Line.ShouldEqual(4);
         }
 
         [Test]
         public void CanGetCurrentColumnNumber()
         {
-            Text empty = new Text("");
-            Assert.AreEqual(1, empty.Advance(0).Column);
-            Assert.AreEqual(1, empty.Advance(1).Column);
+            var empty = new Text("");
+            empty.Advance(0).Column.ShouldEqual(1);
+            empty.Advance(1).Column.ShouldEqual(1);
 
-            StringBuilder lines = new StringBuilder()
+            var lines = new StringBuilder()
                 .AppendLine("Line 1")//Index 0-5, \r\n
                 .AppendLine("Line 2")//Index 8-13, \r\n
                 .AppendLine("Line 3");//Index 16-21, \r\n
-            Text list = new Text(lines.ToString());
+            var list = new Text(lines.ToString());
 
-            Assert.AreEqual(1, list.Advance(0).Column);
-            Assert.AreEqual(6, list.Advance(5).Column);
-            Assert.AreEqual(8, list.Advance(7).Column);
+            list.Advance(0).Column.ShouldEqual(1);
+            list.Advance(5).Column.ShouldEqual(6);
+            list.Advance(7).Column.ShouldEqual(8);
 
-            Assert.AreEqual(1, list.Advance(8).Column);
-            Assert.AreEqual(6, list.Advance(13).Column);
-            Assert.AreEqual(8, list.Advance(15).Column);
+            list.Advance(8).Column.ShouldEqual(1);
+            list.Advance(13).Column.ShouldEqual(6);
+            list.Advance(15).Column.ShouldEqual(8);
 
-            Assert.AreEqual(1, list.Advance(16).Column);
-            Assert.AreEqual(6, list.Advance(21).Column);
-            Assert.AreEqual(8, list.Advance(23).Column);
+            list.Advance(16).Column.ShouldEqual(1);
+            list.Advance(21).Column.ShouldEqual(6);
+            list.Advance(23).Column.ShouldEqual(8);
 
-            Assert.AreEqual(1, list.Advance(24).Column);
-            Assert.AreEqual(1, list.Advance(1000).Column);
+            list.Advance(24).Column.ShouldEqual(1);
+            list.Advance(1000).Column.ShouldEqual(1);
         }
     }
 }

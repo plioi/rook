@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 
 namespace Rook.Compiling.Types
@@ -38,14 +37,14 @@ namespace Rook.Compiling.Types
         public void FailsToUnifyTypesWithDifferentNames()
         {
             var errors = Unify(Integer, Boolean);
-            Assert.AreEqual(new[] {"Type mismatch: expected int, found bool."}, errors.ToArray());
+            errors.ShouldList("Type mismatch: expected int, found bool.");
         }
 
         [Test]
         public void UnifiesSimpleNamedTypesWithThemselves()
         {
             var errors = Unify(Integer, Integer);
-            Assert.IsEmpty(errors.ToArray());
+            errors.ShouldBeEmpty();
         }
 
         [Test]
@@ -53,7 +52,7 @@ namespace Rook.Compiling.Types
         {
             var errors = Unify(Type("A", Integer, Boolean),
                                Type("A", Integer, Boolean, Boolean));
-            Assert.AreEqual(new[] {"Type mismatch: expected A<int, bool>, found A<int, bool, bool>."}, errors.ToArray());
+            errors.ShouldList("Type mismatch: expected A<int, bool>, found A<int, bool, bool>.");
         }
 
         [Test]
@@ -61,7 +60,7 @@ namespace Rook.Compiling.Types
         {
             var errors = Unify(Type("A", Integer, Type("B", Integer)),
                                Type("A", Integer, Type("B", Boolean)));
-            Assert.AreEqual(new[] {"Type mismatch: expected int, found bool."}, errors.ToArray());
+            errors.ShouldList("Type mismatch: expected int, found bool.");
         }
 
         [Test]
@@ -69,21 +68,21 @@ namespace Rook.Compiling.Types
         {
             var errors = Unify(Type("Foo", Integer, Boolean, Type("B", Integer)),
                                Type("Foo", Integer, Boolean, Type("B", Integer)));
-            Assert.IsEmpty(errors.ToArray());
+            errors.ShouldBeEmpty();
         }
 
         [Test]
         public void NormalizesConcreteTypesByPerformingNoChanges()
         {
-            Assert.AreSame(Integer, Normalize(Integer));
-            Assert.AreSame(Type("A", Boolean), Normalize(Type("A", Boolean)));
+            Normalize(Integer).ShouldBeTheSameAs(Integer);
+            Normalize(Type("A", Boolean)).ShouldBeTheSameAs(Type("A", Boolean));
         }
 
         [Test]
         public void NormalizesUnunifiedTypeVariablesByPerformingNoChanges()
         {
-            Assert.AreSame(x, Normalize(x));
-            Assert.AreSame(Type("A", x), Normalize(Type("A", x)));
+            Normalize(x).ShouldBeTheSameAs(x);
+            Normalize(Type("A", x)).ShouldBeTheSameAs(Type("A", x));
         }
 
         [Test]
@@ -92,12 +91,12 @@ namespace Rook.Compiling.Types
             var errorsA = Unify(x, Integer);
             var errorsB = Unify(Boolean, y);
 
-            Assert.AreSame(Integer, Normalize(x));
-            Assert.AreSame(Boolean, Normalize(y));
-            Assert.AreSame(Type("A", Integer, Boolean), Normalize(Type("A", x, y)));
+            Normalize(x).ShouldBeTheSameAs(Integer);
+            Normalize(y).ShouldBeTheSameAs(Boolean);
+            Normalize(Type("A", x, y)).ShouldBeTheSameAs(Type("A", Integer, Boolean));
 
-            Assert.IsEmpty(errorsA.ToArray());
-            Assert.IsEmpty(errorsB.ToArray());
+            errorsA.ShouldBeEmpty();
+            errorsB.ShouldBeEmpty();
         }
 
         [Test]
@@ -105,17 +104,17 @@ namespace Rook.Compiling.Types
         {
             var errors = Unify(x, x);
 
-            Assert.AreSame(x, Normalize(x));
-            Assert.AreSame(Type("A", x), Normalize(Type("A", x)));
+            Normalize(x).ShouldBeTheSameAs(x);
+            Normalize(Type("A", x)).ShouldBeTheSameAs(Type("A", x));
 
-            Assert.IsEmpty(errors.ToArray());
+            errors.ShouldBeEmpty();
         }
 
         [Test]
         public void FailsToUnifyRecursiveTypes()
         {
             var errors = Unify(x, Type("A", x));
-            Assert.AreEqual(new[] {"Type mismatch: expected 0, found A<0>."}, errors.ToArray());
+            errors.ShouldList("Type mismatch: expected 0, found A<0>.");
         }
 
         [Test]
@@ -125,14 +124,14 @@ namespace Rook.Compiling.Types
             var errorsB = Unify(y, z);
             var errorsC = Unify(z, Integer);
             
-            Assert.AreSame(Integer, Normalize(x));
-            Assert.AreSame(Integer, Normalize(y));
-            Assert.AreSame(Integer, Normalize(z));
-            Assert.AreSame(Type("A", Integer, Integer, Integer), Normalize(Type("A", x, y, z)));
+            Normalize(x).ShouldBeTheSameAs(Integer);
+            Normalize(y).ShouldBeTheSameAs(Integer);
+            Normalize(z).ShouldBeTheSameAs(Integer);
+            Normalize(Type("A", x, y, z)).ShouldBeTheSameAs(Type("A", Integer, Integer, Integer));
 
-            Assert.IsEmpty(errorsA.ToArray());
-            Assert.IsEmpty(errorsB.ToArray());
-            Assert.IsEmpty(errorsC.ToArray());
+            errorsA.ShouldBeEmpty();
+            errorsB.ShouldBeEmpty();
+            errorsC.ShouldBeEmpty();
         }
 
         [Test]
@@ -141,8 +140,8 @@ namespace Rook.Compiling.Types
             var errorsA = Unify(x, Integer);
             var errorsB = Unify(x, Boolean);
 
-            Assert.IsEmpty(errorsA.ToArray());
-            Assert.AreEqual(new[] {"Type mismatch: expected int, found bool."}, errorsB.ToArray());
+            errorsA.ShouldBeEmpty();
+            errorsB.ShouldList("Type mismatch: expected int, found bool.");
         }
 
         [Test]
@@ -152,13 +151,13 @@ namespace Rook.Compiling.Types
             var errorsB = Unify(y, z);
             var errorsC = Unify(z, x);
 
-            Assert.IsEmpty(errorsA.ToArray());
-            Assert.IsEmpty(errorsB.ToArray());
-            Assert.IsEmpty(errorsC.ToArray());
+            errorsA.ShouldBeEmpty();
+            errorsB.ShouldBeEmpty();
+            errorsC.ShouldBeEmpty();
 
-            Assert.AreSame(z, Normalize(x));
-            Assert.AreSame(z, Normalize(y));
-            Assert.AreSame(z, Normalize(z));
+            Normalize(x).ShouldBeTheSameAs(z);
+            Normalize(y).ShouldBeTheSameAs(z);
+            Normalize(z).ShouldBeTheSameAs(z);
         }
 
         [Test]
@@ -169,13 +168,10 @@ namespace Rook.Compiling.Types
             var errorsC = Unify(Type("A", Integer), Type("B", Integer));
             var errorsD = Unify(Type("C", Type("D"), Type("E")), Type("C", Type("F"), Type("G")));
 
-            Assert.AreEqual(new[] { "Type mismatch: expected int, found bool." }, errorsA.ToArray());
-            Assert.AreEqual(new[] { "Type mismatch: expected bool, found int." }, errorsB.ToArray());
-            Assert.AreEqual(new[] { "Type mismatch: expected A<int>, found B<int>." }, errorsC.ToArray());
-            Assert.AreEqual(new[] {
-                                    "Type mismatch: expected D, found F.",
-                                    "Type mismatch: expected E, found G."
-                                  }, errorsD.ToArray());
+            errorsA.ShouldList("Type mismatch: expected int, found bool.");
+            errorsB.ShouldList("Type mismatch: expected bool, found int.");
+            errorsC.ShouldList("Type mismatch: expected A<int>, found B<int>.");
+            errorsD.ShouldList("Type mismatch: expected D, found F.", "Type mismatch: expected E, found G.");
         }
 
         private static NamedType Type(string name, params DataType[] innerTypes)

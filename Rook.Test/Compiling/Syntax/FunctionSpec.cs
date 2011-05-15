@@ -64,35 +64,35 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void HasATypeIncludingInputTypesAndReturnType()
         {
-            Assert.AreEqual(NamedType.Function(Integer), Type("int foo() 1"));
-            Assert.AreEqual(NamedType.Function(new[] {Integer}, Boolean), Type("bool foo(int x) false"));
-            Assert.AreEqual(NamedType.Function(new[] {Integer, Boolean}, Integer), Type("int foo(int x, bool y) 1"));
+            Type("int foo() 1").ShouldEqual(NamedType.Function(Integer));
+            Type("bool foo(int x) false").ShouldEqual(NamedType.Function(new[] {Integer}, Boolean));
+            Type("int foo(int x, bool y) 1").ShouldEqual(NamedType.Function(new[] {Integer, Boolean}, Integer));
         }
 
         [Test]
         public void EvaluatesBodyExpressionTypesInANewScopeIncludingParameters()
         {
-            Assert.AreEqual(NamedType.Function(new[] {Integer}, Integer), Type("int foo(int x) x"));
-            Assert.AreEqual(NamedType.Function(new[] {Integer, Integer, Boolean}, Boolean),
-                            Type("bool foo(int x, int y, bool b) x==y || b"));
+            Type("int foo(int x) x").ShouldEqual(NamedType.Function(new[] {Integer}, Integer));
+            Type("bool foo(int x, int y, bool b) x==y || b").ShouldEqual(
+                NamedType.Function(new[] {Integer, Integer, Boolean}, Boolean));
         }
 
         [Test]
         public void CanCreateFullyTypedInstance()
         {
             Function node = Parse("bool foo(int x, int y, bool z) x+y>0 && z");
-            Assert.AreSame(Integer, node.Parameters.ElementAt(0).Type);
-            Assert.AreSame(Integer, node.Parameters.ElementAt(1).Type);
-            Assert.AreSame(Boolean, node.Parameters.ElementAt(2).Type);
-            Assert.IsNull(node.Body.Type);
-            Assert.IsNull(node.Type);
+            node.Parameters.ElementAt(0).Type.ShouldBeTheSameAs(Integer);
+            node.Parameters.ElementAt(1).Type.ShouldBeTheSameAs(Integer);
+            node.Parameters.ElementAt(2).Type.ShouldBeTheSameAs(Boolean);
+            node.Body.Type.ShouldBeNull();
+            node.Type.ShouldBeNull();
 
             Function typedNode = node.WithTypes(Environment()).Syntax;
-            Assert.AreSame(Integer, typedNode.Parameters.ElementAt(0).Type);
-            Assert.AreSame(Integer, typedNode.Parameters.ElementAt(1).Type);
-            Assert.AreSame(Boolean, typedNode.Parameters.ElementAt(2).Type);
-            Assert.AreSame(Boolean, typedNode.Body.Type);
-            Assert.AreSame(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean), typedNode.Type);
+            typedNode.Parameters.ElementAt(0).Type.ShouldBeTheSameAs(Integer);
+            typedNode.Parameters.ElementAt(1).Type.ShouldBeTheSameAs(Integer);
+            typedNode.Parameters.ElementAt(2).Type.ShouldBeTheSameAs(Boolean);
+            typedNode.Body.Type.ShouldBeTheSameAs(Boolean);
+            typedNode.Type.ShouldBeTheSameAs(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean));
         }
 
         [Test]

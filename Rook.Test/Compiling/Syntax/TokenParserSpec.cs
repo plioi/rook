@@ -114,7 +114,7 @@ namespace Rook.Compiling.Syntax
         private static void AssertTokens<T>(Parser<T> parse, string source, params string[] expectedTokens)
         {
             AbstractGrammar.ZeroOrMore(parse).AssertParse(source, "",
-                                                          parsedValues => Assert.AreEqual(expectedTokens, parsedValues.Select(x => x.ToString()).ToArray()));
+                                                          parsedValues => parsedValues.Select(x => x.ToString()).ShouldList(expectedTokens));
         }
 
         private static void AssertParse<T>(Parser<T> parse, string expectedValue, string source)

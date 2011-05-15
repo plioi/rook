@@ -20,34 +20,34 @@ namespace Parsley
         [Test]
         public void HasAParsedValue()
         {
-            Assert.AreSame(parsed, pair.Value);
+            pair.Value.ShouldEqual(parsed);
         }
 
         [Test]
         public void ProvidesParseSuccessMessage()
         {
-            Assert.AreEqual("Parse succeeded.", new Success<string>("x", unparsed).Message);
+            new Success<string>("x", unparsed).Message.ShouldEqual("Parse succeeded.");
         }
 
         [Test]
         public void HasRemainingUnparsedText()
         {
-            Assert.AreSame(unparsed, pair.UnparsedText);
+            pair.UnparsedText.ShouldEqual(unparsed);
         }
 
         [Test]
         public void ReportsNonerrorState()
         {
-            Assert.IsFalse(pair.IsError);
+            pair.IsError.ShouldBeFalse();
         }
 
         [Test]
         public void CanContinueParsingTheRemainingInputWhenGivenAParserGenerator()
         {
             Parsed<string> result = new Success<string>("x", unparsed).ParseRest(s => AbstractGrammar.String("0"));
-            Assert.IsFalse(result.IsError);
-            Assert.AreEqual("0", result.Value);
-            Assert.IsTrue(result.UnparsedText.EndOfInput);
+            result.IsError.ShouldBeFalse();
+            result.Value.ShouldEqual("0");
+            result.UnparsedText.EndOfInput.ShouldBeTrue();
         }
     }
 }

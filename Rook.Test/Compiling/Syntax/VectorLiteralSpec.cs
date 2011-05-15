@@ -35,15 +35,15 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void CanCreateFullyTypedInstance()
         {
-            VectorLiteral node = (VectorLiteral)Parse("[foo, bar]");
-            Assert.IsNull(node.Items.ElementAt(0).Type);
-            Assert.IsNull(node.Items.ElementAt(1).Type);
-            Assert.IsNull(node.Type);
+            var node = (VectorLiteral)Parse("[foo, bar]");
+            node.Items.ElementAt(0).Type.ShouldBeNull();
+            node.Items.ElementAt(1).Type.ShouldBeNull();
+            node.Type.ShouldBeNull();
 
-            VectorLiteral typedNode = (VectorLiteral)node.WithTypes(Environment(foo => Boolean, bar => Boolean)).Syntax;
-            Assert.AreSame(Boolean, typedNode.Items.ElementAt(0).Type);
-            Assert.AreSame(Boolean, typedNode.Items.ElementAt(1).Type);
-            Assert.AreSame(NamedType.Vector(Boolean), typedNode.Type);
+            var typedNode = (VectorLiteral)node.WithTypes(Environment(foo => Boolean, bar => Boolean)).Syntax;
+            typedNode.Items.ElementAt(0).Type.ShouldBeTheSameAs(Boolean);
+            typedNode.Items.ElementAt(1).Type.ShouldBeTheSameAs(Boolean);
+            typedNode.Type.ShouldBeTheSameAs(NamedType.Vector(Boolean));
         }
     }
 }
