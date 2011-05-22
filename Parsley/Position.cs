@@ -5,10 +5,10 @@
         public int Line { get; private set; }
         public int Column { get; private set; }
 
-        public Position(Text text)
+        public Position(int line, int column)
         {
-            Line = text.Line;
-            Column = text.Column;
+            Line = line;
+            Column = column;
         }
     }
 }

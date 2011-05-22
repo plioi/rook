@@ -15,7 +15,7 @@ namespace Parsley
 
         public static Parser<Position> Position
         {
-            get { return text => new Success<Position>(new Position(text), text); }
+            get { return text => new Success<Position>(text.Position, text); }
         }
 
         public static Parser<string> ZeroOrMore(Predicate<char> match)
@@ -189,9 +189,11 @@ namespace Parsley
                     if (!parsed.IsError)
                         return parsed;
 
-                    bool newParseIsDeeper = parsed.UnparsedText.Line > deepestParse.UnparsedText.Line ||
-                                            (parsed.UnparsedText.Line == deepestParse.UnparsedText.Line &&
-                                             parsed.UnparsedText.Column > deepestParse.UnparsedText.Column);
+                    Position newParsePosition = parsed.UnparsedText.Position;
+                    Position deepestParsePosition = deepestParse.UnparsedText.Position;
+                    bool newParseIsDeeper = newParsePosition.Line > deepestParsePosition.Line ||
+                                            (newParsePosition.Line == deepestParsePosition.Line &&
+                                             newParsePosition.Column > deepestParsePosition.Column);
                     if (newParseIsDeeper)
                         deepestParse = parsed;
                 }

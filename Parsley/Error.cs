@@ -38,7 +38,8 @@ namespace Parsley
 
         public override string ToString()
         {
-            return String.Format("({0}, {1}): {2}", UnparsedText.Line, UnparsedText.Column, Message);
+            Position position = UnparsedText.Position;
+            return String.Format("({0}, {1}): {2}", position.Line, position.Column, Message);
         }
     }
 }

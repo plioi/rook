@@ -32,7 +32,7 @@ namespace Rook.Compiling
         public InterpreterResult Interpret(string code)
         {
             var text = new Text(code);
-            var pos = new Position(text);
+            var pos = text.Position;
             
             Expression expression;
             if (TryParse(text, Grammar.Expression, out expression))
@@ -47,7 +47,7 @@ namespace Rook.Compiling
 
         public string Translate()
         {
-            Program program = new Program(new Position(new Text("")), functions.Values);
+            Program program = new Program(new Text("").Position, functions.Values);
             Program typeCheckedProgram = program.WithTypes().Syntax;
             CodeWriter code = new CodeWriter();
             WriteAction write = typeCheckedProgram.Visit(new CSharpTranslator());

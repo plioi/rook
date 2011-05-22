@@ -7,25 +7,27 @@ namespace Parsley
     {
         private readonly int index;
         private readonly string source;
+        private readonly int line;
 
         public Text(string source)
-            : this(source, 0) {}
+            : this(source, 0, 1) {}
 
-        private Text(string source, int index)
+        private Text(string source, int index, int line)
         {
             this.source = source;
             this.index = index;
 
             if (index > source.Length)
                 this.index = source.Length;
+
+            this.line = line;
         }
 
         public string Peek(int characters)
         {
-            if (index + characters >= source.Length)
-                return source.Substring(index);
-
-            return source.Substring(index, characters);
+            return index + characters >= source.Length
+                       ? source.Substring(index)
+                       : source.Substring(index, characters);
         }
 
         public Text Advance(int characters)
@@ -33,7 +35,10 @@ namespace Parsley
             if (characters == 0)
                 return this;
 
-            return new Text(source, index + characters);
+            int newIndex = index + characters;
+            int newLineNumber = line + Peek(characters).Count(ch => ch == '\n');
+            
+            return new Text(source, newIndex, newLineNumber);
         }
 
         public bool EndOfInput
@@ -51,16 +56,7 @@ namespace Parsley
             return sizeOfMatch;
         }
 
-        public int Line
-        {
-            get
-            {
-                const int firstLineNumber = 1;
-                return source.Take(index).Count(ch => ch == '\n') + firstLineNumber;
-            }
-        }
-
-        public int Column
+        private int Column
         {
             get
             {
@@ -70,6 +66,11 @@ namespace Parsley
                 int indexOfPreviousNewLine = source.LastIndexOf('\n', index - 1);
                 return index - indexOfPreviousNewLine;
             }
+        }
+
+        public Position Position
+        {
+            get { return new Position(line, Column); }
         }
 
         public override string ToString()

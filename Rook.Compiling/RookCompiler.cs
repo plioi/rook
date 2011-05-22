@@ -20,7 +20,7 @@ namespace Rook.Compiling
             Parsed<Program> parsedProgram = Parse(code);
             
             if (parsedProgram.IsError)
-                return new CompilerResult(new CompilerError(new Position(parsedProgram.UnparsedText), parsedProgram.Message));
+                return new CompilerResult(new CompilerError(parsedProgram.UnparsedText.Position, parsedProgram.Message));
 
             return Build(parsedProgram.Value);
         }
