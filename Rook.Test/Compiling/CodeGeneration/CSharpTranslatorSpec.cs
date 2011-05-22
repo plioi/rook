@@ -20,7 +20,7 @@ namespace Rook.Compiling.CodeGeneration
         [Test]
         public void ShouldTranslatePrograms()
         {
-            StringBuilder program = new StringBuilder()
+            var program = new StringBuilder()
                 .AppendLine("int Life() 14")
                 .AppendLine("int Universe() 14")
                 .AppendLine("int Everything() 14")
@@ -219,8 +219,8 @@ namespace Rook.Compiling.CodeGeneration
         private static string Translate<T>(Parser<T> parse, string rookSource)
             where T : SyntaxTree
         {
-            Text text = new Text(rookSource);
-            CodeWriter code = new CodeWriter();
+            var text = new Text(rookSource);
+            var code = new CodeWriter();
             WriteAction write = parse(text).Value.Visit(new CSharpTranslator());
             write(code);
             return code.ToString();

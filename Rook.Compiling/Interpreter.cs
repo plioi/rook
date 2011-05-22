@@ -47,9 +47,9 @@ namespace Rook.Compiling
 
         public string Translate()
         {
-            Program program = new Program(new Text("").Position, functions.Values);
+            var program = new Program(new Text("").Position, functions.Values);
             Program typeCheckedProgram = program.WithTypes().Syntax;
-            CodeWriter code = new CodeWriter();
+            var code = new CodeWriter();
             WriteAction write = typeCheckedProgram.Visit(new CSharpTranslator());
             write(code);
             return code.ToString();

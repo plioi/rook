@@ -28,7 +28,7 @@ namespace Rook.Core.Collections
 
         public override Vector<T> Append(T value)
         {
-            T[] array = new T[Count + 1];
+            var array = new T[Count + 1];
             Array.Copy(items, array, Count);
             array[Count] = value;
             return new ArrayVector<T>(array);

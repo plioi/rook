@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Rook.Core.Collections
 {
@@ -19,7 +18,7 @@ namespace Rook.Core.Collections
         [Test]
         public void ShouldRemainImmutableEvenWhenSourceArrayIsMutated()
         {
-            int[] source = new[] {1, 2};
+            var source = new[] {1, 2};
             Vector<int> vector = new ArrayVector<int>(source);
             
             vector.ShouldList(1, 2);

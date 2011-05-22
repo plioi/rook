@@ -4,12 +4,7 @@ namespace Parsley
 {
     public sealed class Error<T> : Parsed<T>
     {
-        public Error(Text unparsedText)
-            : this(unparsedText, null)
-        {
-        }
-
-        public Error(Text unparsedText, string expectation)
+        public Error(Text unparsedText, string expectation = null)
         {
             UnparsedText = unparsedText;
             Expectation = expectation;

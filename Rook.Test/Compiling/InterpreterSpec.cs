@@ -128,7 +128,7 @@ namespace Rook.Compiling
             interpreter.Interpret("int Square(int x) x*x");
             interpreter.Interpret("int Cube(int x) Square(x)*x");
 
-            StringBuilder expected = new StringBuilder()
+            var expected = new StringBuilder()
                 .AppendLine("using System;")
                 .AppendLine("using System.Collections.Generic;")
                 .AppendLine("using Rook.Core;")
@@ -149,7 +149,7 @@ namespace Rook.Compiling
 
             interpreter.Interpret("Cube(3)");
 
-            StringBuilder expectedWithMainExpression = new StringBuilder()
+            var expectedWithMainExpression = new StringBuilder()
                 .AppendLine("using System;")
                 .AppendLine("using System.Collections.Generic;")
                 .AppendLine("using Rook.Core;")

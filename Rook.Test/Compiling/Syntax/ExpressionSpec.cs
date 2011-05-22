@@ -1,5 +1,4 @@
-﻿using NUnit.Framework;
-using Parsley;
+﻿using Parsley;
 using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax

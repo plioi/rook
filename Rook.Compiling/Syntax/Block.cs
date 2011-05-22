@@ -15,7 +15,7 @@ namespace Rook.Compiling.Syntax
         public Block(Position position, IEnumerable<VariableDeclaration> variableDeclarations, IEnumerable<Expression> innerExpressions)
             : this(position, variableDeclarations, innerExpressions, null) { }
 
-        public Block(Position position, IEnumerable<VariableDeclaration> variableDeclarations, IEnumerable<Expression> innerExpressions, DataType type)
+        private Block(Position position, IEnumerable<VariableDeclaration> variableDeclarations, IEnumerable<Expression> innerExpressions, DataType type)
         {
             Position = position;
             VariableDeclarations = variableDeclarations;
@@ -32,9 +32,9 @@ namespace Rook.Compiling.Syntax
         {
             //TODO: Factor suspicious similarity between this and Lambda.WithTypes(Environment);
 
-            Environment localEnvironment = new Environment(environment);
+            var localEnvironment = new Environment(environment);
 
-            List<VariableDeclaration> typedVariableDeclarations = new List<VariableDeclaration>();
+            var typedVariableDeclarations = new List<VariableDeclaration>();
             foreach (var variable in VariableDeclarations)
             {
                 TypeChecked<Expression> typeCheckedValue = variable.Value.WithTypes(localEnvironment);

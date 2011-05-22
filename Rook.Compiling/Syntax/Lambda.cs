@@ -53,8 +53,8 @@ namespace Rook.Compiling.Syntax
 
         private static IEnumerable<Parameter> ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters, Environment localEnvironment)
         {
-            List<Parameter> decoratedParameters = new List<Parameter>();
-            List<TypeVariable> typeVariables = new List<TypeVariable>();
+            var decoratedParameters = new List<Parameter>();
+            var typeVariables = new List<TypeVariable>();
 
             foreach (var parameter in parameters)
             {

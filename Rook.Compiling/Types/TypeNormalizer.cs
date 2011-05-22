@@ -29,7 +29,7 @@ namespace Rook.Compiling.Types
 
             if (a is TypeVariable)
             {
-                TypeVariable variableA = (TypeVariable)a;
+                var variableA = (TypeVariable)a;
 
                 if (b.Contains(variableA))
                 {
@@ -65,7 +65,7 @@ namespace Rook.Compiling.Types
 
         private IEnumerable<string> PairwiseUnify(IEnumerable<DataType> first, IEnumerable<DataType> second)
         {
-            List<string> errors = new List<string>();
+            var errors = new List<string>();
 
             using (var e1 = first.GetEnumerator())
             using (var e2 = second.GetEnumerator())

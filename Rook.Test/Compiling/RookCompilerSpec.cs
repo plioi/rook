@@ -45,7 +45,7 @@ namespace Rook.Compiling
             ExecuteMain().ShouldEqual(123);
         }
 
-        protected void Build(Program program)
+        private void Build(Program program)
         {
             UseResult(Compiler.Build(program));
         }

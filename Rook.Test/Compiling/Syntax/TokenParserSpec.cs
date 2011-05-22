@@ -123,7 +123,7 @@ namespace Rook.Compiling.Syntax
             parse.AssertParse(source, expectedValue, expectedUnparsedText);
         }
 
-        private void AssertError<T>(Parser<T> parse, string source, string expectedUnparsedSource, string expectedMessage)
+        private static void AssertError<T>(Parser<T> parse, string source, string expectedUnparsedSource, string expectedMessage)
         {
             parse.AssertError(source, expectedUnparsedSource, expectedMessage);
         }

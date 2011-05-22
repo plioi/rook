@@ -94,7 +94,7 @@ namespace Rook.Compiling.CodeGeneration
 
             if (isOperator && arguments.Count() != 1)
             {
-                Name nameCallable = callable as Name;
+                var nameCallable = callable as Name;
 
                 if (nameCallable != null)
                 {
@@ -200,7 +200,7 @@ namespace Rook.Compiling.CodeGeneration
 
         private static WriteAction Format(string format, params WriteAction[] writeActions)
         {
-            List<WriteAction> list = new List<WriteAction>();
+            var list = new List<WriteAction>();
             string[] parts = format.Split('@');
             int i = 0;
 

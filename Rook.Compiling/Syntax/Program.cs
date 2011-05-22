@@ -22,7 +22,7 @@ namespace Rook.Compiling.Syntax
 
         public TypeChecked<Program> WithTypes()
         {
-            Environment environment = new Environment();
+            var environment = new Environment();
 
             foreach (var function in Functions)
                 if (!environment.TryIncludeUniqueBinding(function))

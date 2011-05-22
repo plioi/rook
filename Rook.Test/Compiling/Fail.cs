@@ -9,7 +9,7 @@ namespace Rook.Compiling
     {
         public static void WithErrors(IEnumerable<CompilerError> errors)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
 
             foreach (var error in errors)
                 builder.AppendLine(ErrorSummary(error));
@@ -19,7 +19,7 @@ namespace Rook.Compiling
 
         public static void WithErrors(IEnumerable<CompilerError> errors, int line, int column, string expectedMessage)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             builder.AppendLine("Expected error:");
             builder.AppendLine("\t" + ErrorSummary(new CompilerError(line, column, expectedMessage)));
 

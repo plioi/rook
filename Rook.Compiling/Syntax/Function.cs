@@ -46,7 +46,7 @@ namespace Rook.Compiling.Syntax
         {
             //TODO: Factor suspicious similarity between this and Lambda.WithTypes(Environment);
 
-            Environment localEnvironment = new Environment(environment);
+            var localEnvironment = new Environment(environment);
 
             foreach (var parameter in Parameters)
                 if (!localEnvironment.TryIncludeUniqueBinding(parameter))

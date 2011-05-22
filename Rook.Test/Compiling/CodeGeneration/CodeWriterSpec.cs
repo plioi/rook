@@ -58,7 +58,7 @@ namespace Rook.Compiling.CodeGeneration
             code.Line("}");
             code.Line("0 Indnetation");
 
-            StringBuilder expected = new StringBuilder();
+            var expected = new StringBuilder();
             expected.AppendLine("0 Indentation");
             expected.AppendLine("{");
             expected.AppendLine("    1 Indentation");

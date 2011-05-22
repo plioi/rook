@@ -6,12 +6,12 @@ namespace Parsley
 {
     public abstract class AbstractGrammar
     {
-        public static Predicate<char> Digit = Char.IsDigit;
-        public static Predicate<char> Letter = Char.IsLetter;
-        public static Predicate<char> Lower = Char.IsLower;
-        public static Predicate<char> Upper = Char.IsUpper;
-        public static Predicate<char> Alphanumeric = Char.IsLetterOrDigit;
-        public static Predicate<char> WhiteSpace = Char.IsWhiteSpace;
+        public static readonly Predicate<char> Digit = Char.IsDigit;
+        public static readonly Predicate<char> Letter = Char.IsLetter;
+        public static readonly Predicate<char> Lower = Char.IsLower;
+        public static readonly Predicate<char> Upper = Char.IsUpper;
+        public static readonly Predicate<char> Alphanumeric = Char.IsLetterOrDigit;
+        public static readonly Predicate<char> WhiteSpace = Char.IsWhiteSpace;
 
         public static Parser<Position> Position
         {
