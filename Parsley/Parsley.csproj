@@ -59,6 +59,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lexer.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="AbstractGrammar.cs" />
     <Compile Include="Parsed.cs" />
