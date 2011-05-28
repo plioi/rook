@@ -54,6 +54,15 @@ namespace Parsley
         }
 
         [Test]
+        public void CanParseCharactersSatisfyingARegex()
+        {
+            Pattern(@"[a-zA-Z]+").AssertParse("ABc", "ABc", "");
+            Pattern(@"[A-Z]+").AssertParse("ABc", "AB", "c");
+            Pattern(@"[0-9]+").AssertError("ABc", "ABc");
+            Pattern(@"[0-9]").AssertError("", "");
+        }
+
+        [Test]
         public void CanDetectTheEndOfInputWithoutAdvancing()
         {
             EndOfInput.AssertParse("", "", "");

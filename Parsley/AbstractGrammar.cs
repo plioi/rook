@@ -36,6 +36,19 @@ namespace Parsley
             };
         }
 
+        public static Parser<string> Pattern(string pattern)
+        {
+            return text =>
+            {
+                var match = text.Match(pattern);
+
+                if (match.Success)
+                    return Success(text, match.Length);
+
+                return new Error<string>(text);
+            };
+        }
+
         public static Parser<string> String(params string[] possibleMatches)
         {
             return text =>
