@@ -71,6 +71,34 @@ namespace Parsley
         }
 
         [Test]
+        public void CanCountLeadingCharactersMatchingARegex()
+        {
+            const string letters = @"[a-z]+";
+            const string digits = @"[0-9]+";
+            const string alphanumerics = @"[a-z0-9]+";
+
+            var empty = new Text("");
+            empty.Count(letters).ShouldEqual(0);
+
+            var abc123 = new Text("abc123");
+            abc123.Count(digits).ShouldEqual(0);
+            abc123.Count(letters).ShouldEqual(3);
+            abc123.Count(alphanumerics).ShouldEqual(6);
+
+            abc123.Advance(2).Count(digits).ShouldEqual(0);
+            abc123.Advance(2).Count(letters).ShouldEqual(1);
+            abc123.Advance(2).Count(alphanumerics).ShouldEqual(4);
+
+            abc123.Advance(3).Count(digits).ShouldEqual(3);
+            abc123.Advance(3).Count(letters).ShouldEqual(0);
+            abc123.Advance(3).Count(alphanumerics).ShouldEqual(3);
+
+            abc123.Advance(6).Count(digits).ShouldEqual(0);
+            abc123.Advance(6).Count(letters).ShouldEqual(0);
+            abc123.Advance(6).Count(alphanumerics).ShouldEqual(0);
+        }
+
+        [Test]
         public void CanGetCurrentLineNumber()
         {
             var empty = new Text("");

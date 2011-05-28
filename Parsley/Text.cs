@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Parsley
 {
@@ -54,6 +55,11 @@ namespace Parsley
                 sizeOfMatch++;
 
             return sizeOfMatch;
+        }
+
+        public int Count(string pattern)
+        {
+            return new Regex(@"\G" + pattern).Match(source, index).Length;
         }
 
         private int Column
