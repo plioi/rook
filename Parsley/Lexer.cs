@@ -52,9 +52,9 @@ namespace Parsley
         {
             return text =>
             {
-                string peek = text.Peek(text.Count(pattern));
+                var match = text.Match(pattern);
 
-                return peek == "" ? null : peek;
+                return match.Success ? match.Value : null;
             };
         }
     }

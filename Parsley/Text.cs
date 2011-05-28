@@ -57,9 +57,9 @@ namespace Parsley
             return sizeOfMatch;
         }
 
-        public int Count(string pattern)
+        public Match Match(string pattern)
         {
-            return new Regex(@"\G" + pattern).Match(source, index).Length;
+            return new Regex(@"\G" + pattern).Match(source, index);
         }
 
         private int Column

@@ -78,24 +78,24 @@ namespace Parsley
             const string alphanumerics = @"[a-z0-9]+";
 
             var empty = new Text("");
-            empty.Count(letters).ShouldEqual(0);
+            empty.Match(letters).Success.ShouldBeFalse();
 
             var abc123 = new Text("abc123");
-            abc123.Count(digits).ShouldEqual(0);
-            abc123.Count(letters).ShouldEqual(3);
-            abc123.Count(alphanumerics).ShouldEqual(6);
+            abc123.Match(digits).Success.ShouldBeFalse();
+            abc123.Match(letters).Value.ShouldEqual("abc");
+            abc123.Match(alphanumerics).Value.ShouldEqual("abc123");
 
-            abc123.Advance(2).Count(digits).ShouldEqual(0);
-            abc123.Advance(2).Count(letters).ShouldEqual(1);
-            abc123.Advance(2).Count(alphanumerics).ShouldEqual(4);
+            abc123.Advance(2).Match(digits).Success.ShouldBeFalse();
+            abc123.Advance(2).Match(letters).Value.ShouldEqual("c");
+            abc123.Advance(2).Match(alphanumerics).Value.ShouldEqual("c123");
 
-            abc123.Advance(3).Count(digits).ShouldEqual(3);
-            abc123.Advance(3).Count(letters).ShouldEqual(0);
-            abc123.Advance(3).Count(alphanumerics).ShouldEqual(3);
+            abc123.Advance(3).Match(digits).Value.ShouldEqual("123");
+            abc123.Advance(3).Match(letters).Success.ShouldBeFalse();
+            abc123.Advance(3).Match(alphanumerics).Value.ShouldEqual("123");
 
-            abc123.Advance(6).Count(digits).ShouldEqual(0);
-            abc123.Advance(6).Count(letters).ShouldEqual(0);
-            abc123.Advance(6).Count(alphanumerics).ShouldEqual(0);
+            abc123.Advance(6).Match(digits).Success.ShouldBeFalse();
+            abc123.Advance(6).Match(letters).Success.ShouldBeFalse();
+            abc123.Advance(6).Match(alphanumerics).Success.ShouldBeFalse();
         }
 
         [Test]
