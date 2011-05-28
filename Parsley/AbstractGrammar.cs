@@ -6,34 +6,9 @@ namespace Parsley
 {
     public abstract class AbstractGrammar
     {
-        public static readonly Predicate<char> Digit = Char.IsDigit;
-        public static readonly Predicate<char> Letter = Char.IsLetter;
-        public static readonly Predicate<char> Lower = Char.IsLower;
-        public static readonly Predicate<char> Upper = Char.IsUpper;
-        public static readonly Predicate<char> Alphanumeric = Char.IsLetterOrDigit;
-        public static readonly Predicate<char> WhiteSpace = Char.IsWhiteSpace;
-
         public static Parser<Position> Position
         {
             get { return text => new Success<Position>(text.Position, text); }
-        }
-
-        public static Parser<string> ZeroOrMore(Predicate<char> match)
-        {
-            return text => Success(text, text.Count(match));
-        }
-
-        public static Parser<string> OneOrMore(Predicate<char> match)
-        {
-            return text =>
-            {
-                int sizeOfMatch = text.Count(match);
-
-                if (sizeOfMatch > 0)
-                    return Success(text, sizeOfMatch);
-
-                return new Error<string>(text);
-            };
         }
 
         public static Parser<string> Pattern(string pattern)

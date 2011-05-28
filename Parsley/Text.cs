@@ -47,16 +47,6 @@ namespace Parsley
             get { return index >= source.Length; }
         }
 
-        public int Count(Predicate<char> match)
-        {
-            int sizeOfMatch = 0;
-
-            while (index + sizeOfMatch < source.Length && match(source[index + sizeOfMatch]))
-                sizeOfMatch++;
-
-            return sizeOfMatch;
-        }
-
         public Match Match(string pattern)
         {
             return new Regex(@"\G" + pattern).Match(source, index);

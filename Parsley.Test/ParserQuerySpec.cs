@@ -117,7 +117,7 @@ namespace Parsley
             return AbstractGrammar.String(s);
         }
         private static readonly Parser<string> Fail = text => new Error<string>(text);
-        private static readonly Parser<string> Letters = AbstractGrammar.OneOrMore(Char.IsLetter);
+        private static readonly Parser<string> Letters = AbstractGrammar.Pattern(@"[a-zA-Z]+");
         private static Parser<T> OnError<T>(Parser<T> parse, string expectation)
         {
             return AbstractGrammar.OnError(parse, expectation);

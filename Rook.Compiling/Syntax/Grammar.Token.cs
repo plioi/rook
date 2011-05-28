@@ -28,7 +28,7 @@ namespace Rook.Compiling.Syntax
             {
                 return OnError(Token(position =>
                                      from line in Choice(String(System.Environment.NewLine, ";"), EndOfInput)
-                                     from post in ZeroOrMore(WhiteSpace)
+                                     from post in Pattern(@"\s*")
                                      select new Token(position, line)), "end of line");
             }
         }
@@ -38,7 +38,7 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return Token(position =>
-                             from digits in OneOrMore(Digit)
+                             from digits in Pattern(@"[0-9]+")
                              select new Token(position, digits));
             }
         }
@@ -72,7 +72,7 @@ namespace Rook.Compiling.Syntax
             {
                 return Token(position =>
                              from keyword in String(keywords)
-                             from peekAhead in Not(OneOrMore(Letter))
+                             from peekAhead in Not(Pattern(@"[a-zA-Z]"))
                              select new Token(position, keyword));
             }
         }
@@ -87,16 +87,15 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return Expect(Token(position =>
-                                    from prefix in OneOrMore(Letter)
-                                    from suffix in ZeroOrMore(Alphanumeric)
-                                    select new Token(position, prefix + suffix)),
+                                    from identifier in Pattern(@"[a-zA-Z]+[a-zA-Z0-9]*")
+                                    select new Token(position, identifier)),
                               IsNotOneOf(keywords));
             }
         }
 
         private static Parser<Token> Token(TokenParser goal)
         {
-            return from spaces in ZeroOrMore(ch => ch == ' ' || ch == '\t')
+            return from spaces in Pattern(@"[ \t]*")
                    from position in Position
                    from g in goal(position)
                    select g;

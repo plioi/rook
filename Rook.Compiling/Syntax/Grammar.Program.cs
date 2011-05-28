@@ -8,7 +8,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from spaces in ZeroOrMore(WhiteSpace)
+                return from spaces in Pattern(@"\s*")
                        from position in Position
                        from functions in ZeroOrMoreTerminated(Function.TerminatedBy(EndOfLine), EndOfProgram)
                        select new Program(position, functions);
@@ -19,7 +19,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from spaces in ZeroOrMore(WhiteSpace)
+                return from spaces in Pattern(@"\s*")
                        from endOfInput in EndOfInput
                        select endOfInput;
             }

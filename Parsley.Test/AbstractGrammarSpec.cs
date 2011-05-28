@@ -36,24 +36,6 @@ namespace Parsley
         }
 
         [Test]
-        public void CanParseZeroOrMoreCharactersSatisfyingAPredicate()
-        {
-            ZeroOrMore(Letter).AssertParse("ABc", "ABc", "");
-            ZeroOrMore(Upper).AssertParse("ABc", "AB", "c");
-            ZeroOrMore(Digit).AssertParse("ABc", "", "ABc");
-            ZeroOrMore(Digit).AssertParse("", "", "");
-        }
-
-        [Test]
-        public void CanParseOneOrMoreCharactersSatisfyingAPredicate()
-        {
-            OneOrMore(Letter).AssertParse("ABc", "ABc", "");
-            OneOrMore(Upper).AssertParse("ABc", "AB", "c");
-            OneOrMore(Digit).AssertError("ABc", "ABc");
-            OneOrMore(Digit).AssertError("", "");
-        }
-
-        [Test]
         public void CanParseCharactersSatisfyingARegex()
         {
             Pattern(@"[a-zA-Z]+").AssertParse("ABc", "ABc", "");
@@ -284,7 +266,7 @@ namespace Parsley
         public void ProvidingTheCurrentPositionWithoutConsumingInput()
         {
             Parser<Position> start = Position;
-            Parser<Position> afterLeadingWhiteSpace = Between(OneOrMore(WhiteSpace), Position, OneOrMore(Digit));
+            Parser<Position> afterLeadingWhiteSpace = Between(Pattern(@"\s+"), Position, Pattern(@"[0-9]+"));
 
             start.AssertParse("ABC", "ABC", position =>
             {

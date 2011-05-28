@@ -47,30 +47,6 @@ namespace Parsley
         }
 
         [Test]
-        public void CanCountLeadingCharactersSatisfyingAPredicate()
-        {
-            var empty = new Text("");
-            empty.Count(Char.IsLetter).ShouldEqual(0);
-
-            var abc123 = new Text("abc123");
-            abc123.Count(Char.IsDigit).ShouldEqual(0);
-            abc123.Count(Char.IsLetter).ShouldEqual(3);
-            abc123.Count(Char.IsLetterOrDigit).ShouldEqual(6);
-
-            abc123.Advance(2).Count(Char.IsDigit).ShouldEqual(0);
-            abc123.Advance(2).Count(Char.IsLetter).ShouldEqual(1);
-            abc123.Advance(2).Count(Char.IsLetterOrDigit).ShouldEqual(4);
-
-            abc123.Advance(3).Count(Char.IsDigit).ShouldEqual(3);
-            abc123.Advance(3).Count(Char.IsLetter).ShouldEqual(0);
-            abc123.Advance(3).Count(Char.IsLetterOrDigit).ShouldEqual(3);
-
-            abc123.Advance(6).Count(Char.IsDigit).ShouldEqual(0);
-            abc123.Advance(6).Count(Char.IsLetter).ShouldEqual(0);
-            abc123.Advance(6).Count(Char.IsLetterOrDigit).ShouldEqual(0);
-        }
-
-        [Test]
         public void CanCountLeadingCharactersMatchingARegex()
         {
             const string letters = @"[a-z]+";
