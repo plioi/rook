@@ -18,7 +18,7 @@ namespace Parsley
                 var match = text.Match(pattern);
 
                 if (match.Success)
-                    return Success(text, match.Length);
+                    return new Success<string>(match.Value, text.Advance(match.Length));
 
                 return new Error<string>(text);
             };
@@ -30,11 +30,11 @@ namespace Parsley
             {
                 foreach (string expected in possibleMatches)
                     if (text.Peek(expected.Length) == expected)
-                        return Success(text, expected.Length);
-
-                return new Error<string>(text);
-            };
-        }
+                        return new Success<string>(expected, text.Advance(expected.Length));
+ 
+                 return new Error<string>(text);
+             };
+         }
 
         public static Parser<string> EndOfInput
         {
@@ -43,7 +43,7 @@ namespace Parsley
                 return text =>
                 {
                     if (text.EndOfInput)
-                        return Success(text, 0);
+                        return new Success<string>("", text);
 
                     return new Error<string>(text);
                 };
@@ -201,11 +201,6 @@ namespace Parsley
 
                 return parsed;
             };
-        }
-
-        private static Parsed<string> Success(Text text, int characters)
-        {
-            return new Success<string>(text.Peek(characters), text.Advance(characters));
         }
 
         private static IEnumerable<T> List<T>(T first, IEnumerable<T> rest)

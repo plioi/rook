@@ -15,12 +15,20 @@ namespace Rook.Compiling.Syntax
             "if", "return", "else", "fn"
         };
 
-        private static readonly string[] operators = new[]
-        {
-            "(", ")", "*", "/", "+", "-", "<=", "<",
-            ">=", ">", "==", "!=", "||", "&&", "!",
-            "=", ",", "{", "}", "[]", "[", "]", "??", "?", ".", ":"
-        };
+        private const string operators =
+            @"  \(   | \)          # Parentheses
+              | \*   | /           # Multiplicative
+              | \+   | \-          # Additive
+              | <=   | <  | >= | > # Relational
+              | ==   | !=          # Equality
+              | \|\| | && | !      # Logical
+              |  =                 # Assignment
+              |  ,                 # Comma
+              |  {   |  }          # Blocks
+              | \[\] | \[|\] | :   # Vectors
+              | \?\? | \?          # Nullability";
+
+        private static readonly string startsWithKeyword = string.Join("|", keywords.Select(k => k + @"\b"));
 
         public static Parser<Token> EndOfLine
         {
@@ -56,7 +64,7 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return Token(position =>
-                             from symbol in String(operators)
+                             from symbol in Pattern(operators)
                              select new Token(position, symbol));
             }
         }
@@ -71,8 +79,7 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return Token(position =>
-                             from keyword in String(keywords)
-                             from peekAhead in Not(Pattern(@"[a-zA-Z]"))
+                             from keyword in Pattern(startsWithKeyword)
                              select new Token(position, keyword));
             }
         }

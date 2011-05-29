@@ -36,9 +36,9 @@ namespace Rook.Compiling.Syntax
         public void ParsesOperatorsGreedily()
         {
             AssertTokens(Grammar.AnyOperator,
-                         " \t <=>=<>!====*/+-&&||!{}[][,]()???.:",
+                         " \t <=>=<>!====*/+-&&||!{}[][,]()???:",
                          "<=", ">=", "<", ">", "!=", "==", "=", "*", "/", "+", "-",
-                         "&&", "||", "!", "{", "}", "[]", "[", ",", "]", "(", ")", "??", "?", ".", ":");
+                         "&&", "||", "!", "{", "}", "[]", "[", ",", "]", "(", ")", "??", "?", ":");
             Grammar.AnyOperator.AssertError("0", "0");
         }
 
@@ -60,7 +60,7 @@ namespace Rook.Compiling.Syntax
             AssertTokens(Grammar.AnyKeyword,
                          " \t true false int bool void null if return else fn",
                          expectedKeywords);
-            Grammar.AnyKeyword.AssertError("iftrue", "true");
+            Grammar.AnyKeyword.AssertError("iftrue", "iftrue");
             Grammar.AnyKeyword.AssertError("random text", "random text");
         }
 
@@ -71,7 +71,7 @@ namespace Rook.Compiling.Syntax
             AssertParse(ifOrTrue, "true", "true");
             AssertParse(ifOrTrue, "if", "if");
             AssertParse(ifOrTrue, "true", " \t true");
-            ifOrTrue.AssertError("iftrue", "true");
+            ifOrTrue.AssertError("iftrue", "iftrue");
             ifOrTrue.AssertError("random text", "random text");
         }
 
