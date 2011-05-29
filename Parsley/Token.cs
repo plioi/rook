@@ -1,6 +1,4 @@
-using Parsley;
-
-namespace Rook.Compiling.Syntax
+﻿namespace Parsley
 {
     public class Token
     {

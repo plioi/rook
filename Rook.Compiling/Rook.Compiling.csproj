@@ -102,7 +102,6 @@
     <Compile Include="Syntax\Parameter.cs" />
     <Compile Include="Syntax\Program.cs" />
     <Compile Include="Syntax\SyntaxTree.cs" />
-    <Compile Include="Syntax\Token.cs" />
     <Compile Include="Syntax\TypeChecked.cs" />
     <Compile Include="Syntax\TypeCheckingExtensions.cs" />
     <Compile Include="Syntax\VariableDeclaration.cs" />
