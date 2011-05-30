@@ -5,11 +5,21 @@ namespace Parsley
     [TestFixture]
     public sealed class LexerSpec
     {
+        private object lower;
+        private object upper;
+
+        [SetUp]
+        public void SetUp()
+        {
+            lower = new object();
+            upper = new object();
+        }
+
         [Test]
-        public void ProvidesNullTokenAtEndOfInput()
+        public void ProvidesTokenAtEndOfInput()
         {
             var lexer = new Lexer(new Text(""));
-            lexer.CurrentToken.ShouldBeNull();
+            lexer.CurrentToken.AssertToken(TokenKind.EndOfInput, "", 1, 1);
         }
 
         [Test]
@@ -22,28 +32,25 @@ namespace Parsley
         [Test]
         public void UsesPrioritizedTokenMatchersToGetCurrentToken()
         {
-            var lexer = new Lexer(new Text("ABCdefGHI"), @"[a-z]+", @"[A-Z]+");
-            AssertToken(lexer.CurrentToken, "ABC", 1, 1);
-            AssertToken(lexer.Advance().CurrentToken, "def", 1, 4);
-            AssertToken(lexer.Advance().Advance().CurrentToken, "GHI", 1, 7);
-            lexer.Advance().Advance().Advance().CurrentToken.ShouldBeNull();
+            var lexer = new Lexer(new Text("ABCdefGHI"),
+                                  new TokenMatcher(lower, @"[a-z]+"),
+                                  new TokenMatcher(upper, @"[A-Z]+"));
+            lexer.CurrentToken.AssertToken(upper, "ABC", 1, 1);
+            lexer.Advance().CurrentToken.AssertToken(lower, "def", 1, 4);
+            lexer.Advance().Advance().CurrentToken.AssertToken(upper, "GHI", 1, 7);
+            lexer.Advance().Advance().Advance().CurrentToken.AssertToken(TokenKind.EndOfInput, "", 1, 10);
         }
 
         [Test]
         public void TreatsEntireRemainingTextAsOneTokenWhenAllMatchersFail()
         {
-            var lexer = new Lexer(new Text("ABCdef!ABCdef"), @"[a-z]+", @"[A-Z]+");
-            AssertToken(lexer.CurrentToken, "ABC", 1, 1);
-            AssertToken(lexer.Advance().CurrentToken, "def", 1, 4);
-            AssertToken(lexer.Advance().Advance().CurrentToken, "!ABCdef", 1, 7);
-            lexer.Advance().Advance().Advance().CurrentToken.ShouldBeNull();
-        }
-
-        private static void AssertToken(Token actual, string expectedLiteral, int expectedLine, int expectedColumn)
-        {
-            actual.Literal.ShouldEqual(expectedLiteral);
-            actual.Position.Line.ShouldEqual(expectedLine);
-            actual.Position.Column.ShouldEqual(expectedColumn);
+            var lexer = new Lexer(new Text("ABCdef!ABCdef"),
+                                  new TokenMatcher(lower, @"[a-z]+"),
+                                  new TokenMatcher(upper, @"[A-Z]+"));
+            lexer.CurrentToken.AssertToken(upper, "ABC", 1, 1);
+            lexer.Advance().CurrentToken.AssertToken(lower, "def", 1, 4);
+            lexer.Advance().Advance().CurrentToken.AssertToken(TokenKind.Unknown, "!ABCdef", 1, 7);
+            lexer.Advance().Advance().Advance().CurrentToken.AssertToken(TokenKind.EndOfInput, "", 1, 14);
         }
     }
 }

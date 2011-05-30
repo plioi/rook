@@ -6,6 +6,14 @@ namespace Parsley
 {
     public static class ParsingAssertions
     {
+        public static void AssertToken(this Token actual, object expectedKind, string expectedLiteral, int expectedLine, int expectedColumn)
+        {
+            actual.Kind.ShouldEqual(expectedKind);
+            actual.Literal.ShouldEqual(expectedLiteral);
+            actual.Position.Line.ShouldEqual(expectedLine);
+            actual.Position.Column.ShouldEqual(expectedColumn);
+        }
+
         public static void AssertError<TSyntax>(this Parser<TSyntax> parse, string source, string expectedUnparsedSource)
         {
             //Assert a parse error at the end of a single-line input with no known expectation.

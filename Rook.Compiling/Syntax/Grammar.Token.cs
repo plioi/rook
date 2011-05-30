@@ -37,7 +37,7 @@ namespace Rook.Compiling.Syntax
                 return OnError(Token(position =>
                                      from line in Choice(String(System.Environment.NewLine, ";"), EndOfInput)
                                      from post in Pattern(@"\s*")
-                                     select new Token(position, line)), "end of line");
+                                     select new Token(TokenKind.EndOfLine, position, line)), "end of line");
             }
         }
 
@@ -47,7 +47,7 @@ namespace Rook.Compiling.Syntax
             {
                 return Token(position =>
                              from digits in Pattern(@"[0-9]+")
-                             select new Token(position, digits));
+                             select new Token(TokenKind.Integer, position, digits));
             }
         }
 
@@ -65,7 +65,7 @@ namespace Rook.Compiling.Syntax
             {
                 return Token(position =>
                              from symbol in Pattern(operators)
-                             select new Token(position, symbol));
+                             select new Token(TokenKind.Operator, position, symbol));
             }
         }
 
@@ -80,7 +80,7 @@ namespace Rook.Compiling.Syntax
             {
                 return Token(position =>
                              from keyword in Pattern(startsWithKeyword)
-                             select new Token(position, keyword));
+                             select new Token(TokenKind.Keyword, position, keyword));
             }
         }
 
@@ -95,7 +95,7 @@ namespace Rook.Compiling.Syntax
             {
                 return Expect(Token(position =>
                                     from identifier in Pattern(@"[a-zA-Z]+[a-zA-Z0-9]*")
-                                    select new Token(position, identifier)),
+                                    select new Token(TokenKind.Identifier, position, identifier)),
                               IsNotOneOf(keywords));
             }
         }

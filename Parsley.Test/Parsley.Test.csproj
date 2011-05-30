@@ -80,6 +80,7 @@
     <Compile Include="ParserQuerySpec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextSpec.cs" />
+    <Compile Include="TokenMatcherSpec.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Parsley\Parsley.csproj">

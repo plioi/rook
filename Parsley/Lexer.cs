@@ -1,19 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Parsley
 {
     public sealed class Lexer
     {
-        private delegate Token TokenMatcher(Text text);
-
         private readonly Text text;
         private readonly IEnumerable<TokenMatcher> matchers;
 
-        public Lexer(Text text, params string[] patterns)
-            : this(text, patterns.Select(Matcher))
-        {
-        }
+        public Lexer(Text text, params TokenMatcher[] matchers)
+            : this(text, (IEnumerable<TokenMatcher>)matchers) { }
 
         private Lexer(Text text, IEnumerable<TokenMatcher> matchers)
         {
@@ -26,17 +21,14 @@ namespace Parsley
             get
             {
                 if (text.EndOfInput)
-                    return null;
+                    return new Token(TokenKind.EndOfInput, text.Position, text.ToString());
 
-                foreach (var match in matchers)
-                {
-                    var token = match(text);
-                    if (token != null)
+                Token token;
+                foreach (var matcher in matchers)
+                    if (matcher.TryMatch(text, out token))
                         return token;
-                }
 
-                string unknownToken = text.ToString();
-                return new Token(text.Position, unknownToken);
+                return new Token(TokenKind.Unknown, text.Position, text.ToString());
             }
         }
 
@@ -46,16 +38,6 @@ namespace Parsley
                 return this;
 
             return new Lexer(text.Advance(CurrentToken.Literal.Length), matchers);
-        }
-
-        private static TokenMatcher Matcher(string pattern)
-        {
-            return text =>
-            {
-                var match = text.Match(pattern);
-
-                return match.Success ? new Token(text.Position, match.Value) : null;
-            };
         }
     }
 }
