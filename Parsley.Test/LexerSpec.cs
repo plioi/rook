@@ -1,5 +1,4 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Parsley
 {
@@ -24,9 +23,9 @@ namespace Parsley
         public void UsesPrioritizedTokenMatchersToGetCurrentToken()
         {
             var lexer = new Lexer(new Text("ABCdefGHI"), @"[a-z]+", @"[A-Z]+");
-            lexer.CurrentToken.ShouldEqual("ABC");
-            lexer.Advance().CurrentToken.ShouldEqual("def");
-            lexer.Advance().Advance().CurrentToken.ShouldEqual("GHI");
+            AssertToken(lexer.CurrentToken, "ABC", 1, 1);
+            AssertToken(lexer.Advance().CurrentToken, "def", 1, 4);
+            AssertToken(lexer.Advance().Advance().CurrentToken, "GHI", 1, 7);
             lexer.Advance().Advance().Advance().CurrentToken.ShouldBeNull();
         }
 
@@ -34,10 +33,17 @@ namespace Parsley
         public void TreatsEntireRemainingTextAsOneTokenWhenAllMatchersFail()
         {
             var lexer = new Lexer(new Text("ABCdef!ABCdef"), @"[a-z]+", @"[A-Z]+");
-            lexer.CurrentToken.ShouldEqual("ABC");
-            lexer.Advance().CurrentToken.ShouldEqual("def");
-            lexer.Advance().Advance().CurrentToken.ShouldEqual("!ABCdef");
+            AssertToken(lexer.CurrentToken, "ABC", 1, 1);
+            AssertToken(lexer.Advance().CurrentToken, "def", 1, 4);
+            AssertToken(lexer.Advance().Advance().CurrentToken, "!ABCdef", 1, 7);
             lexer.Advance().Advance().Advance().CurrentToken.ShouldBeNull();
+        }
+
+        private static void AssertToken(Token actual, string expectedLiteral, int expectedLine, int expectedColumn)
+        {
+            actual.Literal.ShouldEqual(expectedLiteral);
+            actual.Position.Line.ShouldEqual(expectedLine);
+            actual.Position.Column.ShouldEqual(expectedColumn);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Rook.Compiling.Syntax
             {
                 return from symbol in Optional(Operator("-", "!"))
                        from primary in Primary
-                       select symbol == null ? primary : new Call(symbol.Position, symbol.ToString(), primary);
+                       select symbol == null ? primary : new Call(symbol.Position, symbol.Literal, primary);
             }
         }
 
@@ -114,14 +114,14 @@ namespace Rook.Compiling.Syntax
                     from assignment in Operator("=")
                     from value in Expression
                     from end in EndOfLine
-                    select new VariableDeclaration(identifier.Position, type, identifier.ToString(), value);
+                    select new VariableDeclaration(identifier.Position, type, identifier.Literal, value);
 
                 Parser<VariableDeclaration> implicitlyTyped =
                     from identifier in Identifier
                     from assignment in Operator("=")
                     from value in Expression
                     from end in EndOfLine
-                    select new VariableDeclaration(identifier.Position, identifier.ToString(), value);
+                    select new VariableDeclaration(identifier.Position, identifier.Literal, value);
 
                 return Choice(explicitlyTyped, implicitlyTyped);
             }
@@ -132,7 +132,7 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return from token in Boolean
-                       select new BooleanLiteral(token.Position, bool.Parse(token.ToString()));
+                       select new BooleanLiteral(token.Position, bool.Parse(token.Literal));
             }
         }
 
@@ -141,7 +141,7 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return from token in Integer
-                       select new IntegerLiteral(token.Position, token.ToString());
+                       select new IntegerLiteral(token.Position, token.Literal);
             }
         }
 
@@ -159,7 +159,7 @@ namespace Rook.Compiling.Syntax
             return from leftAssociative in
                        LeftAssociative(operand, Operator(symbols),
                                        (left, symbolAndRight) =>
-                                       new Call(symbolAndRight.Item1.Position, symbolAndRight.Item1.ToString(), left, symbolAndRight.Item2))
+                                       new Call(symbolAndRight.Item1.Position, symbolAndRight.Item1.Literal, left, symbolAndRight.Item2))
                    select leftAssociative;
         }
     }

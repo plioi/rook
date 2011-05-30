@@ -22,10 +22,10 @@ namespace Rook.Compiling.Syntax
             {
                 var explicitlyTyped = from type in TypeName
                                       from identifier in Identifier
-                                      select new Parameter(identifier.Position, type, identifier.ToString());
+                                      select new Parameter(identifier.Position, type, identifier.Literal);
 
                 var implicitlyTyped = from identifier in Identifier
-                                      select new Parameter(identifier.Position, identifier.ToString());
+                                      select new Parameter(identifier.Position, identifier.Literal);
 
                 return Choice(explicitlyTyped, implicitlyTyped);
             }

@@ -27,7 +27,7 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return from identifier in Identifier
-                       select new Name(identifier.Position, identifier.ToString());
+                       select new Name(identifier.Position, identifier.Literal);
             }
         }
     }

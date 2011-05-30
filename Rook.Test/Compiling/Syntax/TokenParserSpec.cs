@@ -49,7 +49,7 @@ namespace Rook.Compiling.Syntax
             AssertParse(Grammar.Operator("<", "="), "<", "<");
             AssertParse(Grammar.Operator("<", "="), "=", " \t =");
 
-            Grammar.Operator("<=", "<", "=").AssertParse("<=", "<=", "");
+            AssertParse(Grammar.Operator("<=", "<", "="), "<=", "<=");
             Grammar.Operator("<=", "<", "=").AssertError("!", "!", "(1, 1): <=, <, = expected");
             Grammar.Operator("<", "=").AssertError("<=", "<=", "(1, 1): <, = expected");
         }
@@ -111,16 +111,16 @@ namespace Rook.Compiling.Syntax
             AssertError(Grammar.EndOfLine, " x", "x", "(1, 2): end of line expected");
         }
         
-        private static void AssertTokens<T>(Parser<T> parse, string source, params string[] expectedTokens)
+        private static void AssertTokens(Parser<Token> parse, string source, params string[] expectedTokens)
         {
             AbstractGrammar.ZeroOrMore(parse).AssertParse(source, "",
-                                                          parsedValues => parsedValues.Select(x => x.ToString()).ShouldList(expectedTokens));
+                                                          parsedValues => parsedValues.Select(x => x.Literal).ShouldList(expectedTokens));
         }
 
-        private static void AssertParse<T>(Parser<T> parse, string expectedValue, string source)
+        private static void AssertParse(Parser<Token> parse, string expectedValue, string source)
         {
             const string expectedUnparsedText = "";
-            parse.AssertParse(source, expectedValue, expectedUnparsedText);
+            parse.AssertParse(source, expectedUnparsedText, parsedValue => parsedValue.Literal.ShouldEqual(expectedValue));
         }
 
         private static void AssertError<T>(Parser<T> parse, string source, string expectedUnparsedSource, string expectedMessage)

@@ -5,7 +5,7 @@ namespace Parsley
 {
     public sealed class Lexer
     {
-        private delegate string TokenMatcher(Text text);
+        private delegate Token TokenMatcher(Text text);
 
         private readonly Text text;
         private readonly IEnumerable<TokenMatcher> matchers;
@@ -21,7 +21,7 @@ namespace Parsley
             this.matchers = matchers;
         }
 
-        public string CurrentToken
+        public Token CurrentToken
         {
             get
             {
@@ -36,7 +36,7 @@ namespace Parsley
                 }
 
                 string unknownToken = text.ToString();
-                return unknownToken;
+                return new Token(text.Position, unknownToken);
             }
         }
 
@@ -45,7 +45,7 @@ namespace Parsley
             if (text.EndOfInput)
                 return this;
 
-            return new Lexer(text.Advance(CurrentToken.Length), matchers);
+            return new Lexer(text.Advance(CurrentToken.Literal.Length), matchers);
         }
 
         private static TokenMatcher Matcher(string pattern)
@@ -54,7 +54,7 @@ namespace Parsley
             {
                 var match = text.Match(pattern);
 
-                return match.Success ? match.Value : null;
+                return match.Success ? new Token(text.Position, match.Value) : null;
             };
         }
     }

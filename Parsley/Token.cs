@@ -3,17 +3,12 @@
     public class Token
     {
         public Position Position { get; private set; }
-        private readonly string token;
+        public string Literal { get; private set; }
 
-        public Token(Position position, string token)
+        public Token(Position position, string value)
         {
             Position = position;
-            this.token = token;
-        }
-
-        public override string ToString()
-        {
-            return token;
+            Literal = value;
         }
     }
 }

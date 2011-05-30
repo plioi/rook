@@ -110,12 +110,12 @@ namespace Rook.Compiling.Syntax
 
         private static Predicate<Token> IsOneOf(IEnumerable<string> values)
         {
-            return x => values.Contains(x.ToString());
+            return x => values.Contains(x.Literal);
         }
 
         private static Predicate<Token> IsNotOneOf(IEnumerable<string> values)
         {
-            return x => !values.Contains(x.ToString());
+            return x => !values.Contains(x.Literal);
         }
     }
 }

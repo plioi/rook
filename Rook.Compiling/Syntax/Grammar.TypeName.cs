@@ -45,10 +45,10 @@ namespace Rook.Compiling.Syntax
 
         private static NamedType ApplyTypeModifier(NamedType targetType, Token modifier)
         {
-            if (modifier.ToString() == "*")
+            if (modifier.Literal == "*")
                 return NamedType.Enumerable(targetType);
 
-            if (modifier.ToString() == "[]")
+            if (modifier.Literal == "[]")
                 return NamedType.Vector(targetType);
 
             return NamedType.Nullable(targetType);
