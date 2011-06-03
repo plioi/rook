@@ -7,44 +7,28 @@ namespace Rook.Compiling.Syntax
 {
     public sealed partial class Grammar
     {
-        private delegate Parser<Token> TokenParser(Position position);
-
         public static Parser<Token> EndOfLine
         {
             get
             {
-                return OnError(Token(position =>
-                                     from line in Choice(Pattern(RookLexer.EndOfLinePattern), EndOfInput)
-                                     select new Token(TokenKind.EndOfLine, position, line)), "end of line");
+                return OnError(Choice(Token(TokenKind.EndOfLine),
+                                      Token(Parsley.TokenKind.EndOfInput)), "end of line");
             }
         }
 
         public static Parser<Token> Integer
         {
-            get
-            {
-                return Token(position =>
-                             from digits in Pattern(RookLexer.IntegerPattern)
-                             select new Token(TokenKind.Integer, position, digits));
-            }
+            get { return Token(TokenKind.Integer); }
         }
 
         public static Parser<Token> Boolean
         {
-            get
-            {
-                return Keyword("true", "false");
-            }
+            get { return Keyword("true", "false"); }
         }
 
         public static Parser<Token> AnyOperator
         {
-            get
-            {
-                return Token(position =>
-                             from symbol in Pattern(RookLexer.OperatorPattern)
-                             select new Token(TokenKind.Operator, position, symbol));
-            }
+            get { return Token(TokenKind.Operator); }
         }
 
         public static Parser<Token> Operator(params string[] expectedOperators)
@@ -54,12 +38,7 @@ namespace Rook.Compiling.Syntax
 
         public static Parser<Token> AnyKeyword
         {
-            get
-            {
-                return Token(position =>
-                             from keyword in Pattern(RookLexer.KeywordPattern)
-                             select new Token(TokenKind.Keyword, position, keyword));
-            }
+            get { return Token(TokenKind.Keyword); }
         }
 
         public static Parser<Token> Keyword(params string[] expectedKeywords)
@@ -69,31 +48,30 @@ namespace Rook.Compiling.Syntax
 
         public static Parser<Token> Identifier
         {
-            get
-            {
-                return Expect(Token(position =>
-                                    from identifier in Pattern(RookLexer.IdentifierPattern)
-                                    select new Token(TokenKind.Identifier, position, identifier)),
-                              IsNotOneOf(RookLexer.Keywords));
-            }
+            get { return Token(TokenKind.Identifier); }
         }
 
-        private static Parser<Token> Token(TokenParser goal)
+        private static Parser<Token> Token(object kind)
         {
-            return from spaces in Optional(Pattern(RookLexer.IntralineWhiteSpace))
-                   from position in Position
-                   from g in goal(position)
-                   select g;
+            return text =>
+            {
+                Lexer lexer = new RookLexer(text);
+
+                //Skip leading intraline white space.
+                if (Equals(TokenKind.IntralineWhiteSpace, lexer.CurrentToken.Kind) &&
+                    !Equals(TokenKind.IntralineWhiteSpace, kind))
+                    lexer = lexer.Advance();
+
+                if (Equals(lexer.CurrentToken.Kind, kind))
+                    return new Success<Token>(lexer.CurrentToken, lexer.Advance().Text);
+
+                return new Error<Token>(lexer.Text);
+            };
         }
 
         private static Predicate<Token> IsOneOf(IEnumerable<string> values)
         {
             return x => values.Contains(x.Literal);
-        }
-
-        private static Predicate<Token> IsNotOneOf(IEnumerable<string> values)
-        {
-            return x => !values.Contains(x.Literal);
         }
     }
 }

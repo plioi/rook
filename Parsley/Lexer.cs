@@ -39,5 +39,8 @@ namespace Parsley
 
             return new Lexer(text.Advance(CurrentToken.Literal.Length), matchers);
         }
+
+        //TODO: Deprecated.  Was only made public to ease the introduction of a lexing phase.
+        public Text Text { get { return text; } }
     }
 }

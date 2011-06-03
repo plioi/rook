@@ -94,8 +94,8 @@ namespace Rook.Compiling.Syntax
         {
             //Endlines are the end of input, \r\n, or semicolons (with optional preceding spaces/tabs and optional trailing whitspace).
 
-            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "", "");
-            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "", " \t \t");
+            AssertParse(Grammar.EndOfLine, Parsley.TokenKind.EndOfInput, "", "");
+            AssertParse(Grammar.EndOfLine, Parsley.TokenKind.EndOfInput, "", " \t \t");
 
             AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "\r\n", "\r\n");
             AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "\r\n", " \t \t\r\n");

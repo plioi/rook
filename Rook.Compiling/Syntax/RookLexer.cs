@@ -1,13 +1,31 @@
-﻿using System.Linq;
-using Parsley;
+﻿using Parsley;
 
 namespace Rook.Compiling.Syntax
 {
     public sealed class RookLexer : Lexer
     {
-        public const string IntegerPattern = @"[0-9]+";
 
-        public const string OperatorPattern =
+        public RookLexer(Text text)
+            : base(text, new TokenMatcher(TokenKind.IntralineWhiteSpace, @"[ \t]+"),
+                         new TokenMatcher(TokenKind.Integer, @"[0-9]+"),
+                         new TokenMatcher(TokenKind.Keyword, Keyword),
+                         new TokenMatcher(TokenKind.Identifier, @"[a-zA-Z]+[a-zA-Z0-9]*"),
+                         new TokenMatcher(TokenKind.Operator, Operator),
+                         new TokenMatcher(TokenKind.EndOfLine, @"(\r\n|;)\s*")) { }
+
+        private const string Keyword =
+            @"  true   \b
+              | false  \b
+              | int    \b
+              | bool   \b
+              | void   \b
+              | null   \b
+              | if     \b
+              | return \b
+              | else   \b
+              | fn     \b";
+
+        private const string Operator =
             @"  \(   | \)          # Parentheses
               | \*   | /           # Multiplicative
               | \+   | \-          # Additive
@@ -19,26 +37,5 @@ namespace Rook.Compiling.Syntax
               |  {   |  }          # Blocks
               | \[\] | \[|\] | :   # Vectors
               | \?\? | \?          # Nullability";
-
-        public static readonly string[] Keywords = new[]
-        {
-            "true", "false", "int", "bool", "void", "null", "if", "return", "else", "fn"
-        };
-
-        public static readonly string KeywordPattern = string.Join("|", Keywords.Select(k => k + @"\b"));
-
-        public const string IdentifierPattern = @"[a-zA-Z]+[a-zA-Z0-9]*";
-
-        public const string EndOfLinePattern = @"(\r\n|;)\s*";
-
-        public const string IntralineWhiteSpace = @"[ \t]+";
-
-        public RookLexer(Text text)
-            : base(text, new TokenMatcher(TokenKind.IntralineWhiteSpace, IntralineWhiteSpace),
-                         new TokenMatcher(TokenKind.Integer, IntegerPattern),
-                         new TokenMatcher(TokenKind.Keyword, KeywordPattern),
-                         new TokenMatcher(TokenKind.Identifier, IdentifierPattern),
-                         new TokenMatcher(TokenKind.Operator, OperatorPattern),
-                         new TokenMatcher(TokenKind.EndOfLine, EndOfLinePattern)) { }
     }
 }
