@@ -9,34 +9,12 @@ namespace Rook.Compiling.Syntax
     {
         private delegate Parser<Token> TokenParser(Position position);
 
-        private static readonly string[] keywords = new[]
-        {
-            "true", "false", "int", "bool", "void", "null", 
-            "if", "return", "else", "fn"
-        };
-
-        private const string operators =
-            @"  \(   | \)          # Parentheses
-              | \*   | /           # Multiplicative
-              | \+   | \-          # Additive
-              | <=   | <  | >= | > # Relational
-              | ==   | !=          # Equality
-              | \|\| | && | !      # Logical
-              |  =                 # Assignment
-              |  ,                 # Comma
-              |  {   |  }          # Blocks
-              | \[\] | \[|\] | :   # Vectors
-              | \?\? | \?          # Nullability";
-
-        private static readonly string startsWithKeyword = string.Join("|", keywords.Select(k => k + @"\b"));
-
         public static Parser<Token> EndOfLine
         {
             get
             {
                 return OnError(Token(position =>
-                                     from line in Choice(String(System.Environment.NewLine, ";"), EndOfInput)
-                                     from post in Pattern(@"\s*")
+                                     from line in Choice(Pattern(RookLexer.EndOfLinePattern), EndOfInput)
                                      select new Token(TokenKind.EndOfLine, position, line)), "end of line");
             }
         }
@@ -46,7 +24,7 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return Token(position =>
-                             from digits in Pattern(@"[0-9]+")
+                             from digits in Pattern(RookLexer.IntegerPattern)
                              select new Token(TokenKind.Integer, position, digits));
             }
         }
@@ -64,7 +42,7 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return Token(position =>
-                             from symbol in Pattern(operators)
+                             from symbol in Pattern(RookLexer.OperatorPattern)
                              select new Token(TokenKind.Operator, position, symbol));
             }
         }
@@ -79,7 +57,7 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return Token(position =>
-                             from keyword in Pattern(startsWithKeyword)
+                             from keyword in Pattern(RookLexer.KeywordPattern)
                              select new Token(TokenKind.Keyword, position, keyword));
             }
         }
@@ -94,15 +72,15 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return Expect(Token(position =>
-                                    from identifier in Pattern(@"[a-zA-Z]+[a-zA-Z0-9]*")
+                                    from identifier in Pattern(RookLexer.IdentifierPattern)
                                     select new Token(TokenKind.Identifier, position, identifier)),
-                              IsNotOneOf(keywords));
+                              IsNotOneOf(RookLexer.Keywords));
             }
         }
 
         private static Parser<Token> Token(TokenParser goal)
         {
-            return from spaces in Pattern(@"[ \t]*")
+            return from spaces in Optional(Pattern(RookLexer.IntralineWhiteSpace))
                    from position in Position
                    from g in goal(position)
                    select g;

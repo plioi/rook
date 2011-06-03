@@ -80,6 +80,7 @@
     <Compile Include="Compiling\RookCompilerSpec.cs" />
     <Compile Include="Compiling\CodeGeneration\CSharpTranslatorSpec.cs" />
     <Compile Include="Compiling\Syntax\LambdaSpec.cs" />
+    <Compile Include="Compiling\Syntax\RookLexerSpec.cs" />
     <Compile Include="Core\Collections\ArrayVectorSpec.cs" />
     <Compile Include="Core\Collections\SliceVectorSpec.cs" />
     <Compile Include="Core\Collections\VectorSpec.cs" />

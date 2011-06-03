@@ -2,10 +2,11 @@
 {
     public enum TokenKind
     {
-        EndOfLine,
+        IntralineWhiteSpace,
         Integer,
-        Operator,
         Keyword,
-        Identifier
+        Identifier,
+        Operator,
+        EndOfLine
     }
 }

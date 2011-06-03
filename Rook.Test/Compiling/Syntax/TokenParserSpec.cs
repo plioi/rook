@@ -99,13 +99,13 @@ namespace Rook.Compiling.Syntax
 
             AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "\r\n", "\r\n");
             AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "\r\n", " \t \t\r\n");
-            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "\r\n", "\r\n \r\n \t ");
-            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "\r\n", " \t \t\r\n \r\n \t ");
+            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "\r\n \r\n \t ", "\r\n \r\n \t ");
+            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "\r\n \r\n \t ", " \t \t\r\n \r\n \t ");
 
             AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, ";", ";");
             AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, ";", " \t \t;");
-            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, ";", "; \r\n \t ");
-            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, ";", " \t \t; \r\n \t ");
+            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "; \r\n \t ", "; \r\n \t ");
+            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "; \r\n \t ", " \t \t; \r\n \t ");
 
             AssertError(Grammar.EndOfLine, "x", "x", "(1, 1): end of line expected");
             AssertError(Grammar.EndOfLine, " x", "x", "(1, 2): end of line expected");

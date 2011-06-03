@@ -2,7 +2,7 @@
 
 namespace Parsley
 {
-    public sealed class Lexer
+    public class Lexer
     {
         private readonly Text text;
         private readonly IEnumerable<TokenMatcher> matchers;
