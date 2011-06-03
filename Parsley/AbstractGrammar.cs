@@ -24,18 +24,6 @@ namespace Parsley
             };
         }
 
-        public static Parser<string> String(params string[] possibleMatches)
-        {
-            return text =>
-            {
-                foreach (string expected in possibleMatches)
-                    if (text.Peek(expected.Length) == expected)
-                        return new Success<string>(expected, text.Advance(expected.Length));
- 
-                 return new Error<string>(text);
-             };
-         }
-
         public static Parser<string> EndOfInput
         {
             get

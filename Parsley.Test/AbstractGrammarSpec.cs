@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace Parsley
@@ -6,35 +7,6 @@ namespace Parsley
     [TestFixture]
     public sealed class AbstractGrammarSpec : AbstractGrammar
     {
-        [Test]
-        public void CanParseASingleExpectedString()
-        {
-            String("ABC").AssertParse("ABC", "ABC", "");
-            String("AB").AssertParse("ABC", "AB", "C");
-            String("").AssertParse("A", "", "A");
-
-            String("ABC").AssertError("AB", "AB");
-            String("BC").AssertError("ABC", "ABC");
-            String("A").AssertError("", "");
-        }
-
-        [Test]
-        public void CanParseASingleStringFromAPrioritizedSetOfPossibleMatches()
-        {
-            String("ABC", "XYZ").AssertParse("ABC", "ABC", "");
-            String("XYZ", "ABC").AssertParse("ABC", "ABC", "");
-
-            String("AB", "XY").AssertParse("ABC", "AB", "C");
-            String("XY", "AB").AssertParse("ABC", "AB", "C");
-
-            String("", "A").AssertParse("A", "", "A");
-            String("A", "").AssertParse("A", "A", "");
-
-            String("ABC", "XYZ").AssertError("AB", "AB");
-            String("BC", "XYZ").AssertError("ABC", "ABC");
-            String("A", "XYZ").AssertError("", "");
-        }
-
         [Test]
         public void CanParseCharactersSatisfyingARegex()
         {
@@ -65,7 +37,7 @@ namespace Parsley
         [Test]
         public void ApplyingARuleZeroOrMoreTimes()
         {
-            var parse = ZeroOrMore(String("0", "1", "2"));
+            var parse = ZeroOrMore(Digit());
 
             parse.AssertParse("", new string[] {}, "");
             parse.AssertParse("!", new string[] {}, "!");
@@ -82,7 +54,7 @@ namespace Parsley
         [Test]
         public void ApplyingARuleOneOrMoreTimes()
         {
-            var parse = OneOrMore(String("0", "1", "2"));
+            var parse = OneOrMore(Digit());
 
             parse.AssertError("", "");
             parse.AssertError("!", "!");
@@ -99,7 +71,7 @@ namespace Parsley
         [Test]
         public void ApplyingARuleZeroOrMoreTimesInterspersedByASeparatorRule()
         {
-            var parse = ZeroOrMore(String("0", "1", "2"), String(","));
+            var parse = ZeroOrMore(Digit(), String(","));
 
             parse.AssertParse("", new string[] {}, "");
             parse.AssertParse("!", new string[] {}, "!");
@@ -116,7 +88,7 @@ namespace Parsley
         [Test]
         public void ApplyingARuleZeroOrMoreTimesFollowedByARequiredTerminatorRule()
         {
-            var parse = ZeroOrMoreTerminated(String("0", "1", "2"), String("EndOfDigits"));
+            var parse = ZeroOrMoreTerminated(Digit(), String("EndOfDigits"));
 
             parse.AssertError("", "");
             parse.AssertError("MissingTerminator", "MissingTerminator");
@@ -134,7 +106,7 @@ namespace Parsley
         [Test]
         public void ApplyingARuleOneOrMoreTimesInterspersedByASeparatorRule()
         {
-            var parse = OneOrMore(String("0", "1", "2"), String(","));
+            var parse = OneOrMore(Digit(), String(","));
 
             parse.AssertError("", "");
             parse.AssertError("!", "!");
@@ -153,8 +125,8 @@ namespace Parsley
         {
             var parse =
                 LeftAssociative(
-                    String("0", "1", "2"),
-                    String("*", "/"),
+                    Digit(),
+                    Pattern(@"[\*/]"),
                     (left, symbolAndRight) =>
                     System.String.Format("({0} {1} {2})", symbolAndRight.Item1, left, symbolAndRight.Item2));
 
@@ -206,7 +178,7 @@ namespace Parsley
             Predicate<string> isDollars = x => x == "$";
             Predicate<string> isCents = x => x == "¢";
 
-            Parser<string> cash = String("$", "¢");
+            Parser<string> cash = Pattern(@"[\$¢]");
 
             Expect(cash, isDollars).AssertError("!", "!");
             Expect(cash, isCents).AssertError("!", "!");
@@ -279,6 +251,16 @@ namespace Parsley
                 position.Line.ShouldEqual(3);
                 position.Column.ShouldEqual(4);
             });
+        }
+
+        private static Parser<string> String(string literal)
+        {
+            return Pattern(Regex.Escape(literal));
+        }
+
+        private static Parser<string> Digit()
+        {
+            return Pattern(@"[0-9]");
         }
     }
 }

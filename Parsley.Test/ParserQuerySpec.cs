@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace Parsley
@@ -28,8 +29,8 @@ namespace Parsley
         public void SatisfiesTheAssociativeLaw()
         {
             //'x' >>= ('y' >>= 'z') == ('x' >>= 'y') >>= 'z'
-            Parser<string> left = Bind(String("x"), x => Bind(String("y"), y => String("z")));
-            Parser<string> right = Bind(Bind(String("x"), x => String("y")), y => String("z"));
+            Parser<string> left = Bind(Char('x'), x => Bind(Char('y'), y => Char('z')));
+            Parser<string> right = Bind(Bind(Char('x'), x => Char('y')), y => Char('z'));
             left.AssertParse("xyz!", "z", "!");
             right.AssertParse("xyz!", "z", "!");
         }
@@ -38,37 +39,37 @@ namespace Parsley
         public void SupportsLinqSyntaxForBuildingParsersFromOtherParsers()
         {
             //Bind notation.
-            (Bind(String("x"), x =>
-                Bind(String("y"), y =>
+            (Bind(Char('x'), x =>
+                Bind(Char('y'), y =>
                     ((x+y).ToUpper()).ToParser()))).AssertParse("xy", "XY", "");
 
             //Bind is in fact SelectMany.
-            (String("x").SelectMany(x => 
-                String("y").SelectMany(y => 
+            (Char('x').SelectMany(x =>
+                Char('y').SelectMany(y =>
                     ((x+y).ToUpper()).ToParser()))).AssertParse("xy", "XY", "");
 
             //LINQ notation hides nested calls to SelectMany.
             //Each 'from' introduces the ordered parsers to 
             //combine into the result parser.  The result of 
             //a query is a function that is a Parser<T>.
-            (from x in String("x")
-             from y in String("y")
+            (from x in Char('x')
+             from y in Char('y')
              select ((x+y).ToUpper())).AssertParse("xy", "XY", "");
         }
 
         [Test]
         public void SupportsLinqSyntaxForBuildingAParserFromASingleSimplerParser()
         {
-            (from x in String("x") 
+            (from x in Char('x')
              select x.ToUpper()).AssertParse("xy", "X", "y");
         }
 
         [Test]
         public void WalksThroughInputOneParserAtATimeWhileCollectingIntermediateResults()
         {
-            (from a in String("a")
-             from b in String("b")
-             from c in String("c")
+            (from a in Char('a')
+             from b in Char('b')
+             from c in Char('c')
              select (a + b + c).ToUpper()).AssertParse("abcdef", "ABC", "def");
         }
 
@@ -76,17 +77,17 @@ namespace Parsley
         public void PropogatesErrorsWithoutConsumingMoreText()
         {
             (from _ in Fail
-             from x in String("x")
-             from y in String("y")
+             from x in Char('x')
+             from y in Char('y')
              select Tuple.Create(x, y)).AssertError("xy", "xy");
 
-            (from x in String("x")
+            (from x in Char('x')
              from _ in Fail
-             from y in String("y")
+             from y in Char('y')
              select Tuple.Create(x, y)).AssertError("xy", "y");
 
-            (from x in String("x")
-             from y in String("y")
+            (from x in Char('x')
+             from y in Char('y')
              from _ in Fail
              select Tuple.Create(x, y)).AssertError("xy", "");
         }
@@ -101,20 +102,20 @@ namespace Parsley
 
             Parser<string> shouldNotBeCalled = text => { throw new Exception(); };
 
-            (from x in String("x")
+            (from x in Char('x')
              from fail in Fail
              from neverAssignedValue in shouldNotBeCalled
              select neverAssignedValue).AssertError("xy", "y");
 
-            (from x in String("x")
+            (from x in Char('x')
              from fail in OnError(Fail, "something")
              from neverAssignedValue in shouldNotBeCalled
              select neverAssignedValue).AssertError("xy", "y", "(1, 2): something expected");
         }
 
-        private static Parser<string> String(string s)
+        private static Parser<string> Char(char letter)
         {
-            return AbstractGrammar.String(s);
+            return AbstractGrammar.Pattern(Regex.Escape(letter.ToString()));
         }
         private static readonly Parser<string> Fail = text => new Error<string>(text);
         private static readonly Parser<string> Letters = AbstractGrammar.Pattern(@"[a-zA-Z]+");

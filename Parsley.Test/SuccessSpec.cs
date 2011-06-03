@@ -44,7 +44,7 @@ namespace Parsley
         [Test]
         public void CanContinueParsingTheRemainingInputWhenGivenAParserGenerator()
         {
-            Parsed<string> result = new Success<string>("x", unparsed).ParseRest(s => AbstractGrammar.String("0"));
+            Parsed<string> result = new Success<string>("x", unparsed).ParseRest(s => AbstractGrammar.Pattern("0"));
             result.IsError.ShouldBeFalse();
             result.Value.ShouldEqual("0");
             result.UnparsedText.EndOfInput.ShouldBeTrue();
