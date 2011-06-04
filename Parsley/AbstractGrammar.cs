@@ -113,7 +113,7 @@ namespace Parsley
 
         public static Parser<T> Optional<T>(Parser<T> parse) where T : class
         {
-            var nothing = default(T).ToParser();
+            var nothing = default(T).SucceedWithThisValue();
             return Choice(parse, nothing);
         }
 
@@ -188,7 +188,7 @@ namespace Parsley
 
         protected static Parser<IEnumerable<T>> Zero<T>()
         {
-            return Enumerable.Empty<T>().ToParser();
+            return Enumerable.Empty<T>().SucceedWithThisValue();
         }
     }
 

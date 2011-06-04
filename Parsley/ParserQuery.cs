@@ -4,29 +4,44 @@ namespace Parsley
 {
     public static class ParserQuery
     {
-        //Unit: The parser which leaves the input alone and simply returns the given value. 
-        public static Parser<T> ToParser<T>(this T value)
+        /// <summary>
+        /// Converts any value into a parser that always succeeds with the given value in its parse result.
+        /// </summary>
+        /// <remarks>
+        /// In monadic terms, this is the 'Unit' function.
+        /// </remarks>
+        /// <typeparam name="T">The type of the value to treat as a parse result.</typeparam>
+        /// <param name="value">The value to treat as a parse result.</param>
+        public static Parser<T> SucceedWithThisValue<T>(this T value)
         {
             return text => new Success<T>(value, text);
         }
 
-        //Bind: Propogate the unpacking of Parsed<T> and the passing along of remaining unparsed text.
-        public static Parser<U> SelectMany<T, U>(this Parser<T> parse, Func<T, Parser<U>> constructNextParser)
-        {
-            return text => parse(text).ParseRest(constructNextParser);
-        }
-
-        //Generalized bind overload for performance reasons.
-        //This is always defined the same way, in terms of SelectMany<T, U>.
-        public static Parser<V> SelectMany<T, U, V>(this Parser<T> parse, Func<T, Parser<U>> k, Func<T, U, V> s)
-        {
-            return parse.SelectMany(x => k(x).SelectMany(y => s(x, y).ToParser()));
-        }
-
-        //Support queries with a single from clause.
+        /// <summary>
+        /// Allows LINQ syntax to construct a new parser from a simpler parser, using a single 'from' clause.
+        /// </summary>
         public static Parser<U> Select<T, U>(this Parser<T> parse, Func<T, U> constructResult)
         {
-            return parse.SelectMany(t => constructResult(t).ToParser());
+            return parse.Bind(t => constructResult(t).SucceedWithThisValue());
+        }
+
+        /// <summary>
+        /// Allows LINQ syntax to contruct a new parser from an ordered sequence of simpler parsers, using multiple 'from' clauses.
+        /// </summary>
+        public static Parser<V> SelectMany<T, U, V>(this Parser<T> parse, Func<T, Parser<U>> k, Func<T, U, V> s)
+        {
+            return parse.Bind(x => k(x).Bind(y => s(x, y).SucceedWithThisValue()));
+        }
+
+        /// <summary>
+        /// Extend a parser such that, after executing, the remaining input is processed by the next parser in the chain.
+        /// </summary>
+        /// <remarks>
+        /// In monadic terms, this is the 'Bind' function.
+        /// </remarks>
+        private static Parser<U> Bind<T, U>(this Parser<T> parse, Func<T, Parser<U>> constructNextParser)
+        {
+            return text => parse(text).ParseRest(constructNextParser);
         }
     }
 }
