@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using Parsley;
 
 namespace Rook.Compiling.Syntax
 {
@@ -8,14 +9,14 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ContainsConditionExpressionAndTwoBodyExpressions()
         {
-            AssertError("if", "", "(1, 3): ( expected");
-            AssertError("if (", "");
-            AssertError("if (false", "", "(1, 10): ) expected");
-            AssertError("if (1)", "");
-            AssertError("if (true) 0", "");
-            AssertError("if (true) 0 1", "1");
-            AssertError("if (true) 0 else", "");
-            AssertError("if false 0 1", "false 0 1", "(1, 4): ( expected");
+            ParserUnderTest.FailsToParse("if", "").WithMessage("(1, 3): ( expected");
+            ParserUnderTest.FailsToParse("if (", "");
+            ParserUnderTest.FailsToParse("if (false", "").WithMessage("(1, 10): ) expected");
+            ParserUnderTest.FailsToParse("if (1)", "");
+            ParserUnderTest.FailsToParse("if (true) 0", "");
+            ParserUnderTest.FailsToParse("if (true) 0 1", "1");
+            ParserUnderTest.FailsToParse("if (true) 0 else", "");
+            ParserUnderTest.FailsToParse("if false 0 1", "false 0 1").WithMessage("(1, 4): ( expected");
 
             AssertTree("(if (true) (0) else (1))", "if (true) 0 else 1");
             AssertTree("(if (false) (1) else (0))", "if (false) 1 else 0");

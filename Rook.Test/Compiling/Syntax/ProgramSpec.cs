@@ -21,7 +21,7 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void DemandsEndOfInputAfterLastValidFunction()
         {
-            AssertError("int life() 42; int univ", "", "(1, 24): ( expected");
+            ParserUnderTest.FailsToParse("int life() 42; int univ", "").WithMessage("(1, 24): ( expected");
         }
 
         [Test]

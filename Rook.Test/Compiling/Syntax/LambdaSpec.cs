@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
+using Parsley;
 using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
@@ -10,9 +11,9 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void HasABodyExpression()
         {
-            AssertError("fn", "", "(1, 3): ( expected");
-            AssertError("fn (", "", "(1, 5): ) expected");
-            AssertError("fn ()", "");
+            ParserUnderTest.FailsToParse("fn", "").WithMessage("(1, 3): ( expected");
+            ParserUnderTest.FailsToParse("fn (", "").WithMessage("(1, 5): ) expected");
+            ParserUnderTest.FailsToParse("fn ()", "");
 
             AssertTree("fn () 1", "fn () 1");
             AssertTree("fn () ((1) + (2))", "fn () 1 + 2");

@@ -1,5 +1,6 @@
 using System.Linq;
 using NUnit.Framework;
+using Parsley;
 using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
@@ -10,9 +11,9 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ContainsOneOrMoreExpressions()
         {
-            AssertError("[", "");
-            AssertError("[]", "[]");
-            AssertError("[0", "", "(1, 3): ] expected");
+            ParserUnderTest.FailsToParse("[", "");
+            ParserUnderTest.FailsToParse("[]", "[]");
+            ParserUnderTest.FailsToParse("[0", "").WithMessage("(1, 3): ] expected");
             AssertTree("[0]", "[0]");
             AssertTree("[0, 1]", "[0, 1]");
             AssertTree("[0, ((1) + (2)), 3]", "[0, 1+2, 3]");

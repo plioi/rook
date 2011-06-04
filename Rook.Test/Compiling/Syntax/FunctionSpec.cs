@@ -13,13 +13,13 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void DemandsCompleteFunctionDefinition()
         {
-            AssertError("", "", "(1, 1): type name expected");
-            AssertError("int", "");
-            AssertError("int foo", "", "(1, 8): ( expected");
-            AssertError("int foo(", "", "(1, 9): ) expected");
-            AssertError("int foo(x)", "");
-            AssertError("int foo(int)", "int)", "(1, 9): ) expected");
-            AssertError("int foo()", "");
+            ParserUnderTest.FailsToParse("", "").WithMessage("(1, 1): type name expected");
+            ParserUnderTest.FailsToParse("int", "");
+            ParserUnderTest.FailsToParse("int foo", "").WithMessage("(1, 8): ( expected");
+            ParserUnderTest.FailsToParse("int foo(", "").WithMessage("(1, 9): ) expected");
+            ParserUnderTest.FailsToParse("int foo(x)", "");
+            ParserUnderTest.FailsToParse("int foo(int)", "int)").WithMessage( "(1, 9): ) expected");
+            ParserUnderTest.FailsToParse("int foo()", "");
             AssertTree("int foo() 1", "int foo() 1");
         }
 

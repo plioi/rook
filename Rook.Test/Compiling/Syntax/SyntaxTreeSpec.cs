@@ -34,16 +34,6 @@ namespace Rook.Compiling.Syntax
             Parse(source).ShouldBeInstanceOf<TSyntax>();
         }
 
-        protected void AssertError(string source, string expectedUnparsedSource)
-        {
-            ParserUnderTest.FailsToParse(source, expectedUnparsedSource);
-        }
-
-        protected void AssertError(string source, string expectedUnparsedSource, string expectedMessage)
-        {
-            ParserUnderTest.FailsToParse(source, expectedUnparsedSource).WithMessage(expectedMessage);
-        }
-
         protected static void AssertTypeCheckError(TypeChecked<TSyntax> typeChecked, int line, int column, string expectedMessage)
         {
             typeChecked.Syntax.ShouldBeNull("Expected type check error but found type checked syntax.");

@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using Parsley;
 
 namespace Rook.Compiling.Syntax
 {
@@ -17,7 +18,7 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void DemandsBalancedParentheses()
         {
-            AssertError("(1(", "(", "(1, 3): ) expected");
+            ParserUnderTest.FailsToParse("(1(", "(").WithMessage("(1, 3): ) expected");
         }
     }
 }
