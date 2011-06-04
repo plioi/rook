@@ -1,74 +1,71 @@
 ﻿using NUnit.Framework;
 using Parsley;
+using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
     public sealed class TypeNameParserSpec
     {
+        private static readonly Parser<NamedType> TypeName = Grammar.TypeName;
+        private static readonly NamedType Integer = NamedType.Integer;
+        private static readonly NamedType Boolean = NamedType.Boolean;
+        private static readonly NamedType Void = NamedType.Void;
+        private static readonly NamedType Foo = NamedType.Create("Foo");
+        
         [Test]
         public void DemandsSimpleNameAtAMinimum()
         {
-            AssertError("", "", "(1, 1): type name expected");
-            AssertError("?", "?", "(1, 1): type name expected");
-            AssertError("*", "*", "(1, 1): type name expected");
-            AssertError("[]", "[]", "(1, 1): type name expected");
+            TypeName.FailsToParse("", "").WithMessage("(1, 1): type name expected");
+            TypeName.FailsToParse("?", "?").WithMessage("(1, 1): type name expected");
+            TypeName.FailsToParse("*", "*").WithMessage("(1, 1): type name expected");
+            TypeName.FailsToParse("[]", "[]").WithMessage("(1, 1): type name expected");
         }
 
         [Test]
         public void ParsesSimpleTypeNames()
         {
-            AssertType("int", "int");
-            AssertType("bool", "bool");
-            AssertType("Rook.Core.Void", "void");
-            AssertType("Foo", "Foo");
+            TypeName.Parses("int").IntoValue(Integer);
+            TypeName.Parses("bool").IntoValue(Boolean);
+            TypeName.Parses("void").IntoValue(Void);
+            TypeName.Parses("Foo").IntoValue(Foo);
         }
 
         [Test]
         public void ParsesNullableTypeNames()
         {
-            AssertType("Rook.Core.Nullable<int>", "int?");
-            AssertType("Rook.Core.Nullable<bool>", "bool?");
-            AssertType("Rook.Core.Nullable<Foo>", "Foo?");
+            TypeName.Parses("int?").IntoValue(NamedType.Nullable(Integer));
+            TypeName.Parses("bool?").IntoValue(NamedType.Nullable(Boolean));
+            TypeName.Parses("Foo?").IntoValue(NamedType.Nullable(Foo));
         }
 
         [Test]
         public void ParsesEnumerableTypeNames()
         {
-            AssertType("System.Collections.Generic.IEnumerable<int>", "int*");
-            AssertType("System.Collections.Generic.IEnumerable<bool>", "bool*");
-            AssertType("System.Collections.Generic.IEnumerable<System.Collections.Generic.IEnumerable<Foo>>", "Foo**");
+            TypeName.Parses("int*").IntoValue(NamedType.Enumerable(Integer));
+            TypeName.Parses("bool*").IntoValue(NamedType.Enumerable(Boolean));
+            TypeName.Parses("Foo**").IntoValue(NamedType.Enumerable(NamedType.Enumerable(Foo)));
         }
 
         [Test]
         public void ParsesVectorTypeNames()
         {
-            AssertType("Rook.Core.Collections.Vector<int>", "int[]");
-            AssertType("Rook.Core.Collections.Vector<bool>", "bool[]");
-            AssertType("Rook.Core.Collections.Vector<Rook.Core.Collections.Vector<Foo>>", "Foo[][]");
+            TypeName.Parses("int[]").IntoValue(NamedType.Vector(Integer));
+            TypeName.Parses("bool[]").IntoValue(NamedType.Vector(Boolean));
+            TypeName.Parses("Foo[][]").IntoValue(NamedType.Vector(NamedType.Vector(Foo)));
         }
 
         [Test]
         public void ParsesTypeNamesWithMixedModifiers()
         {
-            AssertType("Rook.Core.Nullable<System.Collections.Generic.IEnumerable<int>>", "int*?");
-            AssertType("System.Collections.Generic.IEnumerable<Rook.Core.Nullable<bool>>", "bool?*");
+            TypeName.Parses("int*?").IntoValue(NamedType.Nullable(NamedType.Enumerable(Integer)));
+            TypeName.Parses("bool?*").IntoValue(NamedType.Enumerable(NamedType.Nullable(Boolean)));
 
-            AssertType("Rook.Core.Nullable<Rook.Core.Collections.Vector<int>>", "int[]?");
-            AssertType("Rook.Core.Collections.Vector<Rook.Core.Nullable<bool>>", "bool?[]");
+            TypeName.Parses("int[]?").IntoValue(NamedType.Nullable(NamedType.Vector(Integer)));
+            TypeName.Parses("bool?[]").IntoValue(NamedType.Vector(NamedType.Nullable(Boolean)));
 
-            AssertType("Rook.Core.Collections.Vector<System.Collections.Generic.IEnumerable<int>>", "int*[]");
-            AssertType("System.Collections.Generic.IEnumerable<Rook.Core.Collections.Vector<bool>>", "bool[]*");
-        }
-
-        private static void AssertError(string source, string expectedUnparsedSource, string expectedMessage)
-        {
-            Grammar.TypeName.FailsToParse(source, expectedUnparsedSource).WithMessage(expectedMessage);
-        }
-
-        private static void AssertType(string expectedType, string source)
-        {
-            Grammar.TypeName.Parses(source).IntoValue(namedType => namedType.ToString().ShouldEqual(expectedType));
+            TypeName.Parses("int*[]").IntoValue(NamedType.Vector(NamedType.Enumerable(Integer)));
+            TypeName.Parses("bool[]*").IntoValue(NamedType.Enumerable(NamedType.Vector(Boolean)));
         }
     }
 }
