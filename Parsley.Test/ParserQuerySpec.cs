@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace Parsley
@@ -10,8 +9,8 @@ namespace Parsley
         [Test(Description = "Bind(Unit(value), elevator) = elevator(value)")]
         public void SatisfiesTheLeftIdentityLaw()
         {
-            Parser<string> left = Bind(Unit(""), s => Letters);
-            Parser<string> right = Letters;
+            Parser<string> left = Bind(Unit(""), s => Char('a'));
+            Parser<string> right = Char('a');
             left.AssertParse("a0", "a", "0");
             right.AssertParse("a0", "a", "0");
         }
@@ -19,8 +18,8 @@ namespace Parsley
         [Test(Description = "Bind(elevated, Unit) = elevated")]
         public void SatisfiesTheRightIdentityLaw()
         {
-            Parser<string> left = Bind(Letters, Unit);
-            Parser<string> right = Letters;
+            Parser<string> left = Bind(Char('a'), Unit);
+            Parser<string> right = Char('a');
             left.AssertParse("a0", "a", "0");
             right.AssertParse("a0", "a", "0");
         }
@@ -115,10 +114,15 @@ namespace Parsley
 
         private static Parser<string> Char(char letter)
         {
-            return AbstractGrammar.Pattern(Regex.Escape(letter.ToString()));
+            return text =>
+            {
+                if (text.Peek(1) == letter.ToString())
+                    return new Success<string>(text.Peek(1), text.Advance(1));
+                return new Error<string>(text);
+            };
         }
         private static readonly Parser<string> Fail = text => new Error<string>(text);
-        private static readonly Parser<string> Letters = AbstractGrammar.Pattern(@"[a-zA-Z]+");
+
         private static Parser<T> OnError<T>(Parser<T> parse, string expectation)
         {
             return AbstractGrammar.OnError(parse, expectation);

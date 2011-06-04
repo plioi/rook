@@ -8,15 +8,6 @@ namespace Parsley
     public sealed class AbstractGrammarSpec : AbstractGrammar
     {
         [Test]
-        public void CanParseCharactersSatisfyingARegex()
-        {
-            Pattern(@"[a-zA-Z]+").AssertParse("ABc", "ABc", "");
-            Pattern(@"[A-Z]+").AssertParse("ABc", "AB", "c");
-            Pattern(@"[0-9]+").AssertError("ABc", "ABc");
-            Pattern(@"[0-9]").AssertError("", "");
-        }
-
-        [Test]
         public void CanDetectTheEndOfInputWithoutAdvancing()
         {
             EndOfInput.AssertParse("", "", "");
@@ -26,7 +17,7 @@ namespace Parsley
         [Test]
         public void ApplyingARuleFollowedByARequiredButDiscardedTerminatorRule()
         {
-            Parser<string> terminatedGoal = String("(Goal)").TerminatedBy(String("(Terminator)"));
+            Parser<Token> terminatedGoal = String("(Goal)").TerminatedBy(String("(Terminator)"));
 
             terminatedGoal.AssertParse("(Goal)(Terminator)b", "(Goal)", "b");
             terminatedGoal.AssertError("", "");
@@ -128,7 +119,7 @@ namespace Parsley
                     Digit(),
                     Pattern(@"[\*/]"),
                     (left, symbolAndRight) =>
-                    System.String.Format("({0} {1} {2})", symbolAndRight.Item1, left, symbolAndRight.Item2));
+                    new Token(null, symbolAndRight.Item1.Position, System.String.Format("({0} {1} {2})", symbolAndRight.Item1.Literal, left.Literal, symbolAndRight.Item2.Literal)));
 
             parse.AssertError("!", "!");
             parse.AssertParse("0", "0", "");
@@ -148,7 +139,7 @@ namespace Parsley
         [Test]
         public void ApplyingARuleBetweenTwoOtherRules()
         {
-            Parser<string> surroundedGoal = Between(String("(Left)"), String("(Goal)"), String("(Right)"));
+            Parser<Token> surroundedGoal = Between(String("(Left)"), String("(Goal)"), String("(Right)"));
 
             surroundedGoal.AssertParse("(Left)(Goal)(Right)b", "(Goal)", "b");
             surroundedGoal.AssertError("(Left)", "");
@@ -159,7 +150,7 @@ namespace Parsley
         [Test]
         public void ApplyingANegativeLookaheadAssertionWithoutConsumingInput()
         {
-            Parser<string> notX = Not(String("x"));
+            Parser<Token> notX = Not(String("x"));
             notX.AssertParse("y", null, "y");
             notX.AssertError("x", "x");
         }
@@ -167,7 +158,7 @@ namespace Parsley
         [Test]
         public void ParsingAnOptionalRuleZeroOrOneTimes()
         {
-            Parser<string> optionalCash = Optional(String("$"));
+            Parser<Token> optionalCash = Optional(String("$"));
             optionalCash.AssertParse("$.", "$", ".");
             optionalCash.AssertParse(".", null, ".");
         }
@@ -175,10 +166,10 @@ namespace Parsley
         [Test]
         public void ParsingARuleOnlyWhenItsResultWouldPassesAPredicate()
         {
-            Predicate<string> isDollars = x => x == "$";
-            Predicate<string> isCents = x => x == "¢";
+            Predicate<Token> isDollars = x => x.Literal == "$";
+            Predicate<Token> isCents = x => x.Literal == "¢";
 
-            Parser<string> cash = Pattern(@"[\$¢]");
+            Parser<Token> cash = Pattern(@"[\$¢]");
 
             Expect(cash, isDollars).AssertError("!", "!");
             Expect(cash, isCents).AssertError("!", "!");
@@ -193,11 +184,11 @@ namespace Parsley
         [Test]
         public void ChoosingTheFirstSuccessfulParserFromAPrioritizedList()
         {
-            Parser<string> parenthesizedA = Between(String("("), String("a"), String(")"));
-            Parser<string> parenthesizedAB = Between(String("("), String("ab"), String(")"));
-            Parser<string> parenthesizedABC = Between(String("("), String("abc"), String(")"));
-            
-            Parser<string> choice2 = Choice(
+            Parser<Token> parenthesizedA = Between(String("("), String("a"), String(")"));
+            Parser<Token> parenthesizedAB = Between(String("("), String("ab"), String(")"));
+            Parser<Token> parenthesizedABC = Between(String("("), String("abc"), String(")"));
+
+            Parser<Token> choice2 = Choice(
                 OnError(parenthesizedA, "parenthesized a"),
                 OnError(parenthesizedAB, "parenthesized ab"),
                 OnError(parenthesizedABC, "parenthesized abc"));
@@ -228,8 +219,8 @@ namespace Parsley
         [Test]
         public void ImprovingDefaultErrorMessagesWithAKnownExpectation()
         {
-            Parser<string> x = String("x");
-            Parser<string> xImproved = OnError(x, "letter x");
+            Parser<Token> x = String("x");
+            Parser<Token> xImproved = OnError(x, "letter x");
             x.AssertError("y", "y");
             xImproved.AssertError("y", "y", "(1, 1): letter x expected");
         }
@@ -253,14 +244,33 @@ namespace Parsley
             });
         }
 
-        private static Parser<string> String(string literal)
+        private static Parser<Token> String(string literal)
         {
             return Pattern(Regex.Escape(literal));
         }
 
-        private static Parser<string> Digit()
+        private static Parser<Token> Digit()
         {
             return Pattern(@"[0-9]");
+        }
+
+        private static Parser<Token> Pattern(string pattern)
+        {
+            return text =>
+            {
+                Lexer lexer = new StubLexer(text, pattern);
+
+                if (lexer.CurrentToken.Kind == null)
+                    return new Success<Token>(lexer.CurrentToken, lexer.Advance().Text);
+
+                return new Error<Token>(text);
+            };
+        }
+
+        private class StubLexer : Lexer
+        {
+            public StubLexer(Text text, string pattern)
+                : base(text, new TokenMatcher(null, pattern)) { }
         }
     }
 }

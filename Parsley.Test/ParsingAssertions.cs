@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Parsley
@@ -35,24 +36,26 @@ namespace Parsley
                         {
                             if (expectedValue == null)
                                 parsedValue.ShouldBeNull();
+                            else if (parsedValue is Token)
+                                (parsedValue as Token).Literal.ShouldEqual(expectedValue);
                             else
                                 parsedValue.ToString().ShouldEqual(expectedValue);
                         });
         }
 
-        public static void AssertParse<T>(this Parser<IEnumerable<T>> parse, string source, T[] expectedValues, string expectedUnparsedSource)
+        public static void AssertParse(this Parser<IEnumerable<Token>> parse, string source, string[] expectedTokenLiterals, string expectedUnparsedSource)
         {
             AssertParse(parse, source, expectedUnparsedSource,
-                        parsedValues => parsedValues.ShouldList(expectedValues));
+                        parsedTokens => parsedTokens.Select(x => x.Literal).ShouldList(expectedTokenLiterals));
         }
 
-        public static void AssertParse<T, U>(this Parser<Tuple<T, U>> parse, string source, T expectedFirst, U expectedSecond, string expectedUnparsedSource)
+        public static void AssertParse(this Parser<Tuple<Token, Token>> parse, string source, string expectedFirst, string expectedSecond, string expectedUnparsedSource)
         {
             AssertParse(parse, source, expectedUnparsedSource,
                         parsedPair =>
                         {
-                            parsedPair.Item1.ShouldEqual(expectedFirst);
-                            parsedPair.Item2.ShouldEqual(expectedSecond);
+                            parsedPair.Item1.Literal.ShouldEqual(expectedFirst);
+                            parsedPair.Item2.Literal.ShouldEqual(expectedSecond);
                         });
         }
 

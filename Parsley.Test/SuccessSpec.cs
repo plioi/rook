@@ -44,10 +44,12 @@ namespace Parsley
         [Test]
         public void CanContinueParsingTheRemainingInputWhenGivenAParserGenerator()
         {
-            Parsed<string> result = new Success<string>("x", unparsed).ParseRest(s => AbstractGrammar.Pattern("0"));
+            Parsed<string> result = new Success<string>("x", unparsed).ParseRest(s => OneChar);
             result.IsError.ShouldBeFalse();
             result.Value.ShouldEqual("0");
             result.UnparsedText.EndOfInput.ShouldBeTrue();
         }
+
+        private static readonly Parser<string> OneChar = text => new Success<string>(text.Peek(1), text.Advance(1));
     }
 }

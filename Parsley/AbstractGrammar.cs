@@ -11,19 +11,6 @@ namespace Parsley
             get { return text => new Success<Position>(text.Position, text); }
         }
 
-        public static Parser<string> Pattern(string pattern)
-        {
-            return text =>
-            {
-                var match = text.Match(pattern);
-
-                if (match.Success)
-                    return new Success<string>(match.Value, text.Advance(match.Length));
-
-                return new Error<string>(text);
-            };
-        }
-
         public static Parser<string> EndOfInput
         {
             get

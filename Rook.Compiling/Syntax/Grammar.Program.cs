@@ -8,20 +8,10 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from spaces in Pattern(@"\s*")
+                return from leadingWhiteSpace in Optional(Token(TokenKind.EndOfLine))
                        from position in Position
-                       from functions in ZeroOrMoreTerminated(Function.TerminatedBy(EndOfLine), EndOfProgram)
+                       from functions in ZeroOrMoreTerminated(Function.TerminatedBy(EndOfLine), EndOfInput)
                        select new Program(position, functions);
-            }
-        }
-
-        private static Parser<string> EndOfProgram
-        {
-            get
-            {
-                return from spaces in Pattern(@"\s*")
-                       from endOfInput in EndOfInput
-                       select endOfInput;
             }
         }
     }
