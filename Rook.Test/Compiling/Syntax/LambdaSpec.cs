@@ -11,9 +11,9 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void HasABodyExpression()
         {
-            ParserUnderTest.FailsToParse("fn", "").WithMessage("(1, 3): ( expected");
-            ParserUnderTest.FailsToParse("fn (", "").WithMessage("(1, 5): ) expected");
-            ParserUnderTest.FailsToParse("fn ()", "");
+            Parser.FailsToParse("fn", "").WithMessage("(1, 3): ( expected");
+            Parser.FailsToParse("fn (", "").WithMessage("(1, 5): ) expected");
+            Parser.FailsToParse("fn ()", "");
 
             AssertTree("fn () 1", "fn () 1");
             AssertTree("fn () ((1) + (2))", "fn () 1 + 2");

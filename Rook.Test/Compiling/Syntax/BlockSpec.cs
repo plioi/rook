@@ -10,7 +10,7 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ContainsOneOrMoreInnerExpressions()
         {
-            ParserUnderTest.FailsToParse("{}", "}");
+            Parser.FailsToParse("{}", "}");
             AssertTree("{1;}", "{1;}");
             AssertTree("{1; true;}", "{1; true;}");
             AssertTree("{((1) + (2)); ((true) || (false));}", "{1 + 2; true || false;}");
@@ -20,11 +20,11 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void AllowsOptionalLeadingVariableDeclarations()
         {
-            ParserUnderTest.FailsToParse("{int 0}", "int 0}");
-            ParserUnderTest.FailsToParse("{int x 0}", "int x 0}");
-            ParserUnderTest.FailsToParse("{int x = 0}", "int x = 0}");
-            ParserUnderTest.FailsToParse("{int x = 0 0}", "int x = 0 0}");
-            ParserUnderTest.FailsToParse("{int a = 0;}", "}");
+            Parser.FailsToParse("{int 0}", "int 0}");
+            Parser.FailsToParse("{int x 0}", "int x 0}");
+            Parser.FailsToParse("{int x = 0}", "int x = 0}");
+            Parser.FailsToParse("{int x = 0 0}", "int x = 0 0}");
+            Parser.FailsToParse("{int a = 0;}", "}");
             AssertTree("{int a = 0;1;}", "{ int a = 0; 1; }");
             AssertTree("{int a = 0; bool b = ((true) || (false));false; 0;}", "{ int a = 0; bool b = true||false; false; 0; }");
         }

@@ -11,9 +11,9 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ContainsOneOrMoreExpressions()
         {
-            ParserUnderTest.FailsToParse("[", "");
-            ParserUnderTest.FailsToParse("[]", "[]");
-            ParserUnderTest.FailsToParse("[0", "").WithMessage("(1, 3): ] expected");
+            Parser.FailsToParse("[", "");
+            Parser.FailsToParse("[]", "[]");
+            Parser.FailsToParse("[0", "").WithMessage("(1, 3): ] expected");
             AssertTree("[0]", "[0]");
             AssertTree("[0, 1]", "[0, 1]");
             AssertTree("[0, ((1) + (2)), 3]", "[0, 1+2, 3]");

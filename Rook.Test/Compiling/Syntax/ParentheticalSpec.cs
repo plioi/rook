@@ -18,7 +18,7 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void DemandsBalancedParentheses()
         {
-            ParserUnderTest.FailsToParse("(1(", "(").WithMessage("(1, 3): ) expected");
+            Parser.FailsToParse("(1(", "(").WithMessage("(1, 3): ) expected");
         }
     }
 }

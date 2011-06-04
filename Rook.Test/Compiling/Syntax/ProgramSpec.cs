@@ -7,7 +7,7 @@ namespace Rook.Compiling.Syntax
     [TestFixture]
     public sealed class ProgramSpec : SyntaxTreeSpec<Program>
     {
-        protected override Parser<Program> ParserUnderTest { get { return Grammar.Program; } }
+        protected override Parser<Program> Parser { get { return Grammar.Program; } }
 
         [Test]
         public void ParsesZeroOrMoreFunctions()
@@ -21,7 +21,7 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void DemandsEndOfInputAfterLastValidFunction()
         {
-            ParserUnderTest.FailsToParse("int life() 42; int univ", "").WithMessage("(1, 24): ( expected");
+            Parser.FailsToParse("int life() 42; int univ", "").WithMessage("(1, 24): ( expected");
         }
 
         [Test]

@@ -12,7 +12,7 @@ namespace Rook.Compiling.Syntax
 
         protected TSyntax Parse(string source)
         {
-            return ParserUnderTest(new Text(source)).Value;
+            return Parser(new Text(source)).Value;
         }
 
         protected void AssertTree(string expectedSyntaxTree, string source)
@@ -22,14 +22,14 @@ namespace Rook.Compiling.Syntax
             //Although not strictly necessary, we perform the same test using the serialized tree as the input source code.
             //This is simply a sanity check that the serializer is producing code that is equivalent to source.
             //This has also been useful in discovering ambiguity in the grammar.
-            Parsed<TSyntax> result = ParserUnderTest(new Text(source));
+            Parsed<TSyntax> result = Parser(new Text(source));
             string serializedSource = result.Value.Visit(new Serializer());
             AssertTree(expectedSyntaxTree, serializedSource, new Serializer());
         }
 
         private void AssertTree(string expectedSyntaxTree, string source, Serializer serializer)
         {
-            ParserUnderTest.Parses(source)
+            Parser.Parses(source)
                 .IntoValue(parsedValue => parsedValue.Visit(serializer).ShouldEqual(expectedSyntaxTree));
             Parse(source).ShouldBeInstanceOf<TSyntax>();
         }
@@ -52,7 +52,7 @@ namespace Rook.Compiling.Syntax
             }
         }
 
-        protected abstract Parser<TSyntax> ParserUnderTest { get; }
+        protected abstract Parser<TSyntax> Parser { get; }
 
         protected delegate DataType TypeMapping(string name);
 

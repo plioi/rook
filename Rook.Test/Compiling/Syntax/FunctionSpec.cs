@@ -8,18 +8,18 @@ namespace Rook.Compiling.Syntax
     [TestFixture]
     public sealed class FunctionSpec : SyntaxTreeSpec<Function>
     {
-        protected override Parser<Function> ParserUnderTest { get { return Grammar.Function; } }
+        protected override Parser<Function> Parser { get { return Grammar.Function; } }
 
         [Test]
         public void DemandsCompleteFunctionDefinition()
         {
-            ParserUnderTest.FailsToParse("", "").WithMessage("(1, 1): type name expected");
-            ParserUnderTest.FailsToParse("int", "");
-            ParserUnderTest.FailsToParse("int foo", "").WithMessage("(1, 8): ( expected");
-            ParserUnderTest.FailsToParse("int foo(", "").WithMessage("(1, 9): ) expected");
-            ParserUnderTest.FailsToParse("int foo(x)", "");
-            ParserUnderTest.FailsToParse("int foo(int)", "int)").WithMessage( "(1, 9): ) expected");
-            ParserUnderTest.FailsToParse("int foo()", "");
+            Parser.FailsToParse("", "").WithMessage("(1, 1): type name expected");
+            Parser.FailsToParse("int", "");
+            Parser.FailsToParse("int foo", "").WithMessage("(1, 8): ( expected");
+            Parser.FailsToParse("int foo(", "").WithMessage("(1, 9): ) expected");
+            Parser.FailsToParse("int foo(x)", "");
+            Parser.FailsToParse("int foo(int)", "int)").WithMessage( "(1, 9): ) expected");
+            Parser.FailsToParse("int foo()", "");
             AssertTree("int foo() 1", "int foo() 1");
         }
 
