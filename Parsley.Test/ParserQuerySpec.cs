@@ -11,23 +11,27 @@ namespace Parsley
         {
             var parser = 1.SucceedWithThisValue();
 
-            parser.AssertParse("input", "1", "input");
+            parser.PartiallyParses("input", "input").IntoValue(1);
         }
 
         [Test]
         public void CanBuildParserFromSingleSimplerParser()
         {
-            (from x in Char('x')
-             select x.ToUpper()).AssertParse("xy", "X", "y");
+            var parser = from x in Char('x')
+                         select x.ToUpper();
+            
+            parser.PartiallyParses("xy", "y").IntoValue("X");
         }
 
         [Test]
         public void CanBuildParserFromOrderedSequenceOfSimplerParsers()
         {
-            (from a in Char('a')
-             from b in Char('b')
-             from c in Char('c')
-             select (a + b + c).ToUpper()).AssertParse("abcdef", "ABC", "def");
+            var parser = (from a in Char('a')
+                          from b in Char('b')
+                          from c in Char('c')
+                          select (a + b + c).ToUpper());
+
+            parser.PartiallyParses("abcdef", "def").IntoValue("ABC");
         }
 
         [Test]
@@ -36,17 +40,17 @@ namespace Parsley
             (from _ in Fail
              from x in Char('x')
              from y in Char('y')
-             select Tuple.Create(x, y)).AssertError("xy", "xy");
+             select Tuple.Create(x, y)).FailsToParse("xy", "xy");
 
             (from x in Char('x')
              from _ in Fail
              from y in Char('y')
-             select Tuple.Create(x, y)).AssertError("xy", "y");
+             select Tuple.Create(x, y)).FailsToParse("xy", "y");
 
             (from x in Char('x')
              from y in Char('y')
              from _ in Fail
-             select Tuple.Create(x, y)).AssertError("xy", "");
+             select Tuple.Create(x, y)).FailsToParse("xy", "");
         }
 
         private static Parser<string> Char(char letter)

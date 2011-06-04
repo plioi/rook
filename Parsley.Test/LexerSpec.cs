@@ -19,7 +19,7 @@ namespace Parsley
         public void ProvidesTokenAtEndOfInput()
         {
             var lexer = new Lexer(new Text(""));
-            lexer.CurrentToken.AssertToken(TokenKind.EndOfInput, "", 1, 1);
+            lexer.CurrentToken.ShouldBe(TokenKind.EndOfInput, "", 1, 1);
         }
 
         [Test]
@@ -35,10 +35,10 @@ namespace Parsley
             var lexer = new Lexer(new Text("ABCdefGHI"),
                                   new TokenMatcher(lower, @"[a-z]+"),
                                   new TokenMatcher(upper, @"[A-Z]+"));
-            lexer.CurrentToken.AssertToken(upper, "ABC", 1, 1);
-            lexer.Advance().CurrentToken.AssertToken(lower, "def", 1, 4);
-            lexer.Advance().Advance().CurrentToken.AssertToken(upper, "GHI", 1, 7);
-            lexer.Advance().Advance().Advance().CurrentToken.AssertToken(TokenKind.EndOfInput, "", 1, 10);
+            lexer.CurrentToken.ShouldBe(upper, "ABC", 1, 1);
+            lexer.Advance().CurrentToken.ShouldBe(lower, "def", 1, 4);
+            lexer.Advance().Advance().CurrentToken.ShouldBe(upper, "GHI", 1, 7);
+            lexer.Advance().Advance().Advance().CurrentToken.ShouldBe(TokenKind.EndOfInput, "", 1, 10);
         }
 
         [Test]
@@ -47,10 +47,10 @@ namespace Parsley
             var lexer = new Lexer(new Text("ABCdef!ABCdef"),
                                   new TokenMatcher(lower, @"[a-z]+"),
                                   new TokenMatcher(upper, @"[A-Z]+"));
-            lexer.CurrentToken.AssertToken(upper, "ABC", 1, 1);
-            lexer.Advance().CurrentToken.AssertToken(lower, "def", 1, 4);
-            lexer.Advance().Advance().CurrentToken.AssertToken(TokenKind.Unknown, "!ABCdef", 1, 7);
-            lexer.Advance().Advance().Advance().CurrentToken.AssertToken(TokenKind.EndOfInput, "", 1, 14);
+            lexer.CurrentToken.ShouldBe(upper, "ABC", 1, 1);
+            lexer.Advance().CurrentToken.ShouldBe(lower, "def", 1, 4);
+            lexer.Advance().Advance().CurrentToken.ShouldBe(TokenKind.Unknown, "!ABCdef", 1, 7);
+            lexer.Advance().Advance().Advance().CurrentToken.ShouldBe(TokenKind.EndOfInput, "", 1, 14);
         }
     }
 }

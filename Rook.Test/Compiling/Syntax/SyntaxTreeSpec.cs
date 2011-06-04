@@ -29,20 +29,19 @@ namespace Rook.Compiling.Syntax
 
         private void AssertTree(string expectedSyntaxTree, string source, Serializer serializer)
         {
-            const string expectedUnparsedSource = "";
-            ParserUnderTest.AssertParse(source, expectedUnparsedSource,
-                                        parsedValue => parsedValue.Visit(serializer).ShouldEqual(expectedSyntaxTree));
+            ParserUnderTest.Parses(source)
+                .IntoValue(parsedValue => parsedValue.Visit(serializer).ShouldEqual(expectedSyntaxTree));
             Parse(source).ShouldBeInstanceOf<TSyntax>();
         }
 
         protected void AssertError(string source, string expectedUnparsedSource)
         {
-            ParserUnderTest.AssertError(source, expectedUnparsedSource);
+            ParserUnderTest.FailsToParse(source, expectedUnparsedSource);
         }
 
         protected void AssertError(string source, string expectedUnparsedSource, string expectedMessage)
         {
-            ParserUnderTest.AssertError(source, expectedUnparsedSource, expectedMessage);
+            ParserUnderTest.FailsToParse(source, expectedUnparsedSource).WithMessage(expectedMessage);
         }
 
         protected static void AssertTypeCheckError(TypeChecked<TSyntax> typeChecked, int line, int column, string expectedMessage)

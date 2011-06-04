@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 
@@ -7,11 +9,21 @@ namespace Parsley
     [TestFixture]
     public sealed class AbstractGrammarSpec : AbstractGrammar
     {
+        private static Action<Token> Token(string expectedLiteral)
+        {
+            return token => token.Literal.ShouldEqual(expectedLiteral);
+        }
+
+        private static Action<IEnumerable<Token>> Tokens(params string[] expectedLiterals)
+        {
+            return tokens => tokens.Select(x => x.Literal).ShouldList(expectedLiterals);
+        }
+
         [Test]
         public void CanDetectTheEndOfInputWithoutAdvancing()
         {
-            EndOfInput.AssertParse("", "", "");
-            EndOfInput.AssertError("!", "!");
+            EndOfInput.Parses("").IntoValue("");
+            EndOfInput.FailsToParse("!", "!");
         }
 
         [Test]
@@ -19,121 +31,126 @@ namespace Parsley
         {
             Parser<Token> terminatedGoal = String("(Goal)").TerminatedBy(String("(Terminator)"));
 
-            terminatedGoal.AssertParse("(Goal)(Terminator)b", "(Goal)", "b");
-            terminatedGoal.AssertError("", "");
-            terminatedGoal.AssertError("!", "!");
-            terminatedGoal.AssertError("(Goal)!", "!");
+            terminatedGoal.PartiallyParses("(Goal)(Terminator)b", "b").IntoValue(Token("(Goal)"));
+            terminatedGoal.FailsToParse("", "");
+            terminatedGoal.FailsToParse("!", "!");
+            terminatedGoal.FailsToParse("(Goal)!", "!");
         }
 
         [Test]
         public void ApplyingARuleZeroOrMoreTimes()
         {
-            var parse = ZeroOrMore(Digit());
+            var parser = ZeroOrMore(Digit());
 
-            parse.AssertParse("", new string[] {}, "");
-            parse.AssertParse("!", new string[] {}, "!");
+            parser.Parses("").IntoValue(Tokens());
+            parser.PartiallyParses("!", "!").IntoValue(Tokens());
 
-            parse.AssertParse("0!", new[] {"0"}, "!");
-            parse.AssertParse("01!", new[] {"0", "1"}, "!");
-            parse.AssertParse("012!", new[] {"0", "1", "2"}, "!");
+            parser.PartiallyParses("0!", "!").IntoValue(Tokens("0"));
+            parser.PartiallyParses("01!", "!").IntoValue(Tokens("0", "1"));
+            parser.PartiallyParses("012!", "!").IntoValue(Tokens("0", "1", "2"));
 
-            parse.AssertParse("0", new[] { "0" }, "");
-            parse.AssertParse("01", new[] { "0", "1" }, "");
-            parse.AssertParse("012", new[] { "0", "1", "2" }, "");
+            parser.Parses("0").IntoValue(Tokens("0"));
+            parser.Parses("01").IntoValue(Tokens("0", "1"));
+            parser.Parses("012").IntoValue(Tokens("0", "1", "2"));
         }
 
         [Test]
         public void ApplyingARuleOneOrMoreTimes()
         {
-            var parse = OneOrMore(Digit());
+            var parser = OneOrMore(Digit());
 
-            parse.AssertError("", "");
-            parse.AssertError("!", "!");
+            parser.FailsToParse("", "");
+            parser.FailsToParse("!", "!");
 
-            parse.AssertParse("0!", new[] {"0"}, "!");
-            parse.AssertParse("01!", new[] {"0", "1"}, "!");
-            parse.AssertParse("012!", new[] {"0", "1", "2"}, "!");
+            parser.PartiallyParses("0!", "!").IntoValue(Tokens("0"));
+            parser.PartiallyParses("01!", "!").IntoValue(Tokens("0", "1"));
+            parser.PartiallyParses("012!", "!").IntoValue(Tokens("0", "1", "2"));
 
-            parse.AssertParse("0", new[] { "0" }, "");
-            parse.AssertParse("01", new[] { "0", "1" }, "");
-            parse.AssertParse("012", new[] { "0", "1", "2" }, "");
+            parser.Parses("0").IntoValue(Tokens("0"));
+            parser.Parses("01").IntoValue(Tokens("0", "1"));
+            parser.Parses("012").IntoValue(Tokens("0", "1", "2"));
         }
 
         [Test]
         public void ApplyingARuleZeroOrMoreTimesInterspersedByASeparatorRule()
         {
-            var parse = ZeroOrMore(Digit(), String(","));
+            var parser = ZeroOrMore(Digit(), String(","));
 
-            parse.AssertParse("", new string[] {}, "");
-            parse.AssertParse("!", new string[] {}, "!");
+            parser.Parses("").IntoValue(Tokens());
+            parser.PartiallyParses("!", "!").IntoValue(Tokens());
 
-            parse.AssertParse("0!", new[] {"0"}, "!");
-            parse.AssertParse("0,1!", new[] {"0", "1"}, "!");
-            parse.AssertParse("0,1,2!", new[] {"0", "1", "2"}, "!");
+            parser.PartiallyParses("0!", "!").IntoValue(Tokens("0"));
+            parser.PartiallyParses("0,1!", "!").IntoValue(Tokens("0", "1"));
+            parser.PartiallyParses("0,1,2!", "!").IntoValue(Tokens("0", "1", "2"));
 
-            parse.AssertParse("0", new[] { "0" }, "");
-            parse.AssertParse("0,1", new[] { "0", "1" }, "");
-            parse.AssertParse("0,1,2", new[] { "0", "1", "2" }, "");
+            parser.Parses("0").IntoValue(Tokens("0"));
+            parser.Parses("0,1").IntoValue(Tokens("0", "1"));
+            parser.Parses("0,1,2").IntoValue(Tokens("0", "1", "2"));
         }
 
         [Test]
         public void ApplyingARuleZeroOrMoreTimesFollowedByARequiredTerminatorRule()
         {
-            var parse = ZeroOrMoreTerminated(Digit(), String("EndOfDigits"));
+            var parser = ZeroOrMoreTerminated(Digit(), String("EndOfDigits"));
 
-            parse.AssertError("", "");
-            parse.AssertError("MissingTerminator", "MissingTerminator");
-            parse.AssertError("0MissingTerminator", "MissingTerminator");
-            parse.AssertError("01MissingTerminator", "MissingTerminator");
-            parse.AssertError("012MissingTerminator", "MissingTerminator");
+            parser.FailsToParse("", "");
+            parser.FailsToParse("MissingTerminator", "MissingTerminator");
+            parser.FailsToParse("0MissingTerminator", "MissingTerminator");
+            parser.FailsToParse("01MissingTerminator", "MissingTerminator");
+            parser.FailsToParse("012MissingTerminator", "MissingTerminator");
 
-            parse.AssertParse("EndOfDigits", new string[] { }, "");
-            parse.AssertParse("EndOfDigits!", new string[] { }, "!");
-            parse.AssertParse("0EndOfDigits", new[] { "0" }, "");
-            parse.AssertParse("01EndOfDigits", new[] { "0", "1" }, "");
-            parse.AssertParse("012EndOfDigits!", new[] { "0", "1", "2" }, "!");
+            parser.Parses("EndOfDigits").IntoValue(Tokens());
+            parser.PartiallyParses("EndOfDigits!", "!").IntoValue(Tokens());
+            parser.Parses("0EndOfDigits").IntoValue(Tokens("0"));
+            parser.Parses("01EndOfDigits").IntoValue(Tokens("0", "1"));
+            parser.PartiallyParses("012EndOfDigits!", "!").IntoValue(Tokens("0", "1", "2"));
         }
 
         [Test]
         public void ApplyingARuleOneOrMoreTimesInterspersedByASeparatorRule()
         {
-            var parse = OneOrMore(Digit(), String(","));
+            var parser = OneOrMore(Digit(), String(","));
 
-            parse.AssertError("", "");
-            parse.AssertError("!", "!");
+            parser.FailsToParse("", "");
+            parser.FailsToParse("!", "!");
 
-            parse.AssertParse("0!", new[] { "0" }, "!");
-            parse.AssertParse("0,1!", new[] { "0", "1" }, "!");
-            parse.AssertParse("0,1,2!", new[] { "0", "1", "2" }, "!");
+            parser.PartiallyParses("0!", "!").IntoValue(Tokens("0"));
+            parser.PartiallyParses("0,1!", "!").IntoValue(Tokens( "0", "1"));
+            parser.PartiallyParses("0,1,2!", "!").IntoValue(Tokens( "0", "1", "2" ));
 
-            parse.AssertParse("0", new[] { "0" }, "");
-            parse.AssertParse("0,1", new[] { "0", "1" }, "");
-            parse.AssertParse("0,1,2", new[] { "0", "1", "2" }, "");
+            parser.Parses("0").IntoValue(Tokens("0"));
+            parser.Parses("0,1").IntoValue(Tokens("0", "1"));
+            parser.Parses("0,1,2").IntoValue(Tokens("0", "1", "2"));
         }
 
         [Test]
         public void ApplyingARuleOneOrMoreTimesInterspersedByALeftAssociativeSeparatorRule()
         {
-            var parse =
+            var parser =
                 LeftAssociative(
                     Digit(),
                     Pattern(@"[\*/]"),
                     (left, symbolAndRight) =>
                     new Token(null, symbolAndRight.Item1.Position, System.String.Format("({0} {1} {2})", symbolAndRight.Item1.Literal, left.Literal, symbolAndRight.Item2.Literal)));
 
-            parse.AssertError("!", "!");
-            parse.AssertParse("0", "0", "");
-            parse.AssertParse("0*1", "(* 0 1)", "");
-            parse.AssertParse("0*1/2", "(/ (* 0 1) 2)", "");
+            parser.FailsToParse("!", "!");
+            parser.Parses("0").IntoValue(Token("0"));
+            parser.Parses("0*1").IntoValue(Token("(* 0 1)"));
+            parser.Parses("0*1/2").IntoValue(Token("(/ (* 0 1) 2)"));
         }
 
         [Test]
         public void ApplyingAPairOfOrderedRules()
         {
-            var parse = Pair(String("0"), String("1"));
+            var parser = Pair(String("0"), String("1"));
 
-            parse.AssertError("10", "10");
-            parse.AssertParse("01", "0", "1", "");
+            parser.FailsToParse("10", "10");
+
+            parser.Parses("01").IntoValue(pair =>
+            {
+                pair.Item1.Literal.ShouldEqual("0");
+                pair.Item2.Literal.ShouldEqual("1");
+            });
         }
 
         [Test]
@@ -141,26 +158,26 @@ namespace Parsley
         {
             Parser<Token> surroundedGoal = Between(String("(Left)"), String("(Goal)"), String("(Right)"));
 
-            surroundedGoal.AssertParse("(Left)(Goal)(Right)b", "(Goal)", "b");
-            surroundedGoal.AssertError("(Left)", "");
-            surroundedGoal.AssertError("(Left)!", "!");
-            surroundedGoal.AssertError("(Left)(Goal)!", "!");
+            surroundedGoal.PartiallyParses("(Left)(Goal)(Right)b", "b").IntoValue(Token("(Goal)"));
+            surroundedGoal.FailsToParse("(Left)", "");
+            surroundedGoal.FailsToParse("(Left)!", "!");
+            surroundedGoal.FailsToParse("(Left)(Goal)!", "!");
         }
 
         [Test]
         public void ApplyingANegativeLookaheadAssertionWithoutConsumingInput()
         {
             Parser<Token> notX = Not(String("x"));
-            notX.AssertParse("y", null, "y");
-            notX.AssertError("x", "x");
+            notX.PartiallyParses("y", "y").IntoValue(value => value.ShouldBeNull());
+            notX.FailsToParse("x", "x");
         }
 
         [Test]
         public void ParsingAnOptionalRuleZeroOrOneTimes()
         {
             Parser<Token> optionalCash = Optional(String("$"));
-            optionalCash.AssertParse("$.", "$", ".");
-            optionalCash.AssertParse(".", null, ".");
+            optionalCash.PartiallyParses("$.", ".").IntoValue(Token("$"));
+            optionalCash.PartiallyParses(".", ".").IntoValue(token => token.ShouldBeNull());
         }
 
         [Test]
@@ -171,14 +188,14 @@ namespace Parsley
 
             Parser<Token> cash = Pattern(@"[\$¢]");
 
-            Expect(cash, isDollars).AssertError("!", "!");
-            Expect(cash, isCents).AssertError("!", "!");
+            Expect(cash, isDollars).FailsToParse("!", "!");
+            Expect(cash, isCents).FailsToParse("!", "!");
 
-            Expect(cash, isDollars).AssertParse("$", "$", "");
-            Expect(cash, isCents).AssertParse("¢", "¢", "");
+            Expect(cash, isDollars).Parses("$").IntoValue(Token("$"));
+            Expect(cash, isCents).Parses("¢").IntoValue(Token("¢"));
 
-            Expect(cash, isDollars).AssertError("¢", "¢");
-            Expect(cash, isCents).AssertError("$", "$");
+            Expect(cash, isDollars).FailsToParse("¢", "¢");
+            Expect(cash, isCents).FailsToParse("$", "$");
         }
 
         [Test]
@@ -193,20 +210,20 @@ namespace Parsley
                 OnError(parenthesizedAB, "parenthesized ab"),
                 OnError(parenthesizedABC, "parenthesized abc"));
             
-            choice2.AssertParse("(a)bcd", "a", "bcd"); //First rule wins.
-            choice2.AssertParse("(ab)cd", "ab", "cd"); //Second rule wins.
-            choice2.AssertParse("(abc)d", "abc", "d"); //Third rule wins.
+            choice2.PartiallyParses("(a)bcd", "bcd").IntoValue(Token("a")); //First rule wins.
+            choice2.PartiallyParses("(ab)cd", "cd").IntoValue(Token("ab")); //Second rule wins.
+            choice2.PartiallyParses("(abc)d", "d").IntoValue(Token("abc")); //Third rule wins.
 
             //When all rules fail, the error returned should correspond with the
             //rule that made it deepest into the input before encountering a failure.
-            choice2.AssertError("(a!", "!", "(1, 3): parenthesized a expected"); //First rule's error wins.
-            choice2.AssertError("(ab!", "!", "(1, 4): parenthesized ab expected"); //Second rule's error wins.
-            choice2.AssertError("(abc!", "!", "(1, 5): parenthesized abc expected"); //Third rule's error wins.
+            choice2.FailsToParse("(a!", "!").WithMessage("(1, 3): parenthesized a expected"); //First rule's error wins.
+            choice2.FailsToParse("(ab!", "!").WithMessage("(1, 4): parenthesized ab expected"); //Second rule's error wins.
+            choice2.FailsToParse("(abc!", "!").WithMessage("(1, 5): parenthesized abc expected"); //Third rule's error wins.
 
             //When all rules fail, and there is a tie while selecting the rule that 
             //made it deepest into the input, favor the rules in the order they were
             //declared.
-            choice2.AssertError("(x", "x", "(1, 2): parenthesized a expected"); //First rule's error wins.
+            choice2.FailsToParse("(x", "x").WithMessage("(1, 2): parenthesized a expected"); //First rule's error wins.
         }
 
         [Test]
@@ -221,8 +238,8 @@ namespace Parsley
         {
             Parser<Token> x = String("x");
             Parser<Token> xImproved = OnError(x, "letter x");
-            x.AssertError("y", "y");
-            xImproved.AssertError("y", "y", "(1, 1): letter x expected");
+            x.FailsToParse("y", "y").WithMessage("(1, 1): Parse error.");
+            xImproved.FailsToParse("y", "y").WithMessage("(1, 1): letter x expected");
         }
 
         [Test]
@@ -231,13 +248,13 @@ namespace Parsley
             Parser<Position> start = Position;
             Parser<Position> afterLeadingWhiteSpace = Between(Pattern(@"\s+"), Position, Pattern(@"[0-9]+"));
 
-            start.AssertParse("ABC", "ABC", position =>
+            start.PartiallyParses("ABC", "ABC").IntoValue(position =>
             {
                 position.Line.ShouldEqual(1);
                 position.Column.ShouldEqual(1);
             });
 
-            afterLeadingWhiteSpace.AssertParse("  \r\n   \r\n   123!", "!", position =>
+            afterLeadingWhiteSpace.PartiallyParses("  \r\n   \r\n   123!", "!").IntoValue(position =>
             {
                 position.Line.ShouldEqual(3);
                 position.Column.ShouldEqual(4);

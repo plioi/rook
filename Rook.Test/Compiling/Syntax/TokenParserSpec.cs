@@ -39,7 +39,7 @@ namespace Rook.Compiling.Syntax
                          " \t <=>=<>!====*/+-&&||!{}[][,]()???:",
                          "<=", ">=", "<", ">", "!=", "==", "=", "*", "/", "+", "-",
                          "&&", "||", "!", "{", "}", "[]", "[", ",", "]", "(", ")", "??", "?", ":");
-            Grammar.AnyOperator.AssertError("0", "0");
+            Grammar.AnyOperator.FailsToParse("0", "0");
         }
 
         [Test]
@@ -50,8 +50,8 @@ namespace Rook.Compiling.Syntax
             AssertParse(Grammar.Operator("<", "="), TokenKind.Operator, "=", " \t =");
 
             AssertParse(Grammar.Operator("<=", "<", "="), TokenKind.Operator, "<=", "<=");
-            Grammar.Operator("<=", "<", "=").AssertError("!", "!", "(1, 1): <=, <, = expected");
-            Grammar.Operator("<", "=").AssertError("<=", "<=", "(1, 1): <, = expected");
+            Grammar.Operator("<=", "<", "=").FailsToParse("!", "!").WithMessage("(1, 1): <=, <, = expected");
+            Grammar.Operator("<", "=").FailsToParse("<=", "<=").WithMessage("(1, 1): <, = expected");
         }
 
         [Test]
@@ -60,8 +60,8 @@ namespace Rook.Compiling.Syntax
             AssertTokens(Grammar.AnyKeyword,
                          " \t true false int bool void null if return else fn",
                          expectedKeywords);
-            Grammar.AnyKeyword.AssertError("iftrue", "iftrue");
-            Grammar.AnyKeyword.AssertError("random text", "random text");
+            Grammar.AnyKeyword.FailsToParse("iftrue", "iftrue");
+            Grammar.AnyKeyword.FailsToParse("random text", "random text");
         }
 
         [Test]
@@ -71,8 +71,8 @@ namespace Rook.Compiling.Syntax
             AssertParse(ifOrTrue, TokenKind.Keyword, "true", "true");
             AssertParse(ifOrTrue, TokenKind.Keyword, "if", "if");
             AssertParse(ifOrTrue, TokenKind.Keyword, "true", " \t true");
-            ifOrTrue.AssertError("iftrue", "iftrue");
-            ifOrTrue.AssertError("random text", "random text");
+            ifOrTrue.FailsToParse("iftrue", "iftrue");
+            ifOrTrue.FailsToParse("random text", "random text");
         }
 
         [Test]
@@ -84,9 +84,9 @@ namespace Rook.Compiling.Syntax
             AssertParse(Grammar.Identifier, TokenKind.Identifier, "a0", "a0");
             AssertParse(Grammar.Identifier, TokenKind.Identifier, "a01", "a01");
 
-            Grammar.Identifier.AssertError("0", "0");
+            Grammar.Identifier.FailsToParse("0", "0");
             foreach (string keyword in expectedKeywords)
-                Grammar.Identifier.AssertError(keyword, keyword);
+                Grammar.Identifier.FailsToParse(keyword, keyword);
         }
 
         [Test]
@@ -113,14 +113,13 @@ namespace Rook.Compiling.Syntax
         
         private static void AssertTokens(Parser<Token> parse, string source, params string[] expectedTokens)
         {
-            AbstractGrammar.ZeroOrMore(parse).AssertParse(source, "",
-                                                          parsedValues => parsedValues.Select(x => x.Literal).ShouldList(expectedTokens));
+            AbstractGrammar.ZeroOrMore(parse).Parses(source)
+                .IntoValue(parsedValues => parsedValues.Select(x => x.Literal).ShouldList(expectedTokens));
         }
 
         private static void AssertParse(Parser<Token> parse, object expectedKind, string expectedValue, string source)
         {
-            const string expectedUnparsedText = "";
-            parse.AssertParse(source, expectedUnparsedText, parsedValue =>
+            parse.Parses(source).IntoValue(parsedValue =>
             {
                 parsedValue.Kind.ShouldEqual(expectedKind);
                 parsedValue.Literal.ShouldEqual(expectedValue);
@@ -129,7 +128,7 @@ namespace Rook.Compiling.Syntax
 
         private static void AssertError<T>(Parser<T> parse, string source, string expectedUnparsedSource, string expectedMessage)
         {
-            parse.AssertError(source, expectedUnparsedSource, expectedMessage);
+            parse.FailsToParse(source, expectedUnparsedSource).WithMessage(expectedMessage);
         }
     }
 }

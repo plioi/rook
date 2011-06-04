@@ -63,13 +63,12 @@ namespace Rook.Compiling.Syntax
 
         private static void AssertError(string source, string expectedUnparsedSource, string expectedMessage)
         {
-            Grammar.TypeName.AssertError(source, expectedUnparsedSource, expectedMessage);
+            Grammar.TypeName.FailsToParse(source, expectedUnparsedSource).WithMessage(expectedMessage);
         }
 
-        private static void AssertType(string expectedSyntaxTree, string source)
+        private static void AssertType(string expectedType, string source)
         {
-            const string expectedUnparsedSource = "";
-            Grammar.TypeName.AssertParse(source, expectedSyntaxTree, expectedUnparsedSource);
+            Grammar.TypeName.Parses(source).IntoValue(namedType => namedType.ToString().ShouldEqual(expectedType));
         }
     }
 }

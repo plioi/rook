@@ -32,10 +32,10 @@ namespace Parsley
             Token token;
 
             new TokenMatcher(lower, @"[a-z]+").TryMatch(abcDEF, out token).ShouldBeTrue();
-            token.AssertToken(lower, "abc", 1, 1);
+            token.ShouldBe(lower, "abc", 1, 1);
 
             new TokenMatcher(upper, @"[A-Z]+").TryMatch(abcDEF.Advance(3), out token).ShouldBeTrue();
-            token.AssertToken(upper, "DEF", 1, 4);
+            token.ShouldBe(upper, "DEF", 1, 4);
         }
     }
 }
