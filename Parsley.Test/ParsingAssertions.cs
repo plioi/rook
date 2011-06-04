@@ -9,10 +9,15 @@ namespace Parsley
     {
         public static void AssertToken(this Token actual, object expectedKind, string expectedLiteral, int expectedLine, int expectedColumn)
         {
-            actual.Kind.ShouldEqual(expectedKind);
-            actual.Literal.ShouldEqual(expectedLiteral);
+            AssertToken(actual, expectedKind, expectedLiteral);
             actual.Position.Line.ShouldEqual(expectedLine);
             actual.Position.Column.ShouldEqual(expectedColumn);
+        }
+
+        public static void AssertToken(this Token actual, object expectedKind, string expectedLiteral)
+        {
+            actual.Kind.ShouldEqual(expectedKind);
+            actual.Literal.ShouldEqual(expectedLiteral);
         }
 
         public static void AssertError<TSyntax>(this Parser<TSyntax> parse, string source, string expectedUnparsedSource)
