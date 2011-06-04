@@ -4,10 +4,12 @@ namespace Parsley
 {
     public sealed class Error<T> : Parsed<T>
     {
+        private string expectation { get; set; }
+
         public Error(Text unparsedText, string expectation = null)
         {
             UnparsedText = unparsedText;
-            Expectation = expectation;
+            this.expectation = expectation;
         }
 
         public T Value
@@ -21,14 +23,12 @@ namespace Parsley
 
         public string Message
         {
-            get { return Expectation == null ? "Parse error." : Expectation + " expected"; }
+            get { return expectation == null ? "Parse error." : expectation + " expected"; }
         }
-
-        public string Expectation { get; private set; }
 
         public Parsed<U> ParseRest<U>(Func<T, Parser<U>> constructNextParser)
         {
-            return new Error<U>(UnparsedText, Expectation);
+            return new Error<U>(UnparsedText, expectation);
         }
 
         public override string ToString()
