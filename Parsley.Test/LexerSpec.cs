@@ -23,7 +23,7 @@ namespace Parsley
         }
 
         [Test]
-        public void TryingToAdvanceBeyondInputResultsInNoMovement()
+        public void TryingToAdvanceBeyondEndOfInputResultsInNoMovement()
         {
             var lexer = new Lexer(new Text(""));
             lexer.ShouldBeTheSameAs(lexer.Advance());

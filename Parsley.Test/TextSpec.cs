@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using NUnit.Framework;
 
 namespace Parsley
@@ -47,7 +46,7 @@ namespace Parsley
         }
 
         [Test]
-        public void CanCountLeadingCharactersMatchingARegex()
+        public void CanMatchLeadingCharactersByRegex()
         {
             const string letters = @"[a-z]+";
             const string digits = @"[0-9]+";
