@@ -115,8 +115,8 @@ namespace Parsley
             parser.FailsToParse("!", "!");
 
             parser.PartiallyParses("0!", "!").IntoValue(Tokens("0"));
-            parser.PartiallyParses("0,1!", "!").IntoValue(Tokens( "0", "1"));
-            parser.PartiallyParses("0,1,2!", "!").IntoValue(Tokens( "0", "1", "2" ));
+            parser.PartiallyParses("0,1!", "!").IntoValue(Tokens("0", "1"));
+            parser.PartiallyParses("0,1,2!", "!").IntoValue(Tokens("0", "1", "2" ));
 
             parser.Parses("0").IntoValue(Tokens("0"));
             parser.Parses("0,1").IntoValue(Tokens("0", "1"));
