@@ -9,8 +9,8 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void CanBeIdentifier()
         {
-            AssertTree("a", "a");
-            AssertTree("abc", "abc");
+            Parses("a").IntoTree("a");
+            Parses("abc").IntoTree("abc");
         }
 
         [Test]

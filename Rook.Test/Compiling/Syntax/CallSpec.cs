@@ -11,102 +11,102 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void FunctionCalls()
         {
-            AssertTree("(func())", "func()");
-            AssertTree("(func(2))", "func(2)");
-            AssertTree("(func(1, 2, 3))", "func(1, 2, 3)");
-            AssertTree("(func())", "(func)()");
-            AssertTree("(func(1))", "(func)(1)");
-            AssertTree("(func(1, 2, 3))", "(func)(1, 2, 3)");
-            AssertTree("((getFunc(true, false))(1))", "(getFunc(true, false))(1)");
-            AssertTree("({func;}(1, 2))", "{func;}(1, 2)");
+            Parses("func()").IntoTree("(func())");
+            Parses("func(2)").IntoTree("(func(2))");
+            Parses("func(1, 2, 3)").IntoTree("(func(1, 2, 3))");
+            Parses("(func)()").IntoTree("(func())");
+            Parses("(func)(1)").IntoTree("(func(1))");
+            Parses("(func)(1, 2, 3)").IntoTree("(func(1, 2, 3))");
+            Parses("(getFunc(true, false))(1)").IntoTree("((getFunc(true, false))(1))");
+            Parses("{func;}(1, 2)").IntoTree("({func;}(1, 2))");
         }
 
         [Test]
         public void TreatsIndexOperatorsAsCallToIndexFunction()
         {
-            AssertTree("(Index(vector, 0))", "vector[0]");
-            AssertTree("(Index(vector, 0))", "(vector)[0]");
-            AssertTree("(Index((getVector(true, false)), 1))", "(getVector(true, false))[1]");
-            AssertTree("(Index((getVector(true, false)), ((1) + (2))))", "(getVector(true, false))[1+2]");
-            AssertTree("(Index([0], 0))", "[0][0]");
-            AssertTree("(Index([0, 1], 1))", "[0, 1][1]");
-            AssertTree("(Index({[0, 1];}, 1))", "{[0, 1];}[1]");
+            Parses("vector[0]").IntoTree("(Index(vector, 0))");
+            Parses("(vector)[0]").IntoTree("(Index(vector, 0))");
+            Parses("(getVector(true, false))[1]").IntoTree("(Index((getVector(true, false)), 1))");
+            Parses("(getVector(true, false))[1+2]").IntoTree("(Index((getVector(true, false)), ((1) + (2))))");
+            Parses("[0][0]").IntoTree("(Index([0], 0))");
+            Parses("[0, 1][1]").IntoTree("(Index([0, 1], 1))");
+            Parses("{[0, 1];}[1]").IntoTree("(Index({[0, 1];}, 1))");
         }
 
         [Test]
         public void TreatsSliceOperatorsAsCallToSliceFunction()
         {
-            AssertTree("(Slice(vector, 0, 5))", "vector[0:5]");
-            AssertTree("(Slice(vector, 0, 5))", "(vector)[0:5]");
-            AssertTree("(Slice((getVector(true, false)), 1, 6))", "(getVector(true, false))[1:6]");
-            AssertTree("(Slice((getVector(true, false)), ((1) + (2)), ((3) + (4))))", "(getVector(true, false))[1+2:3+4]");
-            AssertTree("(Slice([0], 0, 0))", "[0][0:0]");
-            AssertTree("(Slice([0, 1], 0, 1))", "[0, 1][0:1]");
-            AssertTree("(Slice({[0, 1];}, 0, 1))", "{[0, 1];}[0:1]");
+            Parses("vector[0:5]").IntoTree("(Slice(vector, 0, 5))");
+            Parses("(vector)[0:5]").IntoTree("(Slice(vector, 0, 5))");
+            Parses("(getVector(true, false))[1:6]").IntoTree("(Slice((getVector(true, false)), 1, 6))");
+            Parses("(getVector(true, false))[1+2:3+4]").IntoTree("(Slice((getVector(true, false)), ((1) + (2)), ((3) + (4))))");
+            Parses("[0][0:0]").IntoTree("(Slice([0], 0, 0))");
+            Parses("[0, 1][0:1]").IntoTree("(Slice([0, 1], 0, 1))");
+            Parses("{[0, 1];}[0:1]").IntoTree("(Slice({[0, 1];}, 0, 1))");
         }
 
         [Test]
         public void UnaryOperations()
         {
-            AssertTree("(-(1))", "-1");
-            AssertTree("(!(false))", "!false");
+            Parses("-1").IntoTree("(-(1))");
+            Parses("!false").IntoTree("(!(false))");
         }
 
         [Test]
         public void MultiplicativeOperations()
         {
-            AssertTree("((1) * (2))", "1*2");
-            AssertTree("((1) / (2))", "1/2");
+            Parses("1*2").IntoTree("((1) * (2))");
+            Parses("1/2").IntoTree("((1) / (2))");
         }
 
         [Test]
         public void AdditiveOperations()
         {
-            AssertTree("((1) + (2))", "1+2");
-            AssertTree("((1) - (2))", "1-2");
+            Parses("1+2").IntoTree("((1) + (2))");
+            Parses("1-2").IntoTree("((1) - (2))");
         }
 
         [Test]
         public void RelationalOperations()
         {
-            AssertTree("((1) < (2))", "1<2");
-            AssertTree("((1) > (2))", "1>2");
-            AssertTree("((1) <= (2))", "1<=2");
-            AssertTree("((1) >= (2))", "1>=2");
+            Parses("1<2").IntoTree("((1) < (2))");
+            Parses("1>2").IntoTree("((1) > (2))");
+            Parses("1<=2").IntoTree("((1) <= (2))");
+            Parses("1>=2").IntoTree("((1) >= (2))");
         }
 
         [Test]
         public void EqualityOperations()
         {
-            AssertTree("((1) == (2))", "1==2");
-            AssertTree("((1) != (2))", "1!=2");
+            Parses("1==2").IntoTree("((1) == (2))");
+            Parses("1!=2").IntoTree("((1) != (2))");
         }
 
         [Test]
         public void LogicalAndOperations()
         {
-            AssertTree("((true) && (false))", "true&&false");
+            Parses("true&&false").IntoTree("((true) && (false))");
         }
 
         [Test]
         public void LogicalOrOperations()
         {
-            AssertTree("((true) || (false))", "true||false");
+            Parses("true||false").IntoTree("((true) || (false))");
         }
 
         [Test]
         public void NullCoalescingOperations()
         {
-            AssertTree("((null) ?? (0))", "null??0");
+            Parses("null??0").IntoTree("((null) ?? (0))");
         }
 
         [Test]
         public void TreatsInfixOperationsAsLeftAssociative()
         {
-            AssertTree("((((1) * (2))) * (3))", "1*2*3");
-            AssertTree("((((1) + (2))) + (3))", "1+2+3");
-            AssertTree("((((true) && (false))) && (false))", "true&&false&&false");
-            AssertTree("((((false) || (true))) || (false))", "false||true||false");
+            Parses("1*2*3").IntoTree("((((1) * (2))) * (3))");
+            Parses("1+2+3").IntoTree("((((1) + (2))) + (3))");
+            Parses("true&&false&&false").IntoTree("((((true) && (false))) && (false))");
+            Parses("false||true||false").IntoTree("((((false) || (true))) || (false))");
         }
 
         [Test]

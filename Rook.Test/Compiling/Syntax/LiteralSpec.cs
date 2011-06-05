@@ -9,7 +9,7 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void NullLiterals()
         {
-            AssertTree("null", "null");
+            Parses("null").IntoTree("null");
             AssertType(NamedType.Nullable(new TypeVariable(17)), "null");
         }
 
@@ -26,8 +26,8 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void BooleanLiterals()
         {
-            AssertTree("true", "true");
-            AssertTree("false", "false");
+            Parses("true").IntoTree("true");
+            Parses("false").IntoTree("false");
 
             AssertType(Boolean, "true");
             AssertType(Boolean, "false");
@@ -47,8 +47,8 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void IntegerLiterals()
         {
-            AssertTree("0", "0");
-            AssertTree("2147483647", "2147483647");
+            Parses("0").IntoTree("0");
+            Parses("2147483647").IntoTree("2147483647");
 
             AssertType(Integer, "0");
             AssertType(Integer, "2147483647");

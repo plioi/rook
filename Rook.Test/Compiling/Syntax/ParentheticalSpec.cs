@@ -9,8 +9,8 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ParentheticalExpressions()
         {
-            AssertTree("1", "(1)");
-            AssertTree("a", "(a)");
+            Parses("(1)").IntoTree("1");
+            Parses("(a)").IntoTree("a");
 
             AssertType(Integer, "((1))");
         }
@@ -18,7 +18,7 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void DemandsBalancedParentheses()
         {
-            Parser.FailsToParse("(1(", "(").WithMessage("(1, 3): ) expected");
+            FailsToParse("(1(", "(").WithMessage("(1, 3): ) expected");
         }
     }
 }

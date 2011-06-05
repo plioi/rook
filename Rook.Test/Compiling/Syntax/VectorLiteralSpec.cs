@@ -11,13 +11,13 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ContainsOneOrMoreExpressions()
         {
-            Parser.FailsToParse("[", "");
-            Parser.FailsToParse("[]", "[]");
-            Parser.FailsToParse("[0", "").WithMessage("(1, 3): ] expected");
-            AssertTree("[0]", "[0]");
-            AssertTree("[0, 1]", "[0, 1]");
-            AssertTree("[0, ((1) + (2)), 3]", "[0, 1+2, 3]");
-            AssertTree("[true, ((false) || (true)), false]", "[true, false||true, false]");
+            FailsToParse("[", "");
+            FailsToParse("[]", "[]");
+            FailsToParse("[0", "").WithMessage("(1, 3): ] expected");
+            Parses("[0]").IntoTree("[0]");
+            Parses("[0, 1]").IntoTree("[0, 1]");
+            Parses("[0, 1+2, 3]").IntoTree("[0, ((1) + (2)), 3]");
+            Parses("[true, false||true, false]").IntoTree("[true, ((false) || (true)), false]");
         }
 
         [Test]

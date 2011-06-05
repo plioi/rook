@@ -13,52 +13,52 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void DemandsCompleteFunctionDefinition()
         {
-            Parser.FailsToParse("", "").WithMessage("(1, 1): type name expected");
-            Parser.FailsToParse("int", "");
-            Parser.FailsToParse("int foo", "").WithMessage("(1, 8): ( expected");
-            Parser.FailsToParse("int foo(", "").WithMessage("(1, 9): ) expected");
-            Parser.FailsToParse("int foo(x)", "");
-            Parser.FailsToParse("int foo(int)", "int)").WithMessage( "(1, 9): ) expected");
-            Parser.FailsToParse("int foo()", "");
-            AssertTree("int foo() 1", "int foo() 1");
+            FailsToParse("", "").WithMessage("(1, 1): type name expected");
+            FailsToParse("int", "");
+            FailsToParse("int foo", "").WithMessage("(1, 8): ( expected");
+            FailsToParse("int foo(", "").WithMessage("(1, 9): ) expected");
+            FailsToParse("int foo(x)", "");
+            FailsToParse("int foo(int)", "int)").WithMessage("(1, 9): ) expected");
+            FailsToParse("int foo()", "");
+            Parses("int foo() 1").IntoTree("int foo() 1");
         }
 
         [Test]
         public void ParsesReturnTypes()
         {
-            AssertTree("int foo() 1", "int foo() 1");
-            AssertTree("bool foo() 1", "bool foo() 1");
+            Parses("int foo() 1").IntoTree("int foo() 1");
+            Parses("bool foo() 1").IntoTree("bool foo() 1");
         }
 
         [Test]
         public void ParsesNames()
         {
-            AssertTree("int foo() 1", "int foo() 1");
-            AssertTree("int bar() 1", "int bar() 1");
+            Parses("int foo() 1").IntoTree("int foo() 1");
+            Parses("int bar() 1").IntoTree("int bar() 1");
         }
 
         [Test]
         public void ParsesParameterLists()
         {
-            AssertTree("int foo() 1", "int foo() 1");
-            AssertTree("int foo(int x) 1", "int foo(int x) 1");
-            AssertTree("int foo(int x, bool y) 1", "int foo(int x, bool y) 1");
-            AssertTree("int foo(int x, bool y, int z) 1", "int foo(int x, bool y, int z) 1");
+            Parses("int foo() 1").IntoTree("int foo() 1");
+            Parses("int foo(int x) 1").IntoTree("int foo(int x) 1");
+            Parses("int foo(int x, bool y) 1").IntoTree("int foo(int x, bool y) 1");
+            Parses("int foo(int x, bool y, int z) 1").IntoTree("int foo(int x, bool y, int z) 1");
         }
 
         [Test]
         public void AllowsParametersToOmitExplicitTypeDeclaration()
         {
-            AssertTree("int foo(x) 1", "int foo(x) 1");
-            AssertTree("int foo(x, bool y) 1", "int foo(x, bool y) 1");
-            AssertTree("int foo(int x, y, z) 1", "int foo(int x, y, z) 1");
+            Parses("int foo(x) 1").IntoTree("int foo(x) 1");
+            Parses("int foo(x, bool y) 1").IntoTree("int foo(x, bool y) 1");
+            Parses("int foo(int x, y, z) 1").IntoTree("int foo(int x, y, z) 1");
         }
 
         [Test]
         public void ParsesBodyExpression()
         {
-            AssertTree("int foo() 1", "int foo() 1");
-            AssertTree("int foo() false", "int foo() false");
+            Parses("int foo() 1").IntoTree("int foo() 1");
+            Parses("int foo() false").IntoTree("int foo() false");
         }
 
         [Test]

@@ -15,23 +15,14 @@ namespace Rook.Compiling.Syntax
             return Parser(new Text(source)).Value;
         }
 
-        protected void AssertTree(string expectedSyntaxTree, string source)
+        protected Parsed<TSyntax> Parses(string source)
         {
-            AssertTree(expectedSyntaxTree, source, new Serializer());
-         
-            //Although not strictly necessary, we perform the same test using the serialized tree as the input source code.
-            //This is simply a sanity check that the serializer is producing code that is equivalent to source.
-            //This has also been useful in discovering ambiguity in the grammar.
-            Parsed<TSyntax> result = Parser(new Text(source));
-            string serializedSource = result.Value.Visit(new Serializer());
-            AssertTree(expectedSyntaxTree, serializedSource, new Serializer());
+            return Parser.Parses(source);
         }
 
-        private void AssertTree(string expectedSyntaxTree, string source, Serializer serializer)
+        protected Parsed<TSyntax> FailsToParse(string source, string expectedUnparsedSource)
         {
-            Parser.Parses(source)
-                .IntoValue(parsedValue => parsedValue.Visit(serializer).ShouldEqual(expectedSyntaxTree));
-            Parse(source).ShouldBeInstanceOf<TSyntax>();
+            return Parser.FailsToParse(source, expectedUnparsedSource);
         }
 
         protected static void AssertTypeCheckError(TypeChecked<TSyntax> typeChecked, int line, int column, string expectedMessage)

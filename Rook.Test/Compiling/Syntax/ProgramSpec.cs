@@ -12,16 +12,15 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ParsesZeroOrMoreFunctions()
         {
-            AssertTree("", " \t\r\n");
-            AssertTree(
-                "int life() 42\r\n\r\nint universe() 42\r\n\r\nint everything() 42",
-                " \t\r\n int life() 42; int universe() 42; int everything() 42; \t\r\n");
+            Parses(" \t\r\n").IntoTree("");
+            Parses(" \t\r\n int life() 42; int universe() 42; int everything() 42; \t\r\n")
+                .IntoTree("int life() 42\r\n\r\nint universe() 42\r\n\r\nint everything() 42");
         }
 
         [Test]
         public void DemandsEndOfInputAfterLastValidFunction()
         {
-            Parser.FailsToParse("int life() 42; int univ", "").WithMessage("(1, 24): ( expected");
+            FailsToParse("int life() 42; int univ", "").WithMessage("(1, 24): ( expected");
         }
 
         [Test]

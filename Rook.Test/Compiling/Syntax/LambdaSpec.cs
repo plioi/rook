@@ -11,28 +11,28 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void HasABodyExpression()
         {
-            Parser.FailsToParse("fn", "").WithMessage("(1, 3): ( expected");
-            Parser.FailsToParse("fn (", "").WithMessage("(1, 5): ) expected");
-            Parser.FailsToParse("fn ()", "");
+            FailsToParse("fn", "").WithMessage("(1, 3): ( expected");
+            FailsToParse("fn (", "").WithMessage("(1, 5): ) expected");
+            FailsToParse("fn ()", "");
 
-            AssertTree("fn () 1", "fn () 1");
-            AssertTree("fn () ((1) + (2))", "fn () 1 + 2");
+            Parses("fn () 1").IntoTree("fn () 1");
+            Parses("fn () 1 + 2").IntoTree("fn () ((1) + (2))");
         }
 
         [Test]
         public void HasAParameterList()
         {
-            AssertTree("fn (int x) 1", "fn (int x) 1");
-            AssertTree("fn (bool x) x", "fn (bool x) x");
-            AssertTree("fn (int x, int y) ((x) + (y))", "fn (int x, int y) x+y");
+            Parses("fn (int x) 1").IntoTree("fn (int x) 1");
+            Parses("fn (bool x) x").IntoTree("fn (bool x) x");
+            Parses("fn (int x, int y) x+y").IntoTree("fn (int x, int y) ((x) + (y))");
         }
 
         [Test]
         public void AllowsParametersToOmitExplicitTypeDeclaration()
         {
-            AssertTree("fn (x) 1", "fn (x) 1");
-            AssertTree("fn (x, bool y) 1", "fn (x, bool y) 1");
-            AssertTree("fn (int x, y, z) 1", "fn (int x, y, z) 1");
+            Parses("fn (x) 1").IntoTree("fn (x) 1");
+            Parses("fn (x, bool y) 1").IntoTree("fn (x, bool y) 1");
+            Parses("fn (int x, y, z) 1").IntoTree("fn (int x, y, z) 1");
         }
 
         [Test]

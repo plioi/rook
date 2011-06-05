@@ -1,6 +1,5 @@
 using System.Linq;
 using NUnit.Framework;
-using Parsley;
 
 namespace Rook.Compiling.Syntax
 {
@@ -10,30 +9,30 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ContainsOneOrMoreInnerExpressions()
         {
-            Parser.FailsToParse("{}", "}");
-            AssertTree("{1;}", "{1;}");
-            AssertTree("{1; true;}", "{1; true;}");
-            AssertTree("{((1) + (2)); ((true) || (false));}", "{1 + 2; true || false;}");
-            AssertTree("{((1) + (2)); ((true) || (false));}", "{(1 + 2); (true || false);}");
+            FailsToParse("{}", "}");
+            Parses("{1;}").IntoTree("{1;}");
+            Parses("{1; true;}").IntoTree("{1; true;}");
+            Parses("{1 + 2; true || false;}").IntoTree("{((1) + (2)); ((true) || (false));}");
+            Parses("{(1 + 2); (true || false);}").IntoTree("{((1) + (2)); ((true) || (false));}");
         }
 
         [Test]
         public void AllowsOptionalLeadingVariableDeclarations()
         {
-            Parser.FailsToParse("{int 0}", "int 0}");
-            Parser.FailsToParse("{int x 0}", "int x 0}");
-            Parser.FailsToParse("{int x = 0}", "int x = 0}");
-            Parser.FailsToParse("{int x = 0 0}", "int x = 0 0}");
-            Parser.FailsToParse("{int a = 0;}", "}");
-            AssertTree("{int a = 0;1;}", "{ int a = 0; 1; }");
-            AssertTree("{int a = 0; bool b = ((true) || (false));false; 0;}", "{ int a = 0; bool b = true||false; false; 0; }");
+            FailsToParse("{int 0}", "int 0}");
+            FailsToParse("{int x 0}", "int x 0}");
+            FailsToParse("{int x = 0}", "int x = 0}");
+            FailsToParse("{int x = 0 0}", "int x = 0 0}");
+            FailsToParse("{int a = 0;}", "}");
+            Parses("{ int a = 0; 1; }").IntoTree("{int a = 0;1;}");
+            Parses("{ int a = 0; bool b = true||false; false; 0; }").IntoTree("{int a = 0; bool b = ((true) || (false));false; 0;}");
         }
 
         [Test]
         public void AllowsVariableDeclarationsToOmitExplicitTypeDeclaration()
         {
-            AssertTree("{a = 0;1;}", "{ a = 0; 1; }");
-            AssertTree("{a = 0; b = ((true) || (false));false; 0;}", "{ a = 0; b = true||false; false; 0; }");
+            Parses("{ a = 0; 1; }").IntoTree("{a = 0;1;}");
+            Parses("{ a = 0; b = true||false; false; 0; }").IntoTree("{a = 0; b = ((true) || (false));false; 0;}");
         }
 
         [Test]

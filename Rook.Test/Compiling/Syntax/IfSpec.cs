@@ -9,34 +9,36 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ContainsConditionExpressionAndTwoBodyExpressions()
         {
-            Parser.FailsToParse("if", "").WithMessage("(1, 3): ( expected");
-            Parser.FailsToParse("if (", "");
-            Parser.FailsToParse("if (false", "").WithMessage("(1, 10): ) expected");
-            Parser.FailsToParse("if (1)", "");
-            Parser.FailsToParse("if (true) 0", "");
-            Parser.FailsToParse("if (true) 0 1", "1");
-            Parser.FailsToParse("if (true) 0 else", "");
-            Parser.FailsToParse("if false 0 1", "false 0 1").WithMessage("(1, 4): ( expected");
+            FailsToParse("if", "").WithMessage("(1, 3): ( expected");
+            FailsToParse("if (", "");
+            FailsToParse("if (false", "").WithMessage("(1, 10): ) expected");
+            FailsToParse("if (1)", "");
+            FailsToParse("if (true) 0", "");
+            FailsToParse("if (true) 0 1", "1");
+            FailsToParse("if (true) 0 else", "");
+            FailsToParse("if false 0 1", "false 0 1").WithMessage("(1, 4): ( expected");
 
-            AssertTree("(if (true) (0) else (1))", "if (true) 0 else 1");
-            AssertTree("(if (false) (1) else (0))", "if (false) 1 else 0");
-            AssertTree("(if (((a) || (b))) (1) else (0))", "if (a || b) 1 else 0");
+            Parses("if (true) 0 else 1").IntoTree("(if (true) (0) else (1))");
+            Parses("if (false) 1 else 0").IntoTree("(if (false) (1) else (0))");
+            Parses("if (a || b) 1 else 0").IntoTree("(if (((a) || (b))) (1) else (0))");
         }
 
         [Test]
         public void AssociatesElseExpressionWithNearestPrecedingIf()
         {
-            AssertTree("(if (x) ((if (y) (0) else (1))) else ((if (z) (2) else (3))))",
-                       @"if (x) 
-                             if (y) 
-                                 0 
-                             else 
-                                 1
-                         else 
-                             if (z) 
-                                 2
-                             else 
-                                 3");
+            const string source =
+                @"if (x) 
+                    if (y) 
+                      0 
+                    else 
+                      1
+                  else 
+                    if (z) 
+                      2
+                    else 
+                      3";
+
+            Parses(source).IntoTree("(if (x) ((if (y) (0) else (1))) else ((if (z) (2) else (3))))");
         }
 
         [Test]
