@@ -18,9 +18,9 @@ namespace Parsley
             actual.Literal.ShouldEqual(expectedLiteral);
         }
 
-        public static Parsed<T> FailsToParse<T>(this Parser<T> parse, string source, string expectedUnparsedSource)
+        public static Parsed<T> FailsToParse<T>(this Parser<T> parse, Lexer tokens, string expectedUnparsedSource)
         {
-            return parse(new Text(source)).Fails().WithUnparsedText(expectedUnparsedSource);
+            return parse(tokens).Fails().WithUnparsedText(expectedUnparsedSource);
         }
 
         private static Parsed<T> Fails<T>(this Parsed<T> result)
@@ -35,14 +35,14 @@ namespace Parsley
             result.ToString().ShouldEqual(expectedMessage);
         }
 
-        public static Parsed<T> PartiallyParses<T>(this Parser<T> parse, string source, string expectedUnparsedSource)
+        public static Parsed<T> PartiallyParses<T>(this Parser<T> parse, Lexer tokens, string expectedUnparsedSource)
         {
-            return parse(new Text(source)).Succeeds().WithUnparsedText(expectedUnparsedSource);
+            return parse(tokens).Succeeds().WithUnparsedText(expectedUnparsedSource);
         }
 
-        public static Parsed<T> Parses<T>(this Parser<T> parse, string source)
+        public static Parsed<T> Parses<T>(this Parser<T> parse, Lexer tokens)
         {
-            return parse(new Text(source)).Succeeds().WithAllInputConsumed();
+            return parse(tokens).Succeeds().WithAllInputConsumed();
         }
 
         private static Parsed<T> Succeeds<T>(this Parsed<T> result)
@@ -55,15 +55,15 @@ namespace Parsley
 
         private static Parsed<T> WithUnparsedText<T>(this Parsed<T> result, string expected)
         {
-            result.UnparsedText.ToString().ShouldEqual(expected);
+            result.UnparsedTokens.ToString().ShouldEqual(expected);
 
             return result;
         }
 
         private static Parsed<T> WithAllInputConsumed<T>(this Parsed<T> result)
         {
-            result.UnparsedText.EndOfInput.ShouldBeTrue("Did not consume all input.");
-            result.UnparsedText.ToString().ShouldEqual("");
+            result.UnparsedTokens.EndOfInput.ShouldBeTrue("Did not consume all input.");
+            result.UnparsedTokens.ToString().ShouldEqual("");
 
             return result;
         }

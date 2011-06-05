@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Parsley;
-using Text = Parsley.Text;
 using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
@@ -12,17 +11,17 @@ namespace Rook.Compiling.Syntax
 
         protected TSyntax Parse(string source)
         {
-            return Parser(new Text(source)).Value;
+            return Parser(new RookLexer(source)).Value;
         }
 
         protected Parsed<TSyntax> Parses(string source)
         {
-            return Parser.Parses(source);
+            return Parser.Parses(new RookLexer(source));
         }
 
         protected Parsed<TSyntax> FailsToParse(string source, string expectedUnparsedSource)
         {
-            return Parser.FailsToParse(source, expectedUnparsedSource);
+            return Parser.FailsToParse(new RookLexer(source), expectedUnparsedSource);
         }
 
         protected static void AssertTypeCheckError(TypeChecked<TSyntax> typeChecked, int line, int column, string expectedMessage)

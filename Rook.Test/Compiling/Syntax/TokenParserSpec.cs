@@ -39,7 +39,7 @@ namespace Rook.Compiling.Syntax
                          " \t <=>=<>!====*/+-&&||!{}[][,]()???:",
                          "<=", ">=", "<", ">", "!=", "==", "=", "*", "/", "+", "-",
                          "&&", "||", "!", "{", "}", "[]", "[", ",", "]", "(", ")", "??", "?", ":");
-            Grammar.AnyOperator.FailsToParse("0", "0");
+            Grammar.AnyOperator.FailsToParse(Tokenize("0"), "0");
         }
 
         [Test]
@@ -50,8 +50,8 @@ namespace Rook.Compiling.Syntax
             AssertParse(Grammar.Operator("<", "="), TokenKind.Operator, "=", " \t =");
 
             AssertParse(Grammar.Operator("<=", "<", "="), TokenKind.Operator, "<=", "<=");
-            Grammar.Operator("<=", "<", "=").FailsToParse("!", "!").WithMessage("(1, 1): <=, <, = expected");
-            Grammar.Operator("<", "=").FailsToParse("<=", "<=").WithMessage("(1, 1): <, = expected");
+            Grammar.Operator("<=", "<", "=").FailsToParse(Tokenize("!"), "!").WithMessage("(1, 1): <=, <, = expected");
+            Grammar.Operator("<", "=").FailsToParse(Tokenize("<="), "<=").WithMessage("(1, 1): <, = expected");
         }
 
         [Test]
@@ -60,8 +60,8 @@ namespace Rook.Compiling.Syntax
             AssertTokens(Grammar.AnyKeyword,
                          " \t true false int bool void null if return else fn",
                          expectedKeywords);
-            Grammar.AnyKeyword.FailsToParse("iftrue", "iftrue");
-            Grammar.AnyKeyword.FailsToParse("random text", "random text");
+            Grammar.AnyKeyword.FailsToParse(Tokenize("iftrue"), "iftrue");
+            Grammar.AnyKeyword.FailsToParse(Tokenize("random text"), "random text");
         }
 
         [Test]
@@ -71,8 +71,8 @@ namespace Rook.Compiling.Syntax
             AssertParse(ifOrTrue, TokenKind.Keyword, "true", "true");
             AssertParse(ifOrTrue, TokenKind.Keyword, "if", "if");
             AssertParse(ifOrTrue, TokenKind.Keyword, "true", " \t true");
-            ifOrTrue.FailsToParse("iftrue", "iftrue");
-            ifOrTrue.FailsToParse("random text", "random text");
+            ifOrTrue.FailsToParse(Tokenize("iftrue"), "iftrue");
+            ifOrTrue.FailsToParse(Tokenize("random text"), "random text");
         }
 
         [Test]
@@ -84,9 +84,9 @@ namespace Rook.Compiling.Syntax
             AssertParse(Grammar.Identifier, TokenKind.Identifier, "a0", "a0");
             AssertParse(Grammar.Identifier, TokenKind.Identifier, "a01", "a01");
 
-            Grammar.Identifier.FailsToParse("0", "0");
+            Grammar.Identifier.FailsToParse(Tokenize("0"), "0");
             foreach (string keyword in expectedKeywords)
-                Grammar.Identifier.FailsToParse(keyword, keyword);
+                Grammar.Identifier.FailsToParse(Tokenize(keyword), keyword);
         }
 
         [Test]
@@ -110,16 +110,21 @@ namespace Rook.Compiling.Syntax
             AssertError(Grammar.EndOfLine, "x", "x", "(1, 1): end of line expected");
             AssertError(Grammar.EndOfLine, " x", "x", "(1, 2): end of line expected");
         }
-        
+
+        private static Lexer Tokenize(string source)
+        {
+            return new RookLexer(source);
+        }
+
         private static void AssertTokens(Parser<Token> parse, string source, params string[] expectedTokens)
         {
-            AbstractGrammar.ZeroOrMore(parse).Parses(source)
+            AbstractGrammar.ZeroOrMore(parse).Parses(Tokenize(source))
                 .IntoValue(parsedValues => parsedValues.Select(x => x.Literal).ShouldList(expectedTokens));
         }
 
         private static void AssertParse(Parser<Token> parse, object expectedKind, string expectedValue, string source)
         {
-            parse.Parses(source).IntoValue(parsedValue =>
+            parse.Parses(Tokenize(source)).IntoValue(parsedValue =>
             {
                 parsedValue.Kind.ShouldEqual(expectedKind);
                 parsedValue.Literal.ShouldEqual(expectedValue);
@@ -128,7 +133,7 @@ namespace Rook.Compiling.Syntax
 
         private static void AssertError<T>(Parser<T> parse, string source, string expectedUnparsedSource, string expectedMessage)
         {
-            parse.FailsToParse(source, expectedUnparsedSource).WithMessage(expectedMessage);
+            parse.FailsToParse(Tokenize(source), expectedUnparsedSource).WithMessage(expectedMessage);
         }
     }
 }

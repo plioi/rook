@@ -20,7 +20,7 @@ namespace Rook.Compiling
             Parsed<Program> parsedProgram = Parse(code);
             
             if (parsedProgram.IsError)
-                return new CompilerResult(new CompilerError(parsedProgram.UnparsedText.Position, parsedProgram.Message));
+                return new CompilerResult(new CompilerError(parsedProgram.UnparsedTokens.Position, parsedProgram.Message));
 
             return Build(parsedProgram.Value);
         }
@@ -38,7 +38,7 @@ namespace Rook.Compiling
 
         private static Parsed<Program> Parse(string rookCode)
         {
-            return Grammar.Program(new Text(rookCode));
+            return Grammar.Program(new RookLexer(rookCode));
         }
 
         private static TypeChecked<Program> TypeCheck(Program program)

@@ -8,39 +8,39 @@ namespace Parsley
     {
         public static Parser<Position> Position
         {
-            get { return text => new Success<Position>(text.Position, text); }
+            get { return tokens => new Success<Position>(tokens.Position, tokens); }
         }
 
         public static Parser<string> EndOfInput
         {
             get
             {
-                return text =>
+                return tokens =>
                 {
-                    if (text.EndOfInput)
-                        return new Success<string>("", text);
+                    if (tokens.EndOfInput)
+                        return new Success<string>("", tokens);
 
-                    return new Error<string>(text);
+                    return new Error<string>(tokens);
                 };
             }
         }
 
         public static Parser<IEnumerable<T>> ZeroOrMore<T>(Parser<T> item)
         {
-            return text =>
+            return tokens =>
             {
-                var textBeforeFirstFailure = text;
-                var parsed = item(text);
+                var tokensBeforeFirstFailure = tokens;
+                var parsed = item(tokens);
                 var list = new List<T>();
 
                 while (!parsed.IsError)
                 {
                     list.Add(parsed.Value);
-                    textBeforeFirstFailure = parsed.UnparsedText;
-                    parsed = item(parsed.UnparsedText);
+                    tokensBeforeFirstFailure = parsed.UnparsedTokens;
+                    parsed = item(parsed.UnparsedTokens);
                 }
 
-                return new Success<IEnumerable<T>>(list, textBeforeFirstFailure);
+                return new Success<IEnumerable<T>>(list, tokensBeforeFirstFailure);
             };
         }
 
@@ -102,12 +102,12 @@ namespace Parsley
 
         public static Parser<T> Not<T>(Parser<T> parseAhead)
         {
-            return text =>
+            return tokens =>
             {
-                if (parseAhead(text).IsError)
-                    return new Success<T>(default(T), text);
+                if (parseAhead(tokens).IsError)
+                    return new Success<T>(default(T), tokens);
 
-                return new Error<T>(text);
+                return new Error<T>(tokens);
             };
         }
 
@@ -119,9 +119,9 @@ namespace Parsley
 
         public static Parser<T> Expect<T>(Parser<T> parse, Predicate<T> expectation)
         {
-            return text =>
+            return tokens =>
             {
-                Parsed<T> result = parse(text);
+                Parsed<T> result = parse(tokens);
 
                 if (result.IsError)
                    return result;
@@ -129,7 +129,7 @@ namespace Parsley
                 if (expectation(result.Value))
                    return result;
 
-                return new Error<T>(text);
+                return new Error<T>(tokens);
             };
         }
 
@@ -138,13 +138,13 @@ namespace Parsley
             if (parsers.Length == 0)
                 throw new ArgumentException("Missing choice.");
 
-            return text =>
+            return tokens =>
             {
                 Parsed<T> deepestParse = null;
 
                 foreach (Parser<T> parse in parsers)
                 {
-                    Parsed<T> parsed = parse(text);
+                    Parsed<T> parsed = parse(tokens);
 
                     if (deepestParse == null)
                         deepestParse = parsed;
@@ -152,8 +152,8 @@ namespace Parsley
                     if (!parsed.IsError)
                         return parsed;
 
-                    Position newParsePosition = parsed.UnparsedText.Position;
-                    Position deepestParsePosition = deepestParse.UnparsedText.Position;
+                    Position newParsePosition = parsed.UnparsedTokens.Position;
+                    Position deepestParsePosition = deepestParse.UnparsedTokens.Position;
                     bool newParseIsDeeper = newParsePosition.Line > deepestParsePosition.Line ||
                                             (newParsePosition.Line == deepestParsePosition.Line &&
                                              newParsePosition.Column > deepestParsePosition.Column);
@@ -167,12 +167,12 @@ namespace Parsley
 
         public static Parser<T> OnError<T>(Parser<T> parse, string expectation)
         {
-            return text =>
+            return tokens =>
             {
-                Parsed<T> parsed = parse(text);
+                Parsed<T> parsed = parse(tokens);
 
                 if (parsed.IsError)
-                    return new Error<T>(parsed.UnparsedText, expectation);
+                    return new Error<T>(parsed.UnparsedTokens, expectation);
 
                 return parsed;
             };

@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using Text = Parsley.Text;
 using Rook.Compiling.Syntax;
 
 namespace Rook.Compiling
@@ -39,7 +38,7 @@ namespace Rook.Compiling
         [Test]
         public void ShouldBuildProgramsFromSyntaxTrees()
         {
-            Program program = Grammar.Program(new Text("int Main() 123;")).Value;
+            Program program = Grammar.Program(new RookLexer("int Main() 123;")).Value;
             Build(program);
             AssertErrors(0);
             ExecuteMain().ShouldEqual(123);

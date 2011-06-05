@@ -1,7 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
 using Parsley;
-using Text = Parsley.Text;
 
 namespace Rook.Compiling.Syntax
 {
@@ -94,7 +93,7 @@ namespace Rook.Compiling.Syntax
 
         private static void AssertTokens(string source, params Action<Token>[] assertions)
         {
-            Lexer lexer = new RookLexer(new Text(source));
+            Lexer lexer = new RookLexer(source);
 
             foreach (var assertToken in assertions)
             {

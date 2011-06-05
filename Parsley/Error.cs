@@ -6,9 +6,9 @@ namespace Parsley
     {
         private string expectation { get; set; }
 
-        public Error(Text unparsedText, string expectation = null)
+        public Error(Lexer unparsedTokens, string expectation = null)
         {
-            UnparsedText = unparsedText;
+            UnparsedTokens = unparsedTokens;
             this.expectation = expectation;
         }
 
@@ -17,7 +17,7 @@ namespace Parsley
             get { throw new MemberAccessException(ToString()); }
         }
 
-        public Text UnparsedText { get; private set; }
+        public Lexer UnparsedTokens { get; private set; }
 
         public bool IsError { get { return true; } }
 
@@ -28,12 +28,12 @@ namespace Parsley
 
         public Parsed<U> ParseRest<U>(Func<T, Parser<U>> constructNextParser)
         {
-            return new Error<U>(UnparsedText, expectation);
+            return new Error<U>(UnparsedTokens, expectation);
         }
 
         public override string ToString()
         {
-            Position position = UnparsedText.Position;
+            Position position = UnparsedTokens.Position;
             return String.Format("({0}, {1}): {2}", position.Line, position.Column, Message);
         }
     }

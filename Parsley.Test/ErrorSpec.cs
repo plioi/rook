@@ -6,13 +6,13 @@ namespace Parsley
     [TestFixture]
     public sealed class ErrorSpec
     {
-        private Text x, endOfInput;
+        private Lexer x, endOfInput;
 
         [SetUp]
         public void SetUp()
         {
-            x = new Text("x");
-            endOfInput = new Text("");
+            x = new CharLexer("x");
+            endOfInput = new CharLexer("");
         }
 
         [Test]
@@ -42,10 +42,10 @@ namespace Parsley
         }
 
         [Test]
-        public void HasRemainingUnparsedText()
+        public void HasRemainingUnparsedTokens()
         {
-            new Error<object>(x).UnparsedText.ShouldEqual(x);
-            new Error<object>(endOfInput).UnparsedText.ShouldEqual(endOfInput);
+            new Error<object>(x).UnparsedTokens.ShouldEqual(x);
+            new Error<object>(endOfInput).UnparsedTokens.ShouldEqual(endOfInput);
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace Parsley
 
             Parsed<string> result = new Error<object>(x, "expectation").ParseRest(o => shouldNotBeCalled);
             result.IsError.ShouldBeTrue();
-            result.UnparsedText.ShouldEqual(x);
+            result.UnparsedTokens.ShouldEqual(x);
             ((Error<string>) result).Message.ShouldEqual("expectation expected");
         }
     }

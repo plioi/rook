@@ -21,25 +21,25 @@ namespace Rook.Compiling
 
         public bool CanParse(string code)
         {
-            var text = new Text(code);
+            var tokens = new RookLexer(code);
             Function function;
             Expression expression;
 
-            return TryParse(text, Grammar.Function, out function) ||
-                   TryParse(text, Grammar.Expression, out expression);
+            return TryParse(tokens, Grammar.Function, out function) ||
+                   TryParse(tokens, Grammar.Expression, out expression);
         }
 
         public InterpreterResult Interpret(string code)
         {
-            var text = new Text(code);
-            var pos = text.Position;
+            var tokens = new RookLexer(code);
+            var pos = tokens.Position;
             
             Expression expression;
-            if (TryParse(text, Grammar.Expression, out expression))
+            if (TryParse(tokens, Grammar.Expression, out expression))
                 return InterpretExpression(expression, pos);
 
             Function function;
-            if (TryParse(text, Grammar.Function, out function))
+            if (TryParse(tokens, Grammar.Function, out function))
                 return InterpretFunction(function, pos);
 
             return Error("Cannot evaluate this code: must be a function or expression.");
@@ -89,12 +89,12 @@ namespace Rook.Compiling
             return new Program(pos, new[] { function }.Concat(functionsExceptPotentialOverwrite));
         }
 
-        private static bool TryParse<T>(Text text, Parser<T> parse, out T syntax) where T : SyntaxTree
+        private static bool TryParse<T>(Lexer tokens, Parser<T> parse, out T syntax) where T : SyntaxTree
         {
-            var parsed = parse(text);
+            var parsed = parse(tokens);
 
             if (parsed.IsError ||
-                parsed.UnparsedText.ToString().Trim().Length > 0)
+                parsed.UnparsedTokens.ToString().Trim().Length > 0)
             {
                 syntax = default(T);
                 return false;

@@ -6,14 +6,14 @@ namespace Parsley
     public sealed class SuccessSpec
     {
         private string parsed;
-        private Text unparsed;
+        private Lexer unparsed;
         private Parsed<string> pair;
 
         [SetUp]
         public void SetUp()
         {
             parsed = "parsed";
-            unparsed = new Text("0");
+            unparsed = new CharLexer("0");
             pair = new Success<string>(parsed, unparsed);
         }
 
@@ -30,9 +30,9 @@ namespace Parsley
         }
 
         [Test]
-        public void HasRemainingUnparsedText()
+        public void HasRemainingUnparsedTokens()
         {
-            pair.UnparsedText.ShouldEqual(unparsed);
+            pair.UnparsedTokens.ShouldEqual(unparsed);
         }
 
         [Test]
@@ -47,9 +47,9 @@ namespace Parsley
             Parsed<string> result = new Success<string>("x", unparsed).ParseRest(s => OneChar);
             result.IsError.ShouldBeFalse();
             result.Value.ShouldEqual("0");
-            result.UnparsedText.EndOfInput.ShouldBeTrue();
+            result.UnparsedTokens.EndOfInput.ShouldBeTrue();
         }
 
-        private static readonly Parser<string> OneChar = text => new Success<string>(text.Peek(1), text.Advance(1));
+        private static readonly Parser<string> OneChar = tokens => new Success<string>(tokens.CurrentToken.Literal, tokens.Advance());
     }
 }

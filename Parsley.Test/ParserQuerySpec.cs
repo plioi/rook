@@ -6,12 +6,17 @@ namespace Parsley
     [TestFixture]
     public sealed class ParserQuerySpec
     {
+        private static Lexer Tokenize(string source)
+        {
+            return new CharLexer(source);
+        }
+
         [Test]
         public void CanBuildParserWhichSimulatesSuccessfulParsingOfGivenValueWithoutConsumingInput()
         {
             var parser = 1.SucceedWithThisValue();
 
-            parser.PartiallyParses("input", "input").IntoValue(1);
+            parser.PartiallyParses(Tokenize("input"), "input").IntoValue(1);
         }
 
         [Test]
@@ -19,8 +24,8 @@ namespace Parsley
         {
             var parser = from x in Char('x')
                          select x.ToUpper();
-            
-            parser.PartiallyParses("xy", "y").IntoValue("X");
+
+            parser.PartiallyParses(Tokenize("xy"), "y").IntoValue("X");
         }
 
         [Test]
@@ -31,39 +36,41 @@ namespace Parsley
                           from c in Char('c')
                           select (a + b + c).ToUpper());
 
-            parser.PartiallyParses("abcdef", "def").IntoValue("ABC");
+            parser.PartiallyParses(Tokenize("abcdef"), "def").IntoValue("ABC");
         }
 
         [Test]
         public void PropogatesErrorsWithoutRunningRemainingParsers()
         {
+            var source = Tokenize("xy");
+
             (from _ in Fail
              from x in Char('x')
              from y in Char('y')
-             select Tuple.Create(x, y)).FailsToParse("xy", "xy");
+             select Tuple.Create(x, y)).FailsToParse(source, "xy");
 
             (from x in Char('x')
              from _ in Fail
              from y in Char('y')
-             select Tuple.Create(x, y)).FailsToParse("xy", "y");
+             select Tuple.Create(x, y)).FailsToParse(source, "y");
 
             (from x in Char('x')
              from y in Char('y')
              from _ in Fail
-             select Tuple.Create(x, y)).FailsToParse("xy", "");
+             select Tuple.Create(x, y)).FailsToParse(source, "");
         }
 
         private static Parser<string> Char(char letter)
         {
-            return text =>
+            return tokens =>
             {
-                if (text.Peek(1) == letter.ToString())
-                    return new Success<string>(text.Peek(1), text.Advance(1));
+                if (tokens.CurrentToken.Literal == letter.ToString())
+                    return new Success<string>(tokens.CurrentToken.Literal, tokens.Advance());
 
-                return new Error<string>(text);
+                return new Error<string>(tokens);
             };
         }
 
-        private static readonly Parser<string> Fail = text => new Error<string>(text);
+        private static readonly Parser<string> Fail = tokens => new Error<string>(tokens);
     }
 }

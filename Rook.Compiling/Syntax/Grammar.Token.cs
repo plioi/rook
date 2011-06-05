@@ -53,19 +53,17 @@ namespace Rook.Compiling.Syntax
 
         private static Parser<Token> Token(object kind)
         {
-            return text =>
+            return tokens =>
             {
-                Lexer lexer = new RookLexer(text);
-
                 //Skip leading intraline white space.
-                if (Equals(TokenKind.IntralineWhiteSpace, lexer.CurrentToken.Kind) &&
+                if (Equals(TokenKind.IntralineWhiteSpace, tokens.CurrentToken.Kind) &&
                     !Equals(TokenKind.IntralineWhiteSpace, kind))
-                    lexer = lexer.Advance();
+                    tokens = tokens.Advance();
 
-                if (Equals(lexer.CurrentToken.Kind, kind))
-                    return new Success<Token>(lexer.CurrentToken, lexer.Advance().Text);
+                if (Equals(tokens.CurrentToken.Kind, kind))
+                    return new Success<Token>(tokens.CurrentToken, tokens.Advance());
 
-                return new Error<Token>(lexer.Text);
+                return new Error<Token>(tokens);
             };
         }
 

@@ -4,9 +4,8 @@ namespace Rook.Compiling.Syntax
 {
     public sealed class RookLexer : Lexer
     {
-
-        public RookLexer(Text text)
-            : base(text, new TokenMatcher(TokenKind.IntralineWhiteSpace, @"[ \t]+"),
+        public RookLexer(string source)
+            : base(new Text(source), new TokenMatcher(TokenKind.IntralineWhiteSpace, @"[ \t]+"),
                          new TokenMatcher(TokenKind.Integer, @"[0-9]+"),
                          new TokenMatcher(TokenKind.Keyword, Keyword),
                          new TokenMatcher(TokenKind.Identifier, @"[a-zA-Z]+[a-zA-Z0-9]*"),

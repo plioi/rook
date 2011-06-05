@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using NUnit.Framework;
 using Parsley;
-using Text = Parsley.Text;
 using Rook.Compiling.Syntax;
 
 namespace Rook.Compiling.CodeGeneration
@@ -219,9 +218,9 @@ namespace Rook.Compiling.CodeGeneration
         private static string Translate<T>(Parser<T> parse, string rookSource)
             where T : SyntaxTree
         {
-            var text = new Text(rookSource);
+            var tokens = new RookLexer(rookSource);
             var code = new CodeWriter();
-            WriteAction write = parse(text).Value.Visit(new CSharpTranslator());
+            WriteAction write = parse(tokens).Value.Visit(new CSharpTranslator());
             write(code);
             return code.ToString();
         }
