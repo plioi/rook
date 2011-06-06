@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace Parsley
@@ -21,7 +20,41 @@ namespace Parsley
 
         private static Lexer Tokenize(string source)
         {
-            return new CharLexer(source);
+            return new SampleLexer(source);
+        }
+
+        private static Parser<Token> DIGIT { get { return T(SampleLexer.Digit); } }
+        private static Parser<Token> LETTER { get { return T(SampleLexer.Letter); } }
+        private static Parser<Token> COMMA { get { return T(SampleLexer.Comma); } }
+        private static Parser<Token> WHITESPACE { get { return T(SampleLexer.WhiteSpace); } }
+        private static Parser<Token> SYMBOL { get { return T(SampleLexer.Symbol); } }
+
+        private sealed class SampleLexer : Lexer
+        {
+            public static readonly object Digit = new object();
+            public static readonly object Letter = new object();
+            public static readonly object Comma = new object();
+            public static readonly object WhiteSpace = new object();
+            public static readonly object Symbol = new object();
+
+            public SampleLexer(string source)
+                : base(new Text(source),
+                             new TokenMatcher(Digit, @"[0-9]"),
+                             new TokenMatcher(Letter, @"[a-zA-Z]"),
+                             new TokenMatcher(Comma, @"\,"),
+                             new TokenMatcher(WhiteSpace, @"\s+"),
+                             new TokenMatcher(Symbol, @".")) { }
+        }
+
+        private static Parser<Token> T(object kind)
+        {
+            return tokens =>
+            {
+                if (Equals(tokens.CurrentToken.Kind, kind))
+                    return new Success<Token>(tokens.CurrentToken, tokens.Advance());
+
+                return new Error<Token>(tokens);
+            };
         }
 
         [Test]
@@ -34,18 +67,18 @@ namespace Parsley
         [Test]
         public void ApplyingARuleFollowedByARequiredButDiscardedTerminatorRule()
         {
-            Parser<Token> terminatedGoal = String("(Goal)").TerminatedBy(String("(Terminator)"));
+            Parser<Token> parser = LETTER.TerminatedBy(SYMBOL);
 
-            terminatedGoal.PartiallyParses(Tokenize("(Goal)(Terminator)b"), "b").IntoValue(Token("(Goal)"));
-            terminatedGoal.FailsToParse(Tokenize(""), "");
-            terminatedGoal.FailsToParse(Tokenize("!"), "!");
-            terminatedGoal.FailsToParse(Tokenize("(Goal)!"), "!");
+            parser.PartiallyParses(Tokenize("A~Unparsed"), "Unparsed").IntoValue(Token("A"));
+            parser.FailsToParse(Tokenize(""), "");
+            parser.FailsToParse(Tokenize("~"), "~");
+            parser.FailsToParse(Tokenize("A0"), "0");
         }
 
         [Test]
         public void ApplyingARuleZeroOrMoreTimes()
         {
-            var parser = ZeroOrMore(Digit());
+            var parser = ZeroOrMore(DIGIT);
 
             parser.Parses(Tokenize("")).IntoValue(Tokens());
             parser.PartiallyParses(Tokenize("!"), "!").IntoValue(Tokens());
@@ -62,7 +95,7 @@ namespace Parsley
         [Test]
         public void ApplyingARuleOneOrMoreTimes()
         {
-            var parser = OneOrMore(Digit());
+            var parser = OneOrMore(DIGIT);
 
             parser.FailsToParse(Tokenize(""), "");
             parser.FailsToParse(Tokenize("!"), "!");
@@ -79,7 +112,7 @@ namespace Parsley
         [Test]
         public void ApplyingARuleZeroOrMoreTimesInterspersedByASeparatorRule()
         {
-            var parser = ZeroOrMore(Digit(), String(","));
+            var parser = ZeroOrMore(DIGIT, COMMA);
 
             parser.Parses(Tokenize("")).IntoValue(Tokens());
             parser.PartiallyParses(Tokenize("!"), "!").IntoValue(Tokens());
@@ -96,25 +129,24 @@ namespace Parsley
         [Test]
         public void ApplyingARuleZeroOrMoreTimesFollowedByARequiredTerminatorRule()
         {
-            var parser = ZeroOrMoreTerminated(Digit(), String("EndOfDigits"));
+            var parser = ZeroOrMoreTerminated(DIGIT, SYMBOL);
 
             parser.FailsToParse(Tokenize(""), "");
             parser.FailsToParse(Tokenize("MissingTerminator"), "MissingTerminator");
             parser.FailsToParse(Tokenize("0MissingTerminator"), "MissingTerminator");
             parser.FailsToParse(Tokenize("01MissingTerminator"), "MissingTerminator");
-            parser.FailsToParse(Tokenize("012MissingTerminator"), "MissingTerminator");
 
-            parser.Parses(Tokenize("EndOfDigits")).IntoValue(Tokens());
-            parser.PartiallyParses(Tokenize("EndOfDigits!"), "!").IntoValue(Tokens());
-            parser.Parses(Tokenize("0EndOfDigits")).IntoValue(Tokens("0"));
-            parser.Parses(Tokenize("01EndOfDigits")).IntoValue(Tokens("0", "1"));
-            parser.PartiallyParses(Tokenize("012EndOfDigits!"), "!").IntoValue(Tokens("0", "1", "2"));
+            parser.Parses(Tokenize("~")).IntoValue(Tokens());
+            parser.PartiallyParses(Tokenize("~!"), "!").IntoValue(Tokens());
+            parser.Parses(Tokenize("0~")).IntoValue(Tokens("0"));
+            parser.Parses(Tokenize("01~")).IntoValue(Tokens("0", "1"));
+            parser.PartiallyParses(Tokenize("012~!"), "!").IntoValue(Tokens("0", "1", "2"));
         }
 
         [Test]
         public void ApplyingARuleOneOrMoreTimesInterspersedByASeparatorRule()
         {
-            var parser = OneOrMore(Digit(), String(","));
+            var parser = OneOrMore(DIGIT, COMMA);
 
             parser.FailsToParse(Tokenize(""), "");
             parser.FailsToParse(Tokenize("!"), "!");
@@ -132,11 +164,8 @@ namespace Parsley
         public void ApplyingARuleOneOrMoreTimesInterspersedByALeftAssociativeSeparatorRule()
         {
             var parser =
-                LeftAssociative(
-                    Digit(),
-                    Pattern(@"[\*/]"),
-                    (left, symbolAndRight) =>
-                    new Token(null, symbolAndRight.Item1.Position, System.String.Format("({0} {1} {2})", symbolAndRight.Item1.Literal, left.Literal, symbolAndRight.Item2.Literal)));
+                LeftAssociative(DIGIT, SYMBOL, (left, symbolAndRight) =>
+                    new Token(null, symbolAndRight.Item1.Position, String.Format("({0} {1} {2})", symbolAndRight.Item1.Literal, left.Literal, symbolAndRight.Item2.Literal)));
 
             parser.FailsToParse(Tokenize("!"), "!");
             parser.Parses(Tokenize("0")).IntoValue(Token("0"));
@@ -147,42 +176,43 @@ namespace Parsley
         [Test]
         public void ApplyingAPairOfOrderedRules()
         {
-            var parser = Pair(String("0"), String("1"));
+            var parser = Pair(DIGIT, LETTER);
 
-            parser.FailsToParse(Tokenize("10"), "10");
-
-            parser.Parses(Tokenize("01")).IntoValue(pair =>
+            parser.FailsToParse(Tokenize("A0"), "A0");
+            parser.Parses(Tokenize("0A")).IntoValue(pair =>
             {
                 pair.Item1.Literal.ShouldEqual("0");
-                pair.Item2.Literal.ShouldEqual("1");
+                pair.Item2.Literal.ShouldEqual("A");
             });
         }
 
         [Test]
         public void ApplyingARuleBetweenTwoOtherRules()
         {
-            Parser<Token> surroundedGoal = Between(String("(Left)"), String("(Goal)"), String("(Right)"));
+            var parser = Between(SYMBOL, DIGIT, SYMBOL);
 
-            surroundedGoal.PartiallyParses(Tokenize("(Left)(Goal)(Right)b"), "b").IntoValue(Token("(Goal)"));
-            surroundedGoal.FailsToParse(Tokenize("(Left)"), "");
-            surroundedGoal.FailsToParse(Tokenize("(Left)!"), "!");
-            surroundedGoal.FailsToParse(Tokenize("(Left)(Goal)!"), "!");
+            parser.PartiallyParses(Tokenize("(1)Unparsed"), "Unparsed").IntoValue(Token("1"));
+            parser.FailsToParse(Tokenize("("), "");
+            parser.FailsToParse(Tokenize("(!"), "!");
+            parser.FailsToParse(Tokenize("(1A"), "A");
         }
 
         [Test]
         public void ApplyingANegativeLookaheadAssertionWithoutConsumingInput()
         {
-            Parser<Token> notX = Not(String("x"));
-            notX.PartiallyParses(Tokenize("y"), "y").IntoValue(value => value.ShouldBeNull());
-            notX.FailsToParse(Tokenize("x"), "x");
+            var parser = Not(LETTER);
+
+            parser.PartiallyParses(Tokenize("0"), "0").IntoValue(value => value.ShouldBeNull());
+            parser.FailsToParse(Tokenize("A"), "A");
         }
 
         [Test]
         public void ParsingAnOptionalRuleZeroOrOneTimes()
         {
-            Parser<Token> optionalCash = Optional(String("$"));
-            optionalCash.PartiallyParses(Tokenize("$."), ".").IntoValue(Token("$"));
-            optionalCash.PartiallyParses(Tokenize("."), ".").IntoValue(token => token.ShouldBeNull());
+            var parser = Optional(LETTER);
+
+            parser.PartiallyParses(Tokenize("A."), ".").IntoValue(Token("A"));
+            parser.PartiallyParses(Tokenize("."), ".").IntoValue(token => token.ShouldBeNull());
         }
 
         [Test]
@@ -191,44 +221,51 @@ namespace Parsley
             Predicate<Token> isDollars = x => x.Literal == "$";
             Predicate<Token> isCents = x => x.Literal == "¢";
 
-            Parser<Token> cash = Pattern(@"[\$¢]");
+            Expect(SYMBOL, isDollars).FailsToParse(Tokenize("!"), "!");
+            Expect(SYMBOL, isCents).FailsToParse(Tokenize("!"), "!");
 
-            Expect(cash, isDollars).FailsToParse(Tokenize("!"), "!");
-            Expect(cash, isCents).FailsToParse(Tokenize("!"), "!");
+            Expect(SYMBOL, isDollars).Parses(Tokenize("$")).IntoValue(Token("$"));
+            Expect(SYMBOL, isCents).Parses(Tokenize("¢")).IntoValue(Token("¢"));
 
-            Expect(cash, isDollars).Parses(Tokenize("$")).IntoValue(Token("$"));
-            Expect(cash, isCents).Parses(Tokenize("¢")).IntoValue(Token("¢"));
-
-            Expect(cash, isDollars).FailsToParse(Tokenize("¢"), "¢");
-            Expect(cash, isCents).FailsToParse(Tokenize("$"), "$");
+            Expect(SYMBOL, isDollars).FailsToParse(Tokenize("¢"), "¢");
+            Expect(SYMBOL, isCents).FailsToParse(Tokenize("$"), "$");
         }
 
         [Test]
         public void ChoosingTheFirstSuccessfulParserFromAPrioritizedList()
         {
-            Parser<Token> parenthesizedA = Between(String("("), String("a"), String(")"));
-            Parser<Token> parenthesizedAB = Between(String("("), String("ab"), String(")"));
-            Parser<Token> parenthesizedABC = Between(String("("), String("abc"), String(")"));
+            Parser<Token> A = LETTER;
+            Parser<Token> AB = from a in LETTER
+                               from b in LETTER
+                               select new Token(null, a.Position, a.Literal + b.Literal);
+            Parser<Token> ABC = from a in LETTER
+                                from b in LETTER
+                                from c in LETTER
+                                select new Token(null, a.Position, a.Literal + b.Literal + c.Literal);
 
-            Parser<Token> choice2 = Choice(
+            Parser<Token> parenthesizedA = Between(SYMBOL, A, SYMBOL);
+            Parser<Token> parenthesizedAB = Between(SYMBOL, AB, SYMBOL);
+            Parser<Token> parenthesizedABC = Between(SYMBOL, ABC, SYMBOL);
+
+            Parser<Token> choice = Choice(
                 OnError(parenthesizedA, "parenthesized a"),
                 OnError(parenthesizedAB, "parenthesized ab"),
                 OnError(parenthesizedABC, "parenthesized abc"));
             
-            choice2.PartiallyParses(Tokenize("(a)bcd"), "bcd").IntoValue(Token("a")); //First rule wins.
-            choice2.PartiallyParses(Tokenize("(ab)cd"), "cd").IntoValue(Token("ab")); //Second rule wins.
-            choice2.PartiallyParses(Tokenize("(abc)d"), "d").IntoValue(Token("abc")); //Third rule wins.
+            choice.PartiallyParses(Tokenize("(a)bcd"), "bcd").IntoValue(Token("a")); //First rule wins.
+            choice.PartiallyParses(Tokenize("(ab)cd"), "cd").IntoValue(Token("ab")); //Second rule wins.
+            choice.PartiallyParses(Tokenize("(abc)d"), "d").IntoValue(Token("abc")); //Third rule wins.
 
             //When all rules fail, the error returned should correspond with the
             //rule that made it deepest into the input before encountering a failure.
-            choice2.FailsToParse(Tokenize("(a!"), "!").WithMessage("(1, 3): parenthesized a expected"); //First rule's error wins.
-            choice2.FailsToParse(Tokenize("(ab!"), "!").WithMessage("(1, 4): parenthesized ab expected"); //Second rule's error wins.
-            choice2.FailsToParse(Tokenize("(abc!"), "!").WithMessage("(1, 5): parenthesized abc expected"); //Third rule's error wins.
+            choice.FailsToParse(Tokenize("(a1"), "1").WithMessage("(1, 3): parenthesized a expected"); //First rule's error wins.
+            choice.FailsToParse(Tokenize("(ab1"), "1").WithMessage("(1, 4): parenthesized ab expected"); //Second rule's error wins.
+            choice.FailsToParse(Tokenize("(abc1"), "1").WithMessage("(1, 5): parenthesized abc expected"); //Third rule's error wins.
 
             //When all rules fail, and there is a tie while selecting the rule that 
             //made it deepest into the input, favor the rules in the order they were
             //declared.
-            choice2.FailsToParse(Tokenize("(x"), "x").WithMessage("(1, 2): parenthesized a expected"); //First rule's error wins.
+            choice.FailsToParse(Tokenize("(1"), "1").WithMessage("(1, 2): parenthesized a expected"); //First rule's error wins.
         }
 
         [Test]
@@ -241,59 +278,30 @@ namespace Parsley
         [Test]
         public void ImprovingDefaultErrorMessagesWithAKnownExpectation()
         {
-            Parser<Token> x = String("x");
-            Parser<Token> xImproved = OnError(x, "letter x");
-            x.FailsToParse(Tokenize("y"), "y").WithMessage("(1, 1): Parse error.");
-            xImproved.FailsToParse(Tokenize("y"), "y").WithMessage("(1, 1): letter x expected");
+            LETTER.FailsToParse(Tokenize("."), ".").WithMessage("(1, 1): Parse error.");
+
+            OnError(LETTER, "letter").FailsToParse(Tokenize("."), ".").WithMessage("(1, 1): letter expected");
         }
 
         [Test]
         public void ProvidingTheCurrentPositionWithoutConsumingInput()
         {
-            Parser<Position> start = Position;
-            Parser<Position> afterLeadingWhiteSpace = Between(Pattern(@"\s+"), Position, Pattern(@"[0-9]+"));
-
-            start.PartiallyParses(Tokenize("ABC"), "ABC").IntoValue(position =>
+            Position.PartiallyParses(Tokenize("A"), "A").IntoValue(position =>
             {
                 position.Line.ShouldEqual(1);
                 position.Column.ShouldEqual(1);
             });
 
-            afterLeadingWhiteSpace.PartiallyParses(Tokenize("  \r\n   \r\n   123!"), "!").IntoValue(position =>
+            var afterLeadingWhiteSpace =
+                from _ in WHITESPACE
+                from position in Position
+                select position;
+
+            afterLeadingWhiteSpace.PartiallyParses(Tokenize("  \r\n   \r\n   !"), "!").IntoValue(position =>
             {
                 position.Line.ShouldEqual(3);
                 position.Column.ShouldEqual(4);
             });
-        }
-
-        private static Parser<Token> String(string literal)
-        {
-            return Pattern(Regex.Escape(literal));
-        }
-
-        private static Parser<Token> Digit()
-        {
-            return Pattern(@"[0-9]");
-        }
-
-        //TODO: Deprecated
-        private static Parser<Token> Pattern(string pattern)
-        {
-            return tokens =>
-            {
-                Lexer lexer = new StubLexer(tokens.Text, pattern);
-
-                if (lexer.CurrentToken.Kind == null)
-                    return new Success<Token>(lexer.CurrentToken, new CharLexer(lexer.Advance().Text));
-
-                return new Error<Token>(tokens);
-            };
-        }
-
-        private class StubLexer : Lexer
-        {
-            public StubLexer(Text text, params string[] patterns)
-                : base(text, patterns.Select(p => new TokenMatcher(null, p)).ToArray()) { }
         }
     }
 }
