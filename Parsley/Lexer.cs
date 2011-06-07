@@ -41,8 +41,8 @@ namespace Parsley
             return new Lexer(text.Advance(CurrentToken.Literal.Length), kinds);
         }
 
-        //TODO: Deprecated.  Was only made public to ease the introduction of a lexing phase.
-        public Position Position { get { return CurrentToken.Position; } }
+        public Position Position { get { return text.Position; } }
+
         public override string ToString()
         {
             return text.ToString();
