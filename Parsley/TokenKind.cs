@@ -1,8 +1,8 @@
 ﻿namespace Parsley
 {
-    public enum TokenKind
+    public class TokenKind
     {
-        Unknown,
-        EndOfInput
+        public static readonly TokenKind Unknown = new TokenKind();
+        public static readonly TokenKind EndOfInput = new TokenKind();
     }
 }

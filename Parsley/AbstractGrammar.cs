@@ -29,7 +29,7 @@ namespace Parsley
         {
             return tokens =>
             {
-                if (Equals(tokens.CurrentToken.Kind, kind))
+                if (tokens.CurrentToken.Kind == kind)
                     return new Success<Token>(tokens.CurrentToken, tokens.Advance());
 
                 return new Error<Token>(tokens);
