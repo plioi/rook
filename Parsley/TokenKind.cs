@@ -1,8 +1,26 @@
 ﻿namespace Parsley
 {
-    public class TokenKind
+    public sealed class TokenKind
     {
-        public static readonly TokenKind Unknown = new TokenKind();
-        public static readonly TokenKind EndOfInput = new TokenKind();
+        private readonly string pattern;
+
+        public TokenKind(string pattern)
+        {
+            this.pattern = pattern;
+        }
+
+        public bool TryMatch(Text text, out Token token)
+        {
+            var match = text.Match(pattern);
+
+            if (match.Success)
+            {
+                token = new Token(this, text.Position, match.Value);
+                return true;
+            }
+
+            token = null;
+            return false;
+        }
     }
 }

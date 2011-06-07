@@ -71,7 +71,6 @@
     <Compile Include="Text.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="TokenKind.cs" />
-    <Compile Include="TokenMatcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

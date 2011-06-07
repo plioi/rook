@@ -12,7 +12,7 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return OnError(Choice(Token(RookLexer.EndOfLine),
-                                      Token(TokenKind.EndOfInput)), "end of line");
+                                      Token(Lexer.EndOfInput)), "end of line");
             }
         }
 

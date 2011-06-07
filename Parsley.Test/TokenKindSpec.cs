@@ -3,7 +3,7 @@
 namespace Parsley
 {
     [TestFixture]
-    public sealed class TokenMatcherSpec
+    public sealed class TokenKindSpec
     {
         private TokenKind lower;
         private TokenKind upper;
@@ -12,8 +12,8 @@ namespace Parsley
         [SetUp]
         public void SetUp()
         {
-            lower = new TokenKind();
-            upper = new TokenKind();
+            lower = new TokenKind(@"[a-z]+");
+            upper = new TokenKind(@"[A-Z]+");
             abcDEF = new Text("abcDEF");
         }
 
@@ -22,7 +22,7 @@ namespace Parsley
         {
             Token token;
 
-            new TokenMatcher(upper, @"[A-Z]+").TryMatch(abcDEF, out token).ShouldBeFalse();
+            upper.TryMatch(abcDEF, out token).ShouldBeFalse();
             token.ShouldBeNull();
         }
 
@@ -31,10 +31,10 @@ namespace Parsley
         {
             Token token;
 
-            new TokenMatcher(lower, @"[a-z]+").TryMatch(abcDEF, out token).ShouldBeTrue();
+            lower.TryMatch(abcDEF, out token).ShouldBeTrue();
             token.ShouldBe(lower, "abc", 1, 1);
 
-            new TokenMatcher(upper, @"[A-Z]+").TryMatch(abcDEF.Advance(3), out token).ShouldBeTrue();
+            upper.TryMatch(abcDEF.Advance(3), out token).ShouldBeTrue();
             token.ShouldBe(upper, "DEF", 1, 4);
         }
     }

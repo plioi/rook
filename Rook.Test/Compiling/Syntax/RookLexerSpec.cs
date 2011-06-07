@@ -101,7 +101,7 @@ namespace Rook.Compiling.Syntax
                 lexer = lexer.Advance();
             }
 
-            lexer.CurrentToken.Kind.ShouldEqual(TokenKind.EndOfInput);
+            lexer.CurrentToken.Kind.ShouldEqual(Lexer.EndOfInput);
         }
     }
 }

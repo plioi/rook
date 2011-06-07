@@ -62,7 +62,7 @@ namespace Parsley
 
         private static Parsed<T> WithAllInputConsumed<T>(this Parsed<T> result)
         {
-            result.UnparsedTokens.EndOfInput.ShouldBeTrue("Did not consume all input.");
+            result.UnparsedTokens.IsEndOfInput.ShouldBeTrue("Did not consume all input.");
             result.UnparsedTokens.ToString().ShouldEqual("");
 
             return result;

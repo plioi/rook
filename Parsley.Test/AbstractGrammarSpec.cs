@@ -31,19 +31,14 @@ namespace Parsley
 
         private sealed class SampleLexer : Lexer
         {
-            public static readonly TokenKind Digit = new TokenKind();
-            public static readonly TokenKind Letter = new TokenKind();
-            public static readonly TokenKind Comma = new TokenKind();
-            public static readonly TokenKind WhiteSpace = new TokenKind();
-            public static readonly TokenKind Symbol = new TokenKind();
+            public static readonly TokenKind Digit = new TokenKind(@"[0-9]");
+            public static readonly TokenKind Letter = new TokenKind(@"[a-zA-Z]");
+            public static readonly TokenKind Comma = new TokenKind(@"\,");
+            public static readonly TokenKind WhiteSpace = new TokenKind(@"\s+");
+            public static readonly TokenKind Symbol = new TokenKind(@".");
 
             public SampleLexer(string source)
-                : base(new Text(source),
-                             new TokenMatcher(Digit, @"[0-9]"),
-                             new TokenMatcher(Letter, @"[a-zA-Z]"),
-                             new TokenMatcher(Comma, @"\,"),
-                             new TokenMatcher(WhiteSpace, @"\s+"),
-                             new TokenMatcher(Symbol, @".")) { }
+                : base(new Text(source), Digit, Letter, Comma, WhiteSpace, Symbol) { }
         }
 
         [Test]

@@ -5,19 +5,19 @@ namespace Parsley
 {
     public class Lexer
     {
-        private static readonly TokenMatcher UnknownMatcher = new TokenMatcher(TokenKind.Unknown, ".*");
-        private static readonly TokenMatcher EndOfInputMatcher = new TokenMatcher(TokenKind.EndOfInput, "$");
+        public static readonly TokenKind EndOfInput = new TokenKind("$");
+        public static readonly TokenKind Unknown = new TokenKind(".*");
 
         private readonly Text text;
-        private readonly IEnumerable<TokenMatcher> matchers;
+        private readonly IEnumerable<TokenKind> kinds;
 
-        public Lexer(Text text, params TokenMatcher[] matchers)
-            : this(text, matchers.Concat(new[] { EndOfInputMatcher, UnknownMatcher })) { }
+        public Lexer(Text text, params TokenKind[] kinds)
+            : this(text, kinds.Concat(new[] { EndOfInput, Unknown })) { }
 
-        private Lexer(Text text, IEnumerable<TokenMatcher> matchers)
+        private Lexer(Text text, IEnumerable<TokenKind> kinds)
         {
             this.text = text;
-            this.matchers = matchers;
+            this.kinds = kinds;
         }
 
         public Token CurrentToken
@@ -25,12 +25,11 @@ namespace Parsley
             get
             {
                 Token token;
-                foreach (var matcher in matchers)
-                    if (matcher.TryMatch(text, out token))
+                foreach (var kind in kinds)
+                    if (kind.TryMatch(text, out token))
                         return token;
 
-                //Because of the catch-all Unknown matcher, this should be unreachable.
-                return null;
+                return null; //EndOfInput and Unknown guarantee this is unreachable.
             }
         }
 
@@ -39,13 +38,13 @@ namespace Parsley
             if (text.EndOfInput)
                 return this;
 
-            return new Lexer(text.Advance(CurrentToken.Literal.Length), matchers);
+            return new Lexer(text.Advance(CurrentToken.Literal.Length), kinds);
         }
 
         //TODO: Deprecated.  Was only made public to ease the introduction of a lexing phase.
         public Text Text { get { return text; } }
         public Position Position { get { return CurrentToken.Position; } }
-        public bool EndOfInput { get { return text.EndOfInput; } }
+        public bool IsEndOfInput { get { return text.EndOfInput; } }
         public override string ToString()
         {
             return text.ToString();

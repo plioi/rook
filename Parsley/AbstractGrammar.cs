@@ -17,7 +17,7 @@ namespace Parsley
             {
                 return tokens =>
                 {
-                    if (tokens.EndOfInput)
+                    if (tokens.IsEndOfInput)
                         return new Success<string>("", tokens);
 
                     return new Error<string>(tokens);
