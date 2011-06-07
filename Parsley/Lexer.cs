@@ -1,14 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Parsley
 {
     public class Lexer
     {
+        private static readonly TokenMatcher UnknownMatcher = new TokenMatcher(TokenKind.Unknown, ".*");
+        private static readonly TokenMatcher EndOfInputMatcher = new TokenMatcher(TokenKind.EndOfInput, "$");
+
         private readonly Text text;
         private readonly IEnumerable<TokenMatcher> matchers;
 
         public Lexer(Text text, params TokenMatcher[] matchers)
-            : this(text, (IEnumerable<TokenMatcher>)matchers) { }
+            : this(text, matchers.Concat(new[] { EndOfInputMatcher, UnknownMatcher })) { }
 
         private Lexer(Text text, IEnumerable<TokenMatcher> matchers)
         {
@@ -20,15 +24,13 @@ namespace Parsley
         {
             get
             {
-                if (text.EndOfInput)
-                    return new Token(TokenKind.EndOfInput, text.Position, text.ToString());
-
                 Token token;
                 foreach (var matcher in matchers)
                     if (matcher.TryMatch(text, out token))
                         return token;
 
-                return new Token(TokenKind.Unknown, text.Position, text.ToString());
+                //Because of the catch-all Unknown matcher, this should be unreachable.
+                return null;
             }
         }
 
