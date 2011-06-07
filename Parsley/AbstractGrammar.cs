@@ -25,6 +25,17 @@ namespace Parsley
             }
         }
 
+        public static Parser<Token> Kind(object kind)
+        {
+            return tokens =>
+            {
+                if (Equals(tokens.CurrentToken.Kind, kind))
+                    return new Success<Token>(tokens.CurrentToken, tokens.Advance());
+
+                return new Error<Token>(tokens);
+            };
+        }
+
         public static Parser<IEnumerable<T>> ZeroOrMore<T>(Parser<T> item)
         {
             return tokens =>

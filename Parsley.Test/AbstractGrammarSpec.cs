@@ -23,11 +23,11 @@ namespace Parsley
             return new SampleLexer(source);
         }
 
-        private static Parser<Token> DIGIT { get { return T(SampleLexer.Digit); } }
-        private static Parser<Token> LETTER { get { return T(SampleLexer.Letter); } }
-        private static Parser<Token> COMMA { get { return T(SampleLexer.Comma); } }
-        private static Parser<Token> WHITESPACE { get { return T(SampleLexer.WhiteSpace); } }
-        private static Parser<Token> SYMBOL { get { return T(SampleLexer.Symbol); } }
+        private static Parser<Token> DIGIT { get { return Kind(SampleLexer.Digit); } }
+        private static Parser<Token> LETTER { get { return Kind(SampleLexer.Letter); } }
+        private static Parser<Token> COMMA { get { return Kind(SampleLexer.Comma); } }
+        private static Parser<Token> WHITESPACE { get { return Kind(SampleLexer.WhiteSpace); } }
+        private static Parser<Token> SYMBOL { get { return Kind(SampleLexer.Symbol); } }
 
         private sealed class SampleLexer : Lexer
         {
@@ -46,22 +46,21 @@ namespace Parsley
                              new TokenMatcher(Symbol, @".")) { }
         }
 
-        private static Parser<Token> T(object kind)
-        {
-            return tokens =>
-            {
-                if (Equals(tokens.CurrentToken.Kind, kind))
-                    return new Success<Token>(tokens.CurrentToken, tokens.Advance());
-
-                return new Error<Token>(tokens);
-            };
-        }
-
         [Test]
         public void CanDetectTheEndOfInputWithoutAdvancing()
         {
             EndOfInput.Parses(Tokenize("")).IntoValue("");
             EndOfInput.FailsToParse(Tokenize("!"), "!");
+        }
+
+        [Test]
+        public void CanDemandThatAGivenKindOfTokenAppearsNext()
+        {
+            Kind(SampleLexer.Letter).Parses(Tokenize("A")).IntoValue(Token("A"));
+            Kind(SampleLexer.Letter).FailsToParse(Tokenize("0"), "0");
+
+            Kind(SampleLexer.Digit).FailsToParse(Tokenize("A"), "A");
+            Kind(SampleLexer.Digit).Parses(Tokenize("0")).IntoValue(Token("0"));
         }
 
         [Test]

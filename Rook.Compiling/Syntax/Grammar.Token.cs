@@ -33,7 +33,7 @@ namespace Rook.Compiling.Syntax
 
         public static Parser<Token> Operator(params string[] expectedOperators)
         {
-            return OnError(Expect(AnyOperator, IsOneOf(expectedOperators)), System.String.Join(", ", expectedOperators));
+            return OnError(Expect(AnyOperator, IsOneOf(expectedOperators)), String.Join(", ", expectedOperators));
         }
 
         public static Parser<Token> AnyKeyword
@@ -53,18 +53,9 @@ namespace Rook.Compiling.Syntax
 
         private static Parser<Token> Token(object kind)
         {
-            return tokens =>
-            {
-                //Skip leading intraline white space.
-                if (Equals(TokenKind.IntralineWhiteSpace, tokens.CurrentToken.Kind) &&
-                    !Equals(TokenKind.IntralineWhiteSpace, kind))
-                    tokens = tokens.Advance();
-
-                if (Equals(tokens.CurrentToken.Kind, kind))
-                    return new Success<Token>(tokens.CurrentToken, tokens.Advance());
-
-                return new Error<Token>(tokens);
-            };
+            return from _ in Optional(Kind(TokenKind.IntralineWhiteSpace))
+                   from token in Kind(kind)
+                   select token;
         }
 
         private static Predicate<Token> IsOneOf(IEnumerable<string> values)
