@@ -16,20 +16,20 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ParsesIntegerValues()
         {
-            AssertParse(Grammar.Integer, TokenKind.Integer, "0", "0");
-            AssertParse(Grammar.Integer, TokenKind.Integer, "0", " \t 0");
+            AssertParse(Grammar.Integer, RookLexer.Integer, "0", "0");
+            AssertParse(Grammar.Integer, RookLexer.Integer, "0", " \t 0");
 
             //NOTE: Rook integer literals are not (yet) limited to int.MaxValue:
-            AssertParse(Grammar.Integer, TokenKind.Integer, "2147483648", "2147483648");
+            AssertParse(Grammar.Integer, RookLexer.Integer, "2147483648", "2147483648");
         }
 
         [Test]
         public void ParsesBooleanValues()
         {
-            AssertParse(Grammar.Boolean, TokenKind.Keyword, "false", "false");
-            AssertParse(Grammar.Boolean, TokenKind.Keyword, "true", "true");
-            AssertParse(Grammar.Boolean, TokenKind.Keyword, "false", " \t false");
-            AssertParse(Grammar.Boolean, TokenKind.Keyword, "true", " \t true");
+            AssertParse(Grammar.Boolean, RookLexer.Keyword, "false", "false");
+            AssertParse(Grammar.Boolean, RookLexer.Keyword, "true", "true");
+            AssertParse(Grammar.Boolean, RookLexer.Keyword, "false", " \t false");
+            AssertParse(Grammar.Boolean, RookLexer.Keyword, "true", " \t true");
         }
 
         [Test]
@@ -45,11 +45,11 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ParsesExpectedOperators()
         {
-            AssertParse(Grammar.Operator("<", "="), TokenKind.Operator, "=", "=");
-            AssertParse(Grammar.Operator("<", "="), TokenKind.Operator, "<", "<");
-            AssertParse(Grammar.Operator("<", "="), TokenKind.Operator, "=", " \t =");
+            AssertParse(Grammar.Operator("<", "="), RookLexer.Operator, "=", "=");
+            AssertParse(Grammar.Operator("<", "="), RookLexer.Operator, "<", "<");
+            AssertParse(Grammar.Operator("<", "="), RookLexer.Operator, "=", " \t =");
 
-            AssertParse(Grammar.Operator("<=", "<", "="), TokenKind.Operator, "<=", "<=");
+            AssertParse(Grammar.Operator("<=", "<", "="), RookLexer.Operator, "<=", "<=");
             Grammar.Operator("<=", "<", "=").FailsToParse(Tokenize("!"), "!").WithMessage("(1, 1): <=, <, = expected");
             Grammar.Operator("<", "=").FailsToParse(Tokenize("<="), "<=").WithMessage("(1, 1): <, = expected");
         }
@@ -68,9 +68,9 @@ namespace Rook.Compiling.Syntax
         public void ParsesExpectedKeyword()
         {
             var ifOrTrue = Grammar.Keyword("if", "true");
-            AssertParse(ifOrTrue, TokenKind.Keyword, "true", "true");
-            AssertParse(ifOrTrue, TokenKind.Keyword, "if", "if");
-            AssertParse(ifOrTrue, TokenKind.Keyword, "true", " \t true");
+            AssertParse(ifOrTrue, RookLexer.Keyword, "true", "true");
+            AssertParse(ifOrTrue, RookLexer.Keyword, "if", "if");
+            AssertParse(ifOrTrue, RookLexer.Keyword, "true", " \t true");
             ifOrTrue.FailsToParse(Tokenize("iftrue"), "iftrue");
             ifOrTrue.FailsToParse(Tokenize("random text"), "random text");
         }
@@ -78,11 +78,11 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ParsesIdentifiers()
         {
-            AssertParse(Grammar.Identifier, TokenKind.Identifier, "a", "a");
-            AssertParse(Grammar.Identifier, TokenKind.Identifier, "a", " \t a");
-            AssertParse(Grammar.Identifier, TokenKind.Identifier, "ab", "ab");
-            AssertParse(Grammar.Identifier, TokenKind.Identifier, "a0", "a0");
-            AssertParse(Grammar.Identifier, TokenKind.Identifier, "a01", "a01");
+            AssertParse(Grammar.Identifier, RookLexer.Identifier, "a", "a");
+            AssertParse(Grammar.Identifier, RookLexer.Identifier, "a", " \t a");
+            AssertParse(Grammar.Identifier, RookLexer.Identifier, "ab", "ab");
+            AssertParse(Grammar.Identifier, RookLexer.Identifier, "a0", "a0");
+            AssertParse(Grammar.Identifier, RookLexer.Identifier, "a01", "a01");
 
             Grammar.Identifier.FailsToParse(Tokenize("0"), "0");
             foreach (string keyword in expectedKeywords)
@@ -94,18 +94,18 @@ namespace Rook.Compiling.Syntax
         {
             //Endlines are the end of input, \r\n, or semicolons (with optional preceding spaces/tabs and optional trailing whitspace).
 
-            AssertParse(Grammar.EndOfLine, Parsley.TokenKind.EndOfInput, "", "");
-            AssertParse(Grammar.EndOfLine, Parsley.TokenKind.EndOfInput, "", " \t \t");
+            AssertParse(Grammar.EndOfLine, TokenKind.EndOfInput, "", "");
+            AssertParse(Grammar.EndOfLine, TokenKind.EndOfInput, "", " \t \t");
 
-            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "\r\n", "\r\n");
-            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "\r\n", " \t \t\r\n");
-            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "\r\n \r\n \t ", "\r\n \r\n \t ");
-            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "\r\n \r\n \t ", " \t \t\r\n \r\n \t ");
+            AssertParse(Grammar.EndOfLine, RookLexer.EndOfLine, "\r\n", "\r\n");
+            AssertParse(Grammar.EndOfLine, RookLexer.EndOfLine, "\r\n", " \t \t\r\n");
+            AssertParse(Grammar.EndOfLine, RookLexer.EndOfLine, "\r\n \r\n \t ", "\r\n \r\n \t ");
+            AssertParse(Grammar.EndOfLine, RookLexer.EndOfLine, "\r\n \r\n \t ", " \t \t\r\n \r\n \t ");
 
-            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, ";", ";");
-            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, ";", " \t \t;");
-            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "; \r\n \t ", "; \r\n \t ");
-            AssertParse(Grammar.EndOfLine, TokenKind.EndOfLine, "; \r\n \t ", " \t \t; \r\n \t ");
+            AssertParse(Grammar.EndOfLine, RookLexer.EndOfLine, ";", ";");
+            AssertParse(Grammar.EndOfLine, RookLexer.EndOfLine, ";", " \t \t;");
+            AssertParse(Grammar.EndOfLine, RookLexer.EndOfLine, "; \r\n \t ", "; \r\n \t ");
+            AssertParse(Grammar.EndOfLine, RookLexer.EndOfLine, "; \r\n \t ", " \t \t; \r\n \t ");
 
             AssertError(Grammar.EndOfLine, "x", "x", "(1, 1): end of line expected");
             AssertError(Grammar.EndOfLine, " x", "x", "(1, 2): end of line expected");
@@ -122,7 +122,7 @@ namespace Rook.Compiling.Syntax
                 .IntoValue(parsedValues => parsedValues.Select(x => x.Literal).ShouldList(expectedTokens));
         }
 
-        private static void AssertParse(Parser<Token> parse, Parsley.TokenKind expectedKind, string expectedValue, string source)
+        private static void AssertParse(Parser<Token> parse, TokenKind expectedKind, string expectedValue, string source)
         {
             parse.Parses(Tokenize(source)).IntoValue(parsedValue =>
             {

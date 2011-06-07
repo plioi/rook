@@ -11,14 +11,14 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return OnError(Choice(Token(TokenKind.EndOfLine),
-                                      Token(Parsley.TokenKind.EndOfInput)), "end of line");
+                return OnError(Choice(Token(RookLexer.EndOfLine),
+                                      Token(TokenKind.EndOfInput)), "end of line");
             }
         }
 
         public static Parser<Token> Integer
         {
-            get { return Token(TokenKind.Integer); }
+            get { return Token(RookLexer.Integer); }
         }
 
         public static Parser<Token> Boolean
@@ -28,7 +28,7 @@ namespace Rook.Compiling.Syntax
 
         public static Parser<Token> AnyOperator
         {
-            get { return Token(TokenKind.Operator); }
+            get { return Token(RookLexer.Operator); }
         }
 
         public static Parser<Token> Operator(params string[] expectedOperators)
@@ -38,7 +38,7 @@ namespace Rook.Compiling.Syntax
 
         public static Parser<Token> AnyKeyword
         {
-            get { return Token(TokenKind.Keyword); }
+            get { return Token(RookLexer.Keyword); }
         }
 
         public static Parser<Token> Keyword(params string[] expectedKeywords)
@@ -48,12 +48,12 @@ namespace Rook.Compiling.Syntax
 
         public static Parser<Token> Identifier
         {
-            get { return Token(TokenKind.Identifier); }
+            get { return Token(RookLexer.Identifier); }
         }
 
-        private static Parser<Token> Token(Parsley.TokenKind kind)
+        private static Parser<Token> Token(TokenKind kind)
         {
-            return from _ in Optional(Kind(TokenKind.IntralineWhiteSpace))
+            return from _ in Optional(Kind(RookLexer.IntralineWhiteSpace))
                    from token in Kind(kind)
                    select token;
         }

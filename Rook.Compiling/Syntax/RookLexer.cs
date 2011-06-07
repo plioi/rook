@@ -4,15 +4,22 @@ namespace Rook.Compiling.Syntax
 {
     public sealed class RookLexer : Lexer
     {
-        public RookLexer(string source)
-            : base(new Text(source), new TokenMatcher(TokenKind.IntralineWhiteSpace, @"[ \t]+"),
-                         new TokenMatcher(TokenKind.Integer, @"[0-9]+"),
-                         new TokenMatcher(TokenKind.Keyword, Keyword),
-                         new TokenMatcher(TokenKind.Identifier, @"[a-zA-Z]+[a-zA-Z0-9]*"),
-                         new TokenMatcher(TokenKind.Operator, Operator),
-                         new TokenMatcher(TokenKind.EndOfLine, @"(\r\n|;)\s*")) { }
+        public static readonly TokenKind IntralineWhiteSpace = new TokenKind();
+        public static readonly TokenKind Integer = new TokenKind();
+        public static readonly TokenKind Keyword = new TokenKind();
+        public static readonly TokenKind Identifier = new TokenKind();
+        public static readonly TokenKind Operator = new TokenKind();
+        public static readonly TokenKind EndOfLine = new TokenKind();
 
-        private const string Keyword =
+        public RookLexer(string source)
+            : base(new Text(source), new TokenMatcher(IntralineWhiteSpace, @"[ \t]+"),
+                         new TokenMatcher(Integer, @"[0-9]+"),
+                         new TokenMatcher(Keyword, KeywordPattern),
+                         new TokenMatcher(Identifier, @"[a-zA-Z]+[a-zA-Z0-9]*"),
+                         new TokenMatcher(Operator, OperatorPattern),
+                         new TokenMatcher(EndOfLine, @"(\r\n|;)\s*")) { }
+
+        private const string KeywordPattern =
             @"  true   \b
               | false  \b
               | int    \b
@@ -24,7 +31,7 @@ namespace Rook.Compiling.Syntax
               | else   \b
               | fn     \b";
 
-        private const string Operator =
+        private const string OperatorPattern =
             @"  \(   | \)          # Parentheses
               | \*   | /           # Multiplicative
               | \+   | \-          # Additive
