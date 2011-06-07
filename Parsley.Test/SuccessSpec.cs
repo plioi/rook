@@ -43,7 +43,7 @@ namespace Parsley
             Parsed<string> result = new Success<string>("x", unparsed).ParseRest(s => OneChar);
             result.IsError.ShouldBeFalse();
             result.Value.ShouldEqual("0");
-            result.UnparsedTokens.IsEndOfInput.ShouldBeTrue();
+            result.UnparsedTokens.CurrentToken.Kind.ShouldEqual(Lexer.EndOfInput);
         }
 
         private static readonly Parser<string> OneChar = tokens => new Success<string>(tokens.CurrentToken.Literal, tokens.Advance());

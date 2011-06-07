@@ -42,9 +42,7 @@ namespace Parsley
         }
 
         //TODO: Deprecated.  Was only made public to ease the introduction of a lexing phase.
-        public Text Text { get { return text; } }
         public Position Position { get { return CurrentToken.Position; } }
-        public bool IsEndOfInput { get { return text.EndOfInput; } }
         public override string ToString()
         {
             return text.ToString();

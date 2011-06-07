@@ -62,7 +62,8 @@ namespace Parsley
 
         private static Parsed<T> WithAllInputConsumed<T>(this Parsed<T> result)
         {
-            result.UnparsedTokens.IsEndOfInput.ShouldBeTrue("Did not consume all input.");
+            var consumedAllInput = result.UnparsedTokens.CurrentToken.Kind == Lexer.EndOfInput;
+            consumedAllInput.ShouldBeTrue("Did not consume all input.");
             result.UnparsedTokens.ToString().ShouldEqual("");
 
             return result;

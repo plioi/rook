@@ -44,7 +44,7 @@ namespace Parsley
         [Test]
         public void CanDetectTheEndOfInputWithoutAdvancing()
         {
-            EndOfInput.Parses(Tokenize("")).IntoValue("");
+            EndOfInput.Parses(Tokenize("")).IntoValue(Token(""));
             EndOfInput.FailsToParse(Tokenize("!"), "!");
         }
 

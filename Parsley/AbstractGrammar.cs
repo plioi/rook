@@ -11,18 +11,9 @@ namespace Parsley
             get { return tokens => new Success<Position>(tokens.Position, tokens); }
         }
 
-        public static Parser<string> EndOfInput
+        public static Parser<Token> EndOfInput
         {
-            get
-            {
-                return tokens =>
-                {
-                    if (tokens.IsEndOfInput)
-                        return new Success<string>("", tokens);
-
-                    return new Error<string>(tokens);
-                };
-            }
+            get { return Kind(Lexer.EndOfInput); }
         }
 
         public static Parser<Token> Kind(TokenKind kind)
