@@ -5,22 +5,18 @@ namespace Parsley
     [TestFixture]
     public sealed class SuccessSpec
     {
-        private string parsed;
         private Lexer unparsed;
-        private Parsed<string> pair;
 
         [SetUp]
         public void SetUp()
         {
-            parsed = "parsed";
             unparsed = new CharLexer("0");
-            pair = new Success<string>(parsed, unparsed);
         }
 
         [Test]
         public void HasAParsedValue()
         {
-            pair.Value.ShouldEqual(parsed);
+            new Success<string>("parsed", unparsed).Value.ShouldEqual("parsed");
         }
 
         [Test]
@@ -32,13 +28,13 @@ namespace Parsley
         [Test]
         public void HasRemainingUnparsedTokens()
         {
-            pair.UnparsedTokens.ShouldEqual(unparsed);
+            new Success<string>("parsed", unparsed).UnparsedTokens.ShouldEqual(unparsed);
         }
 
         [Test]
         public void ReportsNonerrorState()
         {
-            pair.IsError.ShouldBeFalse();
+            new Success<string>("parsed", unparsed).IsError.ShouldBeFalse();
         }
 
         [Test]

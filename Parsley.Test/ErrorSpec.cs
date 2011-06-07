@@ -11,8 +11,8 @@ namespace Parsley
         [SetUp]
         public void SetUp()
         {
-            x = new CharLexer("x");
-            endOfInput = new CharLexer("");
+            x = new Lexer(new Text("x"));
+            endOfInput = new Lexer(new Text(""));
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace Parsley
             Parsed<string> result = new Error<object>(x, "expectation").ParseRest(o => shouldNotBeCalled);
             result.IsError.ShouldBeTrue();
             result.UnparsedTokens.ShouldEqual(x);
-            ((Error<string>) result).Message.ShouldEqual("expectation expected");
+            result.Message.ShouldEqual("expectation expected");
         }
     }
 }
