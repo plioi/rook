@@ -5,14 +5,14 @@ namespace Parsley
 {
     public static class ParsingAssertions
     {
-        public static void ShouldBe(this Token actual, object expectedKind, string expectedLiteral, int expectedLine, int expectedColumn)
+        public static void ShouldBe(this Token actual, TokenKind expectedKind, string expectedLiteral, int expectedLine, int expectedColumn)
         {
             ShouldBe(actual, expectedKind, expectedLiteral);
             actual.Position.Line.ShouldEqual(expectedLine);
             actual.Position.Column.ShouldEqual(expectedColumn);
         }
 
-        public static void ShouldBe(this Token actual, object expectedKind, string expectedLiteral)
+        public static void ShouldBe(this Token actual, TokenKind expectedKind, string expectedLiteral)
         {
             actual.Kind.ShouldEqual(expectedKind);
             actual.Literal.ShouldEqual(expectedLiteral);

@@ -2,10 +2,10 @@
 {
     public sealed class TokenMatcher
     {
-        private readonly object kind;
+        private readonly TokenKind kind;
         private readonly string pattern;
 
-        public TokenMatcher(object kind, string pattern)
+        public TokenMatcher(TokenKind kind, string pattern)
         {
             this.kind = kind;
             this.pattern = pattern;

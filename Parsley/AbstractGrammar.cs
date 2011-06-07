@@ -25,7 +25,7 @@ namespace Parsley
             }
         }
 
-        public static Parser<Token> Kind(object kind)
+        public static Parser<Token> Kind(TokenKind kind)
         {
             return tokens =>
             {

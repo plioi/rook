@@ -51,7 +51,7 @@ namespace Rook.Compiling.Syntax
             get { return Token(TokenKind.Identifier); }
         }
 
-        private static Parser<Token> Token(object kind)
+        private static Parser<Token> Token(Parsley.TokenKind kind)
         {
             return from _ in Optional(Kind(TokenKind.IntralineWhiteSpace))
                    from token in Kind(kind)

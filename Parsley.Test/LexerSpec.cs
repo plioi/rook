@@ -5,14 +5,14 @@ namespace Parsley
     [TestFixture]
     public sealed class LexerSpec
     {
-        private object lower;
-        private object upper;
+        private TokenKind lower;
+        private TokenKind upper;
 
         [SetUp]
         public void SetUp()
         {
-            lower = new object();
-            upper = new object();
+            lower = new TokenKind();
+            upper = new TokenKind();
         }
 
         [Test]

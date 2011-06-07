@@ -1,6 +1,6 @@
 ﻿namespace Rook.Compiling.Syntax
 {
-    public class TokenKind
+    public class TokenKind : Parsley.TokenKind
     {
         public static readonly TokenKind IntralineWhiteSpace = new TokenKind();
         public static readonly TokenKind Integer = new TokenKind();

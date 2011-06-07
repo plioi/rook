@@ -31,11 +31,11 @@ namespace Parsley
 
         private sealed class SampleLexer : Lexer
         {
-            public static readonly object Digit = new object();
-            public static readonly object Letter = new object();
-            public static readonly object Comma = new object();
-            public static readonly object WhiteSpace = new object();
-            public static readonly object Symbol = new object();
+            public static readonly TokenKind Digit = new TokenKind();
+            public static readonly TokenKind Letter = new TokenKind();
+            public static readonly TokenKind Comma = new TokenKind();
+            public static readonly TokenKind WhiteSpace = new TokenKind();
+            public static readonly TokenKind Symbol = new TokenKind();
 
             public SampleLexer(string source)
                 : base(new Text(source),

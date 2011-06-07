@@ -122,7 +122,7 @@ namespace Rook.Compiling.Syntax
                 .IntoValue(parsedValues => parsedValues.Select(x => x.Literal).ShouldList(expectedTokens));
         }
 
-        private static void AssertParse(Parser<Token> parse, object expectedKind, string expectedValue, string source)
+        private static void AssertParse(Parser<Token> parse, Parsley.TokenKind expectedKind, string expectedValue, string source)
         {
             parse.Parses(Tokenize(source)).IntoValue(parsedValue =>
             {
