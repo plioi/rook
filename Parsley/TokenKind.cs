@@ -2,10 +2,12 @@
 {
     public sealed class TokenKind
     {
+        private readonly string name;
         private readonly string pattern;
 
-        public TokenKind(string pattern)
+        public TokenKind(string name, string pattern)
         {
+            this.name = name;
             this.pattern = pattern;
         }
 
@@ -21,6 +23,11 @@
 
             token = null;
             return false;
+        }
+
+        public override string ToString()
+        {
+            return name + ": " + pattern;
         }
     }
 }

@@ -4,12 +4,12 @@ namespace Rook.Compiling.Syntax
 {
     public sealed class RookLexer : Lexer
     {
-        public static readonly TokenKind IntralineWhiteSpace = new TokenKind(@"[ \t]+");
-        public static readonly TokenKind Integer = new TokenKind(@"[0-9]+");
-        public static readonly TokenKind Keyword = new TokenKind(KeywordPattern);
-        public static readonly TokenKind Identifier = new TokenKind(@"[a-zA-Z]+[a-zA-Z0-9]*");
-        public static readonly TokenKind Operator = new TokenKind(OperatorPattern);
-        public static readonly TokenKind EndOfLine = new TokenKind(@"(\r\n|;)\s*");
+        public static readonly TokenKind IntralineWhiteSpace = new TokenKind("IntralineWhiteSpace", @"[ \t]+");
+        public static readonly TokenKind Integer = new TokenKind("Integer", @"[0-9]+");
+        public static readonly TokenKind Keyword = new TokenKind("Keyword", KeywordPattern);
+        public static readonly TokenKind Identifier = new TokenKind("Identifier", @"[a-zA-Z]+[a-zA-Z0-9]*");
+        public static readonly TokenKind Operator = new TokenKind("Operator", OperatorPattern);
+        public static readonly TokenKind EndOfLine = new TokenKind("EndOfLine", @"(\r\n|;)\s*");
 
         public RookLexer(string source)
             : base(new Text(source), IntralineWhiteSpace, Integer, Keyword, Identifier, Operator, EndOfLine) { }

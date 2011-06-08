@@ -12,8 +12,8 @@ namespace Parsley
         [SetUp]
         public void SetUp()
         {
-            lower = new TokenKind(@"[a-z]+");
-            upper = new TokenKind(@"[A-Z]+");
+            lower = new TokenKind("Lowercase", @"[a-z]+");
+            upper = new TokenKind("Uppercase", @"[A-Z]+");
             abcDEF = new Text("abcDEF");
         }
 
@@ -36,6 +36,13 @@ namespace Parsley
 
             upper.TryMatch(abcDEF.Advance(3), out token).ShouldBeTrue();
             token.ShouldBe(upper, "DEF", 1, 4);
+        }
+
+        [Test]
+        public void HasDescriptiveStringRepresentation()
+        {
+            lower.ToString().ShouldEqual("Lowercase: [a-z]+");
+            upper.ToString().ShouldEqual("Uppercase: [A-Z]+");
         }
     }
 }

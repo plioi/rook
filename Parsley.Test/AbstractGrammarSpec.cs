@@ -19,11 +19,11 @@ namespace Parsley
 
         private sealed class SampleLexer : Lexer
         {
-            public static readonly TokenKind Digit = new TokenKind(@"[0-9]");
-            public static readonly TokenKind Letter = new TokenKind(@"[a-zA-Z]");
-            public static readonly TokenKind Comma = new TokenKind(@"\,");
-            public static readonly TokenKind WhiteSpace = new TokenKind(@"\s+");
-            public static readonly TokenKind Symbol = new TokenKind(@".");
+            public static readonly TokenKind Digit = new TokenKind("Digit", @"[0-9]");
+            public static readonly TokenKind Letter = new TokenKind("Letter", @"[a-zA-Z]");
+            public static readonly TokenKind Comma = new TokenKind("Comma", @"\,");
+            public static readonly TokenKind WhiteSpace = new TokenKind("WhiteSpace", @"\s+");
+            public static readonly TokenKind Symbol = new TokenKind("Symbol", @".");
 
             public SampleLexer(string source)
                 : base(new Text(source), Digit, Letter, Comma, WhiteSpace, Symbol) { }

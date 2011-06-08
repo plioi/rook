@@ -12,8 +12,8 @@ namespace Parsley
         [SetUp]
         public void SetUp()
         {
-            lower = new TokenKind(@"[a-z]+");
-            upper = new TokenKind(@"[A-Z]+");
+            lower = new TokenKind("Lowercase", @"[a-z]+");
+            upper = new TokenKind("Uppercase", @"[A-Z]+");
         }
 
         [Test]
