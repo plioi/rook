@@ -16,12 +16,12 @@ namespace Rook.Compiling.Syntax
 
         protected Parsed<TSyntax> Parses(string source)
         {
-            return Parser.Parses(new RookLexer(source));
+            return Parser.Parses(source);
         }
 
         protected Parsed<TSyntax> FailsToParse(string source, string expectedUnparsedSource)
         {
-            return Parser.FailsToParse(new RookLexer(source), expectedUnparsedSource);
+            return Parser.FailsToParse(source, expectedUnparsedSource);
         }
 
         protected static void AssertTypeCheckError(TypeChecked<TSyntax> typeChecked, int line, int column, string expectedMessage)

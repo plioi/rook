@@ -7,7 +7,7 @@ namespace Parsley
     {
         public static void ShouldBe(this Token actual, TokenKind expectedKind, string expectedLiteral, int expectedLine, int expectedColumn)
         {
-            ShouldBe(actual, expectedKind, expectedLiteral);
+            actual.ShouldBe(expectedKind, expectedLiteral);
             actual.Position.Line.ShouldEqual(expectedLine);
             actual.Position.Column.ShouldEqual(expectedColumn);
         }
@@ -77,6 +77,11 @@ namespace Parsley
         public static void IntoValue<T>(this Parsed<T> result, Action<T> assertParsedValue)
         {
             assertParsedValue(result.Value);
+        }
+
+        public static void IntoToken(this Parsed<Token> result, TokenKind expectedKind, string expectedLiteral)
+        {
+            result.Value.ShouldBe(expectedKind, expectedLiteral);
         }
     }
 }
