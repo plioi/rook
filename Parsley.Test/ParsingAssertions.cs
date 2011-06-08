@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Parsley
@@ -82,6 +84,16 @@ namespace Parsley
         public static void IntoToken(this Parsed<Token> result, TokenKind expectedKind, string expectedLiteral)
         {
             result.Value.ShouldBe(expectedKind, expectedLiteral);
+        }
+
+        public static void IntoToken(this Parsed<Token> result, string expectedLiteral)
+        {
+            result.Value.Literal.ShouldEqual(expectedLiteral);
+        }
+
+        public static void IntoTokens(this Parsed<IEnumerable<Token>> result, params string[] expectedLiterals)
+        {
+            result.IntoValue(tokens => tokens.Select(x => x.Literal).ShouldList(expectedLiterals));
         }
     }
 }

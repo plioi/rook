@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Parsley;
+﻿using Parsley;
 using NUnit.Framework;
 
 namespace Rook.Compiling.Syntax
@@ -35,10 +34,10 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ParsesOperatorsGreedily()
         {
-            AssertTokens(Grammar.AnyOperator,
-                         " \t <=>=<>!====*/+-&&||!{}[][,]()???:",
-                         "<=", ">=", "<", ">", "!=", "==", "=", "*", "/", "+", "-",
-                         "&&", "||", "!", "{", "}", "[]", "[", ",", "]", "(", ")", "??", "?", ":");
+            AbstractGrammar.ZeroOrMore(Grammar.AnyOperator)
+                .Parses(" \t <=>=<>!====*/+-&&||!{}[][,]()???:")
+                .IntoTokens("<=", ">=", "<", ">", "!=", "==", "=", "*", "/", "+", "-",
+                            "&&", "||", "!", "{", "}", "[]", "[", ",", "]", "(", ")", "??", "?", ":");
             Grammar.AnyOperator.FailsToParse("0", "0");
         }
 
@@ -57,9 +56,9 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ParsesKeywords()
         {
-            AssertTokens(Grammar.AnyKeyword,
-                         " \t true false int bool void null if return else fn",
-                         expectedKeywords);
+            AbstractGrammar.ZeroOrMore(Grammar.AnyKeyword)
+                .Parses(" \t true false int bool void null if return else fn")
+                .IntoTokens(expectedKeywords);
             Grammar.AnyKeyword.FailsToParse("iftrue", "iftrue");
             Grammar.AnyKeyword.FailsToParse("random text", "random text");
         }
@@ -109,12 +108,6 @@ namespace Rook.Compiling.Syntax
 
             Grammar.EndOfLine.FailsToParse("x", "x").WithMessage("(1, 1): end of line expected");
             Grammar.EndOfLine.FailsToParse(" x", "x").WithMessage("(1, 2): end of line expected");
-        }
-
-        private static void AssertTokens(Parser<Token> parse, string source, params string[] expectedTokens)
-        {
-            AbstractGrammar.ZeroOrMore(parse).Parses(source)
-                .IntoValue(parsedValues => parsedValues.Select(x => x.Literal).ShouldList(expectedTokens));
         }
     }
 }

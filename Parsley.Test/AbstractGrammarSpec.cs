@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 
 namespace Parsley
@@ -8,16 +6,6 @@ namespace Parsley
     [TestFixture]
     public sealed class AbstractGrammarSpec : AbstractGrammar
     {
-        private static Action<Token> Token(string expectedLiteral)
-        {
-            return token => token.Literal.ShouldEqual(expectedLiteral);
-        }
-
-        private static Action<IEnumerable<Token>> Tokens(params string[] expectedLiterals)
-        {
-            return tokens => tokens.Select(x => x.Literal).ShouldList(expectedLiterals);
-        }
-
         private static Lexer Tokenize(string source)
         {
             return new SampleLexer(source);
@@ -44,18 +32,18 @@ namespace Parsley
         [Test]
         public void CanDetectTheEndOfInputWithoutAdvancing()
         {
-            EndOfInput.Parses(Tokenize("")).IntoValue(Token(""));
+            EndOfInput.Parses(Tokenize("")).IntoToken("");
             EndOfInput.FailsToParse(Tokenize("!"), "!");
         }
 
         [Test]
         public void CanDemandThatAGivenKindOfTokenAppearsNext()
         {
-            Kind(SampleLexer.Letter).Parses(Tokenize("A")).IntoValue(Token("A"));
+            Kind(SampleLexer.Letter).Parses(Tokenize("A")).IntoToken("A");
             Kind(SampleLexer.Letter).FailsToParse(Tokenize("0"), "0");
 
             Kind(SampleLexer.Digit).FailsToParse(Tokenize("A"), "A");
-            Kind(SampleLexer.Digit).Parses(Tokenize("0")).IntoValue(Token("0"));
+            Kind(SampleLexer.Digit).Parses(Tokenize("0")).IntoToken("0");
         }
 
         [Test]
@@ -63,7 +51,7 @@ namespace Parsley
         {
             Parser<Token> parser = LETTER.TerminatedBy(SYMBOL);
 
-            parser.PartiallyParses(Tokenize("A~Unparsed"), "Unparsed").IntoValue(Token("A"));
+            parser.PartiallyParses(Tokenize("A~Unparsed"), "Unparsed").IntoToken("A");
             parser.FailsToParse(Tokenize(""), "");
             parser.FailsToParse(Tokenize("~"), "~");
             parser.FailsToParse(Tokenize("A0"), "0");
@@ -74,16 +62,16 @@ namespace Parsley
         {
             var parser = ZeroOrMore(DIGIT);
 
-            parser.Parses(Tokenize("")).IntoValue(Tokens());
-            parser.PartiallyParses(Tokenize("!"), "!").IntoValue(Tokens());
+            parser.Parses(Tokenize("")).IntoTokens();
+            parser.PartiallyParses(Tokenize("!"), "!").IntoTokens();
 
-            parser.PartiallyParses(Tokenize("0!"), "!").IntoValue(Tokens("0"));
-            parser.PartiallyParses(Tokenize("01!"), "!").IntoValue(Tokens("0", "1"));
-            parser.PartiallyParses(Tokenize("012!"), "!").IntoValue(Tokens("0", "1", "2"));
+            parser.PartiallyParses(Tokenize("0!"), "!").IntoTokens("0");
+            parser.PartiallyParses(Tokenize("01!"), "!").IntoTokens("0", "1");
+            parser.PartiallyParses(Tokenize("012!"), "!").IntoTokens("0", "1", "2");
 
-            parser.Parses(Tokenize("0")).IntoValue(Tokens("0"));
-            parser.Parses(Tokenize("01")).IntoValue(Tokens("0", "1"));
-            parser.Parses(Tokenize("012")).IntoValue(Tokens("0", "1", "2"));
+            parser.Parses(Tokenize("0")).IntoTokens("0");
+            parser.Parses(Tokenize("01")).IntoTokens("0", "1");
+            parser.Parses(Tokenize("012")).IntoTokens("0", "1", "2");
         }
 
         [Test]
@@ -94,13 +82,13 @@ namespace Parsley
             parser.FailsToParse(Tokenize(""), "");
             parser.FailsToParse(Tokenize("!"), "!");
 
-            parser.PartiallyParses(Tokenize("0!"), "!").IntoValue(Tokens("0"));
-            parser.PartiallyParses(Tokenize("01!"), "!").IntoValue(Tokens("0", "1"));
-            parser.PartiallyParses(Tokenize("012!"), "!").IntoValue(Tokens("0", "1", "2"));
+            parser.PartiallyParses(Tokenize("0!"), "!").IntoTokens("0");
+            parser.PartiallyParses(Tokenize("01!"), "!").IntoTokens("0", "1");
+            parser.PartiallyParses(Tokenize("012!"), "!").IntoTokens("0", "1", "2");
 
-            parser.Parses(Tokenize("0")).IntoValue(Tokens("0"));
-            parser.Parses(Tokenize("01")).IntoValue(Tokens("0", "1"));
-            parser.Parses(Tokenize("012")).IntoValue(Tokens("0", "1", "2"));
+            parser.Parses(Tokenize("0")).IntoTokens("0");
+            parser.Parses(Tokenize("01")).IntoTokens("0", "1");
+            parser.Parses(Tokenize("012")).IntoTokens("0", "1", "2");
         }
 
         [Test]
@@ -108,16 +96,16 @@ namespace Parsley
         {
             var parser = ZeroOrMore(DIGIT, COMMA);
 
-            parser.Parses(Tokenize("")).IntoValue(Tokens());
-            parser.PartiallyParses(Tokenize("!"), "!").IntoValue(Tokens());
+            parser.Parses(Tokenize("")).IntoTokens();
+            parser.PartiallyParses(Tokenize("!"), "!").IntoTokens();
 
-            parser.PartiallyParses(Tokenize("0!"), "!").IntoValue(Tokens("0"));
-            parser.PartiallyParses(Tokenize("0,1!"), "!").IntoValue(Tokens("0", "1"));
-            parser.PartiallyParses(Tokenize("0,1,2!"), "!").IntoValue(Tokens("0", "1", "2"));
+            parser.PartiallyParses(Tokenize("0!"), "!").IntoTokens("0");
+            parser.PartiallyParses(Tokenize("0,1!"), "!").IntoTokens("0", "1");
+            parser.PartiallyParses(Tokenize("0,1,2!"), "!").IntoTokens("0", "1", "2");
 
-            parser.Parses(Tokenize("0")).IntoValue(Tokens("0"));
-            parser.Parses(Tokenize("0,1")).IntoValue(Tokens("0", "1"));
-            parser.Parses(Tokenize("0,1,2")).IntoValue(Tokens("0", "1", "2"));
+            parser.Parses(Tokenize("0")).IntoTokens("0");
+            parser.Parses(Tokenize("0,1")).IntoTokens("0", "1");
+            parser.Parses(Tokenize("0,1,2")).IntoTokens("0", "1", "2");
         }
 
         [Test]
@@ -130,11 +118,11 @@ namespace Parsley
             parser.FailsToParse(Tokenize("0MissingTerminator"), "MissingTerminator");
             parser.FailsToParse(Tokenize("01MissingTerminator"), "MissingTerminator");
 
-            parser.Parses(Tokenize("~")).IntoValue(Tokens());
-            parser.PartiallyParses(Tokenize("~!"), "!").IntoValue(Tokens());
-            parser.Parses(Tokenize("0~")).IntoValue(Tokens("0"));
-            parser.Parses(Tokenize("01~")).IntoValue(Tokens("0", "1"));
-            parser.PartiallyParses(Tokenize("012~!"), "!").IntoValue(Tokens("0", "1", "2"));
+            parser.Parses(Tokenize("~")).IntoTokens();
+            parser.PartiallyParses(Tokenize("~!"), "!").IntoTokens();
+            parser.Parses(Tokenize("0~")).IntoTokens("0");
+            parser.Parses(Tokenize("01~")).IntoTokens("0", "1");
+            parser.PartiallyParses(Tokenize("012~!"), "!").IntoTokens("0", "1", "2");
         }
 
         [Test]
@@ -145,13 +133,13 @@ namespace Parsley
             parser.FailsToParse(Tokenize(""), "");
             parser.FailsToParse(Tokenize("!"), "!");
 
-            parser.PartiallyParses(Tokenize("0!"), "!").IntoValue(Tokens("0"));
-            parser.PartiallyParses(Tokenize("0,1!"), "!").IntoValue(Tokens("0", "1"));
-            parser.PartiallyParses(Tokenize("0,1,2!"), "!").IntoValue(Tokens("0", "1", "2" ));
+            parser.PartiallyParses(Tokenize("0!"), "!").IntoTokens("0");
+            parser.PartiallyParses(Tokenize("0,1!"), "!").IntoTokens("0", "1");
+            parser.PartiallyParses(Tokenize("0,1,2!"), "!").IntoTokens("0", "1", "2");
 
-            parser.Parses(Tokenize("0")).IntoValue(Tokens("0"));
-            parser.Parses(Tokenize("0,1")).IntoValue(Tokens("0", "1"));
-            parser.Parses(Tokenize("0,1,2")).IntoValue(Tokens("0", "1", "2"));
+            parser.Parses(Tokenize("0")).IntoTokens("0");
+            parser.Parses(Tokenize("0,1")).IntoTokens("0", "1");
+            parser.Parses(Tokenize("0,1,2")).IntoTokens("0", "1", "2");
         }
 
         [Test]
@@ -162,9 +150,9 @@ namespace Parsley
                     new Token(null, symbolAndRight.Item1.Position, String.Format("({0} {1} {2})", symbolAndRight.Item1.Literal, left.Literal, symbolAndRight.Item2.Literal)));
 
             parser.FailsToParse(Tokenize("!"), "!");
-            parser.Parses(Tokenize("0")).IntoValue(Token("0"));
-            parser.Parses(Tokenize("0*1")).IntoValue(Token("(* 0 1)"));
-            parser.Parses(Tokenize("0*1/2")).IntoValue(Token("(/ (* 0 1) 2)"));
+            parser.Parses(Tokenize("0")).IntoToken("0");
+            parser.Parses(Tokenize("0*1")).IntoToken("(* 0 1)");
+            parser.Parses(Tokenize("0*1/2")).IntoToken("(/ (* 0 1) 2)");
         }
 
         [Test]
@@ -185,7 +173,7 @@ namespace Parsley
         {
             var parser = Between(SYMBOL, DIGIT, SYMBOL);
 
-            parser.PartiallyParses(Tokenize("(1)Unparsed"), "Unparsed").IntoValue(Token("1"));
+            parser.PartiallyParses(Tokenize("(1)Unparsed"), "Unparsed").IntoToken("1");
             parser.FailsToParse(Tokenize("("), "");
             parser.FailsToParse(Tokenize("(!"), "!");
             parser.FailsToParse(Tokenize("(1A"), "A");
@@ -205,7 +193,7 @@ namespace Parsley
         {
             var parser = Optional(LETTER);
 
-            parser.PartiallyParses(Tokenize("A."), ".").IntoValue(Token("A"));
+            parser.PartiallyParses(Tokenize("A."), ".").IntoToken("A");
             parser.PartiallyParses(Tokenize("."), ".").IntoValue(token => token.ShouldBeNull());
         }
 
@@ -218,8 +206,8 @@ namespace Parsley
             Expect(SYMBOL, isDollars).FailsToParse(Tokenize("!"), "!");
             Expect(SYMBOL, isCents).FailsToParse(Tokenize("!"), "!");
 
-            Expect(SYMBOL, isDollars).Parses(Tokenize("$")).IntoValue(Token("$"));
-            Expect(SYMBOL, isCents).Parses(Tokenize("¢")).IntoValue(Token("¢"));
+            Expect(SYMBOL, isDollars).Parses(Tokenize("$")).IntoToken("$");
+            Expect(SYMBOL, isCents).Parses(Tokenize("¢")).IntoToken("¢");
 
             Expect(SYMBOL, isDollars).FailsToParse(Tokenize("¢"), "¢");
             Expect(SYMBOL, isCents).FailsToParse(Tokenize("$"), "$");
@@ -246,9 +234,9 @@ namespace Parsley
                 OnError(parenthesizedAB, "parenthesized ab"),
                 OnError(parenthesizedABC, "parenthesized abc"));
             
-            choice.PartiallyParses(Tokenize("(a)bcd"), "bcd").IntoValue(Token("a")); //First rule wins.
-            choice.PartiallyParses(Tokenize("(ab)cd"), "cd").IntoValue(Token("ab")); //Second rule wins.
-            choice.PartiallyParses(Tokenize("(abc)d"), "d").IntoValue(Token("abc")); //Third rule wins.
+            choice.PartiallyParses(Tokenize("(a)bcd"), "bcd").IntoToken("a"); //First rule wins.
+            choice.PartiallyParses(Tokenize("(ab)cd"), "cd").IntoToken("ab"); //Second rule wins.
+            choice.PartiallyParses(Tokenize("(abc)d"), "d").IntoToken("abc"); //Third rule wins.
 
             //When all rules fail, the error returned should correspond with the
             //rule that made it deepest into the input before encountering a failure.
