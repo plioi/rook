@@ -1,5 +1,4 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Parsley;
 
 namespace Rook.Compiling.Syntax
@@ -10,73 +9,51 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ShouldRecognizeIntralineWhiteSpaces()
         {
-            AssertTokens(" ", token => token.ShouldBe(RookLexer.IntralineWhiteSpace, " "));
-            AssertTokens("\t", token => token.ShouldBe(RookLexer.IntralineWhiteSpace, "\t"));
-            AssertTokens(" \t ", token => token.ShouldBe(RookLexer.IntralineWhiteSpace, " \t "));
-            AssertTokens("\t \t", token => token.ShouldBe(RookLexer.IntralineWhiteSpace, "\t \t"));
+            AssertTokens(" ", RookLexer.IntralineWhiteSpace, " ");
+            AssertTokens("\t", RookLexer.IntralineWhiteSpace, "\t");
+            AssertTokens(" \t ", RookLexer.IntralineWhiteSpace, " \t ");
+            AssertTokens("\t \t", RookLexer.IntralineWhiteSpace, "\t \t");
         }
 
         [Test]
         public void ShouldRecognizeIntegers()
         {
-            AssertTokens("0", token => token.ShouldBe(RookLexer.Integer, "0"));
+            AssertTokens("0", RookLexer.Integer, "0");
             
             //NOTE: Integer literals are not (yet) limited to int.MaxValue:
-            AssertTokens("2147483648", token => token.ShouldBe(RookLexer.Integer, "2147483648"));
+            AssertTokens("2147483648", RookLexer.Integer, "2147483648");
         }
 
         [Test]
         public void ShouldRecognizeKeywords()
         {
-            AssertTokens("true", token => token.ShouldBe(RookLexer.Keyword, "true"));
-            AssertTokens("false", token => token.ShouldBe(RookLexer.Keyword, "false"));
-            AssertTokens("int", token => token.ShouldBe(RookLexer.Keyword, "int"));
-            AssertTokens("bool", token => token.ShouldBe(RookLexer.Keyword, "bool"));
-            AssertTokens("void", token => token.ShouldBe(RookLexer.Keyword, "void"));
-            AssertTokens("null", token => token.ShouldBe(RookLexer.Keyword, "null"));
-            AssertTokens("if", token => token.ShouldBe(RookLexer.Keyword, "if"));
-            AssertTokens("return", token => token.ShouldBe(RookLexer.Keyword, "return"));
-            AssertTokens("else", token => token.ShouldBe(RookLexer.Keyword, "else"));
-            AssertTokens("fn", token => token.ShouldBe(RookLexer.Keyword, "fn"));
+            AssertTokens("true", RookLexer.Keyword, "true");
+            AssertTokens("false", RookLexer.Keyword, "false");
+            AssertTokens("int", RookLexer.Keyword, "int");
+            AssertTokens("bool", RookLexer.Keyword, "bool");
+            AssertTokens("void", RookLexer.Keyword, "void");
+            AssertTokens("null", RookLexer.Keyword, "null");
+            AssertTokens("if", RookLexer.Keyword, "if");
+            AssertTokens("return", RookLexer.Keyword, "return");
+            AssertTokens("else", RookLexer.Keyword, "else");
+            AssertTokens("fn", RookLexer.Keyword, "fn");
         }
 
         [Test]
         public void ShouldRecognizeIdentifiers()
         {
-            AssertTokens("a", token => token.ShouldBe(RookLexer.Identifier, "a"));
-            AssertTokens("ab", token => token.ShouldBe(RookLexer.Identifier, "ab"));
-            AssertTokens("a0", token => token.ShouldBe(RookLexer.Identifier, "a0"));
+            AssertTokens("a", RookLexer.Identifier, "a");
+            AssertTokens("ab", RookLexer.Identifier, "ab");
+            AssertTokens("a0", RookLexer.Identifier, "a0");
         }
 
         [Test]
         public void ShouldRecognizeOperators()
         {
-            AssertTokens("<=>=<>!====*/+-&&||!{}[][,]()???:",
-                token => token.ShouldBe(RookLexer.Operator, "<="),
-                token => token.ShouldBe(RookLexer.Operator, ">="),
-                token => token.ShouldBe(RookLexer.Operator, "<"),
-                token => token.ShouldBe(RookLexer.Operator, ">"),
-                token => token.ShouldBe(RookLexer.Operator, "!="),
-                token => token.ShouldBe(RookLexer.Operator, "=="),
-                token => token.ShouldBe(RookLexer.Operator, "="),
-                token => token.ShouldBe(RookLexer.Operator, "*"),
-                token => token.ShouldBe(RookLexer.Operator, "/"),
-                token => token.ShouldBe(RookLexer.Operator, "+"),
-                token => token.ShouldBe(RookLexer.Operator, "-"),
-                token => token.ShouldBe(RookLexer.Operator, "&&"),
-                token => token.ShouldBe(RookLexer.Operator, "||"),
-                token => token.ShouldBe(RookLexer.Operator, "!"),
-                token => token.ShouldBe(RookLexer.Operator, "{"),
-                token => token.ShouldBe(RookLexer.Operator, "}"),
-                token => token.ShouldBe(RookLexer.Operator, "[]"),
-                token => token.ShouldBe(RookLexer.Operator, "["),
-                token => token.ShouldBe(RookLexer.Operator, ","),
-                token => token.ShouldBe(RookLexer.Operator, "]"),
-                token => token.ShouldBe(RookLexer.Operator, "("),
-                token => token.ShouldBe(RookLexer.Operator, ")"),
-                token => token.ShouldBe(RookLexer.Operator, "??"),
-                token => token.ShouldBe(RookLexer.Operator, "?"),
-                token => token.ShouldBe(RookLexer.Operator, ":"));
+            AssertTokens("<=>=<>!====*/+-&&||!{}[][,]()???:", RookLexer.Operator, "<=",
+                         ">=", "<", ">", "!=", "==", "=", "*", "/",
+                         "+", "-", "&&", "||", "!", "{", "}", "[]",
+                         "[", ",", "]", "(", ")", "??", "?", ":");
         }
 
         [Test]
@@ -84,20 +61,20 @@ namespace Rook.Compiling.Syntax
         {
             //Endlines are \r\n or semicolons (with optional preceding spaces/tabs and optional trailing whitspace).
 
-            AssertTokens("\r\n", token => token.ShouldBe(RookLexer.EndOfLine, "\r\n"));
-            AssertTokens("\r\n \r\n \t ", token => token.ShouldBe(RookLexer.EndOfLine, "\r\n \r\n \t "));
+            AssertTokens("\r\n", RookLexer.EndOfLine, "\r\n");
+            AssertTokens("\r\n \r\n \t ", RookLexer.EndOfLine, "\r\n \r\n \t ");
 
-            AssertTokens(";", token => token.ShouldBe(RookLexer.EndOfLine, ";"));
-            AssertTokens("; \r\n \t ", token => token.ShouldBe(RookLexer.EndOfLine, "; \r\n \t "));
+            AssertTokens(";", RookLexer.EndOfLine, ";");
+            AssertTokens("; \r\n \t ",RookLexer.EndOfLine, "; \r\n \t ");
         }
 
-        private static void AssertTokens(string source, params Action<Token>[] assertions)
+        private static void AssertTokens(string source, TokenKind expectedKind, params string[] expectedLiterals)
         {
             Lexer lexer = new RookLexer(source);
 
-            foreach (var assertToken in assertions)
+            foreach (var expectedLiteral in expectedLiterals)
             {
-                assertToken(lexer.CurrentToken);
+                lexer.CurrentToken.ShouldBe(expectedKind, expectedLiteral);
                 lexer = lexer.Advance();
             }
 
