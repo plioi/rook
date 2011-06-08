@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Parsley
 {
-    public class Lexer
+    public class Lexer : IEnumerable<Token>
     {
         public static readonly TokenKind EndOfInput = new TokenKind("$");
         public static readonly TokenKind Unknown = new TokenKind(".*");
@@ -46,6 +48,22 @@ namespace Parsley
         public override string ToString()
         {
             return text.ToString();
+        }
+
+        public IEnumerator<Token> GetEnumerator()
+        {
+            var current = CurrentToken;
+
+            yield return current;
+
+            if (current.Kind != EndOfInput)
+                foreach (var token in Advance())
+                    yield return token;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
