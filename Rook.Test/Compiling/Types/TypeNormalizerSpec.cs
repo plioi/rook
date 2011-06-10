@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Rook.Compiling.Types
 {
     [TestFixture]
-    public sealed class TypeNormalizerSpec
+    public class TypeNormalizerSpec
     {
         private static readonly NamedType Integer = NamedType.Integer;
         private static readonly NamedType Boolean = NamedType.Boolean;

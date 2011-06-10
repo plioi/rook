@@ -5,7 +5,7 @@ using Parsley;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public sealed class ProgramSpec : SyntaxTreeSpec<Program>
+    public class ProgramSpec : SyntaxTreeSpec<Program>
     {
         protected override Parser<Program> Parser { get { return Grammar.Program; } }
 

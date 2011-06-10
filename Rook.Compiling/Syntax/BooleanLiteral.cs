@@ -3,7 +3,7 @@ using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
 {
-    public sealed class BooleanLiteral : Expression
+    public class BooleanLiteral : Expression
     {
         public Position Position { get; private set; }
         public bool Value { get; private set; }

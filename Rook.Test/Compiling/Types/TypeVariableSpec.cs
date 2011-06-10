@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Rook.Compiling.Types
 {
     [TestFixture]
-    public sealed class TypeVariableSpec
+    public class TypeVariableSpec
     {
         private TypeVariable a, b;
 

@@ -6,7 +6,7 @@ using Rook.Compiling.Types;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public sealed class FunctionSpec : SyntaxTreeSpec<Function>
+    public class FunctionSpec : SyntaxTreeSpec<Function>
     {
         protected override Parser<Function> Parser { get { return Grammar.Function; } }
 

@@ -4,7 +4,7 @@ using Rook.Compiling.Types;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public sealed class LiteralSpec : ExpressionSpec
+    public class LiteralSpec : ExpressionSpec
     {
         [Test]
         public void NullLiterals()

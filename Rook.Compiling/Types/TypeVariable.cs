@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Rook.Compiling.Types
 {
-    public sealed class TypeVariable : DataType
+    public class TypeVariable : DataType
     {
         private readonly int name;
 

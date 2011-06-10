@@ -4,7 +4,7 @@ using Parsley;
 
 namespace Rook.Compiling.Syntax
 {
-    public sealed class Program : SyntaxTree
+    public class Program : SyntaxTree
     {
         public Position Position { get; private set; }
         public IEnumerable<Function> Functions { get; private set; }

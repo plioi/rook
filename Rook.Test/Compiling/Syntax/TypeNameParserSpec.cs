@@ -5,7 +5,7 @@ using Rook.Compiling.Types;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public sealed class TypeNameParserSpec
+    public class TypeNameParserSpec
     {
         private static readonly NamedType Integer = NamedType.Integer;
         private static readonly NamedType Boolean = NamedType.Boolean;

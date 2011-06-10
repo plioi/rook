@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Parsley
 {
     [TestFixture]
-    public sealed class TextSpec
+    public class TextSpec
     {
         [Test]
         public void CanPeekAheadNCharacters()

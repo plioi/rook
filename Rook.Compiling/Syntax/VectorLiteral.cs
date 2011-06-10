@@ -5,7 +5,7 @@ using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
 {
-    public sealed class VectorLiteral : Expression
+    public class VectorLiteral : Expression
     {
         public Position Position { get; private set; }
         public IEnumerable<Expression> Items { get; private set; }

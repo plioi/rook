@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Parsley
 {
     [TestFixture]
-    public sealed class ErrorSpec
+    public class ErrorSpec
     {
         private Lexer x, endOfInput;
 

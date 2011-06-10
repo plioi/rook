@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Parsley
 {
     [TestFixture]
-    public sealed class ParserQuerySpec
+    public class ParserQuerySpec
     {
         private static readonly Parser<string> Next = tokens => new Success<string>(tokens.CurrentToken.Literal, tokens.Advance());
 

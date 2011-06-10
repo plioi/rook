@@ -5,7 +5,7 @@ using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
 {
-    public sealed class Name : Expression
+    public class Name : Expression
     {
         public Position Position { get; private set; }
         public string Identifier { get; private set; }

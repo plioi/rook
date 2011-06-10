@@ -4,7 +4,7 @@ using Parsley;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public sealed class RookLexerSpec : AbstractGrammar
+    public class RookLexerSpec : AbstractGrammar
     {
         [Test]
         public void ShouldRecognizeIntralineWhiteSpaces()

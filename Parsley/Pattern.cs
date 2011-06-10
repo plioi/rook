@@ -2,7 +2,7 @@
 
 namespace Parsley
 {
-    public sealed class Pattern
+    public class Pattern
     {
         private readonly string pattern;
         private readonly Regex regex;

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Rook.Compiling.Types
 {
-    public sealed class TypeNormalizer
+    public class TypeNormalizer
     {
         private readonly IDictionary<TypeVariable, DataType> substitutions;
         private static readonly IEnumerable<string> success = Enumerable.Empty<string>();

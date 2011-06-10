@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public sealed class TokenParserSpec
+    public class TokenParserSpec
     {
         private static readonly string[] expectedKeywords = new[]
         {

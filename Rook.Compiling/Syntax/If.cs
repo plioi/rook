@@ -4,7 +4,7 @@ using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
 {
-    public sealed class If : Expression
+    public class If : Expression
     {
         public Position Position { get; private set; }
         public Expression Condition { get; private set; }

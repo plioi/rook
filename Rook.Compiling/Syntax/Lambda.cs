@@ -5,7 +5,7 @@ using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
 {
-    public sealed class Lambda : Expression
+    public class Lambda : Expression
     {
         public Position Position { get; private set; }
         public IEnumerable<Parameter> Parameters { get; private set; }

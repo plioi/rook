@@ -2,7 +2,7 @@
 
 namespace Parsley
 {
-    public sealed class Success<T> : Parsed<T>
+    public class Success<T> : Parsed<T>
     {
         public Success(T value, Lexer unparsedTokens)
         {

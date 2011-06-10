@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Parsley
 {
     [TestFixture]
-    public sealed class LexerSpec
+    public class LexerSpec
     {
         private TokenKind lower;
         private TokenKind upper;

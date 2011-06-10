@@ -5,7 +5,7 @@ using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
 {
-    public sealed class Block : Expression
+    public class Block : Expression
     {
         public Position Position { get; private set; }
         public IEnumerable<VariableDeclaration> VariableDeclarations { get; private set; }

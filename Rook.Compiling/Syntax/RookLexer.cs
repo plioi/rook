@@ -2,7 +2,7 @@
 
 namespace Rook.Compiling.Syntax
 {
-    public sealed class RookLexer : Lexer
+    public class RookLexer : Lexer
     {
         public static readonly TokenKind IntralineWhiteSpace = new TokenKind("IntralineWhiteSpace", @"[ \t]+");
         public static readonly TokenKind Integer = new TokenKind("Integer", @"[0-9]+");

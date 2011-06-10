@@ -6,7 +6,7 @@ using Rook.Compiling.Types;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public sealed class LambdaSpec : ExpressionSpec
+    public class LambdaSpec : ExpressionSpec
     {
         [Test]
         public void HasABodyExpression()

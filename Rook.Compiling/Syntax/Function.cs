@@ -5,7 +5,7 @@ using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
 {
-    public sealed class Function : SyntaxTree, Binding
+    public class Function : SyntaxTree, Binding
     {
         public Position Position { get; private set; }
         public NamedType ReturnType { get; private set; }

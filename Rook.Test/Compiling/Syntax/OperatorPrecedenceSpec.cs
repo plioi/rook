@@ -3,7 +3,7 @@ using NUnit.Framework;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public sealed class OperatorPrecedenceSpec : ExpressionSpec
+    public class OperatorPrecedenceSpec : ExpressionSpec
     {
         [Test]
         public void RanksFunctionCallsBeforeUnaryOperators()

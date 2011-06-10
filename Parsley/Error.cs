@@ -2,7 +2,7 @@
 
 namespace Parsley
 {
-    public sealed class Error<T> : Parsed<T>
+    public class Error<T> : Parsed<T>
     {
         private string expectation { get; set; }
 

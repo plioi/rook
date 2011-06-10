@@ -6,7 +6,7 @@ using Rook.Compiling.Types;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public sealed class CallSpec : ExpressionSpec
+    public class CallSpec : ExpressionSpec
     {
         [Test]
         public void FunctionCalls()

@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Parsley
 {
     [TestFixture]
-    public sealed class AbstractGrammarSpec : AbstractGrammar
+    public class AbstractGrammarSpec : AbstractGrammar
     {
         private static Lexer Tokenize(string source)
         {
@@ -17,7 +17,7 @@ namespace Parsley
         private static Parser<Token> WHITESPACE { get { return Kind(SampleLexer.WhiteSpace); } }
         private static Parser<Token> SYMBOL { get { return Kind(SampleLexer.Symbol); } }
 
-        private sealed class SampleLexer : Lexer
+        private class SampleLexer : Lexer
         {
             public static readonly TokenKind Digit = new TokenKind("Digit", @"[0-9]");
             public static readonly TokenKind Letter = new TokenKind("Letter", @"[a-zA-Z]");

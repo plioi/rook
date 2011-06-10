@@ -6,7 +6,7 @@ using Rook.Compiling.Types;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public sealed class VectorLiteralSpec : ExpressionSpec
+    public class VectorLiteralSpec : ExpressionSpec
     {
         [Test]
         public void ContainsOneOrMoreExpressions()

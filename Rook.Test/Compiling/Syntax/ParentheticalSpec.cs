@@ -4,7 +4,7 @@ using Parsley;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public sealed class ParentheticalSpec : ExpressionSpec
+    public class ParentheticalSpec : ExpressionSpec
     {
         [Test]
         public void ParentheticalExpressions()

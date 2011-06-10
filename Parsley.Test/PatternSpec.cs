@@ -3,7 +3,7 @@
 namespace Parsley
 {
     [TestFixture]
-    public sealed class PatternSpec
+    public class PatternSpec
     {
         [Test]
         public void CanMatchRegexStartingFromGivenCharacterPosition()

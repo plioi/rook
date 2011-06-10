@@ -3,7 +3,7 @@
 namespace Parsley
 {
     [TestFixture]
-    public sealed class TokenKindSpec
+    public class TokenKindSpec
     {
         private TokenKind lower;
         private TokenKind upper;

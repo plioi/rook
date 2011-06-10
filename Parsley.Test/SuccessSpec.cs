@@ -3,7 +3,7 @@
 namespace Parsley
 {
     [TestFixture]
-    public sealed class SuccessSpec
+    public class SuccessSpec
     {
         private Lexer unparsed;
 

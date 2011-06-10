@@ -2,7 +2,7 @@
 
 namespace Rook.Compiling.Syntax
 {
-    public sealed partial class Grammar
+    public partial class Grammar
     {
         public static Parser<Program> Program
         {

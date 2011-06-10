@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Parsley
 {
-    public sealed class Text
+    public class Text
     {
         private readonly int index;
         private readonly string source;

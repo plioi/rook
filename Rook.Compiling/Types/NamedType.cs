@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Rook.Compiling.Types
 {
-    public sealed class NamedType : DataType
+    public class NamedType : DataType
     {
         #region Factory Methods
 

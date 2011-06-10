@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Rook.Compiling.Types
 {
     [TestFixture]
-    public sealed class NamedTypeSpec
+    public class NamedTypeSpec
     {
         [Test]
         public void HasAName()

@@ -4,7 +4,7 @@ using Rook.Compiling.Types;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public sealed class NameSpec : ExpressionSpec
+    public class NameSpec : ExpressionSpec
     {
         [Test]
         public void CanBeIdentifier()

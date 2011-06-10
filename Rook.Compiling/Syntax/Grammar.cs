@@ -3,7 +3,7 @@ using Parsley;
 
 namespace Rook.Compiling.Syntax
 {
-    public sealed partial class Grammar : AbstractGrammar
+    public partial class Grammar : AbstractGrammar
     {
         private Grammar() {}
 

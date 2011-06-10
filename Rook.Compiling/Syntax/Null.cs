@@ -3,7 +3,7 @@ using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
 {
-    public sealed class Null : Expression
+    public class Null : Expression
     {
         public Position Position { get; private set; }
         public DataType Type { get; private set; }

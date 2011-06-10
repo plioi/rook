@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public sealed class BlockSpec : ExpressionSpec
+    public class BlockSpec : ExpressionSpec
     {
         [Test]
         public void ContainsOneOrMoreInnerExpressions()

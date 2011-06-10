@@ -1,6 +1,6 @@
 ﻿namespace Parsley
 {
-    public sealed class TokenKind
+    public class TokenKind
     {
         private readonly string name;
         private readonly Pattern pattern;

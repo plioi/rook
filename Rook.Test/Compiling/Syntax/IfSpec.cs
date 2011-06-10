@@ -4,7 +4,7 @@ using Parsley;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public sealed class IfSpec : ExpressionSpec
+    public class IfSpec : ExpressionSpec
     {
         [Test]
         public void ContainsConditionExpressionAndTwoBodyExpressions()

@@ -3,7 +3,7 @@ using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
 {
-    public sealed class IntegerLiteral : Expression
+    public class IntegerLiteral : Expression
     {
         public Position Position { get; private set; }
         public string Digits { get; private set; }
