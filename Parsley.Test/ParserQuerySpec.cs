@@ -6,6 +6,8 @@ namespace Parsley
     [TestFixture]
     public sealed class ParserQuerySpec
     {
+        private static readonly Parser<string> Next = tokens => new Success<string>(tokens.CurrentToken.Literal, tokens.Advance());
+
         private static Lexer Tokenize(string source)
         {
             return new CharLexer(source);
@@ -22,7 +24,7 @@ namespace Parsley
         [Test]
         public void CanBuildParserFromSingleSimplerParser()
         {
-            var parser = from x in Char('x')
+            var parser = from x in Next
                          select x.ToUpper();
 
             parser.PartiallyParses(Tokenize("xy"), "y").IntoValue("X");
@@ -31,9 +33,9 @@ namespace Parsley
         [Test]
         public void CanBuildParserFromOrderedSequenceOfSimplerParsers()
         {
-            var parser = (from a in Char('a')
-                          from b in Char('b')
-                          from c in Char('c')
+            var parser = (from a in Next
+                          from b in Next
+                          from c in Next
                           select (a + b + c).ToUpper());
 
             parser.PartiallyParses(Tokenize("abcdef"), "def").IntoValue("ABC");
@@ -42,35 +44,24 @@ namespace Parsley
         [Test]
         public void PropogatesErrorsWithoutRunningRemainingParsers()
         {
+            Parser<string> Fail = tokens => new Error<string>(tokens);
+
             var source = Tokenize("xy");
 
             (from _ in Fail
-             from x in Char('x')
-             from y in Char('y')
+             from x in Next
+             from y in Next
              select Tuple.Create(x, y)).FailsToParse(source, "xy");
 
-            (from x in Char('x')
+            (from x in Next
              from _ in Fail
-             from y in Char('y')
+             from y in Next
              select Tuple.Create(x, y)).FailsToParse(source, "y");
 
-            (from x in Char('x')
-             from y in Char('y')
+            (from x in Next
+             from y in Next
              from _ in Fail
              select Tuple.Create(x, y)).FailsToParse(source, "");
         }
-
-        private static Parser<string> Char(char letter)
-        {
-            return tokens =>
-            {
-                if (tokens.CurrentToken.Literal == letter.ToString())
-                    return new Success<string>(tokens.CurrentToken.Literal, tokens.Advance());
-
-                return new Error<string>(tokens);
-            };
-        }
-
-        private static readonly Parser<string> Fail = tokens => new Error<string>(tokens);
     }
 }

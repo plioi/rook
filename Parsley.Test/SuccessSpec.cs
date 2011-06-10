@@ -40,12 +40,12 @@ namespace Parsley
         [Test]
         public void CanContinueParsingTheRemainingInputWhenGivenAParserGenerator()
         {
-            Parsed<string> result = new Success<string>("x", unparsed).ParseRest(s => OneChar);
+            Parser<string> next = tokens => new Success<string>(tokens.CurrentToken.Literal, tokens.Advance());
+
+            Parsed<string> result = new Success<string>("x", unparsed).ParseRest(s => next);
             result.IsError.ShouldBeFalse();
             result.Value.ShouldEqual("0");
             result.UnparsedTokens.CurrentToken.Kind.ShouldEqual(Lexer.EndOfInput);
         }
-
-        private static readonly Parser<string> OneChar = tokens => new Success<string>(tokens.CurrentToken.Literal, tokens.Advance());
     }
 }
