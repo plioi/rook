@@ -13,6 +13,9 @@ namespace Parsley
         private readonly Text text;
         private readonly IEnumerable<TokenKind> kinds;
 
+        private readonly Lazy<Token> lazyCurrentToken;
+        private readonly Lazy<Lexer> lazyAdvance;
+
         public Lexer(Text text, params TokenKind[] kinds)
             : this(text, kinds.Concat(new[] { EndOfInput, Unknown })) { }
 
@@ -20,22 +23,21 @@ namespace Parsley
         {
             this.text = text;
             this.kinds = kinds;
+            lazyCurrentToken = new Lazy<Token>(LazyCurrentToken);
+            lazyAdvance = new Lazy<Lexer>(LazyAdvance);
         }
 
-        public Token CurrentToken
+        private Token LazyCurrentToken()
         {
-            get
-            {
-                Token token;
-                foreach (var kind in kinds)
-                    if (kind.TryMatch(text, out token))
-                        return token;
+            Token token;
+            foreach (var kind in kinds)
+                if (kind.TryMatch(text, out token))
+                    return token;
 
-                return null; //EndOfInput and Unknown guarantee this is unreachable.
-            }
+            return null; //EndOfInput and Unknown guarantee this is unreachable.
         }
 
-        public Lexer Advance()
+        private Lexer LazyAdvance()
         {
             if (text.EndOfInput)
                 return this;
@@ -43,7 +45,20 @@ namespace Parsley
             return new Lexer(text.Advance(CurrentToken.Literal.Length), kinds);
         }
 
-        public Position Position { get { return text.Position; } }
+        public Token CurrentToken
+        {
+            get { return lazyCurrentToken.Value; }
+        }
+
+        public Lexer Advance()
+        {
+            return lazyAdvance.Value;
+        }
+
+        public Position Position
+        {
+            get { return text.Position; }
+        }
 
         public override string ToString()
         {
