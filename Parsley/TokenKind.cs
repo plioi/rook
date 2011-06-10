@@ -3,12 +3,12 @@
     public sealed class TokenKind
     {
         private readonly string name;
-        private readonly string pattern;
+        private readonly Pattern pattern;
 
         public TokenKind(string name, string pattern)
         {
             this.name = name;
-            this.pattern = pattern;
+            this.pattern = new Pattern(pattern);
         }
 
         public bool TryMatch(Text text, out Token token)

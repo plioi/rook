@@ -75,6 +75,7 @@
     <Compile Include="AssertionExtensions.cs" />
     <Compile Include="CharLexer.cs" />
     <Compile Include="LexerSpec.cs" />
+    <Compile Include="PatternSpec.cs" />
     <Compile Include="SuccessSpec.cs" />
     <Compile Include="ErrorSpec.cs" />
     <Compile Include="ParsingAssertions.cs" />

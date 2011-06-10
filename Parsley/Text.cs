@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Parsley
 {
     public sealed class Text
     {
-        private static readonly Dictionary<string, Regex> regexes = new Dictionary<string, Regex>();
-
         private readonly int index;
         private readonly string source;
         private readonly int line;
@@ -49,17 +46,9 @@ namespace Parsley
             get { return index >= source.Length; }
         }
 
-        public Match Match(string pattern)
+        public Match Match(Pattern pattern)
         {
-            if (!regexes.ContainsKey(pattern))
-            {
-                var regex = new Regex(@"\G(
-                                       " + pattern + @"
-                                       )", RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
-                regexes[pattern] = regex;
-            }
-
-            return regexes[pattern].Match(source, index);
+            return pattern.Match(source, index);
         }
 
         private int Column
