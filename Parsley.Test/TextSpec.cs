@@ -48,29 +48,29 @@ namespace Parsley
         [Test]
         public void CanMatchLeadingCharactersByPattern()
         {
-            const string letters = @"[a-z]+";
-            const string digits = @"[0-9]+";
-            const string alphanumerics = @"[a-z0-9]+";
+            var letters = new Pattern(@"[a-z]+");
+            var digits = new Pattern(@"[0-9]+");
+            var alphanumerics = new Pattern(@"[a-z0-9]+");
 
             var empty = new Text("");
-            empty.Match(new Pattern(letters)).Success.ShouldBeFalse();
+            empty.Match(letters).Success.ShouldBeFalse();
 
             var abc123 = new Text("abc123");
-            abc123.Match(new Pattern(digits)).Success.ShouldBeFalse();
-            abc123.Match(new Pattern(letters)).Value.ShouldEqual("abc");
-            abc123.Match(new Pattern(alphanumerics)).Value.ShouldEqual("abc123");
+            abc123.Match(digits).Success.ShouldBeFalse();
+            abc123.Match(letters).Value.ShouldEqual("abc");
+            abc123.Match(alphanumerics).Value.ShouldEqual("abc123");
 
-            abc123.Advance(2).Match(new Pattern(digits)).Success.ShouldBeFalse();
-            abc123.Advance(2).Match(new Pattern(letters)).Value.ShouldEqual("c");
-            abc123.Advance(2).Match(new Pattern(alphanumerics)).Value.ShouldEqual("c123");
+            abc123.Advance(2).Match(digits).Success.ShouldBeFalse();
+            abc123.Advance(2).Match(letters).Value.ShouldEqual("c");
+            abc123.Advance(2).Match(alphanumerics).Value.ShouldEqual("c123");
 
-            abc123.Advance(3).Match(new Pattern(digits)).Value.ShouldEqual("123");
-            abc123.Advance(3).Match(new Pattern(letters)).Success.ShouldBeFalse();
-            abc123.Advance(3).Match(new Pattern(alphanumerics)).Value.ShouldEqual("123");
+            abc123.Advance(3).Match(digits).Value.ShouldEqual("123");
+            abc123.Advance(3).Match(letters).Success.ShouldBeFalse();
+            abc123.Advance(3).Match(alphanumerics).Value.ShouldEqual("123");
 
-            abc123.Advance(6).Match(new Pattern(digits)).Success.ShouldBeFalse();
-            abc123.Advance(6).Match(new Pattern(letters)).Success.ShouldBeFalse();
-            abc123.Advance(6).Match(new Pattern(alphanumerics)).Success.ShouldBeFalse();
+            abc123.Advance(6).Match(digits).Success.ShouldBeFalse();
+            abc123.Advance(6).Match(letters).Success.ShouldBeFalse();
+            abc123.Advance(6).Match(alphanumerics).Success.ShouldBeFalse();
         }
 
         [Test]
