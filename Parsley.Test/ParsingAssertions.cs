@@ -20,34 +20,34 @@ namespace Parsley
             actual.Literal.ShouldEqual(expectedLiteral);
         }
 
-        public static Parsed<T> FailsToParse<T>(this Parser<T> parse, Lexer tokens, string expectedUnparsedSource)
+        public static Reply<T> FailsToParse<T>(this Parser<T> parse, Lexer tokens, string expectedUnparsedSource)
         {
             return parse(tokens).Fails().WithUnparsedText(expectedUnparsedSource);
         }
 
-        private static Parsed<T> Fails<T>(this Parsed<T> result)
+        private static Reply<T> Fails<T>(this Reply<T> result)
         {
             result.IsError.ShouldBeTrue("Parse completed without expected error.");
 
             return result;
         }
 
-        public static void WithMessage<T>(this Parsed<T> result, string expectedMessage)
+        public static void WithMessage<T>(this Reply<T> result, string expectedMessage)
         {
             result.ToString().ShouldEqual(expectedMessage);
         }
 
-        public static Parsed<T> PartiallyParses<T>(this Parser<T> parse, Lexer tokens, string expectedUnparsedSource)
+        public static Reply<T> PartiallyParses<T>(this Parser<T> parse, Lexer tokens, string expectedUnparsedSource)
         {
             return parse(tokens).Succeeds().WithUnparsedText(expectedUnparsedSource);
         }
 
-        public static Parsed<T> Parses<T>(this Parser<T> parse, Lexer tokens)
+        public static Reply<T> Parses<T>(this Parser<T> parse, Lexer tokens)
         {
             return parse(tokens).Succeeds().WithAllInputConsumed();
         }
 
-        private static Parsed<T> Succeeds<T>(this Parsed<T> result)
+        private static Reply<T> Succeeds<T>(this Reply<T> result)
         {
             if (result.IsError)
                 Assert.Fail(result.ToString());
@@ -55,14 +55,14 @@ namespace Parsley
             return result;
         }
 
-        private static Parsed<T> WithUnparsedText<T>(this Parsed<T> result, string expected)
+        private static Reply<T> WithUnparsedText<T>(this Reply<T> result, string expected)
         {
             result.UnparsedTokens.ToString().ShouldEqual(expected);
 
             return result;
         }
 
-        private static Parsed<T> WithAllInputConsumed<T>(this Parsed<T> result)
+        private static Reply<T> WithAllInputConsumed<T>(this Reply<T> result)
         {
             var consumedAllInput = result.UnparsedTokens.CurrentToken.Kind == Lexer.EndOfInput;
             consumedAllInput.ShouldBeTrue("Did not consume all input.");
@@ -71,27 +71,27 @@ namespace Parsley
             return result;
         }
 
-        public static void IntoValue<T>(this Parsed<T> result, T expected)
+        public static void IntoValue<T>(this Reply<T> result, T expected)
         {
             result.Value.ShouldEqual(expected);
         }
 
-        public static void IntoValue<T>(this Parsed<T> result, Action<T> assertParsedValue)
+        public static void IntoValue<T>(this Reply<T> result, Action<T> assertParsedValue)
         {
             assertParsedValue(result.Value);
         }
 
-        public static void IntoToken(this Parsed<Token> result, TokenKind expectedKind, string expectedLiteral)
+        public static void IntoToken(this Reply<Token> result, TokenKind expectedKind, string expectedLiteral)
         {
             result.Value.ShouldBe(expectedKind, expectedLiteral);
         }
 
-        public static void IntoToken(this Parsed<Token> result, string expectedLiteral)
+        public static void IntoToken(this Reply<Token> result, string expectedLiteral)
         {
             result.Value.Literal.ShouldEqual(expectedLiteral);
         }
 
-        public static void IntoTokens(this Parsed<IEnumerable<Token>> result, params string[] expectedLiterals)
+        public static void IntoTokens(this Reply<IEnumerable<Token>> result, params string[] expectedLiterals)
         {
             result.IntoValue(tokens => tokens.Select(x => x.Literal).ShouldList(expectedLiterals));
         }

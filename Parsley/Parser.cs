@@ -1,4 +1,4 @@
 ﻿namespace Parsley
 {
-    public delegate Parsed<T> Parser<out T>(Lexer tokens);
+    public delegate Reply<T> Parser<out T>(Lexer tokens);
 }

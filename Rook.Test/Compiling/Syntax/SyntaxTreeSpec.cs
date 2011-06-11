@@ -14,12 +14,12 @@ namespace Rook.Compiling.Syntax
             return Parser(new RookLexer(source)).Value;
         }
 
-        protected Parsed<TSyntax> Parses(string source)
+        protected Reply<TSyntax> Parses(string source)
         {
             return Parser.Parses(source);
         }
 
-        protected Parsed<TSyntax> FailsToParse(string source, string expectedUnparsedSource)
+        protected Reply<TSyntax> FailsToParse(string source, string expectedUnparsedSource)
         {
             return Parser.FailsToParse(source, expectedUnparsedSource);
         }

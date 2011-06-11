@@ -2,7 +2,7 @@
 
 namespace Parsley
 {
-    public class Error<T> : Parsed<T>
+    public class Error<T> : Reply<T>
     {
         private string expectation { get; set; }
 
@@ -26,7 +26,7 @@ namespace Parsley
             get { return expectation == null ? "Parse error." : expectation + " expected"; }
         }
 
-        public Parsed<U> ParseRest<U>(Func<T, Parser<U>> constructNextParser)
+        public Reply<U> ParseRest<U>(Func<T, Parser<U>> constructNextParser)
         {
             return new Error<U>(UnparsedTokens, expectation);
         }

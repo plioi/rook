@@ -91,16 +91,16 @@ namespace Rook.Compiling
 
         private static bool TryParse<T>(Lexer tokens, Parser<T> parse, out T syntax) where T : SyntaxTree
         {
-            var parsed = parse(tokens);
+            var reply = parse(tokens);
 
-            if (parsed.IsError ||
-                parsed.UnparsedTokens.ToString().Trim().Length > 0)
+            if (reply.IsError ||
+                reply.UnparsedTokens.ToString().Trim().Length > 0)
             {
                 syntax = default(T);
                 return false;
             }
 
-            syntax = parsed.Value;
+            syntax = reply.Value;
             return true;
         }
 

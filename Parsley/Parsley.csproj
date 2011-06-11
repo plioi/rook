@@ -62,7 +62,7 @@
     <Compile Include="Lexer.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="AbstractGrammar.cs" />
-    <Compile Include="Parsed.cs" />
+    <Compile Include="Reply.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="ParserQuery.cs" />
     <Compile Include="Pattern.cs" />

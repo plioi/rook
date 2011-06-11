@@ -17,12 +17,12 @@ namespace Rook.Compiling
 
         public CompilerResult Build(string code)
         {
-            Parsed<Program> parsedProgram = Parse(code);
+            Reply<Program> reply = Parse(code);
             
-            if (parsedProgram.IsError)
-                return new CompilerResult(new CompilerError(parsedProgram.UnparsedTokens.Position, parsedProgram.Message));
+            if (reply.IsError)
+                return new CompilerResult(new CompilerError(reply.UnparsedTokens.Position, reply.Message));
 
-            return Build(parsedProgram.Value);
+            return Build(reply.Value);
         }
 
         public CompilerResult Build(Program program)
@@ -36,7 +36,7 @@ namespace Rook.Compiling
             return csCompiler.Build(translatedCode);
         }
 
-        private static Parsed<Program> Parse(string rookCode)
+        private static Reply<Program> Parse(string rookCode)
         {
             return Grammar.Program(new RookLexer(rookCode));
         }

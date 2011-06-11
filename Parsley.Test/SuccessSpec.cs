@@ -42,10 +42,10 @@ namespace Parsley
         {
             Parser<string> next = tokens => new Success<string>(tokens.CurrentToken.Literal, tokens.Advance());
 
-            Parsed<string> result = new Success<string>("x", unparsed).ParseRest(s => next);
-            result.IsError.ShouldBeFalse();
-            result.Value.ShouldEqual("0");
-            result.UnparsedTokens.CurrentToken.Kind.ShouldEqual(Lexer.EndOfInput);
+            Reply<string> reply = new Success<string>("x", unparsed).ParseRest(s => next);
+            reply.IsError.ShouldBeFalse();
+            reply.Value.ShouldEqual("0");
+            reply.UnparsedTokens.CurrentToken.Kind.ShouldEqual(Lexer.EndOfInput);
         }
     }
 }

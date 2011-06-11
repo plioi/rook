@@ -59,10 +59,10 @@ namespace Parsley
         {
             Parser<string> shouldNotBeCalled = tokens => { throw new Exception(); };
 
-            Parsed<string> result = new Error<object>(x, "expectation").ParseRest(o => shouldNotBeCalled);
-            result.IsError.ShouldBeTrue();
-            result.UnparsedTokens.ShouldEqual(x);
-            result.Message.ShouldEqual("expectation expected");
+            Reply<string> reply = new Error<object>(x, "expectation").ParseRest(o => shouldNotBeCalled);
+            reply.IsError.ShouldBeTrue();
+            reply.UnparsedTokens.ShouldEqual(x);
+            reply.Message.ShouldEqual("expectation expected");
         }
     }
 }

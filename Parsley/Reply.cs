@@ -2,12 +2,12 @@
 
 namespace Parsley
 {
-    public interface Parsed<out T>
+    public interface Reply<out T>
     {
         T Value { get; }
         Lexer UnparsedTokens { get; }
         bool IsError { get; }
         string Message { get; }
-        Parsed<U> ParseRest<U>(Func<T, Parser<U>> constructNextParser);
+        Reply<U> ParseRest<U>(Func<T, Parser<U>> constructNextParser);
     }
 }

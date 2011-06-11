@@ -67,12 +67,12 @@ namespace Rook.Compiling.Syntax
             Parses("bool[]*").IntoValue(NamedType.Enumerable(NamedType.Vector(Boolean)));
         }
 
-        private static Parsed<NamedType> FailsToParse(string source, string expectedUnparsedSource)
+        private static Reply<NamedType> FailsToParse(string source, string expectedUnparsedSource)
         {
             return Grammar.TypeName.FailsToParse(source, expectedUnparsedSource);
         }
 
-        private static Parsed<NamedType> Parses(string source)
+        private static Reply<NamedType> Parses(string source)
         {
             return Grammar.TypeName.Parses(source);
         }

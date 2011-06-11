@@ -32,14 +32,14 @@ namespace Parsley
             return tokens =>
             {
                 var tokensBeforeFirstFailure = tokens;
-                var parsed = item(tokens);
+                var reply = item(tokens);
                 var list = new List<T>();
 
-                while (!parsed.IsError)
+                while (!reply.IsError)
                 {
-                    list.Add(parsed.Value);
-                    tokensBeforeFirstFailure = parsed.UnparsedTokens;
-                    parsed = item(parsed.UnparsedTokens);
+                    list.Add(reply.Value);
+                    tokensBeforeFirstFailure = reply.UnparsedTokens;
+                    reply = item(reply.UnparsedTokens);
                 }
 
                 return new Success<IEnumerable<T>>(list, tokensBeforeFirstFailure);
@@ -123,7 +123,7 @@ namespace Parsley
         {
             return tokens =>
             {
-                Parsed<T> result = parse(tokens);
+                Reply<T> result = parse(tokens);
 
                 if (result.IsError)
                    return result;
@@ -142,25 +142,25 @@ namespace Parsley
 
             return tokens =>
             {
-                Parsed<T> deepestParse = null;
+                Reply<T> deepestParse = null;
 
                 foreach (Parser<T> parse in parsers)
                 {
-                    Parsed<T> parsed = parse(tokens);
+                    Reply<T> reply = parse(tokens);
 
                     if (deepestParse == null)
-                        deepestParse = parsed;
+                        deepestParse = reply;
 
-                    if (!parsed.IsError)
-                        return parsed;
+                    if (!reply.IsError)
+                        return reply;
 
-                    Position newParsePosition = parsed.UnparsedTokens.Position;
+                    Position newParsePosition = reply.UnparsedTokens.Position;
                     Position deepestParsePosition = deepestParse.UnparsedTokens.Position;
                     bool newParseIsDeeper = newParsePosition.Line > deepestParsePosition.Line ||
                                             (newParsePosition.Line == deepestParsePosition.Line &&
                                              newParsePosition.Column > deepestParsePosition.Column);
                     if (newParseIsDeeper)
-                        deepestParse = parsed;
+                        deepestParse = reply;
                 }
 
                 return deepestParse;
@@ -171,12 +171,12 @@ namespace Parsley
         {
             return tokens =>
             {
-                Parsed<T> parsed = parse(tokens);
+                Reply<T> reply = parse(tokens);
 
-                if (parsed.IsError)
-                    return new Error<T>(parsed.UnparsedTokens, expectation);
+                if (reply.IsError)
+                    return new Error<T>(reply.UnparsedTokens, expectation);
 
-                return parsed;
+                return reply;
             };
         }
 
