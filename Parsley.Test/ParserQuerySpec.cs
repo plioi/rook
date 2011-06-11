@@ -6,7 +6,7 @@ namespace Parsley
     [TestFixture]
     public class ParserQuerySpec
     {
-        private static readonly Parser<string> Next = tokens => new Success<string>(tokens.CurrentToken.Literal, tokens.Advance());
+        private static readonly Parser<string> Next = tokens => new Parsed<string>(tokens.CurrentToken.Literal, tokens.Advance());
 
         private static Lexer Tokenize(string source)
         {

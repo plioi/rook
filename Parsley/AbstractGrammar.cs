@@ -8,7 +8,7 @@ namespace Parsley
     {
         public static Parser<Position> Position
         {
-            get { return tokens => new Success<Position>(tokens.Position, tokens); }
+            get { return tokens => new Parsed<Position>(tokens.Position, tokens); }
         }
 
         public static Parser<Token> EndOfInput
@@ -21,7 +21,7 @@ namespace Parsley
             return tokens =>
             {
                 if (tokens.CurrentToken.Kind == kind)
-                    return new Success<Token>(tokens.CurrentToken, tokens.Advance());
+                    return new Parsed<Token>(tokens.CurrentToken, tokens.Advance());
 
                 return new Error<Token>(tokens);
             };
@@ -42,7 +42,7 @@ namespace Parsley
                     reply = item(reply.UnparsedTokens);
                 }
 
-                return new Success<IEnumerable<T>>(list, tokensBeforeFirstFailure);
+                return new Parsed<IEnumerable<T>>(list, tokensBeforeFirstFailure);
             };
         }
 
@@ -107,7 +107,7 @@ namespace Parsley
             return tokens =>
             {
                 if (parseAhead(tokens).IsError)
-                    return new Success<T>(default(T), tokens);
+                    return new Parsed<T>(default(T), tokens);
 
                 return new Error<T>(tokens);
             };

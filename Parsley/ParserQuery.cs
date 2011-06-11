@@ -14,7 +14,7 @@ namespace Parsley
         /// <param name="value">The value to treat as a parse result.</param>
         public static Parser<T> SucceedWithThisValue<T>(this T value)
         {
-            return tokens => new Success<T>(value, tokens);
+            return tokens => new Parsed<T>(value, tokens);
         }
 
         /// <summary>

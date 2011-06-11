@@ -67,7 +67,7 @@
     <Compile Include="ParserQuery.cs" />
     <Compile Include="Pattern.cs" />
     <Compile Include="Position.cs" />
-    <Compile Include="Success.cs" />
+    <Compile Include="Parsed.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Text.cs" />
     <Compile Include="Token.cs" />

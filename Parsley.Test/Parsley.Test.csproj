@@ -76,7 +76,7 @@
     <Compile Include="CharLexer.cs" />
     <Compile Include="LexerSpec.cs" />
     <Compile Include="PatternSpec.cs" />
-    <Compile Include="SuccessSpec.cs" />
+    <Compile Include="ParsedSpec.cs" />
     <Compile Include="ErrorSpec.cs" />
     <Compile Include="ParsingAssertions.cs" />
     <Compile Include="ParserQuerySpec.cs" />

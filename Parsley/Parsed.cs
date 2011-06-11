@@ -2,9 +2,9 @@
 
 namespace Parsley
 {
-    public class Success<T> : Reply<T>
+    public class Parsed<T> : Reply<T>
     {
-        public Success(T value, Lexer unparsedTokens)
+        public Parsed(T value, Lexer unparsedTokens)
         {
             Value = value;
             UnparsedTokens = unparsedTokens;
