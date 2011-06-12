@@ -4,12 +4,13 @@ namespace Parsley
 {
     public class Error<T> : Reply<T>
     {
-        private string expectation { get; set; }
+        private ErrorMessage errorMessage { get; set; }
 
         public Error(Lexer unparsedTokens, string expectation = null)
         {
             UnparsedTokens = unparsedTokens;
-            this.expectation = expectation;
+
+            errorMessage = new ErrorMessage(expectation);
         }
 
         public T Value
@@ -23,12 +24,12 @@ namespace Parsley
 
         public string Message
         {
-            get { return expectation == null ? "Parse error." : expectation + " expected"; }
+            get { return errorMessage.ToString(); }
         }
 
         public Reply<U> ParseRest<U>(Func<T, Parser<U>> constructNextParser)
         {
-            return new Error<U>(UnparsedTokens, expectation);
+            return new Error<U>(UnparsedTokens, errorMessage.Expectation);
         }
 
         public override string ToString()
