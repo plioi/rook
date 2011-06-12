@@ -9,7 +9,6 @@ namespace Parsley
         public void CanIndicateGenericErrors()
         {
             var error = new ErrorMessage();
-            error.Expectation.ShouldBeNull();
             error.ToString().ShouldEqual("Parse error.");
         }
 
@@ -17,7 +16,6 @@ namespace Parsley
         public void CanIndicateErrorsWithASpecificExpectation()
         {
             var error = new ErrorMessage("statement");
-            error.Expectation.ShouldEqual("statement");
             error.ToString().ShouldEqual("statement expected");
         }
     }

@@ -176,7 +176,7 @@ namespace Parsley
                 if (reply.Success)
                     return reply;
 
-                return new Error<T>(reply.UnparsedTokens, expectation);
+                return new Error<T>(reply.UnparsedTokens, new ErrorMessage(expectation));
             };
         }
 

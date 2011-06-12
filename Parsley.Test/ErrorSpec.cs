@@ -24,7 +24,7 @@ namespace Parsley
         [Test]
         public void CanIndicateErrorsWithASpecificExpectation()
         {
-            new Error<object>(endOfInput, "statement").Message.ShouldEqual("statement expected");
+            new Error<object>(endOfInput, new ErrorMessage("statement")).Message.ShouldEqual("statement expected");
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace Parsley
         public void ProvidesParseErrorMessageWithPositionAsToString()
         {
             new Error<object>(x).ToString().ShouldEqual("(1, 1): Parse error.");
-            new Error<object>(x, "y").ToString().ShouldEqual("(1, 1): y expected");
+            new Error<object>(x, new ErrorMessage("y")).ToString().ShouldEqual("(1, 1): y expected");
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace Parsley
         {
             Parser<string> shouldNotBeCalled = tokens => { throw new Exception(); };
 
-            Reply<string> reply = new Error<object>(x, "expectation").ParseRest(o => shouldNotBeCalled);
+            Reply<string> reply = new Error<object>(x, new ErrorMessage("expectation")).ParseRest(o => shouldNotBeCalled);
             reply.Success.ShouldBeFalse();
             reply.UnparsedTokens.ShouldEqual(x);
             reply.Message.ShouldEqual("expectation expected");
