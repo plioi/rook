@@ -20,9 +20,9 @@ namespace Parsley
         }
 
         [Test]
-        public void ProvidesParseSuccessMessage()
+        public void HasNoErrorMessage()
         {
-            new Parsed<string>("x", unparsed).Message.ShouldEqual("Parse succeeded.");
+            new Parsed<string>("x", unparsed).ErrorMessage.ShouldBeNull();
         }
 
         [Test]

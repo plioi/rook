@@ -25,9 +25,9 @@ namespace Parsley
 
         public bool Success { get { return false; } }
 
-        public string Message
+        public ErrorMessage ErrorMessage
         {
-            get { return errorMessage.ToString(); }
+            get { return errorMessage; }
         }
 
         public Reply<U> ParseRest<U>(Func<T, Parser<U>> constructNextParser)
@@ -38,7 +38,7 @@ namespace Parsley
         public override string ToString()
         {
             Position position = UnparsedTokens.Position;
-            return String.Format("({0}, {1}): {2}", position.Line, position.Column, Message);
+            return String.Format("({0}, {1}): {2}", position.Line, position.Column, errorMessage);
         }
     }
 }

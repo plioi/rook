@@ -18,13 +18,13 @@ namespace Parsley
         [Test]
         public void CanIndicateGenericErrors()
         {
-            new Error<object>(endOfInput).Message.ShouldEqual("Parse error.");
+            new Error<object>(endOfInput).ErrorMessage.ToString().ShouldEqual("Parse error.");
         }
 
         [Test]
         public void CanIndicateErrorsWithASpecificExpectation()
         {
-            new Error<object>(endOfInput, new ErrorMessage("statement")).Message.ShouldEqual("statement expected");
+            new Error<object>(endOfInput, new ErrorMessage("statement")).ErrorMessage.ToString().ShouldEqual("statement expected");
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace Parsley
             Reply<string> reply = new Error<object>(x, new ErrorMessage("expectation")).ParseRest(o => shouldNotBeCalled);
             reply.Success.ShouldBeFalse();
             reply.UnparsedTokens.ShouldEqual(x);
-            reply.Message.ShouldEqual("expectation expected");
+            reply.ErrorMessage.ToString().ShouldEqual("expectation expected");
         }
     }
 }
