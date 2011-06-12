@@ -27,7 +27,7 @@ namespace Parsley
 
         private static Reply<T> Fails<T>(this Reply<T> result)
         {
-            result.IsError.ShouldBeTrue("Parse completed without expected error.");
+            result.Success.ShouldBeFalse("Parse completed without expected error.");
 
             return result;
         }
@@ -49,8 +49,7 @@ namespace Parsley
 
         private static Reply<T> Succeeds<T>(this Reply<T> result)
         {
-            if (result.IsError)
-                Assert.Fail(result.ToString());
+            result.Success.ShouldBeTrue(result.ToString());
 
             return result;
         }

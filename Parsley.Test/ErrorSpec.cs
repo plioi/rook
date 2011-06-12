@@ -51,7 +51,7 @@ namespace Parsley
         [Test]
         public void ReportsErrorState()
         {
-            new Error<object>(x).IsError.ShouldBeTrue();
+            new Error<object>(x).Success.ShouldBeFalse();
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace Parsley
             Parser<string> shouldNotBeCalled = tokens => { throw new Exception(); };
 
             Reply<string> reply = new Error<object>(x, "expectation").ParseRest(o => shouldNotBeCalled);
-            reply.IsError.ShouldBeTrue();
+            reply.Success.ShouldBeFalse();
             reply.UnparsedTokens.ShouldEqual(x);
             reply.Message.ShouldEqual("expectation expected");
         }

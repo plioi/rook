@@ -93,7 +93,7 @@ namespace Rook.Compiling
         {
             var reply = parse(tokens);
 
-            if (reply.IsError ||
+            if (!reply.Success ||
                 reply.UnparsedTokens.ToString().Trim().Length > 0)
             {
                 syntax = default(T);

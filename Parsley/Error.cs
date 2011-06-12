@@ -19,7 +19,7 @@ namespace Parsley
 
         public Lexer UnparsedTokens { get; private set; }
 
-        public bool IsError { get { return true; } }
+        public bool Success { get { return false; } }
 
         public string Message
         {

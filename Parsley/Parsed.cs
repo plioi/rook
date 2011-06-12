@@ -12,7 +12,7 @@ namespace Parsley
 
         public T Value { get; private set; }
         public Lexer UnparsedTokens { get; private set; }
-        public bool IsError { get { return false; } }
+        public bool Success { get { return true; } }
         public string Message { get { return "Parse succeeded."; } }
         public Reply<U> ParseRest<U>(Func<T, Parser<U>> constructNextParser)
         {

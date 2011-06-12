@@ -6,7 +6,7 @@ namespace Parsley
     {
         T Value { get; }
         Lexer UnparsedTokens { get; }
-        bool IsError { get; }
+        bool Success { get; }
         string Message { get; }
         Reply<U> ParseRest<U>(Func<T, Parser<U>> constructNextParser);
     }

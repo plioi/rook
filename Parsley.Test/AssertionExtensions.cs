@@ -21,6 +21,11 @@ namespace Parsley
             Assert.IsTrue(condition, message);
         }
 
+        public static void ShouldBeFalse(this bool condition, string message)
+        {
+            Assert.IsFalse(condition, message);
+        }
+
         public static void ShouldEqual(this object actual, object expected)
         {
             Assert.AreEqual(expected, actual);

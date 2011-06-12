@@ -18,11 +18,11 @@ namespace Rook.Compiling
         public CompilerResult Build(string code)
         {
             Reply<Program> reply = Parse(code);
-            
-            if (reply.IsError)
-                return new CompilerResult(new CompilerError(reply.UnparsedTokens.Position, reply.Message));
 
-            return Build(reply.Value);
+            if (reply.Success)
+                return Build(reply.Value);
+
+            return new CompilerResult(new CompilerError(reply.UnparsedTokens.Position, reply.Message));
         }
 
         public CompilerResult Build(Program program)

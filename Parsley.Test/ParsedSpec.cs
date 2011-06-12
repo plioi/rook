@@ -34,7 +34,7 @@ namespace Parsley
         [Test]
         public void ReportsNonerrorState()
         {
-            new Parsed<string>("parsed", unparsed).IsError.ShouldBeFalse();
+            new Parsed<string>("parsed", unparsed).Success.ShouldBeTrue();
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace Parsley
             Parser<string> next = tokens => new Parsed<string>(tokens.CurrentToken.Literal, tokens.Advance());
 
             Reply<string> reply = new Parsed<string>("x", unparsed).ParseRest(s => next);
-            reply.IsError.ShouldBeFalse();
+            reply.Success.ShouldBeTrue();
             reply.Value.ShouldEqual("0");
             reply.UnparsedTokens.CurrentToken.Kind.ShouldEqual(Lexer.EndOfInput);
         }

@@ -35,7 +35,7 @@ namespace Parsley
                 var reply = item(tokens);
                 var list = new List<T>();
 
-                while (!reply.IsError)
+                while (reply.Success)
                 {
                     list.Add(reply.Value);
                     tokensBeforeFirstFailure = reply.UnparsedTokens;
@@ -106,10 +106,10 @@ namespace Parsley
         {
             return tokens =>
             {
-                if (parseAhead(tokens).IsError)
-                    return new Parsed<T>(default(T), tokens);
+                if (parseAhead(tokens).Success)
+                    return new Error<T>(tokens);
 
-                return new Error<T>(tokens);
+                return new Parsed<T>(default(T), tokens);
             };
         }
 
@@ -125,7 +125,7 @@ namespace Parsley
             {
                 Reply<T> result = parse(tokens);
 
-                if (result.IsError)
+                if (!result.Success)
                    return result;
 
                 if (expectation(result.Value))
@@ -151,7 +151,7 @@ namespace Parsley
                     if (deepestParse == null)
                         deepestParse = reply;
 
-                    if (!reply.IsError)
+                    if (reply.Success)
                         return reply;
 
                     Position newParsePosition = reply.UnparsedTokens.Position;
@@ -173,10 +173,10 @@ namespace Parsley
             {
                 Reply<T> reply = parse(tokens);
 
-                if (reply.IsError)
-                    return new Error<T>(reply.UnparsedTokens, expectation);
+                if (reply.Success)
+                    return reply;
 
-                return reply;
+                return new Error<T>(reply.UnparsedTokens, expectation);
             };
         }
 
