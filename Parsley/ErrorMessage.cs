@@ -2,16 +2,11 @@
 {
     public class ErrorMessage
     {
-        private readonly string expectation;
-
         public ErrorMessage(string expectation = null)
         {
-            this.expectation = expectation;
+            Expectation = expectation;
         }
 
-        public override string ToString()
-        {
-            return expectation == null ? "Parse error." : expectation + " expected";
-        }
+        public string Expectation { get; private set; }
     }
 }

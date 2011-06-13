@@ -22,7 +22,7 @@ namespace Rook.Compiling
             if (reply.Success)
                 return Build(reply.Value);
 
-            return new CompilerResult(new CompilerError(reply.UnparsedTokens.Position, reply.ErrorMessage.ToString()));
+            return new CompilerResult(new CompilerError(reply.UnparsedTokens.Position, reply.ErrorMessages.ToString()));
         }
 
         public CompilerResult Build(Program program)

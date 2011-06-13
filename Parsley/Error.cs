@@ -4,7 +4,7 @@ namespace Parsley
 {
     public class Error<T> : Reply<T>
     {
-        private ErrorMessage errorMessage { get; set; }
+        private readonly ErrorMessage errorMessage;
 
         public Error(Lexer unparsedTokens)
             : this(unparsedTokens, new ErrorMessage()) { }
@@ -25,9 +25,9 @@ namespace Parsley
 
         public bool Success { get { return false; } }
 
-        public ErrorMessage ErrorMessage
+        public ErrorMessageList ErrorMessages
         {
-            get { return errorMessage; }
+            get { return ErrorMessageList.Empty.With(errorMessage); }
         }
 
         public Reply<U> ParseRest<U>(Func<T, Parser<U>> constructNextParser)
@@ -38,7 +38,7 @@ namespace Parsley
         public override string ToString()
         {
             Position position = UnparsedTokens.Position;
-            return String.Format("({0}, {1}): {2}", position.Line, position.Column, errorMessage);
+            return String.Format("({0}, {1}): {2}", position.Line, position.Column, ErrorMessages);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Parsley
         [Test]
         public void HasNoErrorMessage()
         {
-            new Parsed<string>("x", unparsed).ErrorMessage.ShouldBeNull();
+            new Parsed<string>("x", unparsed).ErrorMessages.ShouldEqual(ErrorMessageList.Empty);
         }
 
         [Test]
