@@ -20,9 +20,19 @@ namespace Parsley
         }
 
         [Test]
-        public void HasNoErrorMessage()
+        public void HasNoErrorMessageByDefault()
         {
             new Parsed<string>("x", unparsed).ErrorMessages.ShouldEqual(ErrorMessageList.Empty);
+        }
+
+        [Test]
+        public void CanIndicatePotentialErrors()
+        {
+            var potentialErrors = ErrorMessageList.Empty
+                .With(new ErrorMessage("A"))
+                .With(new ErrorMessage("B"));
+
+            new Parsed<object>("x", unparsed, potentialErrors).ErrorMessages.ToString().ShouldEqual("A or B expected");
         }
 
         [Test]
