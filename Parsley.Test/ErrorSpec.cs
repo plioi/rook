@@ -28,6 +28,16 @@ namespace Parsley
         }
 
         [Test]
+        public void CanIndicateErrorsWithMultipleExpectations()
+        {
+            var errors = ErrorMessageList.Empty
+                .With(new ErrorMessage("A"))
+                .With(new ErrorMessage("B"));
+
+            new Error<object>(endOfInput, errors).ErrorMessages.ToString().ShouldEqual("A or B expected");
+        }
+
+        [Test]
         [ExpectedException(typeof(MemberAccessException), ExpectedMessage = "(1, 1): Parse error.")]
         public void ThrowsWhenAttemptingToGetParsedValue()
         {

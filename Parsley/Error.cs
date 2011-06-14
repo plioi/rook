@@ -4,16 +4,19 @@ namespace Parsley
 {
     public class Error<T> : Reply<T>
     {
-        private readonly ErrorMessage errorMessage;
+        private readonly ErrorMessageList errors;
 
         public Error(Lexer unparsedTokens)
             : this(unparsedTokens, new ErrorMessage()) { }
 
-        public Error(Lexer unparsedTokens, ErrorMessage errorMessage)
+        public Error(Lexer unparsedTokens, ErrorMessage error)
+            : this(unparsedTokens,  ErrorMessageList.Empty.With(error)) { }
+
+        public Error(Lexer unparsedTokens, ErrorMessageList errors)
         {
             UnparsedTokens = unparsedTokens;
 
-            this.errorMessage = errorMessage;
+            this.errors = errors;
         }
 
         public T Value
@@ -27,12 +30,12 @@ namespace Parsley
 
         public ErrorMessageList ErrorMessages
         {
-            get { return ErrorMessageList.Empty.With(errorMessage); }
+            get { return errors; }
         }
 
         public Reply<U> ParseRest<U>(Func<T, Parser<U>> constructNextParser)
         {
-            return new Error<U>(UnparsedTokens, errorMessage);
+            return new Error<U>(UnparsedTokens, errors);
         }
 
         public override string ToString()
