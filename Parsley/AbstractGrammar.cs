@@ -151,6 +151,41 @@ namespace Parsley
             };
         }
 
+        /// <summary>
+        /// First applies the parser p1. If p1 succeeds, the result of p1 is returned.
+        /// If p1 fails without consuming input, p2 is applied.
+        /// If p1 fails after consuming input, p2 will not be applied.
+        ///
+        /// Choice is 'predictive' since p2 is only tried when
+        /// p1 didn't consume any input (i.e. the look-ahead is 1).
+        /// This non-backtracking behaviour allows for both an efficient
+        /// implementation of the parser combinators and the generation of good
+        /// error messages.
+        /// </summary>
+        public static Parser<T> Choice<T>(Parser<T> p1, Parser<T> p2)
+        {
+            return tokens =>
+            {
+                var start = tokens.Position;
+                var reply = p1(tokens);
+                var newPosition = reply.UnparsedTokens.Position;
+                if (!reply.Success && (start.Line == newPosition.Line && start.Column == newPosition.Column))
+                {
+                    var error = reply.ErrorMessages;
+                    reply = p2(tokens);
+                    newPosition = reply.UnparsedTokens.Position;
+                    if (start.Line == newPosition.Line && start.Column == newPosition.Column)
+                    {
+                        if (reply.Success)
+                            reply = new Parsed<T>(reply.Value, reply.UnparsedTokens, error.Merge(reply.ErrorMessages));
+                        else
+                            reply = new Error<T>(reply.UnparsedTokens, error.Merge(reply.ErrorMessages));
+                    }
+                }
+                return reply;
+            };
+        }
+
         //Deprecated in favor of Parsec-like single look-ahead Choice combinator.
         public static Parser<T> GreedyChoice<T>(params Parser<T>[] parsers)
         {           

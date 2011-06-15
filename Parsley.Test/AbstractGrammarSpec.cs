@@ -4,6 +4,67 @@ using NUnit.Framework;
 namespace Parsley
 {
     [TestFixture]
+    public class AlternationSpec : AbstractGrammar
+    {
+        private static Lexer Tokenize(string source)
+        {
+            return new CharLexer(source);
+        }
+
+        private Parser<Token> A, B;
+
+        [SetUp]
+        public void Setup()
+        {
+            A = String("A");
+            B = String("B");
+        }
+
+        [Test]
+        public void FirstParserCanSucceedWithoutExecutingOtherAlternatives()
+        {
+            Choice(A, NeverExecuted).Parses(Tokenize("A")).IntoToken("A");
+        }
+
+        [Test]
+        public void SecondParserCanSucceedWhenFirstParserFailsWithoutConsumingInput()
+        {
+            Choice(B, A).Parses(Tokenize("A")).IntoToken("A");
+        }
+
+        [Test]
+        public void SecondParserWillNotBeAttemptedWhenFirstParserFailsAfterConsumingInput()
+        {
+            var AB = from a in A
+                     from b in B
+                     select new Token(null, a.Position, a.Literal + b.Literal);
+
+            Choice(AB, NeverExecuted).FailsToParse(Tokenize("A"), "").WithMessage("(1, 2): B expected");
+            //In other words, as soon as something consumes input, it's error message wins
+        }
+
+        [Test]
+        public void MergesErrorMessagesWhenBothParsersFailWithoutConsumingInput()
+        {
+            Choice(A, B).FailsToParse(Tokenize(""), "").WithMessage("(1, 1): A or B expected");
+        }
+
+        [Test]
+        public void MergesPotentialErrorMessagesWhenSecondParserSucceedsWithoutConsumingInput()
+        {
+            Parser<Token> succeedWithoutConsuming = tokens => new Parsed<Token>(null, tokens);
+
+            var reply = Choice(A, succeedWithoutConsuming).Parses(Tokenize(""));
+            reply.ErrorMessages.ToString().ShouldEqual("A expected");
+        }
+
+        private static readonly Parser<Token> NeverExecuted = tokens =>
+        {
+            throw new Exception("Parser 'NeverExecuted' should not have been executed.");
+        };
+    }
+
+    [TestFixture]
     public class AbstractGrammarSpec : AbstractGrammar
     {
         private static Lexer Tokenize(string source)
