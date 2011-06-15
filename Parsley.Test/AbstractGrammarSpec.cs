@@ -30,6 +30,12 @@ namespace Parsley
         }
 
         [Test]
+        public void CanFailWithoutConsumingInput()
+        {
+            Fail<string>().FailsToParse(Tokenize("ABC"), "ABC");
+        }
+
+        [Test]
         public void CanDetectTheEndOfInputWithoutAdvancing()
         {
             EndOfInput.Parses(Tokenize("")).IntoToken("");
@@ -44,6 +50,14 @@ namespace Parsley
 
             Kind(SampleLexer.Digit).FailsToParse(Tokenize("A"), "A");
             Kind(SampleLexer.Digit).Parses(Tokenize("0")).IntoToken("0");
+        }
+
+        [Test]
+        public void CanDemandThatAGivenTokenStringAppearsNext()
+        {
+            String("A").Parses(Tokenize("A")).IntoToken("A");
+            String("\t ").PartiallyParses(Tokenize("\t !"), "!").IntoToken("\t ");
+            String("A").FailsToParse(Tokenize("B"), "B").WithMessage("(1, 1): A expected");
         }
 
         [Test]
@@ -147,7 +161,7 @@ namespace Parsley
         {
             var parser =
                 LeftAssociative(DIGIT, SYMBOL, (left, symbolAndRight) =>
-                    new Token(null, symbolAndRight.Item1.Position, String.Format("({0} {1} {2})", symbolAndRight.Item1.Literal, left.Literal, symbolAndRight.Item2.Literal)));
+                    new Token(null, symbolAndRight.Item1.Position, System.String.Format("({0} {1} {2})", symbolAndRight.Item1.Literal, left.Literal, symbolAndRight.Item2.Literal)));
 
             parser.FailsToParse(Tokenize("!"), "!");
             parser.Parses(Tokenize("0")).IntoToken("0");

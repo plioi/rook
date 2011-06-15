@@ -33,7 +33,7 @@ namespace Rook.Compiling.Syntax
 
         public static Parser<Token> Operator(params string[] expectedOperators)
         {
-            return OnError(Expect(AnyOperator, IsOneOf(expectedOperators)), String.Join(", ", expectedOperators));
+            return OnError(Expect(AnyOperator, IsOneOf(expectedOperators)), System.String.Join(", ", expectedOperators));
         }
 
         public static Parser<Token> AnyKeyword

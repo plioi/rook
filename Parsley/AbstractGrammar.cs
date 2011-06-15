@@ -6,6 +6,11 @@ namespace Parsley
 {
     public abstract class AbstractGrammar
     {
+        public static Parser<T> Fail<T>()
+        {
+            return tokens => new Error<T>(tokens);
+        }
+
         public static Parser<Position> Position
         {
             get { return tokens => new Parsed<Position>(tokens.Position, tokens); }
@@ -24,6 +29,17 @@ namespace Parsley
                     return new Parsed<Token>(tokens.CurrentToken, tokens.Advance());
 
                 return new Error<Token>(tokens);
+            };
+        }
+
+        public static Parser<Token> String(string expected)
+        {
+            return tokens =>
+            {
+                if (tokens.CurrentToken.Literal == expected)
+                    return new Parsed<Token>(tokens.CurrentToken, tokens.Advance());
+
+                return new Error<Token>(tokens, new ErrorMessage(expected));
             };
         }
 
