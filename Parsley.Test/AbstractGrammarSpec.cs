@@ -11,13 +11,14 @@ namespace Parsley
             return new CharLexer(source);
         }
 
-        private Parser<Token> A, B;
+        private Parser<Token> A, B, C;
 
         [SetUp]
         public void Setup()
         {
             A = String("A");
             B = String("B");
+            C = String("C");
         }
 
         [Test]
@@ -41,34 +42,48 @@ namespace Parsley
         }
 
         [Test]
-        public void SecondParserCanSucceedWhenFirstParserFailsWithoutConsumingInput()
+        public void SubsequentParserCanSucceedWhenPreviousParsersFailWithoutConsumingInput()
         {
             Choice(B, A).Parses(Tokenize("A")).IntoToken("A");
+            Choice(C, B, A).Parses(Tokenize("A")).IntoToken("A");
         }
 
         [Test]
-        public void SecondParserWillNotBeAttemptedWhenFirstParserFailsAfterConsumingInput()
+        public void SubsequentParserWillNotBeAttemptedWhenPreviousParserFailsAfterConsumingInput()
         {
+            //As soon as something consumes input, it's failure and message win.
+
             var AB = from a in A
                      from b in B
                      select new Token(null, a.Position, a.Literal + b.Literal);
 
             Choice(AB, NeverExecuted).FailsToParse(Tokenize("A"), "").WithMessage("(1, 2): B expected");
-            //In other words, as soon as something consumes input, it's error message wins
+            Choice(C, AB, NeverExecuted).FailsToParse(Tokenize("A"), "").WithMessage("(1, 2): B expected");
         }
 
         [Test]
-        public void MergesErrorMessagesWhenBothParsersFailWithoutConsumingInput()
+        public void MergesErrorMessagesWhenParsersFailWithoutConsumingInput()
         {
             Choice(A, B).FailsToParse(Tokenize(""), "").WithMessage("(1, 1): A or B expected");
+            Choice(A, B, C).FailsToParse(Tokenize(""), "").WithMessage("(1, 1): A, B or C expected");
         }
 
         [Test]
-        public void MergesPotentialErrorMessagesWhenSecondParserSucceedsWithoutConsumingInput()
+        public void MergesPotentialErrorMessagesWhenParserSucceedsWithoutConsumingInput()
         {
+            //Choice really shouldn't be used with parsers that can succeed without
+            //consuming input.  These tests simply describe the behavior under that
+            //unusual situation.
+
             Parser<Token> succeedWithoutConsuming = tokens => new Parsed<Token>(null, tokens);
 
             var reply = Choice(A, succeedWithoutConsuming).Parses(Tokenize(""));
+            reply.ErrorMessages.ToString().ShouldEqual("A expected");
+
+            reply = Choice(A, B, succeedWithoutConsuming).Parses(Tokenize(""));
+            reply.ErrorMessages.ToString().ShouldEqual("A or B expected");
+
+            reply = Choice(A, succeedWithoutConsuming, B).Parses(Tokenize(""));
             reply.ErrorMessages.ToString().ShouldEqual("A expected");
         }
 

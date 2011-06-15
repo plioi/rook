@@ -152,34 +152,41 @@ namespace Parsley
         }
 
         /// <summary>
-        /// First applies the parser p1. If p1 succeeds, the result of p1 is returned.
-        /// If p1 fails without consuming input, p2 is applied.
-        /// If p1 fails after consuming input, p2 will not be applied.
+        /// Choice() always fails without consuming input.
+        /// 
+        /// Choice(p) is equivalent to p.
+        /// 
+        /// For 2 or more inputs, parsers are applied from left
+        /// to right.  If a parser succeeds, its result is returned.
+        /// If a parser fails without consuming input, the next parser
+        /// is attempted.  If a parser fails after consuming input,
+        /// subsequent parsers will not be attempted.  As long as
+        /// parsers conume no input, their error messages are merged.
         ///
-        /// Choice is 'predictive' since p2 is only tried when
-        /// p1 didn't consume any input (i.e. the look-ahead is 1).
+        /// Choice is 'predictive' since p[n+1] is only tried when
+        /// p[n] didn't consume any input (i.e. the look-ahead is 1).
         /// This non-backtracking behaviour allows for both an efficient
-        /// implementation of the parser combinators and the generation of good
-        /// error messages.
+        /// implementation of the parser combinators and the generation
+        /// of good error messages.
         /// </summary>
         public static Parser<T> Choice<T>(params Parser<T>[] parsers)
         {
             if (parsers.Length == 0)
                 return Fail<T>();
 
-            if (parsers.Length == 1)
-                return parsers[0];
-
             return tokens =>
             {
                 var start = tokens.Position;
                 var reply = parsers[0](tokens);
                 var newPosition = reply.UnparsedTokens.Position;
-                if (!reply.Success && (start.Line == newPosition.Line && start.Column == newPosition.Column))
+
+                var i = 1;
+                while (!reply.Success && (start.Line == newPosition.Line && start.Column == newPosition.Column) && i < parsers.Length)
                 {
                     var errors = reply.ErrorMessages;
-                    reply = parsers[1](tokens);
+                    reply = parsers[i](tokens);
                     newPosition = reply.UnparsedTokens.Position;
+                    i++;
                     if (start.Line == newPosition.Line && start.Column == newPosition.Column)
                     {
                         errors = errors.Merge(reply.ErrorMessages);
