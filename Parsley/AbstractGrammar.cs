@@ -162,24 +162,31 @@ namespace Parsley
         /// implementation of the parser combinators and the generation of good
         /// error messages.
         /// </summary>
-        public static Parser<T> Choice<T>(Parser<T> p1, Parser<T> p2)
+        public static Parser<T> Choice<T>(params Parser<T>[] parsers)
         {
+            if (parsers.Length == 0)
+                return Fail<T>();
+
+            if (parsers.Length == 1)
+                return parsers[0];
+
             return tokens =>
             {
                 var start = tokens.Position;
-                var reply = p1(tokens);
+                var reply = parsers[0](tokens);
                 var newPosition = reply.UnparsedTokens.Position;
                 if (!reply.Success && (start.Line == newPosition.Line && start.Column == newPosition.Column))
                 {
-                    var error = reply.ErrorMessages;
-                    reply = p2(tokens);
+                    var errors = reply.ErrorMessages;
+                    reply = parsers[1](tokens);
                     newPosition = reply.UnparsedTokens.Position;
                     if (start.Line == newPosition.Line && start.Column == newPosition.Column)
                     {
+                        errors = errors.Merge(reply.ErrorMessages);
                         if (reply.Success)
-                            reply = new Parsed<T>(reply.Value, reply.UnparsedTokens, error.Merge(reply.ErrorMessages));
+                            reply = new Parsed<T>(reply.Value, reply.UnparsedTokens, errors);
                         else
-                            reply = new Error<T>(reply.UnparsedTokens, error.Merge(reply.ErrorMessages));
+                            reply = new Error<T>(reply.UnparsedTokens, errors);
                     }
                 }
                 return reply;

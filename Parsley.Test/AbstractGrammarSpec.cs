@@ -21,6 +21,20 @@ namespace Parsley
         }
 
         [Test]
+        public void ChoosingBetweenZeroAlternativesAlwaysFails()
+        {
+            Choice<string>().FailsToParse(Tokenize("ABC"), "ABC");
+        }
+
+        [Test]
+        public void ChoosingBetweenOneAlternativeParserIsEquivalentToThatParser()
+        {
+            Choice(A).Parses(Tokenize("A")).IntoToken("A");
+            Choice(A).PartiallyParses(Tokenize("AB"), "B").IntoToken("A");
+            Choice(A).FailsToParse(Tokenize("B"), "B").WithMessage("(1, 1): A expected");
+        }
+
+        [Test]
         public void FirstParserCanSucceedWithoutExecutingOtherAlternatives()
         {
             Choice(A, NeverExecuted).Parses(Tokenize("A")).IntoToken("A");
