@@ -48,15 +48,15 @@ namespace Rook.Compiling.Syntax
                 var nothing = from zeroArguments in Zero<Expression>()
                               select new Func<Expression, Expression>(callable => callable);
 
-                return from callable in Choice(Literal, VectorLiteral, If, Block, Lambda, Name, Parenthesized(Expression))
-                       from callArgumentAppender in Choice(call, subscript, nothing)
+                return from callable in GreedyChoice(Literal, VectorLiteral, If, Block, Lambda, Name, Parenthesized(Expression))
+                       from callArgumentAppender in GreedyChoice(call, subscript, nothing)
                        select callArgumentAppender(callable);
             }
         }
 
         private static Parser<Expression> Literal
         {
-            get { return Choice(BooleanLiteral, NullLiteral, IntegerLiteral); }
+            get { return GreedyChoice(BooleanLiteral, NullLiteral, IntegerLiteral); }
         }
 
         private static Parser<Expression> If
@@ -123,7 +123,7 @@ namespace Rook.Compiling.Syntax
                     from end in EndOfLine
                     select new VariableDeclaration(identifier.Position, identifier.Literal, value);
 
-                return Choice(explicitlyTyped, implicitlyTyped);
+                return GreedyChoice(explicitlyTyped, implicitlyTyped);
             }
         }
 

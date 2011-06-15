@@ -11,7 +11,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return OnError(Choice(Token(RookLexer.EndOfLine),
+                return OnError(GreedyChoice(Token(RookLexer.EndOfLine),
                                       Token(Lexer.EndOfInput)), "end of line");
             }
         }

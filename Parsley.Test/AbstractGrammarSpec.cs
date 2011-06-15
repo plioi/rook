@@ -228,7 +228,7 @@ namespace Parsley
         }
 
         [Test]
-        public void ChoosingTheFirstSuccessfulParserFromAPrioritizedList()
+        public void GreedilyChoosingTheFirstSuccessfulParserFromAPrioritizedList()
         {
             Parser<Token> A = LETTER;
             Parser<Token> AB = from a in LETTER
@@ -243,7 +243,7 @@ namespace Parsley
             Parser<Token> parenthesizedAB = Between(SYMBOL, AB, SYMBOL);
             Parser<Token> parenthesizedABC = Between(SYMBOL, ABC, SYMBOL);
 
-            Parser<Token> choice = Choice(
+            Parser<Token> choice = GreedyChoice(
                 OnError(parenthesizedA, "parenthesized a"),
                 OnError(parenthesizedAB, "parenthesized ab"),
                 OnError(parenthesizedABC, "parenthesized abc"));
@@ -266,9 +266,9 @@ namespace Parsley
 
         [Test]
         [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Missing choice.")]
-        public void DemandsAtLeastOneChoiceWhenBuidingAChoiceParser()
+        public void DemandsAtLeastOneChoiceWhenBuildingAGreedyChoiceParser()
         {
-            Choice(new Parser<string>[] {});
+            GreedyChoice(new Parser<string>[] {});
         }
 
         [Test]

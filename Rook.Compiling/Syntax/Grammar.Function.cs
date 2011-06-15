@@ -27,7 +27,7 @@ namespace Rook.Compiling.Syntax
                 var implicitlyTyped = from identifier in Identifier
                                       select new Parameter(identifier.Position, identifier.Literal);
 
-                return Choice(explicitlyTyped, implicitlyTyped);
+                return GreedyChoice(explicitlyTyped, implicitlyTyped);
             }
         }
     }

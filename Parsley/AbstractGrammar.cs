@@ -71,12 +71,12 @@ namespace Parsley
 
         public static Parser<IEnumerable<T>> ZeroOrMore<T, S>(Parser<T> item, Parser<S> separator)
         {
-            return Choice(OneOrMore(item, separator), Zero<T>());
+            return GreedyChoice(OneOrMore(item, separator), Zero<T>());
         }
 
         public static Parser<IEnumerable<T>> ZeroOrMoreTerminated<T, X>(Parser<T> item, Parser<X> terminator)
         {
-            return Choice(from end in terminator
+            return GreedyChoice(from end in terminator
                           from zero in Zero<T>()
                           select zero,
 
@@ -132,7 +132,7 @@ namespace Parsley
         public static Parser<T> Optional<T>(Parser<T> parse) where T : class
         {
             var nothing = default(T).SucceedWithThisValue();
-            return Choice(parse, nothing);
+            return GreedyChoice(parse, nothing);
         }
 
         public static Parser<T> Expect<T>(Parser<T> parse, Predicate<T> expectation)
@@ -151,7 +151,8 @@ namespace Parsley
             };
         }
 
-        public static Parser<T> Choice<T>(params Parser<T>[] parsers)
+        //Deprecated in favor of Parsec-like single look-ahead Choice combinator.
+        public static Parser<T> GreedyChoice<T>(params Parser<T>[] parsers)
         {           
             if (parsers.Length == 0)
                 throw new ArgumentException("Missing choice.");
