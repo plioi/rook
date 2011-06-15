@@ -180,22 +180,24 @@ namespace Parsley
                 var reply = parsers[0](tokens);
                 var newPosition = reply.UnparsedTokens.Position;
 
+                var errors = ErrorMessageList.Empty;
                 var i = 1;
                 while (!reply.Success && (start.Line == newPosition.Line && start.Column == newPosition.Column) && i < parsers.Length)
                 {
-                    var errors = reply.ErrorMessages;
+                    errors = errors.Merge(reply.ErrorMessages);
                     reply = parsers[i](tokens);
                     newPosition = reply.UnparsedTokens.Position;
                     i++;
-                    if (start.Line == newPosition.Line && start.Column == newPosition.Column)
-                    {
-                        errors = errors.Merge(reply.ErrorMessages);
-                        if (reply.Success)
-                            reply = new Parsed<T>(reply.Value, reply.UnparsedTokens, errors);
-                        else
-                            reply = new Error<T>(reply.UnparsedTokens, errors);
-                    }
                 }
+                if (start.Line == newPosition.Line && start.Column == newPosition.Column)
+                {
+                    errors = errors.Merge(reply.ErrorMessages);
+                    if (reply.Success)
+                        reply = new Parsed<T>(reply.Value, reply.UnparsedTokens, errors);
+                    else
+                        reply = new Error<T>(reply.UnparsedTokens, errors);
+                }
+
                 return reply;
             };
         }
