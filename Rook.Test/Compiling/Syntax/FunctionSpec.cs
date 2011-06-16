@@ -18,7 +18,7 @@ namespace Rook.Compiling.Syntax
             FailsToParse("int foo", "").WithMessage("(1, 8): ( expected");
             FailsToParse("int foo(", "").WithMessage("(1, 9): ) expected");
             FailsToParse("int foo(x)", "");
-            FailsToParse("int foo(int)", "int)").WithMessage("(1, 9): ) expected");
+            FailsToParse("int foo(int)", ")").WithMessage("(1, 12): identifier expected");
             FailsToParse("int foo()", "");
             Parses("int foo() 1").IntoTree("int foo() 1");
         }

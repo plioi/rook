@@ -71,12 +71,12 @@ namespace Parsley
 
         public static Parser<IEnumerable<T>> ZeroOrMore<T, S>(Parser<T> item, Parser<S> separator)
         {
-            return GreedyChoice(OneOrMore(item, separator), Zero<T>());
+            return Choice(OneOrMore(item, separator), Zero<T>());
         }
 
         public static Parser<IEnumerable<T>> ZeroOrMoreTerminated<T, X>(Parser<T> item, Parser<X> terminator)
         {
-            return GreedyChoice(from end in terminator
+            return Choice(from end in terminator
                           from zero in Zero<T>()
                           select zero,
 

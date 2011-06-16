@@ -206,6 +206,7 @@ namespace Parsley
             parser.PartiallyParses(Tokenize("0!"), "!").IntoTokens("0");
             parser.PartiallyParses(Tokenize("0,1!"), "!").IntoTokens("0", "1");
             parser.PartiallyParses(Tokenize("0,1,2!"), "!").IntoTokens("0", "1", "2");
+            parser.PartiallyParses(Tokenize("0,1,2,"), ",").IntoTokens("0", "1", "2");
 
             parser.Parses(Tokenize("0")).IntoTokens("0");
             parser.Parses(Tokenize("0,1")).IntoTokens("0", "1");

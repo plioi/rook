@@ -36,7 +36,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return GreedyChoice(
+                return Choice(
                     from @int in Keyword("int") select NamedType.Integer,
                     from @bool in Keyword("bool") select NamedType.Boolean,
                     from @void in Keyword("void") select NamedType.Void);
