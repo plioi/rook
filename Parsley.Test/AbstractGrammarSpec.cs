@@ -285,15 +285,6 @@ namespace Parsley
         }
 
         [Test]
-        public void ApplyingANegativeLookaheadAssertionWithoutConsumingInput()
-        {
-            var parser = Not(LETTER);
-
-            parser.PartiallyParses(Tokenize("0"), "0").IntoValue(value => value.ShouldBeNull());
-            parser.FailsToParse(Tokenize("A"), "A");
-        }
-
-        [Test]
         public void ParsingAnOptionalRuleZeroOrOneTimes()
         {
             var parser = Optional(LETTER);

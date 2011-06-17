@@ -118,17 +118,6 @@ namespace Parsley
                    select G;
         }
 
-        public static Parser<T> Not<T>(Parser<T> parseAhead)
-        {
-            return tokens =>
-            {
-                if (parseAhead(tokens).Success)
-                    return new Error<T>(tokens);
-
-                return new Parsed<T>(default(T), tokens);
-            };
-        }
-
         public static Parser<T> Optional<T>(Parser<T> parse) where T : class
         {
             var nothing = default(T).SucceedWithThisValue();
