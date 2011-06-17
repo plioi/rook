@@ -63,9 +63,16 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ParsesExpectedOperators()
         {
+            foreach (var kind in new[] { RookLexer.LeftParenthesis, RookLexer.RightParenthesis })
+            {
+                var o = kind.Name;
+                Grammar.Operator(kind).Parses(o).IntoToken(kind, o);
+                Grammar.Operator(kind).Parses(" \t " + o).IntoToken(kind, o);
+                Grammar.Operator(kind).FailsToParse("x", "x").WithMessage("(1, 1): " + o + " expected");
+            }
             var operators = new[]
             {
-                "(", ")", "*", "/", "+", "-", "<=", "<", ">=", ">", "!=", "==", "=",
+                "*", "/", "+", "-", "<=", "<", ">=", ">", "!=", "==", "=",
                 "&&", "||", "!", ",", "{", "}", "[]", ":", "[", "]", "??", "?"
             };
 

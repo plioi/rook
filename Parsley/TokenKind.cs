@@ -25,9 +25,9 @@
             return false;
         }
 
-        public override string ToString()
+        public string Name
         {
-            return name + ": " + pattern;
+            get { return name; }
         }
     }
 }

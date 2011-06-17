@@ -50,7 +50,7 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ShouldRecognizeOperatorsGreedily()
         {
-            AssertTokens("<=>=<>!====*/+-&&||!{}[][,]()???:", RookLexer.Operator, "<=",
+            AssertTokens("<=>=<>!====*/+-&&||!{}[][,]()???:", "<=",
                          ">=", "<", ">", "!=", "==", "=", "*", "/",
                          "+", "-", "&&", "||", "!", "{", "}", "[]",
                          "[", ",", "]", "(", ")", "??", "?", ":");
@@ -75,6 +75,19 @@ namespace Rook.Compiling.Syntax
             foreach (var expectedLiteral in expectedLiterals)
             {
                 lexer.CurrentToken.ShouldBe(expectedKind, expectedLiteral);
+                lexer = lexer.Advance();
+            }
+
+            lexer.CurrentToken.Kind.ShouldEqual(Lexer.EndOfInput);
+        }
+
+        private static void AssertTokens(string source, params string[] expectedLiterals)
+        {
+            Lexer lexer = new RookLexer(source);
+
+            foreach (var expectedLiteral in expectedLiterals)
+            {
+                lexer.CurrentToken.Literal.ShouldEqual(expectedLiteral);
                 lexer = lexer.Advance();
             }
 

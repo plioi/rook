@@ -39,10 +39,10 @@ namespace Parsley
         }
 
         [Test]
-        public void HasDescriptiveStringRepresentation()
+        public void HasDescriptiveName()
         {
-            lower.ToString().ShouldEqual("Lowercase: [a-z]+");
-            upper.ToString().ShouldEqual("Uppercase: [A-Z]+");
+            lower.Name.ShouldEqual("Lowercase");
+            upper.Name.ShouldEqual("Uppercase");
         }
     }
 }

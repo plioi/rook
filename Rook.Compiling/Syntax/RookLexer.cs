@@ -18,18 +18,22 @@ namespace Rook.Compiling.Syntax
         public static readonly TokenKind Boolean = new TokenKind("Boolean", @"true \b | false \b");
         public static readonly TokenKind Integer = new TokenKind("Integer", @"[0-9]+");
 
-        public static readonly TokenKind Identifier = new TokenKind("Identifier", @"[a-zA-Z]+[a-zA-Z0-9]*");
+        public static readonly TokenKind LeftParenthesis = new TokenKind("(", @"\(");
+        public static readonly TokenKind RightParenthesis = new TokenKind(")", @"\)");
         public static readonly TokenKind Operator = new TokenKind("Operator", OperatorPattern);
+
+        public static readonly TokenKind Identifier = new TokenKind("Identifier", @"[a-zA-Z]+[a-zA-Z0-9]*");
         public static readonly TokenKind EndOfLine = new TokenKind("EndOfLine", @"(\r\n|;)\s*");
 
         public RookLexer(string source)
             : base(new Text(source), IntralineWhiteSpace,
             @int, @bool, @void, @null, @if, @return, @else, @fn,
-            Boolean, Integer, Identifier, Operator, EndOfLine) { }
+            Boolean, Integer, Identifier,
+            LeftParenthesis, RightParenthesis,
+            Operator, EndOfLine) { }
 
         private const string OperatorPattern =
-            @"  \(   | \)          # Parentheses
-              | \*   | /           # Multiplicative
+            @"  \*   | /           # Multiplicative
               | \+   | \-          # Additive
               | <=   | <  | >= | > # Relational
               | ==   | !=          # Equality
