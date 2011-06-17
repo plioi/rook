@@ -347,26 +347,5 @@ namespace Parsley
 
             OnError(LETTER, "letter").FailsToParse(Tokenize("."), ".").WithMessage("(1, 1): letter expected");
         }
-
-        [Test]
-        public void ProvidingTheCurrentPositionWithoutConsumingInput()
-        {
-            Position.PartiallyParses(Tokenize("A"), "A").IntoValue(position =>
-            {
-                position.Line.ShouldEqual(1);
-                position.Column.ShouldEqual(1);
-            });
-
-            var afterLeadingWhiteSpace =
-                from _ in WHITESPACE
-                from position in Position
-                select position;
-
-            afterLeadingWhiteSpace.PartiallyParses(Tokenize("  \r\n   \r\n   !"), "!").IntoValue(position =>
-            {
-                position.Line.ShouldEqual(3);
-                position.Column.ShouldEqual(4);
-            });
-        }
     }
 }

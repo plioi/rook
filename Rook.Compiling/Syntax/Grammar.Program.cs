@@ -9,9 +9,8 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return from leadingWhiteSpace in Optional(Token(RookLexer.EndOfLine))
-                       from position in Position
                        from functions in ZeroOrMoreTerminated(Function.TerminatedBy(EndOfLine), EndOfInput)
-                       select new Program(position, functions);
+                       select new Program(new Position(1, 1), functions);
             }
         }
     }
