@@ -261,19 +261,6 @@ namespace Parsley
         }
 
         [Test]
-        public void ApplyingAPairOfOrderedRules()
-        {
-            var parser = Pair(DIGIT, LETTER);
-
-            parser.FailsToParse(Tokenize("A0"), "A0");
-            parser.Parses(Tokenize("0A")).IntoValue(pair =>
-            {
-                pair.Item1.Literal.ShouldEqual("0");
-                pair.Item2.Literal.ShouldEqual("A");
-            });
-        }
-
-        [Test]
         public void ApplyingARuleBetweenTwoOtherRules()
         {
             var parser = Between(SYMBOL, DIGIT, SYMBOL);

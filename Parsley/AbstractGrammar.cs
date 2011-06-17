@@ -97,15 +97,10 @@ namespace Parsley
         public static Parser<TAccumulated> LeftAssociative<TAccumulated, TSeparator>(Parser<TAccumulated> item, Parser<TSeparator> separator, Func<TAccumulated, Tuple<TSeparator, TAccumulated>, TAccumulated> associatePair)
         {
             return from first in item
-                   from pairs in ZeroOrMore(Pair(separator, item))
+                   from pairs in ZeroOrMore(from s in separator
+                                            from i in item
+                                            select Tuple.Create(s, i))
                    select pairs.Aggregate(first, associatePair);
-        }
-
-        public static Parser<Tuple<TLeft, TRight>> Pair<TLeft, TRight>(Parser<TLeft> left, Parser<TRight> right)
-        {
-            return from L in left
-                   from R in right
-                   select Tuple.Create(L, R);
         }
 
         public static Parser<TGoal> Between<TLeft, TGoal, TRight>(Parser<TLeft> left, 
