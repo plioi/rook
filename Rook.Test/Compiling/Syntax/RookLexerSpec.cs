@@ -27,16 +27,16 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ShouldRecognizeKeywords()
         {
-            AssertTokens("true", RookLexer.Keyword, "true");
-            AssertTokens("false", RookLexer.Keyword, "false");
-            AssertTokens("int", RookLexer.Keyword, "int");
-            AssertTokens("bool", RookLexer.Keyword, "bool");
-            AssertTokens("void", RookLexer.Keyword, "void");
-            AssertTokens("null", RookLexer.Keyword, "null");
-            AssertTokens("if", RookLexer.Keyword, "if");
-            AssertTokens("return", RookLexer.Keyword, "return");
-            AssertTokens("else", RookLexer.Keyword, "else");
-            AssertTokens("fn", RookLexer.Keyword, "fn");
+            AssertTokens("true", RookLexer.Boolean, "true");
+            AssertTokens("false", RookLexer.Boolean, "false");
+            AssertTokens("int", RookLexer.@int, "int");
+            AssertTokens("bool", RookLexer.@bool, "bool");
+            AssertTokens("void", RookLexer.@void, "void");
+            AssertTokens("null", RookLexer.@null, "null");
+            AssertTokens("if", RookLexer.@if, "if");
+            AssertTokens("return", RookLexer.@return, "return");
+            AssertTokens("else", RookLexer.@else, "else");
+            AssertTokens("fn", RookLexer.@fn, "fn");
         }
 
         [Test]

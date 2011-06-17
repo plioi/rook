@@ -63,12 +63,12 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from @if in Keyword("if")
+                return from _if_ in @if
                        from condition in Parenthesized(Expression).TerminatedBy(Optional(EndOfLine))
                        from bodyWhenTrue in Expression.TerminatedBy(Optional(EndOfLine))
-                       from @else in Keyword("else").TerminatedBy(Optional(EndOfLine))
+                       from _else_ in @else.TerminatedBy(Optional(EndOfLine))
                        from bodyWhenFalse in Expression
-                       select new If(@if.Position, condition, bodyWhenTrue, bodyWhenFalse);
+                       select new If(_if_.Position, condition, bodyWhenTrue, bodyWhenFalse);
             }
         }
 
@@ -88,10 +88,10 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from fn in Keyword("fn")
+                return from _fn_ in @fn
                        from parameters in Tuple(Parameter)
                        from body in Expression
-                       select new Lambda(fn.Position, parameters, body);
+                       select new Lambda(_fn_.Position, parameters, body);
             }
         }
 
@@ -149,7 +149,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from literal in Keyword("null")
+                return from literal in @null
                        select new Null(literal.Position);
             }
         }

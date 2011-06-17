@@ -36,10 +36,10 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return Choice(
-                    from @int in Keyword("int") select NamedType.Integer,
-                    from @bool in Keyword("bool") select NamedType.Boolean,
-                    from @void in Keyword("void") select NamedType.Void);
+                return GreedyChoice(
+                    from _ in @int select NamedType.Integer,
+                    from _ in @bool select NamedType.Boolean,
+                    from _ in @void select NamedType.Void);
             }
         }
 

@@ -6,12 +6,6 @@ namespace Rook.Compiling.Syntax
     [TestFixture]
     public class TokenParserSpec
     {
-        private static readonly string[] expectedKeywords = new[]
-        {
-            "true", "false", "int", "bool", "void", "null", 
-            "if", "return", "else", "fn"
-        };
-
         [Test]
         public void ParsesIntegerValues()
         {
@@ -23,12 +17,47 @@ namespace Rook.Compiling.Syntax
         }
 
         [Test]
-        public void ParsesBooleanValues()
+        public void ParsesKeywords()
         {
-            Grammar.Boolean.Parses("false").IntoToken(RookLexer.Keyword, "false");
-            Grammar.Boolean.Parses("true").IntoToken(RookLexer.Keyword, "true");
-            Grammar.Boolean.Parses(" \t false").IntoToken(RookLexer.Keyword, "false");
-            Grammar.Boolean.Parses(" \t true").IntoToken(RookLexer.Keyword, "true");
+            Grammar.Boolean.Parses("false").IntoToken(RookLexer.Boolean, "false");
+            Grammar.Boolean.Parses(" \t false").IntoToken(RookLexer.Boolean, "false");
+            Grammar.Boolean.FailsToParse("falsex", "falsex");
+
+            Grammar.Boolean.Parses("true").IntoToken(RookLexer.Boolean, "true");
+            Grammar.Boolean.Parses(" \t true").IntoToken(RookLexer.Boolean, "true");
+            Grammar.Boolean.FailsToParse("truex", "truex");
+
+            Grammar.@int.Parses("int").IntoToken(RookLexer.@int, "int");
+            Grammar.@int.Parses(" \t int").IntoToken(RookLexer.@int, "int");
+            Grammar.@int.FailsToParse("intx", "intx");
+
+            Grammar.@bool.Parses("bool").IntoToken(RookLexer.@bool, "bool");
+            Grammar.@bool.Parses(" \t bool").IntoToken(RookLexer.@bool, "bool");
+            Grammar.@bool.FailsToParse("boolx", "boolx");
+
+            Grammar.@void.Parses("void").IntoToken(RookLexer.@void, "void");
+            Grammar.@void.Parses(" \t void").IntoToken(RookLexer.@void, "void");
+            Grammar.@void.FailsToParse("voidx", "voidx");
+
+            Grammar.@null.Parses("null").IntoToken(RookLexer.@null, "null");
+            Grammar.@null.Parses(" \t null").IntoToken(RookLexer.@null, "null");
+            Grammar.@null.FailsToParse("nullx", "nullx");
+
+            Grammar.@if.Parses("if").IntoToken(RookLexer.@if, "if");
+            Grammar.@if.Parses(" \t if").IntoToken(RookLexer.@if, "if");
+            Grammar.@if.FailsToParse("ifx", "ifx");
+
+            Grammar.@return.Parses("return").IntoToken(RookLexer.@return, "return");
+            Grammar.@return.Parses(" \t return").IntoToken(RookLexer.@return, "return");
+            Grammar.@return.FailsToParse("returnx", "returnx");
+
+            Grammar.@else.Parses("else").IntoToken(RookLexer.@else, "else");
+            Grammar.@else.Parses(" \t else").IntoToken(RookLexer.@else, "else");
+            Grammar.@else.FailsToParse("elsex", "elsex");
+
+            Grammar.@fn.Parses("fn").IntoToken(RookLexer.@fn, "fn");
+            Grammar.@fn.Parses(" \t fn").IntoToken(RookLexer.@fn, "fn");
+            Grammar.@fn.FailsToParse("fnx", "fnx");
         }
 
         [Test]
@@ -54,27 +83,6 @@ namespace Rook.Compiling.Syntax
         }
 
         [Test]
-        public void ParsesKeywords()
-        {
-            AbstractGrammar.ZeroOrMore(Grammar.AnyKeyword)
-                .Parses(" \t true false int bool void null if return else fn")
-                .IntoTokens(expectedKeywords);
-            Grammar.AnyKeyword.FailsToParse("iftrue", "iftrue");
-            Grammar.AnyKeyword.FailsToParse("random text", "random text");
-        }
-
-        [Test]
-        public void ParsesExpectedKeyword()
-        {
-            var ifOrTrue = Grammar.Keyword("if", "true");
-            ifOrTrue.Parses("true").IntoToken(RookLexer.Keyword, "true");
-            ifOrTrue.Parses("if").IntoToken(RookLexer.Keyword, "if");
-            ifOrTrue.Parses(" \t true").IntoToken(RookLexer.Keyword, "true");
-            ifOrTrue.FailsToParse("iftrue", "iftrue");
-            ifOrTrue.FailsToParse("random text", "random text");
-        }
-
-        [Test]
         public void ParsesIdentifiers()
         {
             Grammar.Identifier.Parses("a").IntoToken(RookLexer.Identifier, "a");
@@ -83,8 +91,10 @@ namespace Rook.Compiling.Syntax
             Grammar.Identifier.Parses("a0").IntoToken(RookLexer.Identifier, "a0");
             Grammar.Identifier.Parses("a01").IntoToken(RookLexer.Identifier, "a01");
 
+            var keywords = new[] {"true", "false", "int", "bool", "void", "null", "if", "return", "else", "fn"};
+
             Grammar.Identifier.FailsToParse("0", "0");
-            foreach (string keyword in expectedKeywords)
+            foreach (string keyword in keywords)
                 Grammar.Identifier.FailsToParse(keyword, keyword);
         }
 
