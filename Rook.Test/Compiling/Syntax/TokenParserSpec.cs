@@ -61,25 +61,20 @@ namespace Rook.Compiling.Syntax
         }
 
         [Test]
-        public void ParsesOperatorsGreedily()
-        {
-            AbstractGrammar.ZeroOrMore(Grammar.AnyOperator)
-                .Parses(" \t <=>=<>!====*/+-&&||!{}[][,]()???:")
-                .IntoTokens("<=", ">=", "<", ">", "!=", "==", "=", "*", "/", "+", "-",
-                            "&&", "||", "!", "{", "}", "[]", "[", ",", "]", "(", ")", "??", "?", ":");
-            Grammar.AnyOperator.FailsToParse("0", "0");
-        }
-
-        [Test]
         public void ParsesExpectedOperators()
         {
-            Grammar.Operator("<", "=").Parses("=").IntoToken(RookLexer.Operator, "=");
-            Grammar.Operator("<", "=").Parses("<").IntoToken(RookLexer.Operator, "<");
-            Grammar.Operator("<", "=").Parses(" \t =").IntoToken(RookLexer.Operator, "=");
+            var operators = new[]
+            {
+                "(", ")", "*", "/", "+", "-", "<=", "<", ">=", ">", "!=", "==", "=",
+                "&&", "||", "!", ",", "{", "}", "[]", ":", "[", "]", "??", "?"
+            };
 
-            Grammar.Operator("<=", "<", "=").Parses("<=").IntoToken(RookLexer.Operator, "<=");
-            Grammar.Operator("<=", "<", "=").FailsToParse("!", "!").WithMessage("(1, 1): <=, <, = expected");
-            Grammar.Operator("<", "=").FailsToParse("<=", "<=").WithMessage("(1, 1): <, = expected");
+            foreach (var o in operators)
+            {
+                Grammar.Operator(o).Parses(o).IntoToken(RookLexer.Operator, o);
+                Grammar.Operator(o).Parses(" \t " + o).IntoToken(RookLexer.Operator, o);
+                Grammar.Operator(o).FailsToParse("x", "x").WithMessage("(1, 1): " + o + " expected");
+            }
         }
 
         [Test]

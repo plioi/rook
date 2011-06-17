@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Parsley;
+﻿using Parsley;
 
 namespace Rook.Compiling.Syntax
 {
@@ -16,11 +13,6 @@ namespace Rook.Compiling.Syntax
             }
         }
 
-        public static Parser<Token> Integer
-        {
-            get { return Token(RookLexer.Integer); }
-        }
-
         public static Parser<Token> @int { get { return Token(RookLexer.@int); } }
         public static Parser<Token> @bool { get { return Token(RookLexer.@bool); } }
         public static Parser<Token> @void { get { return Token(RookLexer.@void); } }
@@ -29,16 +21,13 @@ namespace Rook.Compiling.Syntax
         public static Parser<Token> @return { get { return Token(RookLexer.@return); } }
         public static Parser<Token> @else { get { return Token(RookLexer.@else); } }
         public static Parser<Token> @fn { get { return Token(RookLexer.@fn); } }
+
+        public static Parser<Token> Integer { get { return Token(RookLexer.Integer); } }
         public static Parser<Token> Boolean { get { return Token(RookLexer.Boolean); } }
 
-        public static Parser<Token> AnyOperator
+        public static Parser<Token> Operator(string symbol)
         {
-            get { return Token(RookLexer.Operator); }
-        }
-
-        public static Parser<Token> Operator(params string[] expectedOperators)
-        {
-            return OnError(Expect(AnyOperator, IsOneOf(expectedOperators)), System.String.Join(", ", expectedOperators));
+            return OnError(Expect(Token(RookLexer.Operator), x => x.Literal == symbol), symbol);
         }
 
         public static Parser<Token> Identifier
@@ -51,11 +40,6 @@ namespace Rook.Compiling.Syntax
             return from _ in Optional(Kind(RookLexer.IntralineWhiteSpace))
                    from token in Kind(kind)
                    select token;
-        }
-
-        private static Predicate<Token> IsOneOf(IEnumerable<string> values)
-        {
-            return x => values.Contains(x.Literal);
         }
     }
 }

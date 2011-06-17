@@ -48,7 +48,7 @@ namespace Rook.Compiling.Syntax
         }
 
         [Test]
-        public void ShouldRecognizeOperators()
+        public void ShouldRecognizeOperatorsGreedily()
         {
             AssertTokens("<=>=<>!====*/+-&&||!{}[][,]()???:", RookLexer.Operator, "<=",
                          ">=", "<", ">", "!=", "==", "=", "*", "/",
