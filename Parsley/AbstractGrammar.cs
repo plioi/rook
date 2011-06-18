@@ -111,7 +111,7 @@ namespace Parsley
         public static Parser<T> Optional<T>(Parser<T> parse) where T : class
         {
             var nothing = default(T).SucceedWithThisValue();
-            return GreedyChoice(parse, nothing);
+            return Choice(parse, nothing);
         }
 
         public static Parser<T> Expect<T>(Parser<T> parse, Predicate<T> expectation)

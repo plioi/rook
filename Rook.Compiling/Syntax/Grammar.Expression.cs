@@ -25,7 +25,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from symbol in Optional(GreedyChoice(Operator("-"), Operator("!")))
+                return from symbol in Optional(Choice(Operator("-"), Operator("!")))
                        from primary in Primary
                        select symbol == null ? primary : new Call(symbol.Position, symbol.Literal, primary);
             }
@@ -48,7 +48,7 @@ namespace Rook.Compiling.Syntax
                 var nothing = from zeroArguments in Zero<Expression>()
                               select new Func<Expression, Expression>(callable => callable);
 
-                return from callable in GreedyChoice(Literal, VectorLiteral, If, Block, Lambda, Name, Parenthesized(Expression))
+                return from callable in Choice(Literal, VectorLiteral, If, Block, Lambda, Name, Parenthesized(Expression))
                        from callArgumentAppender in GreedyChoice(call, subscript, nothing)
                        select callArgumentAppender(callable);
             }
@@ -56,7 +56,7 @@ namespace Rook.Compiling.Syntax
 
         private static Parser<Expression> Literal
         {
-            get { return GreedyChoice(BooleanLiteral, NullLiteral, IntegerLiteral); }
+            get { return Choice(BooleanLiteral, NullLiteral, IntegerLiteral); }
         }
 
         private static Parser<Expression> If
@@ -159,7 +159,7 @@ namespace Rook.Compiling.Syntax
             Parser<Token>[] symbolParsers = symbols.Select(Operator).ToArray();
 
             return from leftAssociative in
-                       LeftAssociative(operand, GreedyChoice(symbolParsers),
+                       LeftAssociative(operand, Choice(symbolParsers),
                                        (left, symbolAndRight) =>
                                        new Call(symbolAndRight.Item1.Position, symbolAndRight.Item1.Literal, left, symbolAndRight.Item2))
                    select leftAssociative;

@@ -8,7 +8,8 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from leadingWhiteSpace in Optional(Token(RookLexer.EndOfLine))
+                return from leadingWhiteSpace in Optional(Token(RookLexer.IntralineWhiteSpace))
+                       from leadingEndOfLine in Optional(Token(RookLexer.EndOfLine))
                        from functions in ZeroOrMoreTerminated(Function.TerminatedBy(EndOfLine), EndOfInput)
                        select new Program(new Position(1, 1), functions);
             }

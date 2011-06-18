@@ -16,7 +16,7 @@ namespace Rook.Compiling
         {
             Build("int Main() $1;");
             AssertErrors(1);
-            AssertError(1, 12, "Parse error.");
+            AssertError(1, 12, "(, [ or { expected");
         }
 
         [Test]

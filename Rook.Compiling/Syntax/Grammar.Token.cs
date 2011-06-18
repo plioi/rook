@@ -8,8 +8,8 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return OnError(GreedyChoice(Token(RookLexer.EndOfLine),
-                                      Token(Lexer.EndOfInput)), "end of line");
+                return OnError(Choice(Token(RookLexer.EndOfLine),
+                                            Token(Lexer.EndOfInput)), "end of line");
             }
         }
 
@@ -37,8 +37,8 @@ namespace Rook.Compiling.Syntax
 
         private static Parser<Token> Token(TokenKind kind)
         {
-            return from _ in Optional(Kind(RookLexer.IntralineWhiteSpace))
-                   from token in Kind(kind)
+            return from token in Kind(kind)
+                   from _ in Optional(Kind(RookLexer.IntralineWhiteSpace))
                    select token;
         }
     }

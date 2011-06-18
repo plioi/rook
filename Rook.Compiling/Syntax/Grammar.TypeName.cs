@@ -11,7 +11,7 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return OnError(
-                    from rootType in GreedyChoice(NameType, KeywordType)
+                    from rootType in Choice(NameType, KeywordType)
                     from modifiers in ZeroOrMore(TypeModifier)
                     select modifiers.Aggregate(rootType, ApplyTypeModifier),
                     "type name");
@@ -36,7 +36,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return GreedyChoice(
+                return Choice(
                     from _ in @int select NamedType.Integer,
                     from _ in @bool select NamedType.Boolean,
                     from _ in @void select NamedType.Void);
