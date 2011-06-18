@@ -274,10 +274,16 @@ namespace Parsley
         [Test]
         public void ParsingAnOptionalRuleZeroOrOneTimes()
         {
-            var parser = Optional(LETTER);
+            var A = String("A");
+            var B = String("B");
 
-            parser.PartiallyParses(Tokenize("A."), ".").IntoToken("A");
-            parser.PartiallyParses(Tokenize("."), ".").IntoValue(token => token.ShouldBeNull());
+            var AB = from a in A
+                     from b in B
+                     select new Token(null, a.Position, a.Literal + b.Literal);
+
+            Optional(AB).PartiallyParses(Tokenize("AB."), ".").IntoToken("AB");
+            Optional(AB).PartiallyParses(Tokenize("."), ".").IntoValue(token => token.ShouldBeNull());
+            Optional(AB).FailsToParse(Tokenize("AC."), "C.").WithMessage("(1, 2): B expected");
         }
 
         [Test]
