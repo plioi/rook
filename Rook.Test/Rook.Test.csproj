@@ -87,6 +87,7 @@
     <Compile Include="Core\Collections\VectorSpec.cs" />
     <Compile Include="Core\IdentitySpec.cs" />
     <Compile Include="Core\NullableSpec.cs" />
+    <Compile Include="Core\ValueSpec.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="Compiling\EnvironmentSpec.cs" />
     <Compile Include="Integration\IntegrationTests.cs" />

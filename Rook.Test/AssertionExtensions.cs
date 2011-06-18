@@ -31,6 +31,11 @@ namespace Rook
             Assert.AreEqual(expected, actual);
         }
 
+        public static void ShouldNotEqual(this object actual, object expected)
+        {
+            Assert.AreNotEqual(expected, actual);
+        }
+
         public static void ShouldBeNull(this object o)
         {
             Assert.IsNull(o);
