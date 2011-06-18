@@ -25,7 +25,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from symbol in Optional(Choice(Operator("-"), Operator("!")))
+                return from symbol in Optional(GreedyChoice(Operator("-"), Operator("!")))
                        from primary in Primary
                        select symbol == null ? primary : new Call(symbol.Position, symbol.Literal, primary);
             }
@@ -159,7 +159,7 @@ namespace Rook.Compiling.Syntax
             Parser<Token>[] symbolParsers = symbols.Select(Operator).ToArray();
 
             return from leftAssociative in
-                       LeftAssociative(operand, Choice(symbolParsers),
+                       LeftAssociative(operand, GreedyChoice(symbolParsers),
                                        (left, symbolAndRight) =>
                                        new Call(symbolAndRight.Item1.Position, symbolAndRight.Item1.Literal, left, symbolAndRight.Item2))
                    select leftAssociative;

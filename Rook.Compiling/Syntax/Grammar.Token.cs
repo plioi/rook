@@ -27,12 +27,7 @@ namespace Rook.Compiling.Syntax
 
         public static Parser<Token> Operator(string symbol)
         {
-            return OnError(Expect(Token(RookLexer.Operator), x => x.Literal == symbol), symbol);
-        }
-
-        public static Parser<Token> Operator(TokenKind kind)
-        {
-            return OnError(Expect(Token(kind), x => x.Literal == kind.Name), kind.Name);
+            return OnError(Expect(Token(RookLexer.Operators[symbol]), x => x.Literal == symbol), symbol);
         }
 
         public static Parser<Token> Identifier
