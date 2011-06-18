@@ -52,7 +52,7 @@ namespace Rook.Compiling.Syntax
             node.Type.ShouldBeNull();
 
             var typedNode = (Name)node.WithTypes(Environment(foo => Boolean)).Syntax;
-            typedNode.Type.ShouldBeTheSameAs(Boolean);
+            typedNode.Type.ShouldEqual(Boolean);
         }
 
         [Test]

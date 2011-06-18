@@ -44,36 +44,5 @@ namespace Rook.Compiling.Types
         {
             return Name;
         }
-
-        public override bool Equals(object v)
-        {
-            return v != null && Equals(v as TypeVariable);
-        }
-
-        public bool Equals(TypeVariable v)
-        {
-            return v != null && name == v.name;
-        }
-
-        public static bool operator ==(TypeVariable a, TypeVariable b)
-        {
-            if (ReferenceEquals(a, b))
-                return true;
-
-            if (((object)a == null) || ((object)b == null))
-                return false;
-
-            return a.name == b.name;
-        }
-
-        public static bool operator !=(TypeVariable a, TypeVariable b)
-        {
-            return !(a == b);
-        }
-
-        public override int GetHashCode()
-        {
-            return name.GetHashCode();
-        }
     }
 }

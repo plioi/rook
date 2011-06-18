@@ -33,25 +33,31 @@ namespace Rook.Compiling.Types
         }
 
         [Test]
-        public void IsCreatedLazilyWithMemoization()
+        public void HasValueEqualitySemantics()
         {
-            Create("A").ShouldBeTheSameAs(Create("A"));
-            Create("B", Create("A")).ShouldBeTheSameAs(Create("B", Create("A")));
+            var type = Create("B", Create("A"));
+            type.ShouldEqual(type);
+            type.ShouldEqual(Create("B", Create("A")));
+            type.ShouldNotEqual(Create("B"));
+            type.ShouldNotEqual(new TypeVariable(0));
+
+            type.GetHashCode().ShouldEqual(Create("B", Create("A")).GetHashCode());
+            type.GetHashCode().ShouldNotEqual(Create("B").GetHashCode());
         }
 
         [Test]
         public void CanBeCreatedFromConvenienceFactories()
         {
-            NamedType.Dynamic.ShouldBeTheSameAs(Create("dynamic"));
-            NamedType.Void.ShouldBeTheSameAs(Create("Rook.Core.Void"));
-            NamedType.Integer.ShouldBeTheSameAs(Create("int"));
-            NamedType.Boolean.ShouldBeTheSameAs(Create("bool"));
-            NamedType.Enumerable(NamedType.Integer).ShouldBeTheSameAs(Create("System.Collections.Generic.IEnumerable", Create("int")));
-            NamedType.Vector(NamedType.Integer).ShouldBeTheSameAs(Create("Rook.Core.Collections.Vector", Create("int")));
-            NamedType.Nullable(NamedType.Integer).ShouldBeTheSameAs(Create("Rook.Core.Nullable", Create("int")));
-            NamedType.Function(NamedType.Integer).ShouldBeTheSameAs(Create("System.Func", Create("int")));
+            NamedType.Dynamic.ShouldEqual(Create("dynamic"));
+            NamedType.Void.ShouldEqual(Create("Rook.Core.Void"));
+            NamedType.Integer.ShouldEqual(Create("int"));
+            NamedType.Boolean.ShouldEqual(Create("bool"));
+            NamedType.Enumerable(NamedType.Integer).ShouldEqual(Create("System.Collections.Generic.IEnumerable", Create("int")));
+            NamedType.Vector(NamedType.Integer).ShouldEqual(Create("Rook.Core.Collections.Vector", Create("int")));
+            NamedType.Nullable(NamedType.Integer).ShouldEqual(Create("Rook.Core.Nullable", Create("int")));
+            NamedType.Function(NamedType.Integer).ShouldEqual(Create("System.Func", Create("int")));
             NamedType.Function(new[] { NamedType.Boolean, NamedType.Enumerable(NamedType.Boolean) }, NamedType.Integer)
-                .ShouldBeTheSameAs(Create("System.Func", Create("bool"), Create("System.Collections.Generic.IEnumerable", Create("bool")), Create("int")));
+                .ShouldEqual(Create("System.Func", Create("bool"), Create("System.Collections.Generic.IEnumerable", Create("bool")), Create("int")));
         }
 
         [Test]
@@ -93,20 +99,20 @@ namespace Rook.Compiling.Types
                 new Dictionary<TypeVariable, DataType> { { a, NamedType.Integer }, { b, a } };
 
             DataType concrete = Create("A", Create("B"));
-            concrete.ReplaceTypeVariables(replaceAWithInteger).ShouldBeTheSameAs(concrete);
-            concrete.ReplaceTypeVariables(replaceBWithA).ShouldBeTheSameAs(concrete);
-            concrete.ReplaceTypeVariables(replaceBoth).ShouldBeTheSameAs(concrete);
+            concrete.ReplaceTypeVariables(replaceAWithInteger).ShouldEqual(concrete);
+            concrete.ReplaceTypeVariables(replaceBWithA).ShouldEqual(concrete);
+            concrete.ReplaceTypeVariables(replaceBoth).ShouldEqual(concrete);
 
-            Create("A", a, b, a).ReplaceTypeVariables(replaceAWithInteger).ShouldBeTheSameAs(Create("A", NamedType.Integer, b, NamedType.Integer));
-            Create("B", b, a, b).ReplaceTypeVariables(replaceAWithInteger).ShouldBeTheSameAs(Create("B", b, NamedType.Integer, b));
+            Create("A", a, b, a).ReplaceTypeVariables(replaceAWithInteger).ShouldEqual(Create("A", NamedType.Integer, b, NamedType.Integer));
+            Create("B", b, a, b).ReplaceTypeVariables(replaceAWithInteger).ShouldEqual(Create("B", b, NamedType.Integer, b));
 
-            Create("A", a, b, a).ReplaceTypeVariables(replaceBWithA).ShouldBeTheSameAs(Create("A", a, a, a));
-            Create("B", b, a, b).ReplaceTypeVariables(replaceBWithA).ShouldBeTheSameAs(Create("B", a, a, a));
+            Create("A", a, b, a).ReplaceTypeVariables(replaceBWithA).ShouldEqual(Create("A", a, a, a));
+            Create("B", b, a, b).ReplaceTypeVariables(replaceBWithA).ShouldEqual(Create("B", a, a, a));
             
             //Unlike the type unification/normlization substitutions, these substitutions are ignorant of
             //chains like { b -> a, a -> int }.
-            Create("A", a, b, a).ReplaceTypeVariables(replaceBoth).ShouldBeTheSameAs(Create("A", NamedType.Integer, a, NamedType.Integer));
-            Create("B", b, a, b).ReplaceTypeVariables(replaceBoth).ShouldBeTheSameAs(Create("B", a, NamedType.Integer, a));
+            Create("A", a, b, a).ReplaceTypeVariables(replaceBoth).ShouldEqual(Create("A", NamedType.Integer, a, NamedType.Integer));
+            Create("B", b, a, b).ReplaceTypeVariables(replaceBoth).ShouldEqual(Create("B", a, NamedType.Integer, a));
         }
 
         private static DataType Create(string name, params DataType[] innerTypes)

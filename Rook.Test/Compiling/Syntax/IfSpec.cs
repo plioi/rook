@@ -71,10 +71,10 @@ namespace Rook.Compiling.Syntax
             node.Type.ShouldBeNull();
             
             var typedNode = (If)node.WithTypes(Environment(foo => Boolean, bar => Boolean, baz => Boolean)).Syntax;
-            typedNode.Condition.Type.ShouldBeTheSameAs(Boolean);
-            typedNode.BodyWhenTrue.Type.ShouldBeTheSameAs(Boolean);
-            typedNode.BodyWhenFalse.Type.ShouldBeTheSameAs(Boolean);
-            typedNode.Type.ShouldBeTheSameAs(Boolean);
+            typedNode.Condition.Type.ShouldEqual(Boolean);
+            typedNode.BodyWhenTrue.Type.ShouldEqual(Boolean);
+            typedNode.BodyWhenFalse.Type.ShouldEqual(Boolean);
+            typedNode.Type.ShouldEqual(Boolean);
         }
     }
 }

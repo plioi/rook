@@ -20,7 +20,7 @@ namespace Rook.Compiling.Syntax
             node.Type.ShouldBeNull();
 
             var typedNode = (Null) node.WithTypes(Environment()).Syntax;
-            typedNode.Type.ShouldBeTheSameAs(NamedType.Nullable(new TypeVariable(17)));
+            typedNode.Type.ShouldEqual(NamedType.Nullable(new TypeVariable(17)));
         }
 
         [Test]
@@ -37,11 +37,11 @@ namespace Rook.Compiling.Syntax
         public void BooleanLiteralsAreAlwaysFullyTyped()
         {
             var boolean = (BooleanLiteral) Parse("false");
-            boolean.Type.ShouldBeTheSameAs(Boolean);
+            boolean.Type.ShouldEqual(Boolean);
 
             var typedBoolean = (BooleanLiteral) boolean.WithTypes(Environment()).Syntax;
-            typedBoolean.Type.ShouldBeTheSameAs(Boolean);
-            typedBoolean.ShouldBeTheSameAs(boolean);
+            typedBoolean.Type.ShouldEqual(Boolean);
+            typedBoolean.ShouldEqual(boolean);
         }
 
         [Test]
@@ -58,11 +58,11 @@ namespace Rook.Compiling.Syntax
         public void IntegerLiteralsAreAlwaysFullyTyped()
         {
             var integer = (IntegerLiteral) Parse("12345");
-            integer.Type.ShouldBeTheSameAs(Integer);
+            integer.Type.ShouldEqual(Integer);
 
             var typedInteger = (IntegerLiteral) integer.WithTypes(Environment()).Syntax;
-            typedInteger.Type.ShouldBeTheSameAs(Integer);
-            typedInteger.ShouldBeTheSameAs(integer);
+            typedInteger.Type.ShouldEqual(Integer);
+            typedInteger.ShouldEqual(integer);
         }
     }
 }

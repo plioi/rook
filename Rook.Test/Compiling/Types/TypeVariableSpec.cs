@@ -53,44 +53,20 @@ namespace Rook.Compiling.Types
             IDictionary<TypeVariable, DataType> replaceAWithInteger =
                 new Dictionary<TypeVariable, DataType> { { a, NamedType.Integer } };
 
-            a.ReplaceTypeVariables(replaceAWithInteger).ShouldBeTheSameAs(NamedType.Integer);
-            b.ReplaceTypeVariables(replaceAWithInteger).ShouldBeTheSameAs(b);
+            a.ReplaceTypeVariables(replaceAWithInteger).ShouldEqual(NamedType.Integer);
+            b.ReplaceTypeVariables(replaceAWithInteger).ShouldEqual(b);
         }
 
         [Test]
-        public void ImplementsGetHashCodeAndEqualsBasedOnNameEquality()
+        public void HasValueEqualitySemantics()
         {
-            var c = new TypeVariable(2);
-            var a2 = new TypeVariable(0);
+            a.ShouldEqual(a);
+            a.ShouldEqual(new TypeVariable(0));
+            a.ShouldNotEqual(b);
+            a.ShouldNotEqual(NamedType.Create("A"));
 
-            a.Equals(a).ShouldBeTrue();
-            b.Equals(b).ShouldBeTrue();
-            c.Equals(c).ShouldBeTrue();
-            a.Equals(a2).ShouldBeTrue();
-            a.Equals(b).ShouldBeFalse();
-            b.Equals(a).ShouldBeFalse();
-            a.Equals(null).ShouldBeFalse();
-
-            (a == a).ShouldBeTrue();
-            (b == b).ShouldBeTrue();
-            (c == c).ShouldBeTrue();
-            (a == a2).ShouldBeTrue();
-            (a == b).ShouldBeFalse();
-            (b == a).ShouldBeFalse();
-            (a == null).ShouldBeFalse();
-            (null == a).ShouldBeFalse();
-
-            (a != a).ShouldBeFalse();
-            (b != b).ShouldBeFalse();
-            (c != c).ShouldBeFalse();
-            (a != a2).ShouldBeFalse();
-            (a != b).ShouldBeTrue();
-            (b != a).ShouldBeTrue();
-            (a != null).ShouldBeTrue();
-            (null != a).ShouldBeTrue();
-
-            (a.GetHashCode() == a2.GetHashCode()).ShouldBeTrue();
-            (a.GetHashCode() == b.GetHashCode()).ShouldBeFalse();
+            a.GetHashCode().ShouldEqual(new TypeVariable(0).GetHashCode());
+            a.GetHashCode().ShouldNotEqual(b.GetHashCode());
         }
     }
 }

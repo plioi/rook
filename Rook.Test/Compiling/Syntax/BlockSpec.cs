@@ -69,10 +69,10 @@ namespace Rook.Compiling.Syntax
         public void CanCreateFullyTypedInstance()
         {
             var node = (Block)Parse("{ int x = y; int z = 0; xz = x>z; x; z; xz; }");
-            node.VariableDeclarations.ElementAt(0).Type.ShouldBeTheSameAs(Integer);
+            node.VariableDeclarations.ElementAt(0).Type.ShouldEqual(Integer);
             node.VariableDeclarations.ElementAt(0).Value.Type.ShouldBeNull();
-            node.VariableDeclarations.ElementAt(1).Type.ShouldBeTheSameAs(Integer);
-            node.VariableDeclarations.ElementAt(1).Value.Type.ShouldBeTheSameAs(Integer);//Integer constants are always typed.
+            node.VariableDeclarations.ElementAt(1).Type.ShouldEqual(Integer);
+            node.VariableDeclarations.ElementAt(1).Value.Type.ShouldEqual(Integer);//Integer constants are always typed.
             node.VariableDeclarations.ElementAt(2).Type.ShouldBeNull();//Implicitly typed.
             node.VariableDeclarations.ElementAt(2).Value.Type.ShouldBeNull();
             node.InnerExpressions.ElementAt(0).Type.ShouldBeNull();
@@ -81,16 +81,16 @@ namespace Rook.Compiling.Syntax
             node.Type.ShouldBeNull();
 
             var typedNode = (Block)node.WithTypes(Environment(y => Integer)).Syntax;
-            typedNode.VariableDeclarations.ElementAt(0).Type.ShouldBeTheSameAs(Integer);
-            typedNode.VariableDeclarations.ElementAt(0).Value.Type.ShouldBeTheSameAs(Integer);
-            typedNode.VariableDeclarations.ElementAt(1).Type.ShouldBeTheSameAs(Integer);
-            typedNode.VariableDeclarations.ElementAt(1).Value.Type.ShouldBeTheSameAs(Integer);
-            typedNode.VariableDeclarations.ElementAt(2).Type.ShouldBeTheSameAs(Boolean);
-            typedNode.VariableDeclarations.ElementAt(2).Value.Type.ShouldBeTheSameAs(Boolean);
-            typedNode.InnerExpressions.ElementAt(0).Type.ShouldBeTheSameAs(Integer);
-            typedNode.InnerExpressions.ElementAt(1).Type.ShouldBeTheSameAs(Integer);
-            typedNode.InnerExpressions.ElementAt(2).Type.ShouldBeTheSameAs(Boolean);
-            typedNode.Type.ShouldBeTheSameAs(Boolean);
+            typedNode.VariableDeclarations.ElementAt(0).Type.ShouldEqual(Integer);
+            typedNode.VariableDeclarations.ElementAt(0).Value.Type.ShouldEqual(Integer);
+            typedNode.VariableDeclarations.ElementAt(1).Type.ShouldEqual(Integer);
+            typedNode.VariableDeclarations.ElementAt(1).Value.Type.ShouldEqual(Integer);
+            typedNode.VariableDeclarations.ElementAt(2).Type.ShouldEqual(Boolean);
+            typedNode.VariableDeclarations.ElementAt(2).Value.Type.ShouldEqual(Boolean);
+            typedNode.InnerExpressions.ElementAt(0).Type.ShouldEqual(Integer);
+            typedNode.InnerExpressions.ElementAt(1).Type.ShouldEqual(Integer);
+            typedNode.InnerExpressions.ElementAt(2).Type.ShouldEqual(Boolean);
+            typedNode.Type.ShouldEqual(Boolean);
         }
 
         [Test]

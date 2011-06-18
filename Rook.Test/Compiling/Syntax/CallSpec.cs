@@ -142,10 +142,10 @@ namespace Rook.Compiling.Syntax
             node.Type.ShouldBeNull();
 
             var typedNode = (Call)node.WithTypes(Environment(func => Function(new[] {Boolean, Integer}, Integer), yes => Boolean, zero => Integer)).Syntax;
-            typedNode.Callable.Type.ShouldBeTheSameAs(NamedType.Function(new[] {Boolean, Integer}, Integer));
-            typedNode.Arguments.ElementAt(0).Type.ShouldBeTheSameAs(Boolean);
-            typedNode.Arguments.ElementAt(1).Type.ShouldBeTheSameAs(Integer);
-            typedNode.Type.ShouldBeTheSameAs(Integer);
+            typedNode.Callable.Type.ShouldEqual(NamedType.Function(new[] { Boolean, Integer }, Integer));
+            typedNode.Arguments.ElementAt(0).Type.ShouldEqual(Boolean);
+            typedNode.Arguments.ElementAt(1).Type.ShouldEqual(Integer);
+            typedNode.Type.ShouldEqual(Integer);
         }
 
         [Test]

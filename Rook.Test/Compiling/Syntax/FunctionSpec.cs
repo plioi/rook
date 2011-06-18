@@ -81,18 +81,18 @@ namespace Rook.Compiling.Syntax
         public void CanCreateFullyTypedInstance()
         {
             Function node = Parse("bool foo(int x, int y, bool z) x+y>0 && z");
-            node.Parameters.ElementAt(0).Type.ShouldBeTheSameAs(Integer);
-            node.Parameters.ElementAt(1).Type.ShouldBeTheSameAs(Integer);
-            node.Parameters.ElementAt(2).Type.ShouldBeTheSameAs(Boolean);
+            node.Parameters.ElementAt(0).Type.ShouldEqual(Integer);
+            node.Parameters.ElementAt(1).Type.ShouldEqual(Integer);
+            node.Parameters.ElementAt(2).Type.ShouldEqual(Boolean);
             node.Body.Type.ShouldBeNull();
             node.Type.ShouldBeNull();
 
             Function typedNode = node.WithTypes(Environment()).Syntax;
-            typedNode.Parameters.ElementAt(0).Type.ShouldBeTheSameAs(Integer);
-            typedNode.Parameters.ElementAt(1).Type.ShouldBeTheSameAs(Integer);
-            typedNode.Parameters.ElementAt(2).Type.ShouldBeTheSameAs(Boolean);
-            typedNode.Body.Type.ShouldBeTheSameAs(Boolean);
-            typedNode.Type.ShouldBeTheSameAs(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean));
+            typedNode.Parameters.ElementAt(0).Type.ShouldEqual(Integer);
+            typedNode.Parameters.ElementAt(1).Type.ShouldEqual(Integer);
+            typedNode.Parameters.ElementAt(2).Type.ShouldEqual(Boolean);
+            typedNode.Body.Type.ShouldEqual(Boolean);
+            typedNode.Type.ShouldEqual(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean));
         }
 
         [Test]

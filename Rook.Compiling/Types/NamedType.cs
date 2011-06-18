@@ -8,8 +8,6 @@ namespace Rook.Compiling.Types
     {
         #region Factory Methods
 
-        private static readonly IDictionary<string, NamedType> registeredTypes = new Dictionary<string, NamedType>();
-
         public static NamedType Dynamic
         {
             get { return Create("dynamic"); }
@@ -57,7 +55,7 @@ namespace Rook.Compiling.Types
 
         public static NamedType Create(string name, params DataType[] innerTypes)
         {
-            return RegisteredType(new NamedType(name, innerTypes));
+            return new NamedType(name, innerTypes);
         }
 
         private static IEnumerable<DataType> Enumerate(IEnumerable<DataType> parameterTypes, DataType returnType)
@@ -67,25 +65,17 @@ namespace Rook.Compiling.Types
             yield return returnType;
         }
 
-        private static NamedType RegisteredType(NamedType type)
-        {
-            string name = type.ToString();
-
-            if (!registeredTypes.ContainsKey(name))
-                registeredTypes[name] = type;
-
-            return registeredTypes[name];
-        }
-
         #endregion
 
         private readonly string name;
         private readonly IEnumerable<DataType> innerTypes;
+        private readonly Lazy<string> fullName;
 
         private NamedType(string name, IEnumerable<DataType> innerTypes)
         {
             this.name = name;
             this.innerTypes = innerTypes;
+            fullName = new Lazy<string>(GetFullName);
         }
 
         public override string Name
@@ -114,6 +104,11 @@ namespace Rook.Compiling.Types
         }
 
         public override string ToString()
+        {
+            return fullName.Value;
+        }
+
+        private string GetFullName()
         {
             if (innerTypes.Any())
                 return String.Format("{0}<{1}>", CleanedName(name), String.Join(", ", innerTypes));

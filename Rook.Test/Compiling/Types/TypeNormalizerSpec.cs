@@ -74,15 +74,15 @@ namespace Rook.Compiling.Types
         [Test]
         public void NormalizesConcreteTypesByPerformingNoChanges()
         {
-            Normalize(Integer).ShouldBeTheSameAs(Integer);
-            Normalize(Type("A", Boolean)).ShouldBeTheSameAs(Type("A", Boolean));
+            Normalize(Integer).ShouldEqual(Integer);
+            Normalize(Type("A", Boolean)).ShouldEqual(Type("A", Boolean));
         }
 
         [Test]
         public void NormalizesUnunifiedTypeVariablesByPerformingNoChanges()
         {
-            Normalize(x).ShouldBeTheSameAs(x);
-            Normalize(Type("A", x)).ShouldBeTheSameAs(Type("A", x));
+            Normalize(x).ShouldEqual(x);
+            Normalize(Type("A", x)).ShouldEqual(Type("A", x));
         }
 
         [Test]
@@ -91,9 +91,9 @@ namespace Rook.Compiling.Types
             var errorsA = Unify(x, Integer);
             var errorsB = Unify(Boolean, y);
 
-            Normalize(x).ShouldBeTheSameAs(Integer);
-            Normalize(y).ShouldBeTheSameAs(Boolean);
-            Normalize(Type("A", x, y)).ShouldBeTheSameAs(Type("A", Integer, Boolean));
+            Normalize(x).ShouldEqual(Integer);
+            Normalize(y).ShouldEqual(Boolean);
+            Normalize(Type("A", x, y)).ShouldEqual(Type("A", Integer, Boolean));
 
             errorsA.ShouldBeEmpty();
             errorsB.ShouldBeEmpty();
@@ -104,8 +104,8 @@ namespace Rook.Compiling.Types
         {
             var errors = Unify(x, x);
 
-            Normalize(x).ShouldBeTheSameAs(x);
-            Normalize(Type("A", x)).ShouldBeTheSameAs(Type("A", x));
+            Normalize(x).ShouldEqual(x);
+            Normalize(Type("A", x)).ShouldEqual(Type("A", x));
 
             errors.ShouldBeEmpty();
         }
@@ -123,11 +123,11 @@ namespace Rook.Compiling.Types
             var errorsA = Unify(x, y);
             var errorsB = Unify(y, z);
             var errorsC = Unify(z, Integer);
-            
-            Normalize(x).ShouldBeTheSameAs(Integer);
-            Normalize(y).ShouldBeTheSameAs(Integer);
-            Normalize(z).ShouldBeTheSameAs(Integer);
-            Normalize(Type("A", x, y, z)).ShouldBeTheSameAs(Type("A", Integer, Integer, Integer));
+
+            Normalize(x).ShouldEqual(Integer);
+            Normalize(y).ShouldEqual(Integer);
+            Normalize(z).ShouldEqual(Integer);
+            Normalize(Type("A", x, y, z)).ShouldEqual(Type("A", Integer, Integer, Integer));
 
             errorsA.ShouldBeEmpty();
             errorsB.ShouldBeEmpty();

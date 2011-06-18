@@ -42,9 +42,9 @@ namespace Rook.Compiling.Syntax
             node.Type.ShouldBeNull();
 
             var typedNode = (VectorLiteral)node.WithTypes(Environment(foo => Boolean, bar => Boolean)).Syntax;
-            typedNode.Items.ElementAt(0).Type.ShouldBeTheSameAs(Boolean);
-            typedNode.Items.ElementAt(1).Type.ShouldBeTheSameAs(Boolean);
-            typedNode.Type.ShouldBeTheSameAs(NamedType.Vector(Boolean));
+            typedNode.Items.ElementAt(0).Type.ShouldEqual(Boolean);
+            typedNode.Items.ElementAt(1).Type.ShouldEqual(Boolean);
+            typedNode.Type.ShouldEqual(NamedType.Vector(Boolean));
         }
     }
 }
