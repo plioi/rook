@@ -23,7 +23,7 @@ namespace Parsley
                 if (tokens.CurrentToken.Kind == kind)
                     return new Parsed<Token>(tokens.CurrentToken, tokens.Advance());
 
-                return new Error<Token>(tokens);
+                return new Error<Token>(tokens, new ErrorMessage(kind.Name));
             };
         }
 

@@ -104,7 +104,6 @@ namespace Parsley
         private static Parser<Token> DIGIT { get { return Kind(SampleLexer.Digit); } }
         private static Parser<Token> LETTER { get { return Kind(SampleLexer.Letter); } }
         private static Parser<Token> COMMA { get { return Kind(SampleLexer.Comma); } }
-        private static Parser<Token> WHITESPACE { get { return Kind(SampleLexer.WhiteSpace); } }
         private static Parser<Token> SYMBOL { get { return Kind(SampleLexer.Symbol); } }
 
         private class SampleLexer : Lexer
@@ -129,16 +128,16 @@ namespace Parsley
         public void CanDetectTheEndOfInputWithoutAdvancing()
         {
             EndOfInput.Parses(Tokenize("")).IntoToken("");
-            EndOfInput.FailsToParse(Tokenize("!"), "!");
+            EndOfInput.FailsToParse(Tokenize("!"), "!").WithMessage("(1, 1): end of input expected");
         }
 
         [Test]
         public void CanDemandThatAGivenKindOfTokenAppearsNext()
         {
             Kind(SampleLexer.Letter).Parses(Tokenize("A")).IntoToken("A");
-            Kind(SampleLexer.Letter).FailsToParse(Tokenize("0"), "0");
+            Kind(SampleLexer.Letter).FailsToParse(Tokenize("0"), "0").WithMessage("(1, 1): Letter expected");
 
-            Kind(SampleLexer.Digit).FailsToParse(Tokenize("A"), "A");
+            Kind(SampleLexer.Digit).FailsToParse(Tokenize("A"), "A").WithMessage("(1, 1): Digit expected");
             Kind(SampleLexer.Digit).Parses(Tokenize("0")).IntoToken("0");
         }
 
@@ -333,9 +332,9 @@ namespace Parsley
         [Test]
         public void ImprovingDefaultErrorMessagesWithAKnownExpectation()
         {
-            LETTER.FailsToParse(Tokenize("."), ".").WithMessage("(1, 1): Parse error.");
+            LETTER.FailsToParse(Tokenize("."), ".").WithMessage("(1, 1): Letter expected");
 
-            OnError(LETTER, "letter").FailsToParse(Tokenize("."), ".").WithMessage("(1, 1): letter expected");
+            OnError(LETTER, "known-expectation").FailsToParse(Tokenize("."), ".").WithMessage("(1, 1): known-expectation expected");
         }
     }
 }
