@@ -6,11 +6,7 @@ namespace Rook.Compiling.Syntax
     {
         public static Parser<Token> EndOfLine
         {
-            get
-            {
-                return OnError(Choice(Token(RookLexer.EndOfLine),
-                                            Token(Lexer.EndOfInput)), "end of line");
-            }
+            get { return OnError(Choice(Token(RookLexer.EndOfLine), Token(Lexer.EndOfInput)), "end of line"); }
         }
 
         public static Parser<Token> @int { get { return Token(RookLexer.@int); } }
@@ -27,7 +23,7 @@ namespace Rook.Compiling.Syntax
 
         public static Parser<Token> Operator(string symbol)
         {
-            return OnError(Token(RookLexer.Operators[symbol]), symbol);
+            return Token(RookLexer.Operators[symbol]);
         }
 
         public static Parser<Token> Identifier

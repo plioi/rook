@@ -21,7 +21,7 @@ namespace Rook.Compiling.Syntax
             get
             {
                 var explicitlyTyped = from type in TypeName
-                                      from identifier in OnError(Identifier, "identifier")
+                                      from identifier in Identifier
                                       select new Parameter(identifier.Position, type, identifier.Literal);
 
                 var implicitlyTyped = from identifier in Identifier

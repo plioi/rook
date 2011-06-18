@@ -17,15 +17,15 @@ namespace Rook.Compiling.Syntax
         public static readonly TokenKind @else = new TokenKind("else", @"else \b");
         public static readonly TokenKind @fn = new TokenKind("fn", @"fn \b");
 
-        public static readonly TokenKind Boolean = new TokenKind("Boolean", @"true \b | false \b");
-        public static readonly TokenKind Integer = new TokenKind("Integer", @"[0-9]+");
+        public static readonly TokenKind Boolean = new TokenKind("boolean", @"true \b | false \b");
+        public static readonly TokenKind Integer = new TokenKind("integer", @"[0-9]+");
 
         public static readonly Dictionary<string, TokenKind> Operators = CreateOperators(
             "(", ")", "*", "/", "+", "-", "<=", "<", ">=", ">", "==", "!=", "||",
             "&&", "!", "=", ",", "{", "}", "[]", "[", "]", ":", "??", "?");
 
-        public static readonly TokenKind Identifier = new TokenKind("Identifier", @"[a-zA-Z]+[a-zA-Z0-9]*");
-        public static readonly TokenKind EndOfLine = new TokenKind("EndOfLine", @"(\r\n|;)\s*");
+        public static readonly TokenKind Identifier = new TokenKind("identifier", @"[a-zA-Z]+[a-zA-Z0-9]*");
+        public static readonly TokenKind EndOfLine = new TokenKind("end of line", @"(\r\n|;)\s*");
 
         public RookLexer(string source)
             : base(new Text(source),
