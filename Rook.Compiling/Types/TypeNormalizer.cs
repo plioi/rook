@@ -78,7 +78,7 @@ namespace Rook.Compiling.Types
 
         private DataType NormalizeNamedType(NamedType named)
         {
-            return NamedType.Create(named.Name, named.InnerTypes.Select(Normalize).ToArray());
+            return new NamedType(named.Name, named.InnerTypes.Select(Normalize).ToArray());
         }
 
         private DataType NormalizeVariable(TypeVariable variable)

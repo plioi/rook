@@ -10,52 +10,47 @@ namespace Rook.Compiling.Types
 
         public static NamedType Dynamic
         {
-            get { return Create("dynamic"); }
+            get { return new NamedType("dynamic"); }
         }
 
         public static NamedType Void
         {
-            get { return Create("Rook.Core.Void"); }
+            get { return new NamedType("Rook.Core.Void"); }
         }
 
         public static NamedType Boolean
         {
-            get { return Create("System.Boolean"); }
+            get { return new NamedType("System.Boolean"); }
         }
 
         public static NamedType Integer
         {
-            get { return Create("System.Int32"); }
+            get { return new NamedType("System.Int32"); }
         }
 
         public static NamedType Enumerable(DataType itemType)
         {
-            return Create("System.Collections.Generic.IEnumerable", itemType);
+            return new NamedType("System.Collections.Generic.IEnumerable", itemType);
         }
 
         public static NamedType Vector(DataType itemType)
         {
-            return Create("Rook.Core.Collections.Vector", itemType);
+            return new NamedType("Rook.Core.Collections.Vector", itemType);
         }
 
         public static NamedType Nullable(DataType itemType)
         {
-            return Create("Rook.Core.Nullable", itemType);
+            return new NamedType("Rook.Core.Nullable", itemType);
         }
 
         public static NamedType Function(IEnumerable<DataType> parameterTypes, DataType returnType)
         {
-            return Create("System.Func", Enumerate(parameterTypes, returnType).ToArray());
+            return new NamedType("System.Func", Enumerate(parameterTypes, returnType).ToArray());
         }
 
         public static NamedType Function(DataType returnType)
         {
             return Function(new DataType[] {}, returnType);
-        }
-
-        public static NamedType Create(string name, params DataType[] innerTypes)
-        {
-            return new NamedType(name, innerTypes);
         }
 
         private static IEnumerable<DataType> Enumerate(IEnumerable<DataType> parameterTypes, DataType returnType)
@@ -71,7 +66,7 @@ namespace Rook.Compiling.Types
         private readonly IEnumerable<DataType> innerTypes;
         private readonly Lazy<string> fullName;
 
-        private NamedType(string name, IEnumerable<DataType> innerTypes)
+        public NamedType(string name, params DataType[] innerTypes)
         {
             this.name = name;
             this.innerTypes = innerTypes;
@@ -100,7 +95,7 @@ namespace Rook.Compiling.Types
 
         public override DataType ReplaceTypeVariables(IDictionary<TypeVariable, DataType> substitutions)
         {
-            return Create(name, innerTypes.Select(t => t.ReplaceTypeVariables(substitutions)).ToArray());
+            return new NamedType(name, innerTypes.Select(t => t.ReplaceTypeVariables(substitutions)).ToArray());
         }
 
         public override string ToString()

@@ -23,7 +23,7 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return from name in Name
-                       select NamedType.Create(name.Identifier);
+                       select new NamedType(name.Identifier);
             }
         }
 

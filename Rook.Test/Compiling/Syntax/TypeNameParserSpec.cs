@@ -10,7 +10,7 @@ namespace Rook.Compiling.Syntax
         private static readonly NamedType Integer = NamedType.Integer;
         private static readonly NamedType Boolean = NamedType.Boolean;
         private static readonly NamedType Void = NamedType.Void;
-        private static readonly NamedType Foo = NamedType.Create("Foo");
+        private static readonly NamedType Foo = new NamedType("Foo");
         
         [Test]
         public void DemandsSimpleNameAtAMinimum()

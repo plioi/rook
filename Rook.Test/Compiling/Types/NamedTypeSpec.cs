@@ -117,7 +117,7 @@ namespace Rook.Compiling.Types
 
         private static DataType Create(string name, params DataType[] innerTypes)
         {
-            return NamedType.Create(name, innerTypes);
+            return new NamedType(name, innerTypes);
         }
     }
 }

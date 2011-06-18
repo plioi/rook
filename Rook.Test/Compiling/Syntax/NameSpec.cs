@@ -25,8 +25,8 @@ namespace Rook.Compiling.Syntax
         {
             AssertType(new TypeVariable(17), "foo", foo => new TypeVariable(1));
 
-            NamedType expectedTypeAfterLookup = NamedType.Create("A", new TypeVariable(17), new TypeVariable(18), NamedType.Create("B", new TypeVariable(17), new TypeVariable(18)));
-            NamedType definedType = NamedType.Create("A", new TypeVariable(1), new TypeVariable(2), NamedType.Create("B", new TypeVariable(1), new TypeVariable(2)));
+            NamedType expectedTypeAfterLookup = new NamedType("A", new TypeVariable(17), new TypeVariable(18), new NamedType("B", new TypeVariable(17), new TypeVariable(18)));
+            NamedType definedType = new NamedType("A", new TypeVariable(1), new TypeVariable(2), new NamedType("B", new TypeVariable(1), new TypeVariable(2)));
             AssertType(expectedTypeAfterLookup, "foo", foo => definedType);
         }
 
@@ -35,8 +35,8 @@ namespace Rook.Compiling.Syntax
         {
             //Prevents type '2' from being freshened on type lookup by marking it as non-generic in the environment:
 
-            NamedType expectedTypeAfterLookup = NamedType.Create("A", new TypeVariable(17), new TypeVariable(2), NamedType.Create("B", new TypeVariable(17), new TypeVariable(2)));
-            NamedType definedType = NamedType.Create("A", new TypeVariable(1), new TypeVariable(2), NamedType.Create("B", new TypeVariable(1), new TypeVariable(2)));
+            NamedType expectedTypeAfterLookup = new NamedType("A", new TypeVariable(17), new TypeVariable(2), new NamedType("B", new TypeVariable(17), new TypeVariable(2)));
+            NamedType definedType = new NamedType("A", new TypeVariable(1), new TypeVariable(2), new NamedType("B", new TypeVariable(1), new TypeVariable(2)));
 
             var environment = new Environment();
             environment.TreatAsNonGeneric(new[] { new TypeVariable(2) });
