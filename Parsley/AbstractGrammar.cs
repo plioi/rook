@@ -114,22 +114,6 @@ namespace Parsley
             return Choice(parse, nothing);
         }
 
-        public static Parser<T> Expect<T>(Parser<T> parse, Predicate<T> expectation)
-        {
-            return tokens =>
-            {
-                Reply<T> result = parse(tokens);
-
-                if (!result.Success)
-                   return result;
-
-                if (expectation(result.Value))
-                   return result;
-
-                return new Error<T>(tokens);
-            };
-        }
-
         /// <summary>
         /// Choice() always fails without consuming input.
         /// 

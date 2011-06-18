@@ -281,22 +281,6 @@ namespace Parsley
         }
 
         [Test]
-        public void ParsingARuleOnlyWhenItsResultWouldPassesAPredicate()
-        {
-            Predicate<Token> isDollars = x => x.Literal == "$";
-            Predicate<Token> isCents = x => x.Literal == "¢";
-
-            Expect(SYMBOL, isDollars).FailsToParse(Tokenize("!"), "!");
-            Expect(SYMBOL, isCents).FailsToParse(Tokenize("!"), "!");
-
-            Expect(SYMBOL, isDollars).Parses(Tokenize("$")).IntoToken("$");
-            Expect(SYMBOL, isCents).Parses(Tokenize("¢")).IntoToken("¢");
-
-            Expect(SYMBOL, isDollars).FailsToParse(Tokenize("¢"), "¢");
-            Expect(SYMBOL, isCents).FailsToParse(Tokenize("$"), "$");
-        }
-
-        [Test]
         public void GreedilyChoosingTheFirstSuccessfulParserFromAPrioritizedList()
         {
             Parser<Token> A = LETTER;
