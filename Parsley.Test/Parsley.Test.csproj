@@ -91,6 +91,10 @@
       <Project>{DFDC9B30-8B69-4D65-8881-7903C16C5845}</Project>
       <Name>Parsley</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Rook.Core\Rook.Core.csproj">
+      <Project>{646BF299-17FE-4B59-BC83-5D28AF7D5A48}</Project>
+      <Name>Rook.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

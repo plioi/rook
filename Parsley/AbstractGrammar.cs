@@ -145,14 +145,14 @@ namespace Parsley
 
                 var errors = ErrorMessageList.Empty;
                 var i = 1;
-                while (!reply.Success && (start.Line == newPosition.Line && start.Column == newPosition.Column) && i < parsers.Length)
+                while (!reply.Success && (start == newPosition) && i < parsers.Length)
                 {
                     errors = errors.Merge(reply.ErrorMessages);
                     reply = parsers[i](tokens);
                     newPosition = reply.UnparsedTokens.Position;
                     i++;
                 }
-                if (start.Line == newPosition.Line && start.Column == newPosition.Column)
+                if (start == newPosition)
                 {
                     errors = errors.Merge(reply.ErrorMessages);
                     if (reply.Success)

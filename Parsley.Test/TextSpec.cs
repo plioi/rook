@@ -74,11 +74,11 @@ namespace Parsley
         }
 
         [Test]
-        public void CanGetCurrentLineNumber()
+        public void CanGetCurrentPosition()
         {
             var empty = new Text("");
-            empty.Advance(0).Position.Line.ShouldEqual(1);
-            empty.Advance(1).Position.Line.ShouldEqual(1);
+            empty.Advance(0).Position.ShouldEqual(new Position(1, 1));
+            empty.Advance(1).Position.ShouldEqual(new Position(1, 1));
 
             var lines = new StringBuilder()
                 .AppendLine("Line 1")//Index 0-5, \r\n
@@ -86,49 +86,20 @@ namespace Parsley
                 .AppendLine("Line 3");//Index 16-21, \r\n
             var list = new Text(lines.ToString());
 
-            list.Advance(0).Position.Line.ShouldEqual(1);
-            list.Advance(5).Position.Line.ShouldEqual(1);
-            list.Advance(7).Position.Line.ShouldEqual(1);
+            list.Advance(0).Position.ShouldEqual(new Position(1, 1));
+            list.Advance(5).Position.ShouldEqual(new Position(1, 6));
+            list.Advance(7).Position.ShouldEqual(new Position(1, 8));
 
-            list.Advance(8).Position.Line.ShouldEqual(2);
-            list.Advance(13).Position.Line.ShouldEqual(2);
-            list.Advance(15).Position.Line.ShouldEqual(2);
+            list.Advance(8).Position.ShouldEqual(new Position(2, 1));
+            list.Advance(13).Position.ShouldEqual(new Position(2, 6));
+            list.Advance(15).Position.ShouldEqual(new Position(2, 8));
 
-            list.Advance(16).Position.Line.ShouldEqual(3);
-            list.Advance(21).Position.Line.ShouldEqual(3);
-            list.Advance(23).Position.Line.ShouldEqual(3);
+            list.Advance(16).Position.ShouldEqual(new Position(3, 1));
+            list.Advance(21).Position.ShouldEqual(new Position(3, 6));
+            list.Advance(23).Position.ShouldEqual(new Position(3, 8));
 
-            list.Advance(24).Position.Line.ShouldEqual(4);
-            list.Advance(1000).Position.Line.ShouldEqual(4);
-        }
-
-        [Test]
-        public void CanGetCurrentColumnNumber()
-        {
-            var empty = new Text("");
-            empty.Advance(0).Position.Column.ShouldEqual(1);
-            empty.Advance(1).Position.Column.ShouldEqual(1);
-
-            var lines = new StringBuilder()
-                .AppendLine("Line 1")//Index 0-5, \r\n
-                .AppendLine("Line 2")//Index 8-13, \r\n
-                .AppendLine("Line 3");//Index 16-21, \r\n
-            var list = new Text(lines.ToString());
-
-            list.Advance(0).Position.Column.ShouldEqual(1);
-            list.Advance(5).Position.Column.ShouldEqual(6);
-            list.Advance(7).Position.Column.ShouldEqual(8);
-
-            list.Advance(8).Position.Column.ShouldEqual(1);
-            list.Advance(13).Position.Column.ShouldEqual(6);
-            list.Advance(15).Position.Column.ShouldEqual(8);
-
-            list.Advance(16).Position.Column.ShouldEqual(1);
-            list.Advance(21).Position.Column.ShouldEqual(6);
-            list.Advance(23).Position.Column.ShouldEqual(8);
-
-            list.Advance(24).Position.Column.ShouldEqual(1);
-            list.Advance(1000).Position.Column.ShouldEqual(1);
+            list.Advance(24).Position.ShouldEqual(new Position(4, 1));
+            list.Advance(1000).Position.ShouldEqual(new Position(4, 1));
         }
     }
 }

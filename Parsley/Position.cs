@@ -1,6 +1,8 @@
-﻿namespace Parsley
+﻿using Rook.Core;
+
+namespace Parsley
 {
-    public class Position
+    public class Position : Value<Position>
     {
         public int Line { get; private set; }
         public int Column { get; private set; }
@@ -9,6 +11,11 @@
         {
             Line = line;
             Column = column;
+        }
+
+        protected override object[] ImmutableFields()
+        {
+            return new object[] {Line, Column};
         }
     }
 }
