@@ -63,10 +63,10 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from _if_ in @if
+                return from _if_ in Token(RookLexer.@if)
                        from condition in Parenthesized(Expression).TerminatedBy(Optional(EndOfLine))
                        from bodyWhenTrue in Expression.TerminatedBy(Optional(EndOfLine))
-                       from _else_ in @else.TerminatedBy(Optional(EndOfLine))
+                       from _else_ in Token(RookLexer.@else).TerminatedBy(Optional(EndOfLine))
                        from bodyWhenFalse in Expression
                        select new If(_if_.Position, condition, bodyWhenTrue, bodyWhenFalse);
             }
@@ -88,7 +88,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from _fn_ in @fn
+                return from _fn_ in Token(RookLexer.@fn)
                        from parameters in Tuple(Parameter)
                        from body in Expression
                        select new Lambda(_fn_.Position, parameters, body);
@@ -131,7 +131,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from token in Boolean
+                return from token in Token(RookLexer.Boolean)
                        select new BooleanLiteral(token.Position, bool.Parse(token.Literal));
             }
         }
@@ -140,7 +140,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from token in Integer
+                return from token in Token(RookLexer.Integer)
                        select new IntegerLiteral(token.Position, token.Literal);
             }
         }
@@ -149,7 +149,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from literal in @null
+                return from literal in Token(RookLexer.@null)
                        select new Null(literal.Position);
             }
         }

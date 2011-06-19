@@ -13,7 +13,6 @@ namespace Rook.Compiling.Syntax
         public static readonly TokenKind @void = new TokenKind("void", @"void \b");
         public static readonly TokenKind @null = new TokenKind("null", @"null \b");
         public static readonly TokenKind @if = new TokenKind("if", @"if \b");
-        public static readonly TokenKind @return = new TokenKind("return", @"return \b");
         public static readonly TokenKind @else = new TokenKind("else", @"else \b");
         public static readonly TokenKind @fn = new TokenKind("fn", @"fn \b");
 
@@ -30,7 +29,7 @@ namespace Rook.Compiling.Syntax
         public RookLexer(string source)
             : base(new Text(source),
             IntralineWhiteSpace,
-            @int, @bool, @void, @null, @if, @return, @else, @fn,
+            @int, @bool, @void, @null, @if, @else, @fn,
             Boolean, Integer, Identifier,
             Operators["("], Operators[")"],
             Operators["*"], Operators["/"],

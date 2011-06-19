@@ -37,9 +37,9 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return Choice(
-                    from _ in @int select NamedType.Integer,
-                    from _ in @bool select NamedType.Boolean,
-                    from _ in @void select NamedType.Void);
+                    from _ in Token(RookLexer.@int) select NamedType.Integer,
+                    from _ in Token(RookLexer.@bool) select NamedType.Boolean,
+                    from _ in Token(RookLexer.@void) select NamedType.Void);
             }
         }
 

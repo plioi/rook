@@ -34,7 +34,6 @@ namespace Rook.Compiling.Syntax
             AssertTokens("void", RookLexer.@void, "void");
             AssertTokens("null", RookLexer.@null, "null");
             AssertTokens("if", RookLexer.@if, "if");
-            AssertTokens("return", RookLexer.@return, "return");
             AssertTokens("else", RookLexer.@else, "else");
             AssertTokens("fn", RookLexer.@fn, "fn");
         }
