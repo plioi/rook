@@ -286,47 +286,23 @@ namespace Parsley
         }
 
         [Test]
-        public void GreedilyChoosingTheFirstSuccessfulParserFromAPrioritizedList()
+        public void AttemptingToParseRuleButBacktrackingUponFailure()
         {
-            Parser<Token> A = LETTER;
-            Parser<Token> AB = from a in LETTER
-                               from b in LETTER
-                               select new Token(null, a.Position, a.Literal + b.Literal);
-            Parser<Token> ABC = from a in LETTER
-                                from b in LETTER
-                                from c in LETTER
-                                select new Token(null, a.Position, a.Literal + b.Literal + c.Literal);
+            var A = String("A");
+            var B = String("B");
 
-            Parser<Token> parenthesizedA = Between(SYMBOL, A, SYMBOL);
-            Parser<Token> parenthesizedAB = Between(SYMBOL, AB, SYMBOL);
-            Parser<Token> parenthesizedABC = Between(SYMBOL, ABC, SYMBOL);
+            var AB = from a in A
+                     from b in B
+                     select new Token(null, a.Position, a.Literal + b.Literal);
 
-            Parser<Token> choice = GreedyChoice(
-                OnError(parenthesizedA, "parenthesized a"),
-                OnError(parenthesizedAB, "parenthesized ab"),
-                OnError(parenthesizedABC, "parenthesized abc"));
-            
-            choice.PartiallyParses(Tokenize("(a)bcd"), "bcd").IntoToken("a"); //First rule wins.
-            choice.PartiallyParses(Tokenize("(ab)cd"), "cd").IntoToken("ab"); //Second rule wins.
-            choice.PartiallyParses(Tokenize("(abc)d"), "d").IntoToken("abc"); //Third rule wins.
+            //When AB succeeds, Attempt(AB) is the same as AB.
+            Attempt(AB).Parses(Tokenize("AB")).IntoToken("AB");
 
-            //When all rules fail, the error returned should correspond with the
-            //rule that made it deepest into the input before encountering a failure.
-            choice.FailsToParse(Tokenize("(a1"), "1").WithMessage("(1, 3): parenthesized a expected"); //First rule's error wins.
-            choice.FailsToParse(Tokenize("(ab1"), "1").WithMessage("(1, 4): parenthesized ab expected"); //Second rule's error wins.
-            choice.FailsToParse(Tokenize("(abc1"), "1").WithMessage("(1, 5): parenthesized abc expected"); //Third rule's error wins.
+            //When AB fails without consuming input, Attempt(AB) is the same as AB.
+            Attempt(AB).FailsToParse(Tokenize("!"), "!").WithMessage("(1, 1): A expected");
 
-            //When all rules fail, and there is a tie while selecting the rule that 
-            //made it deepest into the input, favor the rules in the order they were
-            //declared.
-            choice.FailsToParse(Tokenize("(1"), "1").WithMessage("(1, 2): parenthesized a expected"); //First rule's error wins.
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Missing choice.")]
-        public void DemandsAtLeastOneChoiceWhenBuildingAGreedyChoiceParser()
-        {
-            GreedyChoice(new Parser<string>[] {});
+            //When AB fails after consuming input, Attempt(AB) backtracks before reporting failure.
+            Attempt(AB).FailsToParse(Tokenize("A!"), "A!").WithMessage("(1, 1): B expected");
         }
 
         [Test]

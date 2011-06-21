@@ -115,6 +115,39 @@ namespace Parsley
         }
 
         /// <summary>
+        /// The parser Attempt(p) behaves like parser p, except that it pretends
+        /// that it hasn't consumed any input when an error occurs. This combinator
+        /// is used whenever arbitrary look ahead is needed.
+        /// </summary>
+        public static Parser<T> Attempt<T>(Parser<T> parse)
+        {
+            return tokens =>
+            {
+                var start = tokens.Position;
+                var reply = parse(tokens);
+                var newPosition = reply.UnparsedTokens.Position;
+
+                if (reply.Success || start == newPosition)
+                    return reply;
+
+                //Backtrack to original position.
+
+                //TODO: Backtracking (by returning 'tokens' instead of reply.UnparsedTokens below) is correct.
+                //      Ideally, though, the error message reported would be more accurate by indicating
+                //      the true position of error.  FParsec uses 'nested errors' to support this concept:
+                //
+                //      There are two positions we want to return:
+                //          a) The original position, meaning "nothing was consumed, so keep running from that position again".
+                //          b) The position that the error message text really belongs to.
+                //
+                //      These 2 positions are the usually the same, except when a backtracking-combinator like Attempt actually backtracks.
+
+                var backtrackingError = reply.ErrorMessages; //TODO: var backtrackingError = NestedError(reply.UnparsedTokens{.Position?}, reply.ErrorMessages)
+                return new Error<T>(tokens, backtrackingError);
+            };
+        }
+
+        /// <summary>
         /// Choice() always fails without consuming input.
         /// 
         /// Choice(p) is equivalent to p.
@@ -162,39 +195,6 @@ namespace Parsley
                 }
 
                 return reply;
-            };
-        }
-
-        //Deprecated in favor of Parsec-like single look-ahead Choice combinator.
-        public static Parser<T> GreedyChoice<T>(params Parser<T>[] parsers)
-        {           
-            if (parsers.Length == 0)
-                throw new ArgumentException("Missing choice.");
-
-            return tokens =>
-            {
-                Reply<T> deepestParse = null;
-
-                foreach (Parser<T> parse in parsers)
-                {
-                    Reply<T> reply = parse(tokens);
-
-                    if (deepestParse == null)
-                        deepestParse = reply;
-
-                    if (reply.Success)
-                        return reply;
-
-                    Position newParsePosition = reply.UnparsedTokens.Position;
-                    Position deepestParsePosition = deepestParse.UnparsedTokens.Position;
-                    bool newParseIsDeeper = newParsePosition.Line > deepestParsePosition.Line ||
-                                            (newParsePosition.Line == deepestParsePosition.Line &&
-                                             newParsePosition.Column > deepestParsePosition.Column);
-                    if (newParseIsDeeper)
-                        deepestParse = reply;
-                }
-
-                return deepestParse;
             };
         }
 

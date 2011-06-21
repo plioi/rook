@@ -49,7 +49,7 @@ namespace Rook.Compiling.Syntax
                               select new Func<Expression, Expression>(callable => callable);
 
                 return from callable in Choice(Literal, VectorLiteral, If, Block, Lambda, Name, Parenthesized(Expression))
-                       from callArgumentAppender in GreedyChoice(call, subscript, nothing)
+                       from callArgumentAppender in Choice(Attempt(call), Attempt(subscript), nothing)
                        select callArgumentAppender(callable);
             }
         }
@@ -123,7 +123,7 @@ namespace Rook.Compiling.Syntax
                     from end in EndOfLine
                     select new VariableDeclaration(identifier.Position, identifier.Literal, value);
 
-                return GreedyChoice(explicitlyTyped, implicitlyTyped);
+                return Choice(Attempt(explicitlyTyped), implicitlyTyped);
             }
         }
 
