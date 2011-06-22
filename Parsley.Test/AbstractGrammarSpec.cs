@@ -302,7 +302,7 @@ namespace Parsley
             Attempt(AB).FailsToParse(Tokenize("!"), "!").WithMessage("(1, 1): A expected");
 
             //When AB fails after consuming input, Attempt(AB) backtracks before reporting failure.
-            Attempt(AB).FailsToParse(Tokenize("A!"), "A!").WithMessage("(1, 1): B expected");
+            Attempt(AB).FailsToParse(Tokenize("A!"), "A!").WithMessage("(1, 1): [(1, 2): B expected]");
         }
 
         [Test]

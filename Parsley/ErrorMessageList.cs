@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Parsley
 {
@@ -45,18 +46,30 @@ namespace Parsley
                                               .Distinct()
                                               .OrderBy(expectation => expectation));
 
-            if (expectationErrors.Count != 0)
-            {
-                var suffixes = Separators(expectationErrors.Count - 1).Concat(new[] {" expected"});
+            var backtrackErrors = All<BacktrackErrorMessage>().ToArray();
 
-                return String.Join("", expectationErrors.Zip(suffixes, (error, suffix) => error + suffix));
+            if (!expectationErrors.Any() && !backtrackErrors.Any())
+            {
+                var unknownError = All<UnknownErrorMessage>().FirstOrDefault();
+                if (unknownError != null)
+                    return unknownError.ToString();
+
+                return "";
             }
 
-            var unknownError = All<UnknownErrorMessage>().FirstOrDefault();
-            if (unknownError != null)
-                return unknownError.ToString();
+            var parts = new List<string>();
 
-            return "";
+            if (expectationErrors.Any())
+            {
+                var suffixes = Separators(expectationErrors.Count - 1).Concat(new[] { " expected" });
+
+                parts.Add(String.Join("", expectationErrors.Zip(suffixes, (error, suffix) => error + suffix)));
+            }
+
+            if (backtrackErrors.Any())
+                parts.Add(String.Join(" ", backtrackErrors.Select(backtrack => String.Format("[{0}]", backtrack))));
+
+            return String.Join(" ", parts);
         }
 
         private static IEnumerable<string> Separators(int count)
