@@ -29,8 +29,8 @@ namespace Parsley
         public void CanIndicatePotentialErrors()
         {
             var potentialErrors = ErrorMessageList.Empty
-                .With(new ErrorMessage("A"))
-                .With(new ErrorMessage("B"));
+                .With(ErrorMessage.Expected("A"))
+                .With(ErrorMessage.Expected("B"));
 
             new Parsed<object>("x", unparsed, potentialErrors).ErrorMessages.ToString().ShouldEqual("A or B expected");
         }

@@ -6,9 +6,6 @@ namespace Parsley
     {
         private readonly ErrorMessageList errors;
 
-        public Error(Lexer unparsedTokens)
-            : this(unparsedTokens, new ErrorMessage()) { }
-
         public Error(Lexer unparsedTokens, ErrorMessage error)
             : this(unparsedTokens,  ErrorMessageList.Empty.With(error)) { }
 

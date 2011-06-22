@@ -8,14 +8,14 @@ namespace Parsley
         [Test]
         public void CanIndicateGenericErrors()
         {
-            var error = new ErrorMessage();
+            var error = ErrorMessage.Unknown();
             error.Expectation.ShouldBeNull();
         }
 
         [Test]
         public void CanIndicateSpecificExpectation()
         {
-            var error = new ErrorMessage("statement");
+            var error = ErrorMessage.Expected("statement");
             error.Expectation.ShouldEqual("statement");
         }
     }

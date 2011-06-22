@@ -2,7 +2,17 @@
 {
     public class ErrorMessage
     {
-        public ErrorMessage(string expectation = null)
+        public static ErrorMessage Unknown()
+        {
+            return new ErrorMessage(null);
+        }
+
+        public static ErrorMessage Expected(string expectation)
+        {
+            return new ErrorMessage(expectation);
+        }
+
+        private ErrorMessage(string expectation)
         {
             Expectation = expectation;
         }

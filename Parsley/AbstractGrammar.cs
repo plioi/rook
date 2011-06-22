@@ -8,7 +8,7 @@ namespace Parsley
     {
         public static Parser<T> Fail<T>()
         {
-            return tokens => new Error<T>(tokens);
+            return tokens => new Error<T>(tokens, ErrorMessage.Unknown());
         }
 
         public static Parser<Token> EndOfInput
@@ -23,7 +23,7 @@ namespace Parsley
                 if (tokens.CurrentToken.Kind == kind)
                     return new Parsed<Token>(tokens.CurrentToken, tokens.Advance());
 
-                return new Error<Token>(tokens, new ErrorMessage(kind.Name));
+                return new Error<Token>(tokens, ErrorMessage.Expected(kind.Name));
             };
         }
 
@@ -34,7 +34,7 @@ namespace Parsley
                 if (tokens.CurrentToken.Literal == expected)
                     return new Parsed<Token>(tokens.CurrentToken, tokens.Advance());
 
-                return new Error<Token>(tokens, new ErrorMessage(expected));
+                return new Error<Token>(tokens, ErrorMessage.Expected(expected));
             };
         }
 
@@ -207,7 +207,7 @@ namespace Parsley
                 if (reply.Success)
                     return reply;
 
-                return new Error<T>(reply.UnparsedTokens, new ErrorMessage(expectation));
+                return new Error<T>(reply.UnparsedTokens, ErrorMessage.Expected(expectation));
             };
         }
 

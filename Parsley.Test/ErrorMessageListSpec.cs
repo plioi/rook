@@ -20,7 +20,7 @@ namespace Parsley
         [Test]
         public void CreatesNewCollectionWhenAddingItems()
         {
-            ErrorMessageList list = ErrorMessageList.Empty.With(new ErrorMessage("expectation"));
+            ErrorMessageList list = ErrorMessageList.Empty.With(ErrorMessage.Expected("expectation"));
 
             list.ToString().ShouldEqual("expectation expected");
             list.ShouldNotBeTheSameAs(ErrorMessageList.Empty);
@@ -30,21 +30,21 @@ namespace Parsley
         public void CanIncludeMultipleExpectations()
         {
             ErrorMessageList.Empty
-                .With(new ErrorMessage("A"))
-                .With(new ErrorMessage("B"))
+                .With(ErrorMessage.Expected("A"))
+                .With(ErrorMessage.Expected("B"))
                 .ToString().ShouldEqual("A or B expected");
 
             ErrorMessageList.Empty
-                .With(new ErrorMessage("A"))
-                .With(new ErrorMessage("B"))
-                .With(new ErrorMessage("C"))
+                .With(ErrorMessage.Expected("A"))
+                .With(ErrorMessage.Expected("B"))
+                .With(ErrorMessage.Expected("C"))
                 .ToString().ShouldEqual("A, B or C expected");
 
             ErrorMessageList.Empty
-                .With(new ErrorMessage("A"))
-                .With(new ErrorMessage("B"))
-                .With(new ErrorMessage("C"))
-                .With(new ErrorMessage("D"))
+                .With(ErrorMessage.Expected("A"))
+                .With(ErrorMessage.Expected("B"))
+                .With(ErrorMessage.Expected("C"))
+                .With(ErrorMessage.Expected("D"))
                 .ToString().ShouldEqual("A, B, C or D expected");
         }
 
@@ -52,7 +52,7 @@ namespace Parsley
         public void CanIncludeUnknownErrors()
         {
             ErrorMessageList.Empty
-                .With(new ErrorMessage())
+                .With(ErrorMessage.Unknown())
                 .ToString().ShouldEqual("Parse error.");
         }
 
@@ -60,10 +60,10 @@ namespace Parsley
         public void OmitsEmptyExpectationsFromExpectationLists()
         {
             ErrorMessageList.Empty
-                .With(new ErrorMessage("A"))
-                .With(new ErrorMessage("B"))
-                .With(new ErrorMessage())
-                .With(new ErrorMessage("C"))
+                .With(ErrorMessage.Expected("A"))
+                .With(ErrorMessage.Expected("B"))
+                .With(ErrorMessage.Unknown())
+                .With(ErrorMessage.Expected("C"))
                 .ToString().ShouldEqual("A, B or C expected");
         }
 
@@ -71,14 +71,14 @@ namespace Parsley
         public void OmitsDuplicateExpectationsFromExpectationLists()
         {
             ErrorMessageList.Empty
-                .With(new ErrorMessage("A"))
-                .With(new ErrorMessage("A"))
-                .With(new ErrorMessage("B"))
-                .With(new ErrorMessage("C"))
-                .With(new ErrorMessage())
-                .With(new ErrorMessage("C"))
-                .With(new ErrorMessage("C"))
-                .With(new ErrorMessage("A"))
+                .With(ErrorMessage.Expected("A"))
+                .With(ErrorMessage.Expected("A"))
+                .With(ErrorMessage.Expected("B"))
+                .With(ErrorMessage.Expected("C"))
+                .With(ErrorMessage.Unknown())
+                .With(ErrorMessage.Expected("C"))
+                .With(ErrorMessage.Expected("C"))
+                .With(ErrorMessage.Expected("A"))
                 .ToString().ShouldEqual("A, B or C expected");
         }
 
@@ -86,16 +86,16 @@ namespace Parsley
         public void CanMergeTwoLists()
         {
             var first = ErrorMessageList.Empty
-                .With(new ErrorMessage("A"))
-                .With(new ErrorMessage("B"))
-                .With(new ErrorMessage())
-                .With(new ErrorMessage("C"));
+                .With(ErrorMessage.Expected("A"))
+                .With(ErrorMessage.Expected("B"))
+                .With(ErrorMessage.Unknown())
+                .With(ErrorMessage.Expected("C"));
 
             var second = ErrorMessageList.Empty
-                .With(new ErrorMessage("D"))
-                .With(new ErrorMessage("B"))
-                .With(new ErrorMessage())
-                .With(new ErrorMessage("E"));
+                .With(ErrorMessage.Expected("D"))
+                .With(ErrorMessage.Expected("B"))
+                .With(ErrorMessage.Unknown())
+                .With(ErrorMessage.Expected("E"));
 
             first.Merge(second)
                 .ToString().ShouldEqual("A, B, C, D or E expected");

@@ -16,23 +16,18 @@ namespace Parsley
         }
 
         [Test]
-        public void CanIndicateGenericErrors()
+        public void CanIndicateErrorsAtTheCurrentPosition()
         {
-            new Error<object>(endOfInput).ErrorMessages.ToString().ShouldEqual("Parse error.");
+            new Error<object>(endOfInput, ErrorMessage.Unknown()).ErrorMessages.ToString().ShouldEqual("Parse error.");
+            new Error<object>(endOfInput, ErrorMessage.Expected("statement")).ErrorMessages.ToString().ShouldEqual("statement expected");
         }
 
         [Test]
-        public void CanIndicateErrorsWithASpecificExpectation()
-        {
-            new Error<object>(endOfInput, new ErrorMessage("statement")).ErrorMessages.ToString().ShouldEqual("statement expected");
-        }
-
-        [Test]
-        public void CanIndicateErrorsWithMultipleExpectations()
+        public void CanIndicateMultipleErrorsAtTheCurrentPosition()
         {
             var errors = ErrorMessageList.Empty
-                .With(new ErrorMessage("A"))
-                .With(new ErrorMessage("B"));
+                .With(ErrorMessage.Expected("A"))
+                .With(ErrorMessage.Expected("B"));
 
             new Error<object>(endOfInput, errors).ErrorMessages.ToString().ShouldEqual("A or B expected");
         }
@@ -41,27 +36,27 @@ namespace Parsley
         [ExpectedException(typeof(MemberAccessException), ExpectedMessage = "(1, 1): Parse error.")]
         public void ThrowsWhenAttemptingToGetParsedValue()
         {
-            var value = new Error<object>(x).Value;
+            var value = new Error<object>(x, ErrorMessage.Unknown()).Value;
         }
 
         [Test]
-        public void ProvidesParseErrorMessageWithPositionAsToString()
+        public void ProvidesErrorMessageWithPositionAsToString()
         {
-            new Error<object>(x).ToString().ShouldEqual("(1, 1): Parse error.");
-            new Error<object>(x, new ErrorMessage("y")).ToString().ShouldEqual("(1, 1): y expected");
+            new Error<object>(x, ErrorMessage.Unknown()).ToString().ShouldEqual("(1, 1): Parse error.");
+            new Error<object>(x, ErrorMessage.Expected("y")).ToString().ShouldEqual("(1, 1): y expected");
         }
 
         [Test]
         public void HasRemainingUnparsedTokens()
         {
-            new Error<object>(x).UnparsedTokens.ShouldEqual(x);
-            new Error<object>(endOfInput).UnparsedTokens.ShouldEqual(endOfInput);
+            new Error<object>(x, ErrorMessage.Unknown()).UnparsedTokens.ShouldEqual(x);
+            new Error<object>(endOfInput, ErrorMessage.Unknown()).UnparsedTokens.ShouldEqual(endOfInput);
         }
 
         [Test]
         public void ReportsErrorState()
         {
-            new Error<object>(x).Success.ShouldBeFalse();
+            new Error<object>(x, ErrorMessage.Unknown()).Success.ShouldBeFalse();
         }
 
         [Test]
@@ -69,7 +64,7 @@ namespace Parsley
         {
             Parser<string> shouldNotBeCalled = tokens => { throw new Exception(); };
 
-            Reply<string> reply = new Error<object>(x, new ErrorMessage("expectation")).ParseRest(o => shouldNotBeCalled);
+            Reply<string> reply = new Error<object>(x, ErrorMessage.Expected("expectation")).ParseRest(o => shouldNotBeCalled);
             reply.Success.ShouldBeFalse();
             reply.UnparsedTokens.ShouldEqual(x);
             reply.ErrorMessages.ToString().ShouldEqual("expectation expected");
