@@ -32,7 +32,7 @@ namespace Parsley
         {
             var result = this;
 
-            foreach (var error in errors.All())
+            foreach (var error in errors.All<ErrorMessage>())
                 result = result.With(error);
 
             return result;
@@ -40,21 +40,23 @@ namespace Parsley
 
         public override string ToString()
         {
-            if (this == Empty)
-                return "";
-
-            var errors = new List<string>(All()
-                                              .Where(error => error.Expectation != null)
+            var expectationErrors = new List<string>(All<ExpectedErrorMessage>()
                                               .Select(error => error.Expectation)
                                               .Distinct()
                                               .OrderBy(expectation => expectation));
 
-            if (errors.Count == 0)
-                return "Parse error.";
+            if (expectationErrors.Count != 0)
+            {
+                var suffixes = Separators(expectationErrors.Count - 1).Concat(new[] {" expected"});
 
-            var suffixes = Separators(errors.Count - 1).Concat(new[] {" expected"});
+                return String.Join("", expectationErrors.Zip(suffixes, (error, suffix) => error + suffix));
+            }
 
-            return String.Join("", errors.Zip(suffixes, (error, suffix) => error + suffix));
+            var unknownError = All<UnknownErrorMessage>().FirstOrDefault();
+            if (unknownError != null)
+                return unknownError.ToString();
+
+            return "";
         }
 
         private static IEnumerable<string> Separators(int count)
@@ -64,14 +66,14 @@ namespace Parsley
             return Enumerable.Repeat(", ", count - 1).Concat(new[] { " or " });
         }
 
-        private IEnumerable<ErrorMessage> All()
+        private IEnumerable<T> All<T>() where T : ErrorMessage
         {
             if (this != Empty)
             {
-                
-                yield return head;
-                foreach (ErrorMessage message in tail.All())
-                    yield return message;
+                if (head is T)
+                    yield return (T)head;
+                foreach (T message in tail.All<T>())
+                        yield return message;
             }
         }
     }

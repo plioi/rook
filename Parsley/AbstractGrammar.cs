@@ -27,14 +27,14 @@ namespace Parsley
             };
         }
 
-        public static Parser<Token> String(string expected)
+        public static Parser<Token> String(string expectation)
         {
             return tokens =>
             {
-                if (tokens.CurrentToken.Literal == expected)
+                if (tokens.CurrentToken.Literal == expectation)
                     return new Parsed<Token>(tokens.CurrentToken, tokens.Advance());
 
-                return new Error<Token>(tokens, ErrorMessage.Expected(expected));
+                return new Error<Token>(tokens, ErrorMessage.Expected(expectation));
             };
         }
 
