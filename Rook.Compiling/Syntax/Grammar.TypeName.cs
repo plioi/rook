@@ -10,7 +10,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return OnError(
+                return Label(
                     from rootType in Choice(NameType, KeywordType)
                     from modifiers in ZeroOrMore(TypeModifier)
                     select modifiers.Aggregate(rootType, ApplyTypeModifier),

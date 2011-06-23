@@ -32,7 +32,7 @@ namespace Parsley
                 .With(ErrorMessage.Expected("A"))
                 .With(ErrorMessage.Expected("B"));
 
-            new Parsed<object>("x", unparsed, potentialErrors).ErrorMessages.ToString().ShouldEqual("A or B expected");
+            new Parsed<object>("x", unparsed, potentialErrors).ErrorMessages.ShouldEqual(potentialErrors);
         }
 
         [Test]

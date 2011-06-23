@@ -18,7 +18,11 @@ namespace Parsley
 
         public T Value
         {
-            get { throw new MemberAccessException(ToString()); }
+            get
+            {
+                Position position = UnparsedTokens.Position;
+                throw new MemberAccessException(String.Format("({0}, {1}): {2}", position.Line, position.Column, ErrorMessages));
+            }
         }
 
         public Lexer UnparsedTokens { get; private set; }
@@ -33,12 +37,6 @@ namespace Parsley
         public Reply<U> ParseRest<U>(Func<T, Parser<U>> constructNextParser)
         {
             return new Error<U>(UnparsedTokens, errors);
-        }
-
-        public override string ToString()
-        {
-            Position position = UnparsedTokens.Position;
-            return String.Format("({0}, {1}): {2}", position.Line, position.Column, ErrorMessages);
         }
     }
 }

@@ -185,16 +185,28 @@ namespace Parsley
             };
         }
 
-        public static Parser<T> OnError<T>(Parser<T> parse, string expectation)
+        /// <summary>
+        /// When parser p consumes any input, Label(p, e) is the same as p.
+        /// When parser p does not consume any input, Label(p, e) is the same
+        /// as p, except any messages are replaced with expectation e.
+        /// </summary>
+        public static Parser<T> Label<T>(Parser<T> parse, string expectation)
         {
+            var errors = ErrorMessageList.Empty.With(ErrorMessage.Expected(expectation));
+
             return tokens =>
             {
-                Reply<T> reply = parse(tokens);
-
-                if (reply.Success)
-                    return reply;
-
-                return new Error<T>(reply.UnparsedTokens, ErrorMessage.Expected(expectation));
+                var start = tokens.Position;
+                var reply = parse(tokens);
+                var newPosition = reply.UnparsedTokens.Position;
+                if (start == newPosition)
+                {
+                    if (reply.Success)
+                        reply = new Parsed<T>(reply.Value, reply.UnparsedTokens, errors);
+                    else
+                        reply = new Error<T>(reply.UnparsedTokens, errors);
+                }
+                return reply;
             };
         }
 

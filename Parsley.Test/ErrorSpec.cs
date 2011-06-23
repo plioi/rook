@@ -40,13 +40,6 @@ namespace Parsley
         }
 
         [Test]
-        public void ProvidesErrorMessageWithPositionAsToString()
-        {
-            new Error<object>(x, ErrorMessage.Unknown()).ToString().ShouldEqual("(1, 1): Parse error.");
-            new Error<object>(x, ErrorMessage.Expected("y")).ToString().ShouldEqual("(1, 1): y expected");
-        }
-
-        [Test]
         public void HasRemainingUnparsedTokens()
         {
             new Error<object>(x, ErrorMessage.Unknown()).UnparsedTokens.ShouldEqual(x);

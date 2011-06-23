@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
 
 namespace Parsley
 {
@@ -32,9 +31,18 @@ namespace Parsley
             return result;
         }
 
-        public static void WithMessage<T>(this Reply<T> result, string expectedMessage)
+        public static Reply<T> WithMessage<T>(this Reply<T> result, string expectedMessage)
         {
-            result.ToString().ShouldEqual(expectedMessage);
+            var position = result.UnparsedTokens.Position;
+            var actual = String.Format("({0}, {1}): {2}", position.Line, position.Column, result.ErrorMessages);
+            actual.ShouldEqual(expectedMessage);
+            return result;
+        }
+
+        public static Reply<T> WithNoMessage<T>(this Reply<T> result)
+        {
+            result.ErrorMessages.ShouldEqual(ErrorMessageList.Empty);
+            return result;
         }
 
         public static Reply<T> PartiallyParses<T>(this Parser<T> parse, Lexer tokens, string expectedUnparsedSource)
@@ -70,29 +78,34 @@ namespace Parsley
             return result;
         }
 
-        public static void IntoValue<T>(this Reply<T> result, T expected)
+        public static Reply<T> IntoValue<T>(this Reply<T> result, T expected)
         {
             result.Value.ShouldEqual(expected);
+            return result;
         }
 
-        public static void IntoValue<T>(this Reply<T> result, Action<T> assertParsedValue)
+        public static Reply<T> IntoValue<T>(this Reply<T> result, Action<T> assertParsedValue)
         {
             assertParsedValue(result.Value);
+            return result;
         }
 
-        public static void IntoToken(this Reply<Token> result, TokenKind expectedKind, string expectedLiteral)
+        public static Reply<Token> IntoToken(this Reply<Token> result, TokenKind expectedKind, string expectedLiteral)
         {
             result.Value.ShouldBe(expectedKind, expectedLiteral);
+            return result;
         }
 
-        public static void IntoToken(this Reply<Token> result, string expectedLiteral)
+        public static Reply<Token> IntoToken(this Reply<Token> result, string expectedLiteral)
         {
             result.Value.Literal.ShouldEqual(expectedLiteral);
+            return result;
         }
 
-        public static void IntoTokens(this Reply<IEnumerable<Token>> result, params string[] expectedLiterals)
+        public static Reply<IEnumerable<Token>> IntoTokens(this Reply<IEnumerable<Token>> result, params string[] expectedLiterals)
         {
             result.IntoValue(tokens => tokens.Select(x => x.Literal).ShouldList(expectedLiterals));
+            return result;
         }
     }
 }

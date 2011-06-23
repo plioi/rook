@@ -306,11 +306,32 @@ namespace Parsley
         }
 
         [Test]
-        public void ImprovingDefaultErrorMessagesWithAKnownExpectation()
+        public void ImprovingDefaultMessagesWithAKnownExpectation()
         {
-            LETTER.FailsToParse(Tokenize("."), ".").WithMessage("(1, 1): Letter expected");
+            var A = String("A");
+            var B = String("B");
 
-            OnError(LETTER, "known-expectation").FailsToParse(Tokenize("."), ".").WithMessage("(1, 1): known-expectation expected");
+            var AB = from a in A
+                     from b in B
+                     select new Token(null, a.Position, a.Literal + b.Literal);
+            var labeled = Label(AB, "'A' followed by 'B'");
+
+            //When p succeeds after consuming input, Label(p) is the same as p.
+            AB.Parses(Tokenize("AB")).IntoToken("AB").WithNoMessage();
+            labeled.Parses(Tokenize("AB")).IntoToken("AB").WithNoMessage();
+
+            //When p fails after consuming input, Label(p) is the same as p.
+            AB.FailsToParse(Tokenize("A!"), "!").WithMessage("(1, 2): B expected");
+            labeled.FailsToParse(Tokenize("A!"), "!").WithMessage("(1, 2): B expected");
+
+            //When p succeeds but does not consume input, Label(p) still succeeds but the potential error is included.
+            var succeedWithoutConsuming = new Token(null, null, "$").SucceedWithThisValue();
+            succeedWithoutConsuming.PartiallyParses(Tokenize("!"), "!").IntoToken("$").WithNoMessage();
+            Label(succeedWithoutConsuming, "nothing").PartiallyParses(Tokenize("!"), "!").IntoToken("$").WithMessage("(1, 1): nothing expected");
+
+            //When p fails but does not consume input, Label(p) fails with the given expectation.
+            AB.FailsToParse(Tokenize("!"), "!").WithMessage("(1, 1): A expected");
+            labeled.FailsToParse(Tokenize("!"), "!").WithMessage("(1, 1): 'A' followed by 'B' expected");
         }
     }
 }
