@@ -118,6 +118,19 @@ namespace Parsley
                 : base(new Text(source), Digit, Letter, Comma, WhiteSpace, Symbol) { }
         }
 
+        private Parser<Token> A, B, AB;
+
+        [SetUp]
+        public void SetUp()
+        {
+            A = String("A");
+            B = String("B");
+
+            AB = from a in A
+                 from b in B
+                 select new Token(null, a.Position, a.Literal + b.Literal);
+        }
+
         [Test]
         public void CanFailWithoutConsumingInput()
         {
@@ -273,13 +286,6 @@ namespace Parsley
         [Test]
         public void ParsingAnOptionalRuleZeroOrOneTimes()
         {
-            var A = String("A");
-            var B = String("B");
-
-            var AB = from a in A
-                     from b in B
-                     select new Token(null, a.Position, a.Literal + b.Literal);
-
             Optional(AB).PartiallyParses(Tokenize("AB."), ".").IntoToken("AB");
             Optional(AB).PartiallyParses(Tokenize("."), ".").IntoValue(token => token.ShouldBeNull());
             Optional(AB).FailsToParse(Tokenize("AC."), "C.").WithMessage("(1, 2): B expected");
@@ -288,32 +294,19 @@ namespace Parsley
         [Test]
         public void AttemptingToParseRuleButBacktrackingUponFailure()
         {
-            var A = String("A");
-            var B = String("B");
-
-            var AB = from a in A
-                     from b in B
-                     select new Token(null, a.Position, a.Literal + b.Literal);
-
-            //When AB succeeds, Attempt(AB) is the same as AB.
+            //When p succeeds, Attempt(p) is the same as p.
             Attempt(AB).Parses(Tokenize("AB")).IntoToken("AB");
 
-            //When AB fails without consuming input, Attempt(AB) is the same as AB.
+            //When p fails without consuming input, Attempt(p) is the same as p.
             Attempt(AB).FailsToParse(Tokenize("!"), "!").WithMessage("(1, 1): A expected");
 
-            //When AB fails after consuming input, Attempt(AB) backtracks before reporting failure.
+            //When p fails after consuming input, Attempt(p) backtracks before reporting failure.
             Attempt(AB).FailsToParse(Tokenize("A!"), "A!").WithMessage("(1, 1): [(1, 2): B expected]");
         }
 
         [Test]
         public void ImprovingDefaultMessagesWithAKnownExpectation()
         {
-            var A = String("A");
-            var B = String("B");
-
-            var AB = from a in A
-                     from b in B
-                     select new Token(null, a.Position, a.Literal + b.Literal);
             var labeled = Label(AB, "'A' followed by 'B'");
 
             //When p succeeds after consuming input, Label(p) is the same as p.
