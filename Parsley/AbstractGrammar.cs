@@ -140,7 +140,7 @@ namespace Parsley
         /// Choice(p) is equivalent to p.
         /// 
         /// For 2 or more inputs, parsers are applied from left
-        /// to right.  If a parser succeeds, its result is returned.
+        /// to right.  If a parser succeeds, its reply is returned.
         /// If a parser fails without consuming input, the next parser
         /// is attempted.  If a parser fails after consuming input,
         /// subsequent parsers will not be attempted.  As long as

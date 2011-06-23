@@ -14,9 +14,9 @@ namespace Rook.Compiling.Syntax
             return parse.FailsToParse(new RookLexer(source), expectedUnparsedSource);
         }
 
-        public static void IntoTree<TSyntax>(this Reply<TSyntax> result, string expectedSyntaxTree) where TSyntax : SyntaxTree
+        public static void IntoTree<TSyntax>(this Reply<TSyntax> reply, string expectedSyntaxTree) where TSyntax : SyntaxTree
         {
-            result.IntoValue(syntaxTree => syntaxTree.Visit(new Serializer()).ShouldEqual(expectedSyntaxTree));
+            reply.IntoValue(syntaxTree => syntaxTree.Visit(new Serializer()).ShouldEqual(expectedSyntaxTree));
         }
     }
 }

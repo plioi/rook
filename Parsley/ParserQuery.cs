@@ -5,7 +5,7 @@ namespace Parsley
     public static class ParserQuery
     {
         /// <summary>
-        /// Converts any value into a parser that always succeeds with the given value in its parse result.
+        /// Converts any value into a parser that always succeeds with the given value in its reply.
         /// </summary>
         /// <remarks>
         /// In monadic terms, this is the 'Unit' function.
