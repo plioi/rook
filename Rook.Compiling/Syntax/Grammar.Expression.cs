@@ -131,7 +131,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from token in Token(RookLexer.Boolean)
+                return from token in Choice(Token(RookLexer.@true), Token(RookLexer.@false))
                        select new BooleanLiteral(token.Position, bool.Parse(token.Literal));
             }
         }

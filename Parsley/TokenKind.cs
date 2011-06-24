@@ -1,4 +1,7 @@
-﻿namespace Parsley
+﻿using System;
+using System.Linq;
+
+namespace Parsley
 {
     public class TokenKind
     {
@@ -28,6 +31,15 @@
         public string Name
         {
             get { return name; }
+        }
+    }
+
+    public class Keyword : TokenKind
+    {
+        public Keyword(string word) : base(word, word + @"\b")
+        {
+            if (word.Any(ch => !Char.IsLetter(ch)))
+                throw new ArgumentException("Keywords may only contain letters.", "word");
         }
     }
 }

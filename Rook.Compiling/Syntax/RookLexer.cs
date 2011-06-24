@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Parsley;
 
@@ -7,16 +9,17 @@ namespace Rook.Compiling.Syntax
     public class RookLexer : Lexer
     {
         public static readonly TokenKind IntralineWhiteSpace = new TokenKind("IntralineWhiteSpace", @"[ \t]+");
-        
-        public static readonly TokenKind @int = new TokenKind("int", @"int \b");
-        public static readonly TokenKind @bool = new TokenKind("bool", @"bool \b");
-        public static readonly TokenKind @void = new TokenKind("void", @"void \b");
-        public static readonly TokenKind @null = new TokenKind("null", @"null \b");
-        public static readonly TokenKind @if = new TokenKind("if", @"if \b");
-        public static readonly TokenKind @else = new TokenKind("else", @"else \b");
-        public static readonly TokenKind @fn = new TokenKind("fn", @"fn \b");
 
-        public static readonly TokenKind Boolean = new TokenKind("boolean", @"true \b | false \b");
+        public static readonly Keyword @int = new Keyword("int");
+        public static readonly Keyword @bool = new Keyword("bool");
+        public static readonly Keyword @void = new Keyword("void");
+        public static readonly Keyword @null = new Keyword("null");
+        public static readonly Keyword @if = new Keyword("if");
+        public static readonly Keyword @else = new Keyword("else");
+        public static readonly Keyword @fn = new Keyword("fn");
+        public static readonly Keyword @true = new Keyword("true");
+        public static readonly Keyword @false = new Keyword("false");
+
         public static readonly TokenKind Integer = new TokenKind("integer", @"[0-9]+");
 
         public static readonly Dictionary<string, TokenKind> Operators = CreateOperators(
@@ -29,8 +32,8 @@ namespace Rook.Compiling.Syntax
         public RookLexer(string source)
             : base(new Text(source),
             IntralineWhiteSpace,
-            @int, @bool, @void, @null, @if, @else, @fn,
-            Boolean, Integer, Identifier,
+            @int, @bool, @void, @null, @if, @else, @fn, @true, @false,
+            Integer, Identifier,
             Operators["("], Operators[")"],
             Operators["*"], Operators["/"],
             Operators["+"], Operators["-"],

@@ -27,8 +27,8 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ShouldRecognizeKeywords()
         {
-            AssertTokens("true", RookLexer.Boolean, "true");
-            AssertTokens("false", RookLexer.Boolean, "false");
+            AssertTokens("true", RookLexer.@true, "true");
+            AssertTokens("false", RookLexer.@false, "false");
             AssertTokens("int", RookLexer.@int, "int");
             AssertTokens("bool", RookLexer.@bool, "bool");
             AssertTokens("void", RookLexer.@void, "void");

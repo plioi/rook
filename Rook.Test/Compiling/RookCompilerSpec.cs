@@ -16,7 +16,7 @@ namespace Rook.Compiling
         {
             Build("int Main() $1;");
             AssertErrors(1);
-            AssertError(1, 12, "(, [, {, boolean, fn, identifier, if, integer or null expected");
+            AssertError(1, 12, "(, [, {, false, fn, identifier, if, integer, null or true expected");
         }
 
         [Test]
