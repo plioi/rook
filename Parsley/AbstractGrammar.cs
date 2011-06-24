@@ -51,7 +51,7 @@ namespace Parsley
                 while (reply.Success)
                 {
                     if (oldPosition == newPosition)
-                        throw new Exception("ZeroOrMore encountered a potential infinite loop.");
+                        throw new Exception("Parser encountered a potential infinite loop.");
 
                     list.Add(reply.Value);
                     oldPosition = newPosition;

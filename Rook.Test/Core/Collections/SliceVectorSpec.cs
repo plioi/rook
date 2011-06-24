@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Rook.Core.Collections
 {
     [TestFixture]
-    public class SliceVectorSpec : VectorSpec
+    public class SliceVectorSpec
     {
         [Test]
         public void ShouldProvideItemCount()
@@ -148,11 +148,16 @@ namespace Rook.Core.Collections
         {
             Vector<int> fiveToNine = SliceDigits(5, 10);
 
-            AssertIndexOutOfRange(() => fiveToNine.With(5, 5));
-            AssertIndexOutOfRange(() => fiveToNine.With(-1, -1));
+            var actions = new Action[]
+            {
+                () => fiveToNine.With(5, 5),
+                () => fiveToNine.With(-1, -1),
+                () => { int value = fiveToNine[5]; },
+                () => { int value = fiveToNine[-1]; }
+            };
 
-            AssertIndexOutOfRange(() => { int value = fiveToNine[5]; });
-            AssertIndexOutOfRange(() => { int value = fiveToNine[-1]; });
+            foreach (var action in actions)
+                action.ShouldThrow<IndexOutOfRangeException>("Index was outside the bounds of the vector.");
         }
 
         private static Vector<int> SliceDigits(int startIndexInclusive, int endIndexExclusive)

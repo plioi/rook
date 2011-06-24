@@ -84,7 +84,6 @@
     <Compile Include="Compiling\Syntax\ParsingAssertions.cs" />
     <Compile Include="Core\Collections\ArrayVectorSpec.cs" />
     <Compile Include="Core\Collections\SliceVectorSpec.cs" />
-    <Compile Include="Core\Collections\VectorSpec.cs" />
     <Compile Include="Core\IdentitySpec.cs" />
     <Compile Include="Core\NullableSpec.cs" />
     <Compile Include="Core\ValueSpec.cs" />

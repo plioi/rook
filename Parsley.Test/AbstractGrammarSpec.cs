@@ -181,23 +181,11 @@ namespace Parsley
             parser.Parses(Tokenize("")).IntoTokens();
             parser.PartiallyParses(Tokenize("AB!"), "!").IntoTokens("AB");
             parser.PartiallyParses(Tokenize("ABAB!"), "!").IntoTokens("AB", "AB");
-
             parser.FailsToParse(Tokenize("ABABA!"), "!").WithMessage("(1, 6): B expected");
 
-            bool threw = false;
-            try
-            {
-                Parser<Token> succeedWithoutConsuming = tokens => new Parsed<Token>(null, tokens);
-
-                ZeroOrMore(succeedWithoutConsuming)(Tokenize(""));
-            }
-            catch (Exception ex)
-            {
-                threw = true;
-                ex.Message.ShouldEqual("ZeroOrMore encountered a potential infinite loop.");
-            }
-
-            threw.ShouldBeTrue();
+            Parser<Token> succeedWithoutConsuming = tokens => new Parsed<Token>(null, tokens);
+            Action infiniteLoop = () => ZeroOrMore(succeedWithoutConsuming)(Tokenize(""));
+            infiniteLoop.ShouldThrow<Exception>("Parser encountered a potential infinite loop.");
         }
 
         [Test]

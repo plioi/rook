@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
@@ -74,6 +75,23 @@ namespace Parsley
         public static void ShouldList<T>(this IEnumerable<T> actual, params T[] expected)
         {
             actual.ToArray().ShouldEqual(expected);
+        }
+
+        public static void ShouldThrow<TException>(this Action shouldThrow, string expectedMessage) where TException : Exception
+        {
+            bool threw = false;
+
+            try
+            {
+                shouldThrow();
+            }
+            catch (TException ex)
+            {
+                ex.Message.ShouldEqual(expectedMessage);
+                threw = true;
+            }
+
+            threw.ShouldBeTrue(String.Format("Expected {0}.", typeof(TException).Name));
         }
     }
 }

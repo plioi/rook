@@ -1,9 +1,10 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 
 namespace Rook.Core.Collections
 {
     [TestFixture]
-    public class ArrayVectorSpec : VectorSpec
+    public class ArrayVectorSpec
     {
         [Test]
         public void ShouldProvideItemCount()
@@ -72,11 +73,16 @@ namespace Rook.Core.Collections
         {
             Vector<int> empty = new ArrayVector<int>();
 
-            AssertIndexOutOfRange(() => empty.With(0, 0));
-            AssertIndexOutOfRange(() => empty.With(-1, -1));
+            var actions = new Action[]
+            {
+                () => empty.With(0, 0),
+                () => empty.With(-1, -1),
+                () => { int value = empty[0]; },
+                () => { int value = empty[-1]; }
+            };
 
-            AssertIndexOutOfRange(() => { int value = empty[0]; });
-            AssertIndexOutOfRange(() => { int value = empty[-1]; });
+            foreach (var action in actions)
+                action.ShouldThrow<IndexOutOfRangeException>("Index was outside the bounds of the vector.");
         }
 
         [Test]
