@@ -77,7 +77,7 @@ namespace Rook.Compiling.Syntax
             get
             {
                 return from open in Operator("{").TerminatedBy(Optional(EndOfLine))
-                       from variableDeclarations in ZeroOrMore(VariableDeclaration)
+                       from variableDeclarations in ZeroOrMore(Attempt(VariableDeclaration))
                        from innerExpressions in OneOrMore(Expression.TerminatedBy(EndOfLine))
                        from close in Operator("}")
                        select new Block(open.Position, variableDeclarations, innerExpressions);

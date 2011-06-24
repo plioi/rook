@@ -42,18 +42,29 @@ namespace Parsley
         {
             return tokens =>
             {
-                var tokensBeforeFirstFailure = tokens;
+                Position oldPosition = tokens.Position;
                 var reply = item(tokens);
+                Position newPosition = reply.UnparsedTokens.Position;
+
                 var list = new List<T>();
 
                 while (reply.Success)
                 {
+                    if (oldPosition == newPosition)
+                        throw new Exception("ZeroOrMore encountered a potential infinite loop.");
+
                     list.Add(reply.Value);
-                    tokensBeforeFirstFailure = reply.UnparsedTokens;
+                    oldPosition = newPosition;
                     reply = item(reply.UnparsedTokens);
+                    newPosition = reply.UnparsedTokens.Position;
                 }
 
-                return new Parsed<IEnumerable<T>>(list, tokensBeforeFirstFailure);
+                //The item parse finally failed.
+
+                if (oldPosition != newPosition)
+                    return new Error<IEnumerable<T>>(reply.UnparsedTokens, reply.ErrorMessages);
+
+                return new Parsed<IEnumerable<T>>(list, reply.UnparsedTokens, reply.ErrorMessages);
             };
         }
 
@@ -67,17 +78,6 @@ namespace Parsley
         public static Parser<IEnumerable<T>> ZeroOrMore<T, S>(Parser<T> item, Parser<S> separator)
         {
             return Choice(OneOrMore(item, separator), Zero<T>());
-        }
-
-        public static Parser<IEnumerable<T>> ZeroOrMoreTerminated<T, X>(Parser<T> item, Parser<X> terminator)
-        {
-            return Choice(from end in terminator
-                          from zero in Zero<T>()
-                          select zero,
-
-                          from first in item
-                          from rest in ZeroOrMoreTerminated(item, terminator)
-                          select List(first, rest));
         }
 
         public static Parser<IEnumerable<T>> OneOrMore<T, S>(Parser<T> item, Parser<S> separator)

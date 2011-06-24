@@ -176,18 +176,28 @@ namespace Parsley
         [Test]
         public void ApplyingARuleZeroOrMoreTimes()
         {
-            var parser = ZeroOrMore(DIGIT);
+            var parser = ZeroOrMore(AB);
 
             parser.Parses(Tokenize("")).IntoTokens();
-            parser.PartiallyParses(Tokenize("!"), "!").IntoTokens();
+            parser.PartiallyParses(Tokenize("AB!"), "!").IntoTokens("AB");
+            parser.PartiallyParses(Tokenize("ABAB!"), "!").IntoTokens("AB", "AB");
 
-            parser.PartiallyParses(Tokenize("0!"), "!").IntoTokens("0");
-            parser.PartiallyParses(Tokenize("01!"), "!").IntoTokens("0", "1");
-            parser.PartiallyParses(Tokenize("012!"), "!").IntoTokens("0", "1", "2");
+            parser.FailsToParse(Tokenize("ABABA!"), "!").WithMessage("(1, 6): B expected");
 
-            parser.Parses(Tokenize("0")).IntoTokens("0");
-            parser.Parses(Tokenize("01")).IntoTokens("0", "1");
-            parser.Parses(Tokenize("012")).IntoTokens("0", "1", "2");
+            bool threw = false;
+            try
+            {
+                Parser<Token> succeedWithoutConsuming = tokens => new Parsed<Token>(null, tokens);
+
+                ZeroOrMore(succeedWithoutConsuming)(Tokenize(""));
+            }
+            catch (Exception ex)
+            {
+                threw = true;
+                ex.Message.ShouldEqual("ZeroOrMore encountered a potential infinite loop.");
+            }
+
+            threw.ShouldBeTrue();
         }
 
         [Test]
@@ -218,28 +228,11 @@ namespace Parsley
             parser.PartiallyParses(Tokenize("0!"), "!").IntoTokens("0");
             parser.PartiallyParses(Tokenize("0,1!"), "!").IntoTokens("0", "1");
             parser.PartiallyParses(Tokenize("0,1,2!"), "!").IntoTokens("0", "1", "2");
-            parser.PartiallyParses(Tokenize("0,1,2,"), ",").IntoTokens("0", "1", "2");
+            parser.FailsToParse(Tokenize("0,1,2,"), "").WithMessage("(1, 7): Digit expected");
 
             parser.Parses(Tokenize("0")).IntoTokens("0");
             parser.Parses(Tokenize("0,1")).IntoTokens("0", "1");
             parser.Parses(Tokenize("0,1,2")).IntoTokens("0", "1", "2");
-        }
-
-        [Test]
-        public void ApplyingARuleZeroOrMoreTimesFollowedByARequiredTerminatorRule()
-        {
-            var parser = ZeroOrMoreTerminated(DIGIT, SYMBOL);
-
-            parser.FailsToParse(Tokenize(""), "");
-            parser.FailsToParse(Tokenize("MissingTerminator"), "MissingTerminator");
-            parser.FailsToParse(Tokenize("0MissingTerminator"), "MissingTerminator");
-            parser.FailsToParse(Tokenize("01MissingTerminator"), "MissingTerminator");
-
-            parser.Parses(Tokenize("~")).IntoTokens();
-            parser.PartiallyParses(Tokenize("~!"), "!").IntoTokens();
-            parser.Parses(Tokenize("0~")).IntoTokens("0");
-            parser.Parses(Tokenize("01~")).IntoTokens("0", "1");
-            parser.PartiallyParses(Tokenize("012~!"), "!").IntoTokens("0", "1", "2");
         }
 
         [Test]

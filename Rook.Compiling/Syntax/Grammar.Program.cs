@@ -10,7 +10,7 @@ namespace Rook.Compiling.Syntax
             {
                 return from leadingWhiteSpace in Optional(Token(RookLexer.IntralineWhiteSpace))
                        from leadingEndOfLine in Optional(Token(RookLexer.EndOfLine))
-                       from functions in ZeroOrMoreTerminated(Function.TerminatedBy(EndOfLine), EndOfInput)
+                       from functions in ZeroOrMore(Function.TerminatedBy(EndOfLine)).TerminatedBy(EndOfInput)
                        select new Program(new Position(1, 1), functions);
             }
         }
