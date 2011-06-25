@@ -7,15 +7,6 @@ namespace Rook.Compiling.Syntax
     public class RookLexerSpec : AbstractGrammar
     {
         [Test]
-        public void ShouldRecognizeIntralineWhiteSpaces()
-        {
-            AssertTokens(" ", RookLexer.IntralineWhiteSpace, " ");
-            AssertTokens("\t", RookLexer.IntralineWhiteSpace, "\t");
-            AssertTokens(" \t ", RookLexer.IntralineWhiteSpace, " \t ");
-            AssertTokens("\t \t", RookLexer.IntralineWhiteSpace, "\t \t");
-        }
-
-        [Test]
         public void ShouldRecognizeIntegers()
         {
             AssertTokens("0", RookLexer.Integer, "0");
@@ -65,6 +56,15 @@ namespace Rook.Compiling.Syntax
 
             AssertTokens(";", RookLexer.EndOfLine, ";");
             AssertTokens("; \r\n \t ",RookLexer.EndOfLine, "; \r\n \t ");
+        }
+
+        [Test]
+        public void ShouldRecognizeAndSkipOverIntralineWhiteSpaces()
+        {
+            AssertTokens(" a if == \r\n 0 ", "a", "if", "==", "\r\n ", "0");
+            AssertTokens("\ta\tif\t==\t\r\n\t0\t", "a", "if", "==", "\r\n\t", "0");
+            AssertTokens(" \t a \t if \t == \t \r\n \t 0 \t ", "a", "if", "==", "\r\n \t ", "0");
+            AssertTokens("\t \ta\t \tif\t \t==\t \t\r\n\t \t0\t \t", "a", "if", "==", "\r\n\t \t", "0");
         }
 
         private static void AssertTokens(string source, TokenKind expectedKind, params string[] expectedLiterals)
