@@ -7,11 +7,13 @@ namespace Parsley
     {
         private readonly string name;
         private readonly Pattern pattern;
+        private readonly bool skippable;
 
-        public TokenKind(string name, string pattern)
+        public TokenKind(string name, string pattern, bool skippable = false)
         {
             this.name = name;
             this.pattern = new Pattern(pattern);
+            this.skippable = skippable;
         }
 
         public bool TryMatch(Text text, out Token token)
@@ -31,6 +33,11 @@ namespace Parsley
         public string Name
         {
             get { return name; }
+        }
+
+        public bool Skippable
+        {
+            get { return skippable;}
         }
     }
 
