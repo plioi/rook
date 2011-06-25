@@ -254,12 +254,15 @@ namespace Parsley
         [Test]
         public void ApplyingARuleBetweenTwoOtherRules()
         {
-            var parser = Between(SYMBOL, DIGIT, SYMBOL);
+            var p = Between(A, B, A);
 
-            parser.PartiallyParses(Tokenize("(1)Unparsed"), "Unparsed").IntoToken("1");
-            parser.FailsToParse(Tokenize("("), "");
-            parser.FailsToParse(Tokenize("(!"), "!");
-            parser.FailsToParse(Tokenize("(1A"), "A");
+            p.FailsToParse(Tokenize(""), "").WithMessage("(1, 1): A expected");
+            p.FailsToParse(Tokenize("B"), "B").WithMessage("(1, 1): A expected");
+            p.FailsToParse(Tokenize("A"), "").WithMessage("(1, 2): B expected");
+            p.FailsToParse(Tokenize("AA"), "A").WithMessage("(1, 2): B expected");
+            p.FailsToParse(Tokenize("AB"), "").WithMessage("(1, 3): A expected");
+            p.FailsToParse(Tokenize("ABB"), "B").WithMessage("(1, 3): A expected");
+            p.Parses(Tokenize("ABA")).IntoToken("B");
         }
 
         [Test]

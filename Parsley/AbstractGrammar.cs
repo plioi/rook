@@ -107,6 +107,10 @@ namespace Parsley
                    select pairs.Aggregate(first, associatePair);
         }
 
+        /// <summary>
+        /// Between(left, goal, right) parses its arguments in order.  If all three
+        /// parsers succeed, the result of the goal parser is returned.
+        /// </summary>
         public static Parser<TGoal> Between<TLeft, TGoal, TRight>(Parser<TLeft> left, 
                                                                   Parser<TGoal> goal, 
                                                                   Parser<TRight> right)
