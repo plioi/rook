@@ -246,6 +246,10 @@ namespace Parsley
 
     public static class AbstractGrammarExtensions
     {
+        /// <summary>
+        /// goal.TerminatedBy(terminator) parse goal and then terminator.  If goal and terminator both
+        /// succeed, the result of the goal parser is returned.
+        /// </summary>
         public static Parser<T> TerminatedBy<T, S>(this Parser<T> goal, Parser<S> terminator)
         {
             return from G in goal

@@ -165,12 +165,13 @@ namespace Parsley
         [Test]
         public void ApplyingARuleFollowedByARequiredButDiscardedTerminatorRule()
         {
-            Parser<Token> parser = LETTER.TerminatedBy(SYMBOL);
+            var parser = A.TerminatedBy(B);
 
-            parser.PartiallyParses(Tokenize("A~Unparsed"), "Unparsed").IntoToken("A");
-            parser.FailsToParse(Tokenize(""), "");
-            parser.FailsToParse(Tokenize("~"), "~");
-            parser.FailsToParse(Tokenize("A0"), "0");
+            parser.FailsToParse(Tokenize(""), "").WithMessage("(1, 1): A expected");
+            parser.FailsToParse(Tokenize("B"), "B").WithMessage("(1, 1): A expected");
+            parser.FailsToParse(Tokenize("A"), "").WithMessage("(1, 2): B expected");
+            parser.FailsToParse(Tokenize("AA"), "A").WithMessage("(1, 2): B expected");
+            parser.Parses(Tokenize("AB")).IntoToken("A");
         }
 
         [Test]
@@ -245,15 +246,15 @@ namespace Parsley
         [Test]
         public void ApplyingARuleBetweenTwoOtherRules()
         {
-            var p = Between(A, B, A);
+            var parser = Between(A, B, A);
 
-            p.FailsToParse(Tokenize(""), "").WithMessage("(1, 1): A expected");
-            p.FailsToParse(Tokenize("B"), "B").WithMessage("(1, 1): A expected");
-            p.FailsToParse(Tokenize("A"), "").WithMessage("(1, 2): B expected");
-            p.FailsToParse(Tokenize("AA"), "A").WithMessage("(1, 2): B expected");
-            p.FailsToParse(Tokenize("AB"), "").WithMessage("(1, 3): A expected");
-            p.FailsToParse(Tokenize("ABB"), "B").WithMessage("(1, 3): A expected");
-            p.Parses(Tokenize("ABA")).IntoToken("B");
+            parser.FailsToParse(Tokenize(""), "").WithMessage("(1, 1): A expected");
+            parser.FailsToParse(Tokenize("B"), "B").WithMessage("(1, 1): A expected");
+            parser.FailsToParse(Tokenize("A"), "").WithMessage("(1, 2): B expected");
+            parser.FailsToParse(Tokenize("AA"), "A").WithMessage("(1, 2): B expected");
+            parser.FailsToParse(Tokenize("AB"), "").WithMessage("(1, 3): A expected");
+            parser.FailsToParse(Tokenize("ABB"), "B").WithMessage("(1, 3): A expected");
+            parser.Parses(Tokenize("ABA")).IntoToken("B");
         }
 
         [Test]
