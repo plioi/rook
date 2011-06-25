@@ -13,7 +13,7 @@ namespace Parsley
         private readonly Text text;
         private readonly IEnumerable<TokenKind> kinds;
 
-        private readonly Lazy<Token> lazyCurrentToken;
+        private readonly Token currentToken;
         private readonly Lazy<Lexer> lazyAdvance;
 
         public Lexer(Text text, params TokenKind[] kinds)
@@ -23,11 +23,12 @@ namespace Parsley
         {
             this.text = text;
             this.kinds = kinds;
-            lazyCurrentToken = new Lazy<Token>(LazyCurrentToken);
+
+            currentToken = GetCurrentToken();
             lazyAdvance = new Lazy<Lexer>(LazyAdvance);
         }
 
-        private Token LazyCurrentToken()
+        private Token GetCurrentToken()
         {
             Token token;
             foreach (var kind in kinds)
@@ -47,7 +48,7 @@ namespace Parsley
 
         public Token CurrentToken
         {
-            get { return lazyCurrentToken.Value; }
+            get { return currentToken; }
         }
 
         public Lexer Advance()
