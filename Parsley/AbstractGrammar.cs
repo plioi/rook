@@ -13,10 +13,10 @@ namespace Parsley
 
         public static Parser<Token> EndOfInput
         {
-            get { return Kind(Lexer.EndOfInput); }
+            get { return Token(Lexer.EndOfInput); }
         }
 
-        public static Parser<Token> Kind(TokenKind kind)
+        public static Parser<Token> Token(TokenKind kind)
         {
             return tokens =>
             {
@@ -27,7 +27,7 @@ namespace Parsley
             };
         }
 
-        public static Parser<Token> Literal(string expectation)
+        public static Parser<Token> Token(string expectation)
         {
             return tokens =>
             {

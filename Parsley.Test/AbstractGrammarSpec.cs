@@ -26,14 +26,14 @@ namespace Parsley
         [SetUp]
         public void SetUp()
         {
-            A = Literal("A");
-            B = Literal("B");
+            A = Token("A");
+            B = Token("B");
 
             AB = from a in A
                  from b in B
                  select new Token(null, a.Position, a.Literal + b.Literal);
 
-            COMMA = Literal(",");
+            COMMA = Token(",");
         }
 
         [Test]
@@ -52,19 +52,19 @@ namespace Parsley
         [Test]
         public void CanDemandThatAGivenKindOfTokenAppearsNext()
         {
-            Kind(SampleLexer.Letter).Parses(Tokenize("A")).IntoToken("A");
-            Kind(SampleLexer.Letter).FailsToParse(Tokenize("0"), "0").WithMessage("(1, 1): Letter expected");
+            Token(SampleLexer.Letter).Parses(Tokenize("A")).IntoToken("A");
+            Token(SampleLexer.Letter).FailsToParse(Tokenize("0"), "0").WithMessage("(1, 1): Letter expected");
 
-            Kind(SampleLexer.Digit).FailsToParse(Tokenize("A"), "A").WithMessage("(1, 1): Digit expected");
-            Kind(SampleLexer.Digit).Parses(Tokenize("0")).IntoToken("0");
+            Token(SampleLexer.Digit).FailsToParse(Tokenize("A"), "A").WithMessage("(1, 1): Digit expected");
+            Token(SampleLexer.Digit).Parses(Tokenize("0")).IntoToken("0");
         }
 
         [Test]
         public void CanDemandThatAGivenTokenLiteralAppearsNext()
         {
-            Literal("A").Parses(Tokenize("A")).IntoToken("A");
-            Literal("A").PartiallyParses(Tokenize("A!"), "!").IntoToken("A");
-            Literal("A").FailsToParse(Tokenize("B"), "B").WithMessage("(1, 1): A expected");
+            Token("A").Parses(Tokenize("A")).IntoToken("A");
+            Token("A").PartiallyParses(Tokenize("A!"), "!").IntoToken("A");
+            Token("A").FailsToParse(Tokenize("B"), "B").WithMessage("(1, 1): A expected");
         }
 
         [Test]
@@ -138,7 +138,7 @@ namespace Parsley
         [Test]
         public void ApplyingARuleOneOrMoreTimesInterspersedByALeftAssociativeSeparatorRule()
         {
-            var OPERATOR = Choice(Literal("*"), Literal("/"));
+            var OPERATOR = Choice(Token("*"), Token("/"));
             var parser =
                 LeftAssociative(AB, OPERATOR, (left, symbolAndRight) =>
                     new Token(null, symbolAndRight.Item1.Position, String.Format("({0} {1} {2})", symbolAndRight.Item1.Literal, left.Literal, symbolAndRight.Item2.Literal)));
@@ -222,9 +222,9 @@ namespace Parsley
         [SetUp]
         public void Setup()
         {
-            A = Literal("A");
-            B = Literal("B");
-            C = Literal("C");
+            A = Token("A");
+            B = Token("B");
+            C = Token("C");
         }
 
         [Test]

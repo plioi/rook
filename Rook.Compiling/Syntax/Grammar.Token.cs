@@ -18,11 +18,5 @@ namespace Rook.Compiling.Syntax
         {
             get { return Token(RookLexer.Identifier); }
         }
-
-        private static Parser<Token> Token(TokenKind kind)
-        {
-            return from token in Kind(kind)
-                   select token;
-        }
     }
 }
