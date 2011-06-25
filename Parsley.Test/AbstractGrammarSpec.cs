@@ -16,9 +16,9 @@ namespace Parsley
         [SetUp]
         public void Setup()
         {
-            A = String("A");
-            B = String("B");
-            C = String("C");
+            A = Literal("A");
+            B = Literal("B");
+            C = Literal("C");
         }
 
         [Test]
@@ -102,7 +102,6 @@ namespace Parsley
         }
 
         private static Parser<Token> DIGIT { get { return Kind(SampleLexer.Digit); } }
-        private static Parser<Token> LETTER { get { return Kind(SampleLexer.Letter); } }
         private static Parser<Token> COMMA { get { return Kind(SampleLexer.Comma); } }
         private static Parser<Token> SYMBOL { get { return Kind(SampleLexer.Symbol); } }
 
@@ -123,8 +122,8 @@ namespace Parsley
         [SetUp]
         public void SetUp()
         {
-            A = String("A");
-            B = String("B");
+            A = Literal("A");
+            B = Literal("B");
 
             AB = from a in A
                  from b in B
@@ -155,11 +154,11 @@ namespace Parsley
         }
 
         [Test]
-        public void CanDemandThatAGivenTokenStringAppearsNext()
+        public void CanDemandThatAGivenTokenLiteralAppearsNext()
         {
-            String("A").Parses(Tokenize("A")).IntoToken("A");
-            String("\t ").PartiallyParses(Tokenize("\t !"), "!").IntoToken("\t ");
-            String("A").FailsToParse(Tokenize("B"), "B").WithMessage("(1, 1): A expected");
+            Literal("A").Parses(Tokenize("A")).IntoToken("A");
+            Literal("\t ").PartiallyParses(Tokenize("\t !"), "!").IntoToken("\t ");
+            Literal("A").FailsToParse(Tokenize("B"), "B").WithMessage("(1, 1): A expected");
         }
 
         [Test]
@@ -237,7 +236,7 @@ namespace Parsley
                 LeftAssociative(DIGIT, SYMBOL, (left, symbolAndRight) =>
                     new Token(null, symbolAndRight.Item1.Position, System.String.Format("({0} {1} {2})", symbolAndRight.Item1.Literal, left.Literal, symbolAndRight.Item2.Literal)));
 
-            parser.FailsToParse(Tokenize("!"), "!");
+            parser.FailsToParse(Tokenize(""), "").WithMessage("(1, 1): Digit expected");
             parser.Parses(Tokenize("0")).IntoToken("0");
             parser.Parses(Tokenize("0*1")).IntoToken("(* 0 1)");
             parser.Parses(Tokenize("0*1/2")).IntoToken("(/ (* 0 1) 2)");

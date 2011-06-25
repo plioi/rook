@@ -27,7 +27,7 @@ namespace Parsley
             };
         }
 
-        public static Parser<Token> String(string expectation)
+        public static Parser<Token> Literal(string expectation)
         {
             return tokens =>
             {
