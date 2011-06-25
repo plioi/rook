@@ -6,7 +6,7 @@ namespace Rook.Compiling.Syntax
 {
     public class RookLexer : Lexer
     {
-        public static readonly TokenKind IntralineWhiteSpace = new TokenKind("IntralineWhiteSpace", @"[ \t]+", skippable: true);
+        private static readonly TokenKind IntralineWhitespace = new TokenKind("intra-line whitespace", @"[ \t]+", skippable: true);
 
         public static readonly Keyword @int = new Keyword("int");
         public static readonly Keyword @bool = new Keyword("bool");
@@ -29,7 +29,7 @@ namespace Rook.Compiling.Syntax
 
         public RookLexer(string source)
             : base(new Text(source),
-            IntralineWhiteSpace,
+            IntralineWhitespace,
             @int, @bool, @void, @null, @if, @else, @fn, @true, @false,
             Integer, Identifier,
             Operators["("], Operators[")"],

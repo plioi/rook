@@ -22,7 +22,6 @@ namespace Rook.Compiling.Syntax
         private static Parser<Token> Token(TokenKind kind)
         {
             return from token in Kind(kind)
-                   from _ in Optional(Kind(RookLexer.IntralineWhiteSpace))
                    select token;
         }
     }

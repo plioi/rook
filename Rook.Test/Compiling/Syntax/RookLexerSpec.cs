@@ -59,7 +59,7 @@ namespace Rook.Compiling.Syntax
         }
 
         [Test]
-        public void ShouldRecognizeAndSkipOverIntralineWhiteSpaces()
+        public void ShouldRecognizeAndSkipOverIntralineWhitespace()
         {
             AssertTokens(" a if == \r\n 0 ", "a", "if", "==", "\r\n ", "0");
             AssertTokens("\ta\tif\t==\t\r\n\t0\t", "a", "if", "==", "\r\n\t", "0");
