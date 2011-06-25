@@ -75,5 +75,23 @@ namespace Parsley
             tokens[1].ShouldBe(Lexer.Unknown, "!def", 1, 4);
             tokens[2].ShouldBe(Lexer.EndOfInput, "", 1, 8);
         }
+
+        [Test]
+        public void SkipsPastSkippableTokens()
+        {
+            var space = new TokenKind("Space", @"\s", skippable: true);
+
+            var tokens = new Lexer(new Text(" "), lower, upper, space).ToArray();
+            tokens.Length.ShouldEqual(1);
+            tokens[0].ShouldBe(Lexer.EndOfInput, "", 1, 2);
+
+            tokens = new Lexer(new Text(" ABC  def   GHI    jkl"), lower, upper, space).ToArray();
+            tokens.Length.ShouldEqual(5);
+            tokens[0].ShouldBe(upper, "ABC", 1, 2);
+            tokens[1].ShouldBe(lower, "def", 1, 7);
+            tokens[2].ShouldBe(upper, "GHI", 1, 13);
+            tokens[3].ShouldBe(lower, "jkl", 1, 20);
+            tokens[4].ShouldBe(Lexer.EndOfInput, "", 1, 23);
+        }
     }
 }

@@ -21,14 +21,25 @@ namespace Parsley
 
         private Lexer(Text text, IEnumerable<TokenKind> kinds)
         {
+            currentToken = GetToken(text, kinds);
+
+            //After exiting this loop, currentToken will be the
+            //next unskippable token, and text will indicate
+            //where that token starts.
+            while (currentToken.Kind.Skippable)
+            {
+                text = text.Advance(currentToken.Literal.Length);
+
+                currentToken = GetToken(text, kinds);
+            }
+
             this.text = text;
             this.kinds = kinds;
 
-            currentToken = GetCurrentToken();
             lazyAdvance = new Lazy<Lexer>(LazyAdvance);
         }
 
-        private Token GetCurrentToken()
+        private static Token GetToken(Text text, IEnumerable<TokenKind> kinds)
         {
             Token token;
             foreach (var kind in kinds)
