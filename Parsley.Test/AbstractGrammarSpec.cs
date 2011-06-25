@@ -206,36 +206,27 @@ namespace Parsley
         [Test]
         public void ApplyingARuleZeroOrMoreTimesInterspersedByASeparatorRule()
         {
-            var parser = ZeroOrMore(DIGIT, COMMA);
+            var parser = ZeroOrMore(AB, COMMA);
 
             parser.Parses(Tokenize("")).IntoTokens();
-            parser.PartiallyParses(Tokenize("!"), "!").IntoTokens();
-
-            parser.PartiallyParses(Tokenize("0!"), "!").IntoTokens("0");
-            parser.PartiallyParses(Tokenize("0,1!"), "!").IntoTokens("0", "1");
-            parser.PartiallyParses(Tokenize("0,1,2!"), "!").IntoTokens("0", "1", "2");
-            parser.FailsToParse(Tokenize("0,1,2,"), "").WithMessage("(1, 7): Digit expected");
-
-            parser.Parses(Tokenize("0")).IntoTokens("0");
-            parser.Parses(Tokenize("0,1")).IntoTokens("0", "1");
-            parser.Parses(Tokenize("0,1,2")).IntoTokens("0", "1", "2");
+            parser.Parses(Tokenize("AB")).IntoTokens("AB");
+            parser.Parses(Tokenize("AB,AB")).IntoTokens("AB", "AB");
+            parser.Parses(Tokenize("AB,AB,AB")).IntoTokens("AB", "AB", "AB");
+            parser.FailsToParse(Tokenize("AB,"), "").WithMessage("(1, 4): A expected");
+            parser.FailsToParse(Tokenize("AB,A"), "").WithMessage("(1, 5): B expected");
         }
 
         [Test]
         public void ApplyingARuleOneOrMoreTimesInterspersedByASeparatorRule()
         {
-            var parser = OneOrMore(DIGIT, COMMA);
+            var parser = OneOrMore(AB, COMMA);
 
-            parser.FailsToParse(Tokenize(""), "");
-            parser.FailsToParse(Tokenize("!"), "!");
-
-            parser.PartiallyParses(Tokenize("0!"), "!").IntoTokens("0");
-            parser.PartiallyParses(Tokenize("0,1!"), "!").IntoTokens("0", "1");
-            parser.PartiallyParses(Tokenize("0,1,2!"), "!").IntoTokens("0", "1", "2");
-
-            parser.Parses(Tokenize("0")).IntoTokens("0");
-            parser.Parses(Tokenize("0,1")).IntoTokens("0", "1");
-            parser.Parses(Tokenize("0,1,2")).IntoTokens("0", "1", "2");
+            parser.FailsToParse(Tokenize(""), "").WithMessage("(1, 1): A expected");
+            parser.Parses(Tokenize("AB")).IntoTokens("AB");
+            parser.Parses(Tokenize("AB,AB")).IntoTokens("AB", "AB");
+            parser.Parses(Tokenize("AB,AB,AB")).IntoTokens("AB", "AB", "AB");
+            parser.FailsToParse(Tokenize("AB,"), "").WithMessage("(1, 4): A expected");
+            parser.FailsToParse(Tokenize("AB,A"), "").WithMessage("(1, 5): B expected");
         }
 
         [Test]

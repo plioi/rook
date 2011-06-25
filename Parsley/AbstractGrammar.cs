@@ -84,11 +84,18 @@ namespace Parsley
                    select List(first, rest);
         }
 
+        /// <summary>
+        /// ZeroOrMore(p, s) parses zero or more occurrences of p separated by occurrences of s,
+        /// returning the list of values returned by successful applications of p.
+        /// </summary>
         public static Parser<IEnumerable<T>> ZeroOrMore<T, S>(Parser<T> item, Parser<S> separator)
         {
             return Choice(OneOrMore(item, separator), Zero<T>());
         }
 
+        /// <summary>
+        /// OneOrMore(p, s) behaves like ZeroOrMore(p, s), except that p must succeed at least one time.
+        /// </summary>
         public static Parser<IEnumerable<T>> OneOrMore<T, S>(Parser<T> item, Parser<S> separator)
         {
             return from first in item
