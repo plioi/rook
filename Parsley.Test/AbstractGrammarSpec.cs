@@ -191,18 +191,16 @@ namespace Parsley
         [Test]
         public void ApplyingARuleOneOrMoreTimes()
         {
-            var parser = OneOrMore(DIGIT);
+            var parser = OneOrMore(AB);
 
-            parser.FailsToParse(Tokenize(""), "");
-            parser.FailsToParse(Tokenize("!"), "!");
+            parser.FailsToParse(Tokenize(""), "").WithMessage("(1, 1): A expected");
+            parser.PartiallyParses(Tokenize("AB!"), "!").IntoTokens("AB");
+            parser.PartiallyParses(Tokenize("ABAB!"), "!").IntoTokens("AB", "AB");
+            parser.FailsToParse(Tokenize("ABABA!"), "!").WithMessage("(1, 6): B expected");
 
-            parser.PartiallyParses(Tokenize("0!"), "!").IntoTokens("0");
-            parser.PartiallyParses(Tokenize("01!"), "!").IntoTokens("0", "1");
-            parser.PartiallyParses(Tokenize("012!"), "!").IntoTokens("0", "1", "2");
-
-            parser.Parses(Tokenize("0")).IntoTokens("0");
-            parser.Parses(Tokenize("01")).IntoTokens("0", "1");
-            parser.Parses(Tokenize("012")).IntoTokens("0", "1", "2");
+            Parser<Token> succeedWithoutConsuming = tokens => new Parsed<Token>(null, tokens);
+            Action infiniteLoop = () => OneOrMore(succeedWithoutConsuming)(Tokenize(""));
+            infiniteLoop.ShouldThrow<Exception>("Parser encountered a potential infinite loop.");
         }
 
         [Test]

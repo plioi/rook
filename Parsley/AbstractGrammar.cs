@@ -38,6 +38,12 @@ namespace Parsley
             };
         }
 
+        /// <summary>
+        /// ZeroOrMore(p) repeatedly applies an parser p until it fails, returing
+        /// the list of values returned by successful applications of p.  At the
+        /// end of the sequence, p must fail without consuming input, otherwise the
+        /// sequence will fail with the error reported by p.
+        /// </summary>
         public static Parser<IEnumerable<T>> ZeroOrMore<T>(Parser<T> item)
         {
             return tokens =>
@@ -68,6 +74,9 @@ namespace Parsley
             };
         }
 
+        /// <summary>
+        /// OneOrMore(p) behaves like ZeroOrMore(p), except that p must succeed at least one time.
+        /// </summary>
         public static Parser<IEnumerable<T>> OneOrMore<T>(Parser<T> item)
         {
             return from first in item
