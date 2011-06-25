@@ -14,7 +14,7 @@ namespace Rook.Compiling.Syntax
 
         private static Parser<T> Parenthesized<T>(Parser<T> parse)
         {
-            return Between(Operator("("), parse, Operator(")"));
+            return Between("(", parse, ")");
         }
 
         private static Parser<IEnumerable<T>> Tuple<T>(Parser<T> item)

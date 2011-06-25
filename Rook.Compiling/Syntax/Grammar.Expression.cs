@@ -54,7 +54,7 @@ namespace Rook.Compiling.Syntax
             }
         }
 
-        private static Parser<Expression> Literal
+        private new static Parser<Expression> Literal
         {
             get { return Choice(BooleanLiteral, NullLiteral, IntegerLiteral); }
         }
