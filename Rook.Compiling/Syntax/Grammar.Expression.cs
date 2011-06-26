@@ -25,7 +25,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from symbol in Optional(Choice(Operator("-"), Operator("!")))
+                return from symbol in Optional(Choice(Token("-"), Token("!")))
                        from primary in Primary
                        select symbol == null ? primary : new Call(symbol.Position, symbol.Literal, primary);
             }
@@ -38,7 +38,7 @@ namespace Rook.Compiling.Syntax
                 Parser<Func<Expression, Expression>> call = from arguments in Tuple(Expression)
                            select new Func<Expression, Expression>(callable => new Call(callable.Position, callable, arguments));
 
-                var subscript = from arguments in Between("[", OneOrMore(Expression, Operator(":")), "]")
+                var subscript = from arguments in Between("[", OneOrMore(Expression, Token(":")), "]")
                                 select new Func<Expression, Expression>(
                                     callable =>
                                         new Call(callable.Position,
@@ -54,7 +54,7 @@ namespace Rook.Compiling.Syntax
             }
         }
 
-        private new static Parser<Expression> Literal
+        private static Parser<Expression> Literal
         {
             get { return Choice(BooleanLiteral, NullLiteral, IntegerLiteral); }
         }
@@ -76,10 +76,10 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from open in Operator("{").TerminatedBy(Optional(EndOfLine))
+                return from open in Token("{").TerminatedBy(Optional(EndOfLine))
                        from variableDeclarations in ZeroOrMore(Attempt(VariableDeclaration))
                        from innerExpressions in OneOrMore(Expression.TerminatedBy(EndOfLine))
-                       from close in Operator("}")
+                       from close in Token("}")
                        select new Block(open.Position, variableDeclarations, innerExpressions);
             }
         }
@@ -99,7 +99,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                return from items in Between("[", OneOrMore(Expression, Operator(",")), "]")
+                return from items in Between("[", OneOrMore(Expression, Token(",")), "]")
                        select new VectorLiteral(items.First().Position, items);
             }
         }
@@ -111,14 +111,14 @@ namespace Rook.Compiling.Syntax
                 Parser<VariableDeclaration> explicitlyTyped =
                     from type in TypeName
                     from identifier in Identifier
-                    from assignment in Operator("=")
+                    from assignment in Token("=")
                     from value in Expression
                     from end in EndOfLine
                     select new VariableDeclaration(identifier.Position, type, identifier.Literal, value);
 
                 Parser<VariableDeclaration> implicitlyTyped =
                     from identifier in Identifier
-                    from assignment in Operator("=")
+                    from assignment in Token("=")
                     from value in Expression
                     from end in EndOfLine
                     select new VariableDeclaration(identifier.Position, identifier.Literal, value);
@@ -156,7 +156,7 @@ namespace Rook.Compiling.Syntax
 
         private static Parser<Expression> Binary(Parser<Expression> operand, params string[] symbols)
         {
-            Parser<Token>[] symbolParsers = symbols.Select(Operator).ToArray();
+            Parser<Token>[] symbolParsers = symbols.Select(Token).ToArray();
 
             return from leftAssociative in
                        LeftAssociative(operand, Choice(symbolParsers),

@@ -69,5 +69,41 @@ namespace Parsley
             Action notJustLetters = () => new Keyword(" oops ");
             notJustLetters.ShouldThrow<ArgumentException>("Keywords may only contain letters.\r\nParameter name: word");
         }
+
+        [Test]
+        public void ProvidesConvenienceSubclassForDefiningOperators()
+        {
+            Token token;
+            var star = new Operator("*");
+            var doubleStar = new Operator("**");
+
+            star.Name.ShouldEqual("*");
+
+            star.TryMatch(new Text("a"), out token).ShouldBeFalse();
+            token.ShouldBeNull();
+
+            star.TryMatch(new Text("*"), out token).ShouldBeTrue();
+            token.ShouldBe(star, "*", 1, 1);
+
+            star.TryMatch(new Text("* *"), out token).ShouldBeTrue();
+            token.ShouldBe(star, "*", 1, 1);
+
+            star.TryMatch(new Text("**"), out token).ShouldBeTrue();
+            token.ShouldBe(star, "*", 1, 1);
+
+            doubleStar.Name.ShouldEqual("**");
+
+            doubleStar.TryMatch(new Text("a"), out token).ShouldBeFalse();
+            token.ShouldBeNull();
+
+            doubleStar.TryMatch(new Text("*"), out token).ShouldBeFalse();
+            token.ShouldBeNull();
+
+            doubleStar.TryMatch(new Text("* *"), out token).ShouldBeFalse();
+            token.ShouldBeNull();
+
+            doubleStar.TryMatch(new Text("**"), out token).ShouldBeTrue();
+            token.ShouldBe(doubleStar, "**", 1, 1);
+        }
     }
 }

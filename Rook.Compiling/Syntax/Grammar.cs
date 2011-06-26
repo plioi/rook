@@ -5,11 +5,11 @@ namespace Rook.Compiling.Syntax
 {
     public partial class Grammar : AbstractGrammar
     {
-        private Grammar() {}
+        protected Grammar() {}
 
         private static Parser<T> Between<T>(string openOperator, Parser<T> parse, string closeOperator)
         {
-            return Between(Operator(openOperator), parse, Operator(closeOperator));
+            return Between(Token(openOperator), parse, Token(closeOperator));
         }
 
         private static Parser<T> Parenthesized<T>(Parser<T> parse)
@@ -19,7 +19,7 @@ namespace Rook.Compiling.Syntax
 
         private static Parser<IEnumerable<T>> Tuple<T>(Parser<T> item)
         {
-            return Parenthesized(ZeroOrMore(item, Operator(",")));
+            return Parenthesized(ZeroOrMore(item, Token(",")));
         }
 
         public static Parser<Name> Name

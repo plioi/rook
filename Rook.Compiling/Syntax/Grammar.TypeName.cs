@@ -29,7 +29,7 @@ namespace Rook.Compiling.Syntax
 
         private static Parser<Token> TypeModifier
         {
-            get { return Choice(Operator("*"), Operator("?"), Operator("[]")); }
+            get { return Choice(Token("*"), Token("?"), Token("[]")); }
         }
 
         private static Parser<NamedType> KeywordType

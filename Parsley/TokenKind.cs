@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Parsley
 {
@@ -48,5 +49,10 @@ namespace Parsley
             if (word.Any(ch => !Char.IsLetter(ch)))
                 throw new ArgumentException("Keywords may only contain letters.", "word");
         }
+    }
+
+    public class Operator : TokenKind
+    {
+        public Operator(string symbol) : base(symbol, Regex.Escape(symbol)) { }
     }
 }

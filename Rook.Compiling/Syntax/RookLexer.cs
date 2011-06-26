@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Parsley;
+﻿using Parsley;
 
 namespace Rook.Compiling.Syntax
 {
@@ -19,11 +17,6 @@ namespace Rook.Compiling.Syntax
         public static readonly Keyword @false = new Keyword("false");
 
         public static readonly TokenKind Integer = new TokenKind("integer", @"[0-9]+");
-
-        public static readonly Dictionary<string, TokenKind> Operators = CreateOperators(
-            "(", ")", "*", "/", "+", "-", "<=", "<", ">=", ">", "==", "!=", "||",
-            "&&", "!", "=", ",", "{", "}", "[]", "[", "]", ":", "??", "?");
-
         public static readonly TokenKind Identifier = new TokenKind("identifier", @"[a-zA-Z]+[a-zA-Z0-9]*");
         public static readonly TokenKind EndOfLine = new TokenKind("end of line", @"(\r\n|;)\s*");
 
@@ -32,24 +25,16 @@ namespace Rook.Compiling.Syntax
             IntralineWhitespace,
             @int, @bool, @void, @null, @if, @else, @fn, @true, @false,
             Integer, Identifier,
-            Operators["("], Operators[")"],
-            Operators["*"], Operators["/"],
-            Operators["+"], Operators["-"],
-            Operators["<="], Operators["<"], Operators[">="], Operators[">"],
-            Operators["=="], Operators["!="],
-            Operators["||"], Operators["&&"], Operators["!"],
-            Operators["="], Operators[","],
-            Operators["{"], Operators["}"],
-            Operators["[]"], Operators["["], Operators["]"], Operators[":"],
-            Operators["??"], Operators["?"],
+            new Operator("("), new Operator(")"),
+            new Operator("*"), new Operator("/"),
+            new Operator("+"), new Operator("-"),
+            new Operator("<="), new Operator("<"), new Operator(">="), new Operator(">"),
+            new Operator("=="), new Operator("!="),
+            new Operator("||"), new Operator("&&"), new Operator("!"),
+            new Operator("="), new Operator(","),
+            new Operator("{"), new Operator("}"),
+            new Operator("[]"), new Operator("["), new Operator("]"), new Operator(":"),
+            new Operator("??"), new Operator("?"),
             EndOfLine) { }
-
-        private static Dictionary<string, TokenKind> CreateOperators(params string[] symbols)
-        {
-            var result = new Dictionary<string, TokenKind>();
-            foreach (var symbol in symbols)
-                result[symbol] = new TokenKind(symbol, Regex.Escape(symbol));
-            return result;
-        }
     }
 }
