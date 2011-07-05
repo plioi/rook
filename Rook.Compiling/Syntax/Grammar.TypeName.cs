@@ -4,7 +4,7 @@ using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
 {
-    public partial class Grammar
+    public partial class RookGrammar
     {
         public static Parser<NamedType> TypeName
         {

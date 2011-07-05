@@ -38,7 +38,7 @@ namespace Rook.Compiling
         [Test]
         public void ShouldBuildProgramsFromSyntaxTrees()
         {
-            Program program = Grammar.Program(new RookLexer("int Main() 123;")).Value;
+            Program program = RookGrammar.Program(new RookLexer("int Main() 123;")).Value;
             Build(program);
             AssertErrors(0);
             ExecuteMain().ShouldEqual(123);

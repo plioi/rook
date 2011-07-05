@@ -49,7 +49,7 @@ namespace Rook.Compiling.CodeGeneration
             Expect("        return (((((Life())) + ((Universe())))) + ((Everything())));");
             Expect("    }");
             Expect("}");
-            AssertTranslation(Grammar.Program, program.ToString());
+            AssertTranslation(RookGrammar.Program, program.ToString());
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace Rook.Compiling.CodeGeneration
             Expect("{");
             Expect("    return false;");
             Expect("}");
-            AssertTranslation(Grammar.Function, "bool Negatory() false");
+            AssertTranslation(RookGrammar.Function, "bool Negatory() false");
         }
 
         [Test]
@@ -69,7 +69,7 @@ namespace Rook.Compiling.CodeGeneration
             Expect("{");
             Expect("    return ((((a) + (b))) + (c));");
             Expect("}");
-            AssertTranslation(Grammar.Function, "int Sum(int a, int b, int c) a+b+c");
+            AssertTranslation(RookGrammar.Function, "int Sum(int a, int b, int c) a+b+c");
         }
 
         [Test]
@@ -79,14 +79,14 @@ namespace Rook.Compiling.CodeGeneration
             Expect("{");
             Expect("    return (Print(((((a) + (b))) + (c))));");
             Expect("}");
-            AssertTranslation(Grammar.Function, "void PrintSum(int a, int b, int c) Print(a+b+c)");
+            AssertTranslation(RookGrammar.Function, "void PrintSum(int a, int b, int c) Print(a+b+c)");
         }
 
         [Test]
         public void ShouldTranslateNames()
         {
-            AssertTranslation("foo", Grammar.Name, "foo");
-            AssertTranslation("bar", Grammar.Name, "bar");
+            AssertTranslation("foo", RookGrammar.Name, "foo");
+            AssertTranslation("bar", RookGrammar.Name, "bar");
         }
 
         [Test]
@@ -97,7 +97,7 @@ namespace Rook.Compiling.CodeGeneration
             Expect("    return 0;");
             Expect("}");
             Expect(")");
-            AssertTranslation(Grammar.Expression, "{ 0; }");
+            AssertTranslation(RookGrammar.Expression, "{ 0; }");
         }
 
         [Test]
@@ -110,7 +110,7 @@ namespace Rook.Compiling.CodeGeneration
             Expect("    return 0;");
             Expect("}");
             Expect(")");
-            AssertTranslation(Grammar.Expression, "{ true; true||false; 0; }");
+            AssertTranslation(RookGrammar.Expression, "{ true; true||false; 0; }");
         }
 
         [Test]
@@ -125,78 +125,78 @@ namespace Rook.Compiling.CodeGeneration
             Expect("    return ((c) == (3));");
             Expect("}");
             Expect(")");
-            AssertTranslation(Grammar.Expression, "{ int a = 1; int b = 2; int c = a+b; a+b; c==3; }");
+            AssertTranslation(RookGrammar.Expression, "{ int a = 1; int b = 2; int c = a+b; a+b; c==3; }");
         }
         
         [Test]
         public void ShouldTranslateLambdaExpressions()
         {
-            AssertTranslation("() => 0", Grammar.Expression, "fn () 0");
-            AssertTranslation("() => x", Grammar.Expression, "fn () x");
-            AssertTranslation("() => ((1) + (2))", Grammar.Expression, "fn () 1+2");
+            AssertTranslation("() => 0", RookGrammar.Expression, "fn () 0");
+            AssertTranslation("() => x", RookGrammar.Expression, "fn () x");
+            AssertTranslation("() => ((1) + (2))", RookGrammar.Expression, "fn () 1+2");
 
-            AssertTranslation("(int a) => ((a) + (1))", Grammar.Expression, "fn (int a) a+1");
-            AssertTranslation("(int a, int b) => ((a) + (b))", Grammar.Expression, "fn (int a, int b) a+b");
+            AssertTranslation("(int a) => ((a) + (1))", RookGrammar.Expression, "fn (int a) a+1");
+            AssertTranslation("(int a, int b) => ((a) + (b))", RookGrammar.Expression, "fn (int a, int b) a+b");
         }
 
         [Test]
         public void ShouldTranslateIfExpressions()
         {
             Expect("((((x) == (2))) ? (((0) + (1))) : (((1) + (2))))");
-            AssertTranslation(Grammar.Expression, "if (x==2) 0+1 else 1+2");
+            AssertTranslation(RookGrammar.Expression, "if (x==2) 0+1 else 1+2");
         }
 
         [Test]
         public void ShouldTranslateCallExpressionsForUnaryOperators()
         {
-            AssertTranslation("(-(5))", Grammar.Expression, "-5");
-            AssertTranslation("(-(x))", Grammar.Expression, "-x");
-            AssertTranslation("(!(true))", Grammar.Expression, "!true");
-            AssertTranslation("(!(b))", Grammar.Expression, "!b");
+            AssertTranslation("(-(5))", RookGrammar.Expression, "-5");
+            AssertTranslation("(-(x))", RookGrammar.Expression, "-x");
+            AssertTranslation("(!(true))", RookGrammar.Expression, "!true");
+            AssertTranslation("(!(b))", RookGrammar.Expression, "!b");
         }
 
         [Test]
         public void ShouldTranslateCallExpressionsForBinaryOperators()
         {
-            AssertTranslation("((1) + (2))", Grammar.Expression, "1+2");
-            AssertTranslation("((true) || (false))", Grammar.Expression, "true||false");
-            AssertTranslation("((x) * (y))", Grammar.Expression, "x*y");
-            AssertTranslation("(((x) != null) ? ((x).Value) : (y))", Grammar.Expression, "x??y");
+            AssertTranslation("((1) + (2))", RookGrammar.Expression, "1+2");
+            AssertTranslation("((true) || (false))", RookGrammar.Expression, "true||false");
+            AssertTranslation("((x) * (y))", RookGrammar.Expression, "x*y");
+            AssertTranslation("(((x) != null) ? ((x).Value) : (y))", RookGrammar.Expression, "x??y");
         }
 
         [Test]
         public void ShouldTranslateCallExpressionsForNamedFunctions()
         {
-            AssertTranslation("(Foo())", Grammar.Expression, "Foo()");
-            AssertTranslation("(Foo(true))", Grammar.Expression, "Foo(true)");
-            AssertTranslation("(Foo(1, x, false))", Grammar.Expression, "Foo(1, x, false)");
+            AssertTranslation("(Foo())", RookGrammar.Expression, "Foo()");
+            AssertTranslation("(Foo(true))", RookGrammar.Expression, "Foo(true)");
+            AssertTranslation("(Foo(1, x, false))", RookGrammar.Expression, "Foo(1, x, false)");
         }
 
         [Test]
         public void ShouldTranslateBooleanLiterals()
         {
-            AssertTranslation("true", Grammar.Expression, "true");
-            AssertTranslation("false", Grammar.Expression, "false");
+            AssertTranslation("true", RookGrammar.Expression, "true");
+            AssertTranslation("false", RookGrammar.Expression, "false");
         }
 
         [Test]
         public void ShouldTranslateIntegerLiterals()
         {
-            AssertTranslation("123", Grammar.Expression, "123");
+            AssertTranslation("123", RookGrammar.Expression, "123");
         }
 
         [Test]
         public void ShouldTranslateNulls()
         {
-            AssertTranslation("null", Grammar.Expression, "null");
+            AssertTranslation("null", RookGrammar.Expression, "null");
         }
 
         [Test]
         public void ShouldTranslateVectorLiterals()
         {
-            AssertTranslation("_Vector(0)", Grammar.Expression, "[0]");
-            AssertTranslation("_Vector(0, ((1) + (2)))", Grammar.Expression, "[0, 1+2]");
-            AssertTranslation("_Vector(true, ((false) || (true)), false)", Grammar.Expression, "[true, false||true, false]");
+            AssertTranslation("_Vector(0)", RookGrammar.Expression, "[0]");
+            AssertTranslation("_Vector(0, ((1) + (2)))", RookGrammar.Expression, "[0, 1+2]");
+            AssertTranslation("_Vector(true, ((false) || (true)), false)", RookGrammar.Expression, "[true, false||true, false]");
         }
 
         private void Expect(string line)

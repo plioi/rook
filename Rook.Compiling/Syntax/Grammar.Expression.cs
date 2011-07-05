@@ -4,7 +4,7 @@ using Parsley;
 
 namespace Rook.Compiling.Syntax
 {
-    public partial class Grammar
+    public partial class RookGrammar
     {
         public static Parser<Expression> Expression
         {

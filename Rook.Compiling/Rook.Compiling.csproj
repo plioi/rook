@@ -80,21 +80,21 @@
     <Compile Include="Syntax\Call.cs" />
     <Compile Include="Syntax\Expression.cs" />
     <Compile Include="Syntax\Function.cs" />
-    <Compile Include="Syntax\Grammar.cs" />
+    <Compile Include="Syntax\RookGrammar.cs" />
     <Compile Include="Syntax\Grammar.Expression.cs">
-      <DependentUpon>Grammar.cs</DependentUpon>
+      <DependentUpon>RookGrammar.cs</DependentUpon>
     </Compile>
     <Compile Include="Syntax\Grammar.Function.cs">
-      <DependentUpon>Grammar.cs</DependentUpon>
+      <DependentUpon>RookGrammar.cs</DependentUpon>
     </Compile>
     <Compile Include="Syntax\Grammar.Program.cs">
-      <DependentUpon>Grammar.cs</DependentUpon>
+      <DependentUpon>RookGrammar.cs</DependentUpon>
     </Compile>
     <Compile Include="Syntax\Grammar.Token.cs">
-      <DependentUpon>Grammar.cs</DependentUpon>
+      <DependentUpon>RookGrammar.cs</DependentUpon>
     </Compile>
     <Compile Include="Syntax\Grammar.TypeName.cs">
-      <DependentUpon>Grammar.cs</DependentUpon>
+      <DependentUpon>RookGrammar.cs</DependentUpon>
     </Compile>
     <Compile Include="Syntax\If.cs" />
     <Compile Include="Syntax\IntegerLiteral.cs" />

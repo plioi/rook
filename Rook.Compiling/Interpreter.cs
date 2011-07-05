@@ -25,8 +25,8 @@ namespace Rook.Compiling
             Function function;
             Expression expression;
 
-            return TryParse(tokens, Grammar.Function, out function) ||
-                   TryParse(tokens, Grammar.Expression, out expression);
+            return TryParse(tokens, RookGrammar.Function, out function) ||
+                   TryParse(tokens, RookGrammar.Expression, out expression);
         }
 
         public InterpreterResult Interpret(string code)
@@ -35,11 +35,11 @@ namespace Rook.Compiling
             var pos = tokens.Position;
             
             Expression expression;
-            if (TryParse(tokens, Grammar.Expression, out expression))
+            if (TryParse(tokens, RookGrammar.Expression, out expression))
                 return InterpretExpression(expression, pos);
 
             Function function;
-            if (TryParse(tokens, Grammar.Function, out function))
+            if (TryParse(tokens, RookGrammar.Function, out function))
                 return InterpretFunction(function, pos);
 
             return Error("Cannot evaluate this code: must be a function or expression.");

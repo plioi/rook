@@ -5,7 +5,7 @@ namespace Rook.Compiling.Syntax
 {
     public abstract class ExpressionSpec : SyntaxTreeSpec<Expression>
     {
-        protected override Parser<Expression> Parser { get { return Grammar.Expression; } }
+        protected override Parser<Expression> Parser { get { return RookGrammar.Expression; } }
         
         protected void AssertType(DataType expectedType, string source, params TypeMapping[] symbols)
         {

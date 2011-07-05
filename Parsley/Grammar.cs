@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parsley
 {
-    public abstract class AbstractGrammar
+    public abstract class Grammar
     {
         public static Parser<T> Fail<T>()
         {

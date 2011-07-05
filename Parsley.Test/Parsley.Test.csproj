@@ -71,7 +71,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractGrammarSpec.cs" />
+    <Compile Include="GrammarSpec.cs" />
     <Compile Include="AssertionExtensions.cs" />
     <Compile Include="CharLexer.cs" />
     <Compile Include="ErrorMessageListSpec.cs" />

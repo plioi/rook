@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Parsley
 {
     [TestFixture]
-    public class AbstractGrammarSpec : AbstractGrammar
+    public class GrammarSpec : Grammar
     {
         private static Lexer Tokenize(string source)
         {
@@ -210,7 +210,7 @@ namespace Parsley
     }
 
     [TestFixture]
-    public class AlternationSpec : AbstractGrammar
+    public class AlternationSpec : Grammar
     {
         private static Lexer Tokenize(string source)
         {

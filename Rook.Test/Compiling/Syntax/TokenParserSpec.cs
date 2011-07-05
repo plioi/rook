@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public class TokenParserSpec : Grammar
+    public class TokenParserSpec : RookGrammar
     {
         [Test]
         public void ParsesExpectedOperators()

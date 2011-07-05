@@ -3,9 +3,9 @@ using Parsley;
 
 namespace Rook.Compiling.Syntax
 {
-    public partial class Grammar : AbstractGrammar
+    public partial class RookGrammar : Grammar
     {
-        protected Grammar() {}
+        protected RookGrammar() {}
 
         private static Parser<T> Between<T>(string openOperator, Parser<T> parse, string closeOperator)
         {

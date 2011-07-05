@@ -44,7 +44,7 @@ namespace Parsley
         [Test]
         public void PropogatesErrorsWithoutRunningRemainingParsers()
         {
-            Parser<string> Fail = AbstractGrammar.Fail<string>();
+            Parser<string> Fail = Grammar.Fail<string>();
 
             var source = Tokenize("xy");
 

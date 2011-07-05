@@ -69,12 +69,12 @@ namespace Rook.Compiling.Syntax
 
         private static Reply<NamedType> FailsToParse(string source, string expectedUnparsedSource)
         {
-            return Grammar.TypeName.FailsToParse(source, expectedUnparsedSource);
+            return RookGrammar.TypeName.FailsToParse(source, expectedUnparsedSource);
         }
 
         private static Reply<NamedType> Parses(string source)
         {
-            return Grammar.TypeName.Parses(source);
+            return RookGrammar.TypeName.Parses(source);
         }
     }
 }

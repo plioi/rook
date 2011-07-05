@@ -8,7 +8,7 @@ namespace Rook.Compiling.Syntax
     [TestFixture]
     public class FunctionSpec : SyntaxTreeSpec<Function>
     {
-        protected override Parser<Function> Parser { get { return Grammar.Function; } }
+        protected override Parser<Function> Parser { get { return RookGrammar.Function; } }
 
         [Test]
         public void DemandsCompleteFunctionDefinition()

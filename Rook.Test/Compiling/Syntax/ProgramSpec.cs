@@ -7,7 +7,7 @@ namespace Rook.Compiling.Syntax
     [TestFixture]
     public class ProgramSpec : SyntaxTreeSpec<Program>
     {
-        protected override Parser<Program> Parser { get { return Grammar.Program; } }
+        protected override Parser<Program> Parser { get { return RookGrammar.Program; } }
 
         [Test]
         public void ParsesZeroOrMoreFunctions()

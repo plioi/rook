@@ -4,7 +4,7 @@ using Parsley;
 namespace Rook.Compiling.Syntax
 {
     [TestFixture]
-    public class RookLexerSpec : AbstractGrammar
+    public class RookLexerSpec : Grammar
     {
         [Test]
         public void ShouldRecognizeIntegers()
