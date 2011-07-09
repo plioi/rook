@@ -59,6 +59,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="CodeGeneration\CodeWriter.cs" />
     <Compile Include="CodeGeneration\WriteAction.cs" />
     <Compile Include="Compiler.cs" />

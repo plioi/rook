@@ -35,6 +35,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Collections\ArrayVector.cs" />
     <Compile Include="Collections\SliceVector.cs" />
     <Compile Include="Collections\Vector.cs" />
