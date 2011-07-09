@@ -74,6 +74,7 @@
     <Compile Include="Text.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="TokenKind.cs" />
+    <Compile Include="Value.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -91,12 +92,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Rook.Core\Rook.Core.csproj">
-      <Project>{646BF299-17FE-4B59-BC83-5D28AF7D5A48}</Project>
-      <Name>Rook.Core</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

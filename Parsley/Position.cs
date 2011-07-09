@@ -1,6 +1,4 @@
-﻿using Rook.Core;
-
-namespace Parsley
+﻿namespace Parsley
 {
     public class Position : Value<Position>
     {
