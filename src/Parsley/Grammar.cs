@@ -132,7 +132,7 @@ namespace Parsley
         /// Optional(p) is equivalent to p whenever p succeeds or when p fails after consuming input.
         /// If p fails without consuming input, Optional(p) succeeds.
         /// </summary>
-        public static Parser<T> Optional<T>(Parser<T> parse) where T : class
+        public static Parser<T> Optional<T>(Parser<T> parse)
         {
             var nothing = default(T).SucceedWithThisValue();
             return Choice(parse, nothing);

@@ -72,13 +72,19 @@ namespace Rook.Core
             var a2 = new Sample(0, "A");
             var b = new Sample(0, "B");
 
+            #pragma warning disable 1718
             (a == a).ShouldBeTrue();
+            #pragma warning restore 1718
+
             (a == b).ShouldBeFalse();
             (a == a2).ShouldBeTrue();
             (null == a).ShouldBeFalse();
             (a == null).ShouldBeFalse();
 
+            #pragma warning disable 1718
             (a != a).ShouldBeFalse();
+            #pragma warning restore 1718
+
             (a != b).ShouldBeTrue();
             (a != a2).ShouldBeFalse();
             (null != a).ShouldBeTrue();
