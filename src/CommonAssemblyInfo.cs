@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -16,7 +17,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: AssemblyCopyright("Copyright Patrick Lioi 2011")]
 [assembly: AssemblyProduct("Rook")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCompany("")]
 [assembly: AssemblyConfiguration("release")]
 [assembly: AssemblyInformationalVersion("1.0.0.0")]

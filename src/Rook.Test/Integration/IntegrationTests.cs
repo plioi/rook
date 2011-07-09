@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,26 +11,24 @@ namespace Rook.Integration
     [TestFixture]
     public class IntegrationTests
     {
-        [Test] public void ArithmeticExpression() { Run(); }
-        [Test] public void BooleanExpression() { Run(); }
-        [Test] public void FunctionCall() { Run(); }
-        [Test] public void BlockExpression() { Run(); }
-        [Test] public void Closure() { Run(); }
-        [Test] public void Recursion() { Run(); }
-        [Test] public void MutualRecursion() { Run(); }
-        [Test] public void Enumerable() { Run(); }
-        [Test] public void Vector() { Run(); }
-        [Test] public void Void() { Run(); }
-        [Test] public void Nullable() { Run(); }
+        [Test] public void ArithmeticExpression() { Run("ArithmeticExpression"); }
+        [Test] public void BooleanExpression() { Run("BooleanExpression"); }
+        [Test] public void FunctionCall() { Run("FunctionCall"); }
+        [Test] public void BlockExpression() { Run("BlockExpression"); }
+        [Test] public void Closure() { Run("Closure"); }
+        [Test] public void Recursion() { Run("Recursion"); }
+        [Test] public void MutualRecursion() { Run("MutualRecursion"); }
+        [Test] public void Enumerable() { Run("Enumerable"); }
+        [Test] public void Vector() { Run("Vector"); }
+        [Test] public void Void() { Run("Void"); }
+        [Test] public void Nullable() { Run("Nullable"); }
 
         #region Integration Test Runner
 
         private const string SampleFolder = "Samples";
 
-        private static void Run()
+        private static void Run(string testName)
         {
-            string testName = new StackTrace().GetFrame(1).GetMethod().Name;
-
             ActualOutput(testName).ShouldEqual(ExpectedOutput(testName));
         }
 
