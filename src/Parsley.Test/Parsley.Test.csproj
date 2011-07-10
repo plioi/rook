@@ -73,6 +73,7 @@
     <Compile Include="CharLexer.cs" />
     <Compile Include="ErrorMessageListTests.cs" />
     <Compile Include="ErrorMessageTests.cs" />
+    <Compile Include="IntegrationTests\Calculator.cs" />
     <Compile Include="IntegrationTests\CommaSeparatedValues.cs" />
     <Compile Include="LexerTests.cs" />
     <Compile Include="PatternTests.cs" />

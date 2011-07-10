@@ -10,13 +10,13 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                Parser<Expression> Multiplicative = Binary(Unary, "*", "/");
-                Parser<Expression> Additive = Binary(Multiplicative, "+", "-");
-                Parser<Expression> Relational = Binary(Additive, "<=", "<", ">=", ">");
-                Parser<Expression> Equality = Binary(Relational, "==", "!=");
-                Parser<Expression> And = Binary(Equality, "&&");
-                Parser<Expression> Or = Binary(And, "||");
-                Parser<Expression> NullCoalescing = Binary(Or, "??");
+                var Multiplicative = Binary(Unary, "*", "/");
+                var Additive = Binary(Multiplicative, "+", "-");
+                var Relational = Binary(Additive, "<=", "<", ">=", ">");
+                var Equality = Binary(Relational, "==", "!=");
+                var And = Binary(Equality, "&&");
+                var Or = Binary(And, "||");
+                var NullCoalescing = Binary(Or, "??");
                 return NullCoalescing;
             }
         }
@@ -158,11 +158,10 @@ namespace Rook.Compiling.Syntax
         {
             Parser<Token>[] symbolParsers = symbols.Select(Token).ToArray();
 
-            return from leftAssociative in
-                       LeftAssociative(operand, Choice(symbolParsers),
-                                       (left, symbolAndRight) =>
-                                       new Call(symbolAndRight.Item1.Position, symbolAndRight.Item1.Literal, left, symbolAndRight.Item2))
-                   select leftAssociative;
+            return LeftAssociative(operand, Choice(symbolParsers),
+                                   (left, symbolAndRight) =>
+                                   new Call(symbolAndRight.Item1.Position, symbolAndRight.Item1.Literal, left,
+                                            symbolAndRight.Item2));
         }
     }
 }

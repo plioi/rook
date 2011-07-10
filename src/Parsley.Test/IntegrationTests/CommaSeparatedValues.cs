@@ -6,6 +6,56 @@ namespace Parsley.IntegrationTests
     [TestFixture]
     public class CommaSeparatedValues
     {
+        [Test]
+        public void Empty()
+        {
+            const string input = "";
+            var tokens = new CsvLexer(input);
+            CsvGrammar.CsvFile.Parses(tokens).IntoValue(new string[][] { });
+        }
+
+        [Test]
+        public void SingleValue()
+        {
+            const string input = "0";
+            var tokens = new CsvLexer(input);
+            CsvGrammar.CsvFile.Parses(tokens).IntoValue(new[]
+            {
+                new[]{ "0" }
+            });
+        }
+
+        [Test]
+        public void DanglingComma()
+        {
+            const string input = "0,";
+            var tokens = new CsvLexer(input);
+            CsvGrammar.CsvFile.FailsToParse(tokens, "").WithMessage("(1, 3): value expected");
+        }
+
+        [Test]
+        public void MultipleValues()
+        {
+            const string input = "abc,123,DEF";
+            var tokens = new CsvLexer(input);
+            CsvGrammar.CsvFile.Parses(tokens).IntoValue(new[]
+            {
+                new[] { "abc", "123", "DEF" }
+            });
+        }
+
+        [Test]
+        public void MultipleLines()
+        {
+            const string input = "abc,123,DEF\r\nghi,456,JKL\r\n";
+            var tokens = new CsvLexer(input);
+            CsvGrammar.CsvFile.Parses(tokens).IntoValue(new[]
+            {
+                new[] {"abc", "123", "DEF"},
+                new[] {"ghi", "456", "JKL"}
+            });
+        }
+
         private class CsvLexer : Lexer
         {
             public static readonly TokenKind Comma = new TokenKind("comma", @",");
@@ -45,57 +95,13 @@ namespace Parsley.IntegrationTests
 
             private static Parser<Token> Comma
             {
-                get { return Token(CsvLexer.Comma); }
+                get { return Token(","); }
             }
 
             private static Parser<Token> Value
             {
                 get { return Token(CsvLexer.Value); }
             }
-        }
-
-        [Test]
-        public void Empty()
-        {
-            const string input = "";
-            var tokens = new CsvLexer(input);
-            CsvGrammar.CsvFile.Parses(tokens).IntoValue(new string[][] { });
-        }
-
-        [Test]
-        public void SingleValue()
-        {
-            const string input = "0";
-            var tokens = new CsvLexer(input);
-            CsvGrammar.CsvFile.Parses(tokens).IntoValue(new[] {new[]{"0"}});
-        }
-
-        [Test]
-        public void DanglingComma()
-        {
-            const string input = "0,";
-            var tokens = new CsvLexer(input);
-            CsvGrammar.CsvFile.FailsToParse(tokens, "").WithMessage("(1, 3): value expected");
-        }
-
-        [Test]
-        public void MultipleValues()
-        {
-            const string input = "abc,123,DEF";
-            var tokens = new CsvLexer(input);
-            CsvGrammar.CsvFile.Parses(tokens).IntoValue(new[] { new[] { "abc", "123", "DEF" } });
-        }
-
-        [Test]
-        public void MultipleLines()
-        {
-            const string input = "abc,123,DEF\r\nghi,456,JKL\r\n";
-            var tokens = new CsvLexer(input);
-            CsvGrammar.CsvFile.Parses(tokens).IntoValue(new[]
-            {
-                new[] {"abc", "123", "DEF"},
-                new[] {"ghi", "456", "JKL"}
-            });
         }
     }
 }
