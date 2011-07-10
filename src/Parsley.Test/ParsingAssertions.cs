@@ -57,7 +57,7 @@ namespace Parsley
 
         private static Reply<T> Succeeds<T>(this Reply<T> reply)
         {
-            reply.Success.ShouldBeTrue(reply.ToString());
+            reply.Success.ShouldBeTrue(reply.ErrorMessages.ToString());
 
             return reply;
         }
