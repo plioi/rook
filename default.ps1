@@ -6,7 +6,7 @@ properties {
     $base_dir = resolve-path .\
     $source_dir = "$base_dir\src"
     $samples_dir = "$source_dir\Rook.Test\Samples"
-    $nunit_dir = "$source_dir\packages\NUnit.2.5.9.10348\Tools"
+    $nunit_dir = "$source_dir\packages\NUnit.2.5.10.11092\Tools"
 	
     $build_dir = "$base_dir\build"
     $test_dir = "$build_dir\test"
