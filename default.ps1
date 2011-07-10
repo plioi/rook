@@ -20,13 +20,19 @@ FormatTaskName "------------------------------
 -- {0}
 ------------------------------"
 
-task default -depends Init, CommonAssemblyInfo, Compile, Test, Package
+task default -depends Init, CommonAssemblyInfo, Compile, Test
+task package -depends Init, CommonAssemblyInfo, Compile, Test, ZipPackage
 
 task Init {
     delete_file $package_file
     delete_directory $build_dir
     create_directory $test_dir
     create_directory $build_dir
+}
+
+task CommonAssemblyInfo {
+    $version = "1.0.0.0"
+    create-commonAssemblyInfo "$version" $projectName "$source_dir\CommonAssemblyInfo.cs"
 }
 
 task Compile -depends Init {
@@ -43,12 +49,7 @@ task Test {
     }
 }
 
-task CommonAssemblyInfo {
-    $version = "1.0.0.0"   
-    create-commonAssemblyInfo "$version" $projectName "$source_dir\CommonAssemblyInfo.cs"
-}
-
-task Package -depends Compile {
+task ZipPackage -depends Compile {
     delete_directory $package_dir
 
     copy_files "$source_dir\Parsley\bin\$projectConfig\" $package_dir
