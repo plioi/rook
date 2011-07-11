@@ -57,6 +57,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Parsley, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Parsley\Parsley.dll</HintPath>
+    </Reference>
+    <Reference Include="Parsley.Test, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Parsley\Parsley.Test.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -107,14 +115,6 @@
     <Compile Include="Compiling\Types\TypeVariableTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Parsley.Test\Parsley.Test.csproj">
-      <Project>{B701DB7C-EE1A-4A32-B12F-B8EEFA86DF08}</Project>
-      <Name>Parsley.Test</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Parsley\Parsley.csproj">
-      <Project>{DFDC9B30-8B69-4D65-8881-7903C16C5845}</Project>
-      <Name>Parsley</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Rook.Compiling\Rook.Compiling.csproj">
       <Project>{DD4E13B5-E96D-4DBF-9821-9908839ECDD4}</Project>
       <Name>Rook.Compiling</Name>

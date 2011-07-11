@@ -53,6 +53,10 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Parsley, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Parsley\Parsley.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -117,10 +121,6 @@
     <Compile Include="Types\TypeVariable.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Parsley\Parsley.csproj">
-      <Project>{DFDC9B30-8B69-4D65-8881-7903C16C5845}</Project>
-      <Name>Parsley</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Rook.Core\Rook.Core.csproj">
       <Project>{646BF299-17FE-4B59-BC83-5D28AF7D5A48}</Project>
       <Name>Rook.Core</Name>
