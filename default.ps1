@@ -84,12 +84,11 @@ function global:copy_all_assemblies_for_test($destination){
     copy_and_flatten $source_dir *.config $destination
     copy_and_flatten $source_dir *.xml $destination
     copy_and_flatten $source_dir *.pdb $destination
-    copy-item $samples_dir $destination
 }
 
 function global:copy_samples_for_test($destination) {
-    create_directory $destination
-    copy-item "$samples_dir\*" "$destination\Samples"
+    create_directory "$destination\Samples"
+    copy_files $samples_dir "$destination\Samples"
 }
 
 function global:delete_file($file) {
