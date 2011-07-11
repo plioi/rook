@@ -1,4 +1,4 @@
-Rook is a compiler/interpreter for a simple programming language.
+Rook (https://github.com/plioi/rook) is a compiler/interpreter for a simple programming language.
 
 Integration tests consist of sample rook programs, found under Rook.Test.Samples.
 
