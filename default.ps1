@@ -52,10 +52,7 @@ task Test {
 task ZipPackage -depends Compile {
     delete_directory $package_dir
 
-    copy_files "$source_dir\Parsley\bin\$projectConfig\" $package_dir
     copy_files "$source_dir\Rook\bin\$projectConfig\" $package_dir
-    copy_files "$source_dir\Rook.Compiling\bin\$projectConfig\" $package_dir
-    copy_files "$source_dir\Rook.Core\bin\$projectConfig\" $package_dir
     Copy-Item "$base_dir\README.md" "$package_dir\README.txt"
 
     zip_directory $package_dir $package_file 
