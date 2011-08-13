@@ -11,7 +11,7 @@ namespace Rook.Compiling.Syntax
 
         protected TSyntax Parse(string source)
         {
-            return Parser(new RookLexer(source)).Value;
+            return Parser.Parse(new RookLexer(source)).Value;
         }
 
         protected Reply<TSyntax> Parses(string source)

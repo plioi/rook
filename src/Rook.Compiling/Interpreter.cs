@@ -89,9 +89,9 @@ namespace Rook.Compiling
             return new Program(pos, new[] { function }.Concat(functionsExceptPotentialOverwrite));
         }
 
-        private static bool TryParse<T>(Lexer tokens, Parser<T> parse, out T syntax) where T : SyntaxTree
+        private static bool TryParse<T>(Lexer tokens, Parser<T> parser, out T syntax) where T : SyntaxTree
         {
-            var reply = parse(tokens);
+            var reply = parser.Parse(tokens);
 
             if (!reply.Success ||
                 reply.UnparsedTokens.ToString().Trim().Length > 0)

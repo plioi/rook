@@ -204,23 +204,23 @@ namespace Rook.Compiling.CodeGeneration
             expectation.AppendLine(line);
         }
 
-        private static void AssertTranslation<T>(string expectedCSharp, Parser<T> parse, string rookSource) 
+        private static void AssertTranslation<T>(string expectedCSharp, Parser<T> parser, string rookSource) 
             where T : SyntaxTree
         {
-            Translate(parse, rookSource).ShouldEqual(expectedCSharp);
+            Translate(parser, rookSource).ShouldEqual(expectedCSharp);
         }
 
-        private void AssertTranslation<T>(Parser<T> parse, string rookSource) where T : SyntaxTree
+        private void AssertTranslation<T>(Parser<T> parser, string rookSource) where T : SyntaxTree
         {
-            Translate(parse, rookSource).TrimEnd().ShouldEqual(expectation.ToString().TrimEnd());
+            Translate(parser, rookSource).TrimEnd().ShouldEqual(expectation.ToString().TrimEnd());
         }
 
-        private static string Translate<T>(Parser<T> parse, string rookSource)
+        private static string Translate<T>(Parser<T> parser, string rookSource)
             where T : SyntaxTree
         {
             var tokens = new RookLexer(rookSource);
             var code = new CodeWriter();
-            WriteAction write = parse(tokens).Value.Visit(new CSharpTranslator());
+            WriteAction write = parser.Parse(tokens).Value.Visit(new CSharpTranslator());
             write(code);
             return code.ToString();
         }

@@ -4,14 +4,14 @@ namespace Rook.Compiling.Syntax
 {
     public static class ParsingAssertions
     {
-        public static Reply<T> Parses<T>(this Parser<T> parse, string source)
+        public static Reply<T> Parses<T>(this Parser<T> parser, string source)
         {
-            return parse.Parses(new RookLexer(source));
+            return parser.Parses(new RookLexer(source));
         }
 
-        public static Reply<T> FailsToParse<T>(this Parser<T> parse, string source, string expectedUnparsedSource)
+        public static Reply<T> FailsToParse<T>(this Parser<T> parser, string source, string expectedUnparsedSource)
         {
-            return parse.FailsToParse(new RookLexer(source), expectedUnparsedSource);
+            return parser.FailsToParse(new RookLexer(source), expectedUnparsedSource);
         }
 
         public static void IntoTree<TSyntax>(this Reply<TSyntax> reply, string expectedSyntaxTree) where TSyntax : SyntaxTree
