@@ -41,6 +41,32 @@ namespace Rook.Compiling.Syntax
         public void ShouldRecognizeOperatorsGreedily()
         {
             new RookLexer("<=>=<>!====*/+-&&||!{}[][,]()???:").ShouldYieldTokens("<=", ">=", "<", ">", "!=", "==", "=", "*", "/", "+", "-", "&&", "||", "!", "{", "}", "[]", "[", ",", "]", "(", ")", "??", "?", ":");
+
+            new RookLexer("(").ShouldYieldTokens(RookLexer.LeftParen, "(");
+            new RookLexer(")").ShouldYieldTokens(RookLexer.RightParen, ")");
+            new RookLexer("*").ShouldYieldTokens(RookLexer.Multiply, "*");
+            new RookLexer("/").ShouldYieldTokens(RookLexer.Divide, "/");
+            new RookLexer("+").ShouldYieldTokens(RookLexer.Add, "+");
+            new RookLexer("-").ShouldYieldTokens(RookLexer.Subtract, "-");
+            new RookLexer("<=").ShouldYieldTokens(RookLexer.LessThanOrEqual, "<=");
+            new RookLexer("<").ShouldYieldTokens(RookLexer.LessThan, "<");
+            new RookLexer(">=").ShouldYieldTokens(RookLexer.GreaterThanOrEqual, ">=");
+            new RookLexer(">").ShouldYieldTokens(RookLexer.GreaterThan, ">");
+            new RookLexer("==").ShouldYieldTokens(RookLexer.Equal, "==");
+            new RookLexer("!=").ShouldYieldTokens(RookLexer.NotEqual, "!=");
+            new RookLexer("||").ShouldYieldTokens(RookLexer.Or, "||");
+            new RookLexer("&&").ShouldYieldTokens(RookLexer.And, "&&");
+            new RookLexer("!").ShouldYieldTokens(RookLexer.Not, "!");
+            new RookLexer("=").ShouldYieldTokens(RookLexer.Assignment, "=");
+            new RookLexer(",").ShouldYieldTokens(RookLexer.Comma, ",");
+            new RookLexer("{").ShouldYieldTokens(RookLexer.LeftBrace, "{");
+            new RookLexer("}").ShouldYieldTokens(RookLexer.RightBrace, "}");
+            new RookLexer("[]").ShouldYieldTokens(RookLexer.Vector, "[]");
+            new RookLexer("[").ShouldYieldTokens(RookLexer.LeftSquareBrace, "[");
+            new RookLexer("]").ShouldYieldTokens(RookLexer.RightSquareBrace, "]");
+            new RookLexer(":").ShouldYieldTokens(RookLexer.Colon, ":");
+            new RookLexer("??").ShouldYieldTokens(RookLexer.NullCoalesce, "??");
+            new RookLexer("?").ShouldYieldTokens(RookLexer.Question, "?");
         }
 
         [Test]
