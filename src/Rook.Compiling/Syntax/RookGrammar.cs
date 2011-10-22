@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
@@ -8,49 +7,31 @@ namespace Rook.Compiling.Syntax
 {
     public class RookGrammar : Grammar
     {
-        public static readonly GrammarRule<Program> Program = new GrammarRule<Program>();
-        public static readonly GrammarRule<Function> Function = new GrammarRule<Function>();
-        public static readonly GrammarRule<NamedType> TypeName = new GrammarRule<NamedType>();
-        public static readonly GrammarRule<Expression> Expression = new GrammarRule<Expression>();
-        public static readonly GrammarRule<Token> EndOfLine = new GrammarRule<Token>();
-        public static readonly GrammarRule<Token> Identifier = new GrammarRule<Token>();
-        public static readonly GrammarRule<Name> Name = new GrammarRule<Name>();
+        public readonly GrammarRule<Program> Program = new GrammarRule<Program>();
+        public readonly GrammarRule<Function> Function = new GrammarRule<Function>();
+        public readonly GrammarRule<NamedType> TypeName = new GrammarRule<NamedType>();
+        public readonly GrammarRule<Token> EndOfLine = new GrammarRule<Token>();
+        public readonly GrammarRule<Token> Identifier = new GrammarRule<Token>();
+        public readonly GrammarRule<Name> Name = new GrammarRule<Name>();
 
-        #region Private Rules
-        private static readonly GrammarRule<NamedType> NameType = new GrammarRule<NamedType>();
-        private static readonly GrammarRule<Token> TypeModifier = new GrammarRule<Token>();
-        private static readonly GrammarRule<NamedType> KeywordType = new GrammarRule<NamedType>();
-        private static readonly GrammarRule<Parameter> ExplicitlyTypedParameter = new GrammarRule<Parameter>();
-        private static readonly GrammarRule<Parameter> ImplicitlyTypedParameter = new GrammarRule<Parameter>();
-        private static readonly GrammarRule<Parameter> Parameter = new GrammarRule<Parameter>();
+        private readonly GrammarRule<NamedType> NameType = new GrammarRule<NamedType>();
+        private readonly GrammarRule<Token> TypeModifier = new GrammarRule<Token>();
+        private readonly GrammarRule<NamedType> KeywordType = new GrammarRule<NamedType>();
+        private readonly GrammarRule<Parameter> ExplicitlyTypedParameter = new GrammarRule<Parameter>();
+        private readonly GrammarRule<Parameter> ImplicitlyTypedParameter = new GrammarRule<Parameter>();
+        public readonly GrammarRule<Parameter> Parameter = new GrammarRule<Parameter>();
 
-        private static readonly GrammarRule<Expression> NullCoalescing = new GrammarRule<Expression>();
-        private static readonly GrammarRule<Expression> Or = new GrammarRule<Expression>();
-        private static readonly GrammarRule<Expression> And = new GrammarRule<Expression>();
-        private static readonly GrammarRule<Expression> Equality = new GrammarRule<Expression>();
-        private static readonly GrammarRule<Expression> Relational = new GrammarRule<Expression>();
-        private static readonly GrammarRule<Expression> Additive = new GrammarRule<Expression>();
-        private static readonly GrammarRule<Expression> Multiplicative = new GrammarRule<Expression>();
-        private static readonly GrammarRule<Expression> Unary = new GrammarRule<Expression>();
-        
-        private static readonly GrammarRule<Expression> Primary = new GrammarRule<Expression>();
-        private static readonly GrammarRule<Func<Expression, Expression>> Call = new GrammarRule<Func<Expression, Expression>>();
-        private static readonly GrammarRule<Func<Expression, Expression>> Subscript = new GrammarRule<Func<Expression, Expression>>();
+        public readonly GrammarRule<Expression> Parenthetical = new GrammarRule<Expression>();
+        public readonly GrammarRule<Expression> If = new GrammarRule<Expression>();
+        public readonly GrammarRule<Expression> Lambda = new GrammarRule<Expression>();
+        public readonly GrammarRule<Expression> VectorLiteral = new GrammarRule<Expression>();
+        public readonly GrammarRule<Expression> Block = new GrammarRule<Expression>();
+        public readonly GrammarRule<VariableDeclaration> VariableDeclaration = new GrammarRule<VariableDeclaration>();
+        public readonly GrammarRule<VariableDeclaration> ExplicitlyTypedVariableDeclaration = new GrammarRule<VariableDeclaration>();
+        public readonly GrammarRule<VariableDeclaration> ImplicitlyTypedVariableDeclaration = new GrammarRule<VariableDeclaration>();
+        public readonly OperatorPrecedenceParser<Expression> Expression = new OperatorPrecedenceParser<Expression>();
 
-        private static readonly GrammarRule<Expression> Literal = new GrammarRule<Expression>();
-        private static readonly GrammarRule<Expression> If = new GrammarRule<Expression>();
-        private static readonly GrammarRule<Expression> Block = new GrammarRule<Expression>();
-        private static readonly GrammarRule<Expression> Lambda = new GrammarRule<Expression>();
-        private static readonly GrammarRule<Expression> VectorLiteral = new GrammarRule<Expression>();
-        private static readonly GrammarRule<VariableDeclaration> ExplicitlyTypedVariableDeclaration = new GrammarRule<VariableDeclaration>();
-        private static readonly GrammarRule<VariableDeclaration> ImplicitlyTypedVariableDeclaration = new GrammarRule<VariableDeclaration>();
-        private static readonly GrammarRule<VariableDeclaration> VariableDeclaration = new GrammarRule<VariableDeclaration>();
-        private static readonly GrammarRule<Expression> BooleanLiteral = new GrammarRule<Expression>();
-        private static readonly GrammarRule<Expression> IntegerLiteral = new GrammarRule<Expression>();
-        private static readonly GrammarRule<Expression> NullLiteral = new GrammarRule<Expression>();
-        #endregion
-
-        static RookGrammar()
+        public RookGrammar()
         {
             TopLevelConstructs();
             TypeNames();
@@ -64,7 +45,7 @@ namespace Rook.Compiling.Syntax
                 Token(RookLexer.Identifier);
         }
 
-        private static void TopLevelConstructs()
+        private void TopLevelConstructs()
         {
             Program.Rule =
                 from leadingEndOfLine in Optional(Token(RookLexer.EndOfLine))
@@ -79,7 +60,7 @@ namespace Rook.Compiling.Syntax
                 select new Function(name.Position, returnType, name, parameters, body);
         }
 
-        private static void TypeNames()
+        private void TypeNames()
         {
             NameType.Rule =
                 from name in Name
@@ -100,7 +81,7 @@ namespace Rook.Compiling.Syntax
                       "type name");
         }
 
-        private static void Parameters()
+        private void Parameters()
         {
             ExplicitlyTypedParameter.Rule =
                 from type in TypeName
@@ -115,48 +96,10 @@ namespace Rook.Compiling.Syntax
                 Choice(Attempt(ExplicitlyTypedParameter), ImplicitlyTypedParameter);
         }
 
-        private static void Expressions()
+        private void Expressions()
         {
-            Expression.Rule = NullCoalescing;
-            NullCoalescing.Rule = Binary(Or, "??");
-            Or.Rule = Binary(And, "||");
-            And.Rule = Binary(Equality, "&&");
-            Equality.Rule = Binary(Relational, "==", "!=");
-            Relational.Rule = Binary(Additive, "<=", "<", ">=", ">");
-            Additive.Rule = Binary(Multiplicative, "+", "-");
-            Multiplicative.Rule = Binary(Unary, "*", "/");
-
-            Unary.Rule =
-                from symbol in Optional(Choice(Token("-"), Token("!")))
-                from primary in Primary
-                select symbol == null ? primary : new Call(symbol.Position, symbol.Literal, primary);
-
-            var nothing = from zeroArguments in Zero<Expression>()
-                          select new Func<Expression, Expression>(callable => callable);
-
-            Primary.Rule =
-                from callable in Choice(Literal, VectorLiteral, If, Block, Lambda, Name, Parenthesized(Expression))
-                from callArgumentAppender in Choice(Attempt(Call), Attempt(Subscript), nothing)
-                select callArgumentAppender(callable);
-
-            Literal.Rule =
-                Choice(BooleanLiteral, NullLiteral, IntegerLiteral);
-
-            BooleanLiteral.Rule =
-                from token in Choice(Token(RookLexer.@true), Token(RookLexer.@false))
-                select new BooleanLiteral(token.Position, bool.Parse(token.Literal));
-
-            IntegerLiteral.Rule =
-                from token in Token(RookLexer.Integer)
-                select new IntegerLiteral(token.Position, token.Literal);
-
-            NullLiteral.Rule =
-                from literal in Token(RookLexer.@null)
-                select new Null(literal.Position);
-
-            VectorLiteral.Rule =
-                from items in Between("[", OneOrMore(Expression, Token(",")), "]")
-                select new VectorLiteral(items.First().Position, items);
+            Parenthetical.Rule =
+                Between("(", Expression, ")");
 
             If.Rule =
                 from _if_ in Token(RookLexer.@if)
@@ -183,16 +126,9 @@ namespace Rook.Compiling.Syntax
                 from identifier in Identifier
                 select new Name(identifier.Position, identifier.Literal);
 
-            Call.Rule =
-                from arguments in Tuple(Expression)
-                select new Func<Expression, Expression>(callable => new Call(callable.Position, callable, arguments));
-
-            Subscript.Rule =
-                from arguments in Between("[", OneOrMore(Expression, Token(":")), "]")
-                select new Func<Expression, Expression>(
-                    callable => new Call(callable.Position,
-                                         new Name(callable.Position, arguments.Count() == 1 ? "Index" : "Slice"),
-                                         new[] {callable}.Concat(arguments)));
+            VectorLiteral.Rule =
+                from items in Between("[", OneOrMore(Expression, Token(",")), "]")
+                select new VectorLiteral(items.First().Position, items);
 
             VariableDeclaration.Rule =
                 Choice(Attempt(ExplicitlyTypedVariableDeclaration), ImplicitlyTypedVariableDeclaration);
@@ -211,6 +147,82 @@ namespace Rook.Compiling.Syntax
                 from value in Expression
                 from end in EndOfLine
                 select new VariableDeclaration(identifier.Position, identifier.Literal, value);
+
+            Atom(RookLexer.@null, token => new Null(token.Position));
+            Atom(RookLexer.Identifier, token => new Name(token.Position, token.Literal));
+            Atom(RookLexer.Integer, token => new IntegerLiteral(token.Position, token.Literal));
+            Atom(RookLexer.@true, token => new BooleanLiteral(token.Position, true));
+            Atom(RookLexer.@false, token => new BooleanLiteral(token.Position, false));
+
+            Unit(RookLexer.LeftSquareBrace, VectorLiteral);
+            Unit(RookLexer.@if, If);
+            Unit(RookLexer.fn, Lambda);
+            Unit(RookLexer.LeftBrace, Block);
+            Unit(RookLexer.LeftParen, Parenthetical);
+
+            Extend(RookLexer.LeftParen, 12, Call);
+            Extend(RookLexer.LeftSquareBrace, 12, Subscript);
+
+            Prefix(RookLexer.Subtract, 11);
+            Prefix(RookLexer.Not, 11);
+
+            Binary(RookLexer.Multiply, 10);
+            Binary(RookLexer.Divide, 10);
+
+            Binary(RookLexer.Add, 9);
+            Binary(RookLexer.Subtract, 9);
+
+            Binary(RookLexer.LessThan, 8);
+            Binary(RookLexer.GreaterThan, 8);
+            Binary(RookLexer.LessThanOrEqual, 8);
+            Binary(RookLexer.GreaterThanOrEqual, 8);
+
+            Binary(RookLexer.Equal, 7);
+            Binary(RookLexer.NotEqual, 7);
+
+            Binary(RookLexer.And, 6);
+            Binary(RookLexer.Or, 5);
+            Binary(RookLexer.NullCoalesce, 4);
+        }
+
+        private void Atom(TokenKind kind, AtomNodeBuilder<Expression> createAtomNode)
+        {
+            Expression.Atom(kind, createAtomNode);
+        }
+
+        private void Unit(TokenKind kind, Parser<Expression> parselet)
+        {
+            Expression.Unit(kind, parselet);
+        }
+
+        private void Prefix(Operator operation, int precedence)
+        {
+            Expression.Prefix(operation, precedence, (symbol, operand) => new Call(symbol.Position, symbol.Literal, operand));
+        }
+
+        private void Binary(Operator operation, int precedence)
+        {
+            Expression.Binary(operation, precedence, (left, symbol, right) => new Call(symbol.Position, symbol.Literal, left, right));
+        }
+
+        private void Extend(Operator operation, int precedence, ExtendParserBuilder<Expression> createExtendParser)
+        {
+            Expression.Extend(operation, precedence, createExtendParser);
+        }
+
+        private Parser<Expression> Call(Expression callable)
+        {
+            return from arguments in Tuple(Expression)
+                   select new Call(callable.Position, callable, arguments);
+
+        }
+
+        private Parser<Expression> Subscript(Expression callable)
+        {
+            return from arguments in Between("[", OneOrMore(Expression, Token(":")), "]")
+                   select new Call(callable.Position,
+                                   new Name(callable.Position, arguments.Count() == 1 ? "Index" : "Slice"),
+                                   new[] { callable }.Concat(arguments));
         }
 
         private static Parser<T> Between<T>(string openOperator, Parser<T> parser, string closeOperator)
@@ -237,16 +249,6 @@ namespace Rook.Compiling.Syntax
                 return NamedType.Vector(targetType);
 
             return NamedType.Nullable(targetType);
-        }
-
-        private static Parser<Expression> Binary(Parser<Expression> operand, params string[] symbols)
-        {
-            Parser<Token>[] symbolParsers = symbols.Select(Token).ToArray();
-
-            return LeftAssociative(operand, Choice(symbolParsers),
-                                   (left, symbolAndRight) =>
-                                   new Call(symbolAndRight.Item1.Position, symbolAndRight.Item1.Literal, left,
-                                            symbolAndRight.Item2));
         }
     }
 }

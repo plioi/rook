@@ -6,6 +6,7 @@ namespace Rook.Compiling.Syntax
 {
     public abstract class SyntaxTreeTests<TSyntax> where TSyntax : SyntaxTree
     {
+        protected static readonly RookGrammar RookGrammar = new RookGrammar();
         protected static readonly DataType Integer = NamedType.Integer;
         protected static readonly DataType Boolean = NamedType.Boolean;
 

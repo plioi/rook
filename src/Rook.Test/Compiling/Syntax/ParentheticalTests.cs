@@ -18,7 +18,14 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void DemandsBalancedParentheses()
         {
-            FailsToParse("(1(", "(").WithMessage("(1, 3): ) expected");
+            FailsToParse("(1(", "").WithMessage("(1, 4): ) expected");
+        }
+
+        [Test]
+        public void GroupingSupercedesBasicOperatorPrecedence()
+        {
+            Parses("(1+2)*3").IntoTree("((((1) + (2))) * (3))");
+            Parses("1/(2+3)").IntoTree("((1) / (((2) + (3))))");
         }
     }
 }

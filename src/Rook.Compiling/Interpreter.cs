@@ -10,11 +10,13 @@ namespace Rook.Compiling
 {
     public class Interpreter
     {
+        private readonly RookGrammar grammar;
         private readonly RookCompiler compiler;
         private readonly Dictionary<string, Function> functions;
 
         public Interpreter()
         {
+            grammar = new RookGrammar();
             compiler = new RookCompiler(CompilerParameters.ForBasicEvaluation());
             functions = new Dictionary<string, Function>();
         }
@@ -25,8 +27,8 @@ namespace Rook.Compiling
             Function function;
             Expression expression;
 
-            return TryParse(tokens, RookGrammar.Function, out function) ||
-                   TryParse(tokens, RookGrammar.Expression, out expression);
+            return TryParse(tokens, grammar.Function, out function) ||
+                   TryParse(tokens, grammar.Expression, out expression);
         }
 
         public InterpreterResult Interpret(string code)
@@ -35,11 +37,11 @@ namespace Rook.Compiling
             var pos = tokens.Position;
             
             Expression expression;
-            if (TryParse(tokens, RookGrammar.Expression, out expression))
+            if (TryParse(tokens, grammar.Expression, out expression))
                 return InterpretExpression(expression, pos);
 
             Function function;
-            if (TryParse(tokens, RookGrammar.Function, out function))
+            if (TryParse(tokens, grammar.Function, out function))
                 return InterpretFunction(function, pos);
 
             return Error("Cannot evaluate this code: must be a function or expression.");

@@ -101,12 +101,21 @@ namespace Rook.Compiling.Syntax
         }
 
         [Test]
-        public void TreatsInfixOperationsAsLeftAssociative()
+        public void TreatsBinaryOperationsAsLeftAssociative()
         {
             Parses("1*2*3").IntoTree("((((1) * (2))) * (3))");
+            Parses("1/2/3").IntoTree("((((1) / (2))) / (3))");
             Parses("1+2+3").IntoTree("((((1) + (2))) + (3))");
+            Parses("1-2-3").IntoTree("((((1) - (2))) - (3))");
+            Parses("1<2<3").IntoTree("((((1) < (2))) < (3))");
+            Parses("1>2>3").IntoTree("((((1) > (2))) > (3))");
+            Parses("1<=2<=3").IntoTree("((((1) <= (2))) <= (3))");
+            Parses("1>=2>=3").IntoTree("((((1) >= (2))) >= (3))");
+            Parses("1==2==3").IntoTree("((((1) == (2))) == (3))");
+            Parses("1!=2!=3").IntoTree("((((1) != (2))) != (3))");
             Parses("true&&false&&false").IntoTree("((((true) && (false))) && (false))");
             Parses("false||true||false").IntoTree("((((false) || (true))) || (false))");
+            Parses("x??y??z").IntoTree("((((x) ?? (y))) ?? (z))");
         }
 
         [Test]

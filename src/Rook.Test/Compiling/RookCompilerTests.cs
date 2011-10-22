@@ -16,7 +16,7 @@ namespace Rook.Compiling
         {
             Build("int Main() $1;");
             AssertErrors(1);
-            AssertError(1, 12, "(, [, {, false, fn, identifier, if, integer, null or true expected");
+            AssertError(1, 12, "Parse error.");
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace Rook.Compiling
         [Test]
         public void ShouldBuildProgramsFromSyntaxTrees()
         {
-            Program program = RookGrammar.Program.Parse(new RookLexer("int Main() 123;")).Value;
+            Program program = new RookGrammar().Program.Parse(new RookLexer("int Main() 123;")).Value;
             Build(program);
             AssertErrors(0);
             ExecuteMain().ShouldEqual(123);
