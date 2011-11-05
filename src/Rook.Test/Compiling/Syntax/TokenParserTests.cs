@@ -42,17 +42,18 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ParsesLineEndings()
         {
-            //Endlines are the end of input, \r\n, or semicolons (with optional trailing whitspace).
+            //Endlines are the end of input, \n, or semicolons (with optional trailing whitespace).
+            //Note that Parsley normalizes \r, \n, and \r\n to a single line feed \n.
 
             EndOfLine.Parses("").IntoToken(Lexer.EndOfInput, "");
 
-            EndOfLine.Parses("\r\n").IntoToken(RookLexer.EndOfLine, "\r\n");
-            EndOfLine.Parses("\r\n \t \t").IntoToken(RookLexer.EndOfLine, "\r\n \t \t");
-            EndOfLine.Parses("\r\n \r\n \t ").IntoToken(RookLexer.EndOfLine, "\r\n \r\n \t ");
+            EndOfLine.Parses("\r\n").IntoToken(RookLexer.EndOfLine, "\n");
+            EndOfLine.Parses("\r\n \t \t").IntoToken(RookLexer.EndOfLine, "\n \t \t");
+            EndOfLine.Parses("\r\n \r\n \t ").IntoToken(RookLexer.EndOfLine, "\n \n \t ");
 
             EndOfLine.Parses(";").IntoToken(RookLexer.EndOfLine, ";");
             EndOfLine.Parses("; \t \t").IntoToken(RookLexer.EndOfLine, "; \t \t");
-            EndOfLine.Parses("; \r\n \t ").IntoToken(RookLexer.EndOfLine, "; \r\n \t ");
+            EndOfLine.Parses("; \r\n \t ").IntoToken(RookLexer.EndOfLine, "; \n \t ");
 
             EndOfLine.FailsToParse("x", "x").WithMessage("(1, 1): end of line expected");
         }

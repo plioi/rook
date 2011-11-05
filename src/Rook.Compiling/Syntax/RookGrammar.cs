@@ -33,6 +33,8 @@ namespace Rook.Compiling.Syntax
 
         public RookGrammar()
         {
+            InferGrammarRuleNames();
+
             TopLevelConstructs();
             TypeNames();
             Parameters();
@@ -249,6 +251,20 @@ namespace Rook.Compiling.Syntax
                 return NamedType.Vector(targetType);
 
             return NamedType.Nullable(targetType);
+        }
+    }
+
+    public static class GrammarExtensions
+    {
+        /// <summary>
+        /// goal.TerminatedBy(terminator) parse goal and then terminator.  If goal and terminator both
+        /// succeed, the result of the goal parser is returned.
+        /// </summary>
+        public static Parser<T> TerminatedBy<T, S>(this Parser<T> goal, Parser<S> terminator)
+        {
+            return from G in goal
+                   from _ in terminator
+                   select G;
         }
     }
 }

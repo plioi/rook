@@ -72,22 +72,25 @@ namespace Rook.Compiling.Syntax
         [Test]
         public void ShouldRecognizeEndOfLogicalLine()
         {
-            //Endlines are \r\n or semicolons (with optional preceding spaces/tabs and optional trailing whitspace).
+            //Endlines are \n or semicolons (with optional preceding spaces/tabs and optional trailing whitspace).
+            //Note that Parsley normalizes \r, \n, and \r\n to a single line feed \n.
 
-            new RookLexer("\r\n").ShouldYieldTokens(RookLexer.EndOfLine, "\r\n");
-            new RookLexer("\r\n \r\n \t ").ShouldYieldTokens(RookLexer.EndOfLine, "\r\n \r\n \t ");
+            new RookLexer("\r\n").ShouldYieldTokens(RookLexer.EndOfLine, "\n");
+            new RookLexer("\r\n \r\n \t ").ShouldYieldTokens(RookLexer.EndOfLine, "\n \n \t ");
 
             new RookLexer(";").ShouldYieldTokens(RookLexer.EndOfLine, ";");
-            new RookLexer("; \r\n \t ").ShouldYieldTokens(RookLexer.EndOfLine, "; \r\n \t ");
+            new RookLexer("; \r\n \t ").ShouldYieldTokens(RookLexer.EndOfLine, "; \n \t ");
         }
 
         [Test]
         public void ShouldRecognizeAndSkipOverIntralineWhitespace()
         {
-            new RookLexer(" a if == \r\n 0 ").ShouldYieldTokens("a", "if", "==", "\r\n ", "0");
-            new RookLexer("\ta\tif\t==\t\r\n\t0\t").ShouldYieldTokens("a", "if", "==", "\r\n\t", "0");
-            new RookLexer(" \t a \t if \t == \t \r\n \t 0 \t ").ShouldYieldTokens("a", "if", "==", "\r\n \t ", "0");
-            new RookLexer("\t \ta\t \tif\t \t==\t \t\r\n\t \t0\t \t").ShouldYieldTokens("a", "if", "==", "\r\n\t \t", "0");
+            //Note that Parsley normalizes \r, \n, and \r\n to a single line feed \n.
+
+            new RookLexer(" a if == \r\n 0 ").ShouldYieldTokens("a", "if", "==", "\n ", "0");
+            new RookLexer("\ta\tif\t==\t\r\n\t0\t").ShouldYieldTokens("a", "if", "==", "\n\t", "0");
+            new RookLexer(" \t a \t if \t == \t \r\n \t 0 \t ").ShouldYieldTokens("a", "if", "==", "\n \t ", "0");
+            new RookLexer("\t \ta\t \tif\t \t==\t \t\r\n\t \t0\t \t").ShouldYieldTokens("a", "if", "==", "\n\t \t", "0");
         }
     }
 }
