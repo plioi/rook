@@ -72,7 +72,7 @@ namespace Rook.Compiling.Syntax
             node.VariableDeclarations.ElementAt(0).Type.ShouldEqual(Integer);
             node.VariableDeclarations.ElementAt(0).Value.Type.ShouldBeNull();
             node.VariableDeclarations.ElementAt(1).Type.ShouldEqual(Integer);
-            node.VariableDeclarations.ElementAt(1).Value.Type.ShouldEqual(Integer);//Integer constants are always typed.
+            node.VariableDeclarations.ElementAt(1).Value.Type.ShouldBeNull();
             node.VariableDeclarations.ElementAt(2).Type.ShouldBeNull();//Implicitly typed.
             node.VariableDeclarations.ElementAt(2).Value.Type.ShouldBeNull();
             node.InnerExpressions.ElementAt(0).Type.ShouldBeNull();

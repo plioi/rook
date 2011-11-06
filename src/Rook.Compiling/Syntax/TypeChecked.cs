@@ -32,6 +32,11 @@ namespace Rook.Compiling.Syntax
             return new TypeChecked<T>(default(T), errors);
         }
 
+        public static TypeChecked<T> InvalidConstantError(Position position, string literal)
+        {
+            return Failure(new CompilerError(position, "Invalid constant: " + literal));
+        }
+
         public static TypeChecked<T> DuplicateIdentifierError(Binding duplicate)
         {
             return Failure(new CompilerError(duplicate.Position, "Duplicate identifier: " + duplicate.Identifier));

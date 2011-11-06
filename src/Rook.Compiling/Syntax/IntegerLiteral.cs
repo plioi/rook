@@ -7,22 +7,26 @@ namespace Rook.Compiling.Syntax
     {
         public Position Position { get; private set; }
         public string Digits { get; private set; }
-        public DataType Type { get { return NamedType.Integer; } }
+        public DataType Type { get; private set; }
 
         public IntegerLiteral(Position position, string digits)
+            : this (position, digits, null) { }
+
+        private IntegerLiteral(Position position, string digits, DataType type)
         {
             Position = position;
-
-            //TODO: We're currently just trusting that the given string contains digits
-            //      and that it is a string of digits we can use (ie would fit in the 
-            //      target int/long/etc type).
-
             Digits = digits;
+            Type = type;
         }
 
         public TypeChecked<Expression> WithTypes(Environment environment)
         {
-            return TypeChecked<Expression>.Success(this);
+            int value;
+
+            if (int.TryParse(Digits, out value))
+                return TypeChecked<Expression>.Success(new IntegerLiteral(Position, Digits, NamedType.Integer));
+
+            return TypeChecked<Expression>.InvalidConstantError(Position, Digits);
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)

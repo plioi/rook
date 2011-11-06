@@ -80,7 +80,9 @@
     <Compile Include="Compiling\InterpreterTests.cs" />
     <Compile Include="Compiling\RookCompilerTests.cs" />
     <Compile Include="Compiling\CodeGeneration\CSharpTranslatorTests.cs" />
+    <Compile Include="Compiling\Syntax\IntegerLiteralTests.cs" />
     <Compile Include="Compiling\Syntax\LambdaTests.cs" />
+    <Compile Include="Compiling\Syntax\NullTests.cs" />
     <Compile Include="Compiling\Syntax\RookLexerTests.cs" />
     <Compile Include="Compiling\Syntax\ParsingAssertions.cs" />
     <Compile Include="Core\Collections\ArrayVectorTests.cs" />
@@ -97,7 +99,7 @@
     <Compile Include="Compiling\Syntax\ExpressionTests.cs" />
     <Compile Include="Compiling\Syntax\FunctionTests.cs" />
     <Compile Include="Compiling\Syntax\IfTests.cs" />
-    <Compile Include="Compiling\Syntax\LiteralTests.cs" />
+    <Compile Include="Compiling\Syntax\BooleanLiteralTests.cs" />
     <Compile Include="Compiling\Syntax\NameTests.cs" />
     <Compile Include="Compiling\Syntax\OperatorPrecedenceTests.cs" />
     <Compile Include="Compiling\Syntax\ParentheticalTests.cs" />
