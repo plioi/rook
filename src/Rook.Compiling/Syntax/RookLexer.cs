@@ -16,7 +16,13 @@ namespace Rook.Compiling.Syntax
         public static readonly Keyword @true = new Keyword("true");
         public static readonly Keyword @false = new Keyword("false");
 
-        public static readonly TokenKind Integer = new TokenKind("integer", @"[0-9]+");
+        public static readonly TokenKind Integer = new TokenKind("integer", @"
+            0(?!\d) #Zero, not followed by other digits.
+
+            |
+
+            [1-9]\d* #Nonzero integer.
+        ");
         public static readonly TokenKind Identifier = new TokenKind("identifier", @"[a-zA-Z]+[a-zA-Z0-9]*");
         public static readonly TokenKind EndOfLine = new TokenKind("end of line", @"(\n|;)\s*");
         public static readonly Operator LeftParen = new Operator("(");

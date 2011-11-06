@@ -10,8 +10,13 @@ namespace Rook.Compiling.Syntax
         public void ShouldRecognizeIntegers()
         {
             new RookLexer("0").ShouldYieldTokens(RookLexer.Integer, "0");
-            
-            //NOTE: Integer literals are not (yet) limited to int.MaxValue:
+            new RookLexer("1").ShouldYieldTokens(RookLexer.Integer, "1");
+            new RookLexer("01").ShouldYieldTokens(Lexer.Unknown, "01");
+            new RookLexer("10").ShouldYieldTokens(RookLexer.Integer, "10");
+            new RookLexer("2147483647").ShouldYieldTokens(RookLexer.Integer, "2147483647");
+
+            //NOTE: The parser does not limit integer literals to min and max values,
+            //      because that is a type checking concern.
             new RookLexer("2147483648").ShouldYieldTokens(RookLexer.Integer, "2147483648");
         }
 
