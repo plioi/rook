@@ -74,6 +74,7 @@ namespace Rook.Compiling.Syntax
             KeywordType.Rule =
                 Choice(from _ in Token(RookLexer.@int) select NamedType.Integer,
                        from _ in Token(RookLexer.@bool) select NamedType.Boolean,
+                       from _ in Token(RookLexer.@string) select NamedType.String,
                        from _ in Token(RookLexer.@void) select NamedType.Void);
 
             TypeName.Rule =
@@ -155,6 +156,7 @@ namespace Rook.Compiling.Syntax
             Atom(RookLexer.Integer, token => new IntegerLiteral(token.Position, token.Literal));
             Atom(RookLexer.@true, token => new BooleanLiteral(token.Position, true));
             Atom(RookLexer.@false, token => new BooleanLiteral(token.Position, false));
+            Atom(RookLexer.StringLiteral, token => new StringLiteral(token.Position, token.Literal));
 
             Unit(RookLexer.LeftSquareBrace, VectorLiteral);
             Unit(RookLexer.@if, If);

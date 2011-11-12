@@ -129,6 +129,11 @@ namespace Rook.Compiling.CodeGeneration
             return Literal(integerLiteral.Digits);
         }
 
+        public WriteAction Visit(StringLiteral stringLiteral)
+        {
+            return Literal(stringLiteral.QuotedLiteral);
+        }
+
         public WriteAction Visit(Null nullLiteral)
         {
             return Literal("null");

@@ -13,6 +13,7 @@
         TResult Visit(Call call);
         TResult Visit(BooleanLiteral booleanLiteral);
         TResult Visit(IntegerLiteral integerLiteral);
+        TResult Visit(StringLiteral stringLiteral);
         TResult Visit(Null nullLiteral);
         TResult Visit(VectorLiteral vectorLiteral);
     }

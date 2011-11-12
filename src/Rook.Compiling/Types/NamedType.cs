@@ -23,6 +23,11 @@ namespace Rook.Compiling.Types
             get { return new NamedType("System.Boolean"); }
         }
 
+        public static NamedType String
+        {
+            get { return new NamedType("System.String"); }
+        }
+
         public static NamedType Integer
         {
             get { return new NamedType("System.Int32"); }
@@ -106,7 +111,7 @@ namespace Rook.Compiling.Types
         private string GetFullName()
         {
             if (innerTypes.Any())
-                return String.Format("{0}<{1}>", CleanedName(name), String.Join(", ", innerTypes));
+                return System.String.Format("{0}<{1}>", CleanedName(name), System.String.Join(", ", innerTypes));
             
             return CleanedName(name);
         }
@@ -115,7 +120,8 @@ namespace Rook.Compiling.Types
         {
             return name
                 .Replace("System.Boolean", "bool")
-                .Replace("System.Int32", "int");
+                .Replace("System.Int32", "int")
+                .Replace("System.String", "string");
         }
     }
 }

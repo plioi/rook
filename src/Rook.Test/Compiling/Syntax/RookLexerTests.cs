@@ -21,12 +21,29 @@ namespace Rook.Compiling.Syntax
         }
 
         [Test]
+        public void ShouldRecognizeStringLiterals()
+        {
+            new RookLexer("\"\"").ShouldYieldTokens(RookLexer.StringLiteral, "\"\"");
+            new RookLexer("\"a\"").ShouldYieldTokens(RookLexer.StringLiteral, "\"a\"");
+            new RookLexer("\"abc\"").ShouldYieldTokens(RookLexer.StringLiteral, "\"abc\"");
+            new RookLexer("\"abc \\\" def\"").ShouldYieldTokens(RookLexer.StringLiteral, "\"abc \\\" def\"");
+            new RookLexer("\"abc \\\\ def\"").ShouldYieldTokens(RookLexer.StringLiteral, "\"abc \\\\ def\"");
+            new RookLexer("\"abc \\n def\"").ShouldYieldTokens(RookLexer.StringLiteral, "\"abc \\n def\"");
+            new RookLexer("\"abc \\r def\"").ShouldYieldTokens(RookLexer.StringLiteral, "\"abc \\r def\"");
+            new RookLexer("\"abc \\t def\"").ShouldYieldTokens(RookLexer.StringLiteral, "\"abc \\t def\"");
+            new RookLexer("\"abc \\u005C def\"").ShouldYieldTokens(RookLexer.StringLiteral, "\"abc \\u005C def\"");
+
+            new RookLexer("\" a \" \" b \" \" c \"").ShouldYieldTokens(RookLexer.StringLiteral, "\" a \"", "\" b \"", "\" c \"");
+        }
+
+        [Test]
         public void ShouldRecognizeKeywords()
         {
             new RookLexer("true").ShouldYieldTokens(RookLexer.@true, "true");
             new RookLexer("false").ShouldYieldTokens(RookLexer.@false, "false");
             new RookLexer("int").ShouldYieldTokens(RookLexer.@int, "int");
             new RookLexer("bool").ShouldYieldTokens(RookLexer.@bool, "bool");
+            new RookLexer("string").ShouldYieldTokens(RookLexer.@string, "string");
             new RookLexer("void").ShouldYieldTokens(RookLexer.@void, "void");
             new RookLexer("null").ShouldYieldTokens(RookLexer.@null, "null");
             new RookLexer("if").ShouldYieldTokens(RookLexer.@if, "if");

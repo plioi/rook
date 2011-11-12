@@ -52,6 +52,7 @@ namespace Rook.Compiling.Types
             NamedType.Void.ShouldEqual(Create("Rook.Core.Void"));
             NamedType.Integer.ShouldEqual(Create("int"));
             NamedType.Boolean.ShouldEqual(Create("bool"));
+            NamedType.String.ShouldEqual(Create("string"));
             NamedType.Enumerable(NamedType.Integer).ShouldEqual(Create("System.Collections.Generic.IEnumerable", Create("int")));
             NamedType.Vector(NamedType.Integer).ShouldEqual(Create("Rook.Core.Collections.Vector", Create("int")));
             NamedType.Nullable(NamedType.Integer).ShouldEqual(Create("Rook.Core.Nullable", Create("int")));

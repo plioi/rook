@@ -22,6 +22,7 @@ namespace Rook.Integration
         [Test] public void Vector() { Run("Vector"); }
         [Test] public void Void() { Run("Void"); }
         [Test] public void Nullable() { Run("Nullable"); }
+        [Test] public void String() { Run("String"); }
 
         #region Integration Test Runner
 

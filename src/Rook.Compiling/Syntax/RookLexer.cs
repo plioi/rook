@@ -8,6 +8,7 @@ namespace Rook.Compiling.Syntax
 
         public static readonly Keyword @int = new Keyword("int");
         public static readonly Keyword @bool = new Keyword("bool");
+        public static readonly Keyword @string = new Keyword("string");
         public static readonly Keyword @void = new Keyword("void");
         public static readonly Keyword @null = new Keyword("null");
         public static readonly Keyword @if = new Keyword("if");
@@ -22,6 +23,20 @@ namespace Rook.Compiling.Syntax
             |
 
             [1-9]\d* #Nonzero integer.
+        ");
+        public static readonly TokenKind StringLiteral = new TokenKind("string literal", @"
+            # Open quote:
+            ""
+
+            # Zero or more content characters:
+            (
+                      [^""\\]              # Non-quote / non-slash character.
+                |     \\ [""\\nrt]         # One of: slash-quote   \\   \n   \r   \t
+                |     \\ u [0-9a-fA-F]{4}  # \u folowed by four hex digits
+            )*
+
+            # Close quote:
+            ""
         ");
         public static readonly TokenKind Identifier = new TokenKind("identifier", @"[a-zA-Z]+[a-zA-Z0-9]*");
         public static readonly TokenKind EndOfLine = new TokenKind("end of line", @"(\n|;)\s*");
@@ -54,8 +69,8 @@ namespace Rook.Compiling.Syntax
         public RookLexer(string source)
             : base(new Text(source),
             IntralineWhitespace,
-            @int, @bool, @void, @null, @if, @else, @fn, @true, @false,
-            Integer, Identifier,
+            @int, @bool, @string, @void, @null, @if, @else, @fn, @true, @false,
+            Integer, StringLiteral, Identifier,
             LeftParen, RightParen,
             Multiply, Divide,
             Add, Subtract,

@@ -80,6 +80,7 @@
     <Compile Include="RookCompiler.cs" />
     <Compile Include="Syntax\Lambda.cs" />
     <Compile Include="Syntax\RookLexer.cs" />
+    <Compile Include="Syntax\StringLiteral.cs" />
     <Compile Include="Syntax\VectorLiteral.cs" />
     <Compile Include="Syntax\Binding.cs" />
     <Compile Include="Syntax\Block.cs" />

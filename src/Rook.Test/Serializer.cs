@@ -95,6 +95,11 @@ namespace Rook
             return integerLiteral.Digits;
         }
 
+        public string Visit(StringLiteral stringLiteral)
+        {
+            return stringLiteral.QuotedLiteral;
+        }
+
         public string Visit(Null nullLiteral)
         {
             return "null";

@@ -1,0 +1,5 @@
+﻿void Main()
+{
+	string escapeSequences = "Quote: \"\r\nBackslash: \\\r\nTab: \t\r\nUnicode Smiley: \u263a\r\nUnsupported C# Escapes: \\' \\0 \\a \\b \\f \\U \\x \\v"
+	Print(escapeSequences)
+}

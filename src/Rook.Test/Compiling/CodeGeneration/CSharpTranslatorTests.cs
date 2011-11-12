@@ -193,6 +193,13 @@ namespace Rook.Compiling.CodeGeneration
         }
 
         [Test]
+        public void ShouldTranslateStringLiterals()
+        {
+            AssertTranslation("\"\"", rookGrammar.Expression, "\"\"");
+            AssertTranslation("\"abc \\\" \\\\ \\n \\r \\t \\u263a def\"", rookGrammar.Expression, "\"abc \\\" \\\\ \\n \\r \\t \\u263a def\"");
+        }
+
+        [Test]
         public void ShouldTranslateNulls()
         {
             AssertTranslation("null", rookGrammar.Expression, "null");

@@ -9,6 +9,7 @@ namespace Rook.Compiling.Syntax
     {
         private static readonly NamedType Integer = NamedType.Integer;
         private static readonly NamedType Boolean = NamedType.Boolean;
+        private static readonly NamedType String = NamedType.String;
         private static readonly NamedType Void = NamedType.Void;
         private static readonly NamedType Foo = new NamedType("Foo");
         
@@ -26,6 +27,7 @@ namespace Rook.Compiling.Syntax
         {
             Parses("int").IntoValue(Integer);
             Parses("bool").IntoValue(Boolean);
+            Parses("string").IntoValue(String);
             Parses("void").IntoValue(Void);
             Parses("Foo").IntoValue(Foo);
         }

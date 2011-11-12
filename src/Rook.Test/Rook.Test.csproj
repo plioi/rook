@@ -85,6 +85,7 @@
     <Compile Include="Compiling\Syntax\NullTests.cs" />
     <Compile Include="Compiling\Syntax\RookLexerTests.cs" />
     <Compile Include="Compiling\Syntax\ParsingAssertions.cs" />
+    <Compile Include="Compiling\Syntax\StringLiteralTests.cs" />
     <Compile Include="Core\Collections\ArrayVectorTests.cs" />
     <Compile Include="Core\Collections\SliceVectorTests.cs" />
     <Compile Include="Core\IdentityTests.cs" />
@@ -148,6 +149,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Samples\Closure.rook.out">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\String.rook.out">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\String.rook">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Samples\FunctionCall.rook">
