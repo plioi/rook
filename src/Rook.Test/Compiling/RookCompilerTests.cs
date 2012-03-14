@@ -1,9 +1,9 @@
-﻿using NUnit.Framework;
-using Rook.Compiling.Syntax;
+﻿using Rook.Compiling.Syntax;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling
 {
-    [TestFixture]
     public class RookCompilerTests : CompilerTests<RookCompiler>
     {
         protected override RookCompiler Compiler
@@ -11,7 +11,7 @@ namespace Rook.Compiling
             get { return new RookCompiler(CompilerParameters.ForBasicEvaluation()); }
         }
 
-        [Test]
+        [Fact]
         public void ShouldReportParseErrors()
         {
             Build("int Main() $1;");
@@ -19,7 +19,7 @@ namespace Rook.Compiling
             AssertError(1, 12, "Parse error.");
         }
 
-        [Test]
+        [Fact]
         public void ShouldReportValidationErrors()
         {
             Build("int Main() x;");
@@ -27,7 +27,7 @@ namespace Rook.Compiling
             AssertError(1, 12, "Reference to undefined identifier: x");
         }
 
-        [Test]
+        [Fact]
         public void ShouldBuildProgramsFromSourceCode()
         {
             Build("int Main() 123;");
@@ -35,7 +35,7 @@ namespace Rook.Compiling
             ExecuteMain().ShouldEqual(123);
         }
 
-        [Test]
+        [Fact]
         public void ShouldBuildProgramsFromSyntaxTrees()
         {
             Program program = new RookGrammar().Program.Parse(new RookLexer("int Main() 123;")).Value;

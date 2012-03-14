@@ -1,16 +1,16 @@
 ﻿using System.Linq;
-using NUnit.Framework;
 using Parsley;
 using Rook.Compiling.Types;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class FunctionTests : SyntaxTreeTests<Function>
     {
         protected override Parser<Function> Parser { get { return RookGrammar.Function; } }
 
-        [Test]
+        [Fact]
         public void DemandsCompleteFunctionDefinition()
         {
             FailsToParse("", "").WithMessage("(1, 1): type name expected");
@@ -23,21 +23,21 @@ namespace Rook.Compiling.Syntax
             Parses("int foo() 1").IntoTree("int foo() 1");
         }
 
-        [Test]
+        [Fact]
         public void ParsesReturnTypes()
         {
             Parses("int foo() 1").IntoTree("int foo() 1");
             Parses("bool foo() 1").IntoTree("bool foo() 1");
         }
 
-        [Test]
+        [Fact]
         public void ParsesNames()
         {
             Parses("int foo() 1").IntoTree("int foo() 1");
             Parses("int bar() 1").IntoTree("int bar() 1");
         }
 
-        [Test]
+        [Fact]
         public void ParsesParameterLists()
         {
             Parses("int foo() 1").IntoTree("int foo() 1");
@@ -46,7 +46,7 @@ namespace Rook.Compiling.Syntax
             Parses("int foo(int x, bool y, int z) 1").IntoTree("int foo(int x, bool y, int z) 1");
         }
 
-        [Test]
+        [Fact]
         public void AllowsParametersToOmitExplicitTypeDeclaration()
         {
             Parses("int foo(x) 1").IntoTree("int foo(x) 1");
@@ -54,14 +54,14 @@ namespace Rook.Compiling.Syntax
             Parses("int foo(int x, y, z) 1").IntoTree("int foo(int x, y, z) 1");
         }
 
-        [Test]
+        [Fact]
         public void ParsesBodyExpression()
         {
             Parses("int foo() 1").IntoTree("int foo() 1");
             Parses("int foo() false").IntoTree("int foo() false");
         }
 
-        [Test]
+        [Fact]
         public void HasATypeIncludingInputTypesAndReturnType()
         {
             Type("int foo() 1").ShouldEqual(NamedType.Function(Integer));
@@ -69,7 +69,7 @@ namespace Rook.Compiling.Syntax
             Type("int foo(int x, bool y) 1").ShouldEqual(NamedType.Function(new[] {Integer, Boolean}, Integer));
         }
 
-        [Test]
+        [Fact]
         public void EvaluatesBodyExpressionTypesInANewScopeIncludingParameters()
         {
             Type("int foo(int x) x").ShouldEqual(NamedType.Function(new[] {Integer}, Integer));
@@ -77,7 +77,7 @@ namespace Rook.Compiling.Syntax
                 NamedType.Function(new[] {Integer, Integer, Boolean}, Boolean));
         }
 
-        [Test]
+        [Fact]
         public void CanCreateFullyTypedInstance()
         {
             Function node = Parse("bool foo(int x, int y, bool z) x+y>0 && z");
@@ -95,25 +95,25 @@ namespace Rook.Compiling.Syntax
             typedNode.Type.ShouldEqual(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean));
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenBodyExpressionFailsTypeChecking()
         {
             AssertTypeCheckError(1, 15, "Type mismatch: expected int, found bool.", "int foo() true+0");
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenParameterNamesAreNotUnique()
         {
             AssertTypeCheckError(1, 34, "Duplicate identifier: x", "int foo(int x, int y, int z, int x) true");
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenParameterNamesShadowSurroundingScope()
         {
             AssertTypeCheckError(1, 27, "Duplicate identifier: z", "int foo(int x, int y, int z) true;", z => Integer);
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenDeclaredReturnTypeDoesNotMatchBodyExpressionType()
         {
             AssertTypeCheckError(1, 5, "Type mismatch: expected int, found bool.", "int foo (int x) false");

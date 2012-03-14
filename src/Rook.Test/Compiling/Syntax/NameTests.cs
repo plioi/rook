@@ -1,26 +1,26 @@
-using NUnit.Framework;
 using Rook.Compiling.Types;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class NameTests : ExpressionTests
     {
-        [Test]
+        [Fact]
         public void CanBeIdentifier()
         {
             Parses("a").IntoTree("a");
             Parses("abc").IntoTree("abc");
         }
 
-        [Test]
+        [Fact]
         public void HasATypeProvidedByTheEnvironmentInScope()
         {
             AssertType(Boolean, "foo", foo => Boolean, bar => Integer);
             AssertType(Integer, "bar", foo => Boolean, bar => Integer);
         }
 
-        [Test]
+        [Fact]
         public void HasATypeInWhichTypeVariablesAreFreshenedOnEachEnvironmentLookup()
         {
             AssertType(new TypeVariable(17), "foo", foo => new TypeVariable(1));
@@ -30,7 +30,7 @@ namespace Rook.Compiling.Syntax
             AssertType(expectedTypeAfterLookup, "foo", foo => definedType);
         }
 
-        [Test]
+        [Fact]
         public void HasATypeInWhichOnlyGenericTypeVariablesAreFreshenedOnEachEnvironmentLookup()
         {
             //Prevents type '2' from being freshened on type lookup by marking it as non-generic in the environment:
@@ -45,7 +45,7 @@ namespace Rook.Compiling.Syntax
             AssertType(expectedTypeAfterLookup, "foo", environment);
         }
 
-        [Test]
+        [Fact]
         public void CanCreateFullyTypedInstance()
         {
             var node = (Name)Parse("foo");
@@ -55,7 +55,7 @@ namespace Rook.Compiling.Syntax
             typedNode.Type.ShouldEqual(Boolean);
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingForIdentifiersNotInScope()
         {
             AssertTypeCheckError(1, 1, "Reference to undefined identifier: foo", "foo");

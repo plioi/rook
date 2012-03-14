@@ -1,15 +1,15 @@
 ﻿using System.Linq;
-using NUnit.Framework;
 using Parsley;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class ProgramTests : SyntaxTreeTests<Program>
     {
         protected override Parser<Program> Parser { get { return RookGrammar.Program; } }
 
-        [Test]
+        [Fact]
         public void ParsesZeroOrMoreFunctions()
         {
             Parses(" \t\r\n").IntoTree("");
@@ -17,13 +17,13 @@ namespace Rook.Compiling.Syntax
                 .IntoTree("int life() 42\r\n\r\nint universe() 42\r\n\r\nint everything() 42");
         }
 
-        [Test]
+        [Fact]
         public void DemandsEndOfInputAfterLastValidFunction()
         {
             FailsToParse("int life() 42; int univ", "").WithMessage("(1, 24): ( expected");
         }
 
-        [Test]
+        [Fact]
         public void ParsesAndTypesMutuallyRecursivePrograms()
         {
             var program = Parse(
@@ -49,7 +49,7 @@ namespace Rook.Compiling.Syntax
             ((If)typedProgram.Functions.ElementAt(2).Body).Type.ShouldEqual(Integer);
         }
 
-        [Test]
+        [Fact]
         public void FailsValidationWhenFunctionsFailValidation()
         {
             AssertTypeCheckError(
@@ -78,7 +78,7 @@ namespace Rook.Compiling.Syntax
                 "int Main() Square(2);");
         }
 
-        [Test]
+        [Fact]
         public void FailsValidationWhenFunctionNamesAreNotUnique()
         {
             AssertTypeCheckError(1, 27, "Duplicate identifier: a", "int a() 0; int b() 1; int a() 2; int Main() 1;");

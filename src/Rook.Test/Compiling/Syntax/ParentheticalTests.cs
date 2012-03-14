@@ -1,12 +1,11 @@
-using NUnit.Framework;
 using Parsley;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class ParentheticalTests : ExpressionTests
     {
-        [Test]
+        [Fact]
         public void ParentheticalExpressions()
         {
             Parses("(1)").IntoTree("1");
@@ -15,13 +14,13 @@ namespace Rook.Compiling.Syntax
             AssertType(Integer, "((1))");
         }
 
-        [Test]
+        [Fact]
         public void DemandsBalancedParentheses()
         {
             FailsToParse("(1(", "").WithMessage("(1, 4): ) expected");
         }
 
-        [Test]
+        [Fact]
         public void GroupingSupercedesBasicOperatorPrecedence()
         {
             Parses("(1+2)*3").IntoTree("((((1) + (2))) * (3))");

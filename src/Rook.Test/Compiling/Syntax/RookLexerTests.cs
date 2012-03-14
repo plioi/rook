@@ -1,12 +1,11 @@
-﻿using NUnit.Framework;
-using Parsley;
+﻿using Parsley;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class RookLexerTests : Grammar
     {
-        [Test]
+        [Fact]
         public void ShouldRecognizeIntegers()
         {
             new RookLexer("0").ShouldYieldTokens(RookLexer.Integer, "0");
@@ -20,7 +19,7 @@ namespace Rook.Compiling.Syntax
             new RookLexer("2147483648").ShouldYieldTokens(RookLexer.Integer, "2147483648");
         }
 
-        [Test]
+        [Fact]
         public void ShouldRecognizeStringLiterals()
         {
             new RookLexer("\"\"").ShouldYieldTokens(RookLexer.StringLiteral, "\"\"");
@@ -36,7 +35,7 @@ namespace Rook.Compiling.Syntax
             new RookLexer("\" a \" \" b \" \" c \"").ShouldYieldTokens(RookLexer.StringLiteral, "\" a \"", "\" b \"", "\" c \"");
         }
 
-        [Test]
+        [Fact]
         public void ShouldRecognizeKeywords()
         {
             new RookLexer("true").ShouldYieldTokens(RookLexer.@true, "true");
@@ -51,7 +50,7 @@ namespace Rook.Compiling.Syntax
             new RookLexer("fn").ShouldYieldTokens(RookLexer.@fn, "fn");
         }
 
-        [Test]
+        [Fact]
         public void ShouldRecognizeIdentifiers()
         {
             new RookLexer("a").ShouldYieldTokens(RookLexer.Identifier, "a");
@@ -59,7 +58,7 @@ namespace Rook.Compiling.Syntax
             new RookLexer("a0").ShouldYieldTokens(RookLexer.Identifier, "a0");
         }
 
-        [Test]
+        [Fact]
         public void ShouldRecognizeOperatorsGreedily()
         {
             new RookLexer("<=>=<>!====*/+-&&||!{}[][,]()???:").ShouldYieldTokens("<=", ">=", "<", ">", "!=", "==", "=", "*", "/", "+", "-", "&&", "||", "!", "{", "}", "[]", "[", ",", "]", "(", ")", "??", "?", ":");
@@ -91,7 +90,7 @@ namespace Rook.Compiling.Syntax
             new RookLexer("?").ShouldYieldTokens(RookLexer.Question, "?");
         }
 
-        [Test]
+        [Fact]
         public void ShouldRecognizeEndOfLogicalLine()
         {
             //Endlines are \n or semicolons (with optional preceding spaces/tabs and optional trailing whitspace).
@@ -104,7 +103,7 @@ namespace Rook.Compiling.Syntax
             new RookLexer("; \r\n \t ").ShouldYieldTokens(RookLexer.EndOfLine, "; \n \t ");
         }
 
-        [Test]
+        [Fact]
         public void ShouldRecognizeAndSkipOverIntralineWhitespace()
         {
             //Note that Parsley normalizes \r, \n, and \r\n to a single line feed \n.

@@ -1,12 +1,12 @@
 ﻿using System;
-using NUnit.Framework;
+using Should;
+using Xunit;
 
 namespace Rook.Core.Collections
 {
-    [TestFixture]
     public class SliceVectorTests
     {
-        [Test]
+        [Fact]
         public void ShouldProvideItemCount()
         {
             SliceDigits(0, 0).Count.ShouldEqual(0);
@@ -14,7 +14,7 @@ namespace Rook.Core.Collections
             SliceDigits(7, 10).Count.ShouldEqual(3);
         }
 
-        [Test]
+        [Fact]
         public void ShouldBeEnumerable()
         {
             Vector<int> empty = SliceDigits(0, 0);
@@ -24,7 +24,7 @@ namespace Rook.Core.Collections
             nonempty.ShouldList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
         }
 
-        [Test]
+        [Fact]
         public void ShouldSliceFromStartIndexInclusiveToEndIndexExclusive()
         {
             SliceDigits(0, 0).ShouldBeEmpty();
@@ -42,7 +42,7 @@ namespace Rook.Core.Collections
             SliceDigits(5, 10).ShouldList(5, 6, 7, 8, 9);
         }
 
-        [Test]
+        [Fact]
         public void ShouldGetItemsByIndex()
         {
             Vector<int> start = SliceDigits(0, 2);
@@ -57,7 +57,7 @@ namespace Rook.Core.Collections
             end[4].ShouldEqual(9);
         }
 
-        [Test]
+        [Fact]
         public void ShouldCreateNewVectorWithNewValueAppended()
         {
             Vector<int> interiorSlice = SliceDigits(1, 4);
@@ -73,7 +73,7 @@ namespace Rook.Core.Collections
             tailSlice.ShouldList(7, 8, 9);
         }
 
-        [Test]
+        [Fact]
         public void ShouldCreateNewVectorWithAlteredCell()
         {
             Vector<int> interiorSlice = SliceDigits(1, 4);
@@ -94,7 +94,7 @@ namespace Rook.Core.Collections
             tailSlice.ShouldList(7, 8, 9);
         }
 
-        [Test]
+        [Fact]
         public void ShouldCreateSlices()
         {
             Vector<int> sliceOfInteriorSlice = SliceDigits(2, 9).Slice(1, 4);
@@ -104,35 +104,35 @@ namespace Rook.Core.Collections
             sliceOfTailSlice.ShouldList(4, 5, 6);
         }
 
-        [Test]
-        [ExpectedException(typeof(ArgumentException), ExpectedMessage = "endIndexExclusive must be greater than or equal to startIndexInclusive.")]
+        [Fact]
         public void ShouldDemandUpperLimitCannotBeSmallerThanLowerLimit()
         {
-            SliceDigits(1, 0);
+            Action upperLimitSmallerThanLowerLimit = () => SliceDigits(1, 0);
+            upperLimitSmallerThanLowerLimit.ShouldThrow<ArgumentException>("endIndexExclusive must be greater than or equal to startIndexInclusive.");
         }
 
-        [Test]
-        [ExpectedException(typeof(ArgumentException), ExpectedMessage = "endIndexExclusive must be less than or equal to the source vector's Count.")]
+        [Fact]
         public void ShouldDemandUpperLimitCannotExceedSourceVectorCount()
         {
-            SliceDigits(0, 11);
+            Action upperLimitTooLarge = () => SliceDigits(0, 11);
+            upperLimitTooLarge.ShouldThrow<ArgumentException>("endIndexExclusive must be less than or equal to the source vector's Count.");
         }
 
-        [Test]
-        [ExpectedException(typeof(ArgumentException), ExpectedMessage = "startIndexInclusive cannot be negative.")]
+        [Fact]
         public void ShouldDemandLowerLimitCannotBeNegative()
         {
-            SliceDigits(-1, 0);
+            Action lowerLimitNegative = () => SliceDigits(-1, 0);
+            lowerLimitNegative.ShouldThrow<ArgumentException>("startIndexInclusive cannot be negative.");
         }
 
-        [Test]
-        [ExpectedException(typeof(ArgumentException), ExpectedMessage = "startIndexInclusive must be a valid index for the source vector.")]
+        [Fact]
         public void ShouldDemandLowerLimitMustBeValidForSoureVector()
         {
-            SliceDigits(10, 10);
+            Action lowerLimitTooLarge = () => SliceDigits(10, 10);
+            lowerLimitTooLarge.ShouldThrow<ArgumentException>("startIndexInclusive must be a valid index for the source vector.");
         }
 
-        [Test]
+        [Fact]
         public void ShouldAllowTakingAnEmptySliceOfAnEmptySourceVector()
         {
             //This is a test of the internal SliceVector constructor,
@@ -143,17 +143,17 @@ namespace Rook.Core.Collections
             empty.Slice(0, 0).ShouldBeEmpty();
         }
 
-        [Test]
+        [Fact]
         public void ShouldThrowExceptionWhenGivenIndexIsOutOfRange()
         {
             Vector<int> fiveToNine = SliceDigits(5, 10);
 
-            var actions = new Action[]
+            var actions = new Func<object>[]
             {
                 () => fiveToNine.With(5, 5),
                 () => fiveToNine.With(-1, -1),
-                () => { int value = fiveToNine[5]; },
-                () => { int value = fiveToNine[-1]; }
+                () => fiveToNine[5],
+                () => fiveToNine[-1]
             };
 
             foreach (var action in actions)

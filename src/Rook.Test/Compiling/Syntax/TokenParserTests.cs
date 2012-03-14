@@ -1,12 +1,12 @@
 ﻿using Parsley;
-using NUnit.Framework;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class TokenParserTests : RookGrammar
     {
-        [Test]
+        [Fact]
         public void ParsesExpectedOperators()
         {
             var operators = new[]
@@ -17,13 +17,13 @@ namespace Rook.Compiling.Syntax
 
             foreach (var o in operators)
             {
-                Token(o).Parses(o).IntoToken(o).Value.Kind.ShouldBeInstanceOf<Operator>();
-                Token(o).Parses(o + " \t ").IntoToken(o).Value.Kind.ShouldBeInstanceOf<Operator>();
+                Token(o).Parses(o).IntoToken(o).Value.Kind.ShouldBeType<Operator>();
+                Token(o).Parses(o + " \t ").IntoToken(o).Value.Kind.ShouldBeType<Operator>();
                 Token(o).FailsToParse("x", "x").WithMessage("(1, 1): " + o + " expected");
             }
         }
 
-        [Test]
+        [Fact]
         public void ParsesIdentifiers()
         {
             Identifier.Parses("a").IntoToken(RookLexer.Identifier, "a");
@@ -39,7 +39,7 @@ namespace Rook.Compiling.Syntax
                 Identifier.FailsToParse(keyword, keyword);
         }
 
-        [Test]
+        [Fact]
         public void ParsesLineEndings()
         {
             //Endlines are the end of input, \n, or semicolons (with optional trailing whitespace).

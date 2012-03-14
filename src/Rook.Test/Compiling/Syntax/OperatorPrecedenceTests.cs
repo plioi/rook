@@ -1,11 +1,10 @@
-using NUnit.Framework;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class OperatorPrecedenceTests : ExpressionTests
     {
-        [Test]
+        [Fact]
         public void RanksFunctionCallsBeforeUnaryOperators()
         {
             Parses("-Square(2)").IntoTree("(-((Square(2))))");
@@ -15,7 +14,7 @@ namespace Rook.Compiling.Syntax
             Parses("!(GetCallable())(3)").IntoTree("(!(((GetCallable())(3))))");
         }
 
-        [Test]
+        [Fact]
         public void RanksUnaryBeforeMultiplicativeOperators()
         {
             Parses("2*-3").IntoTree("((2) * ((-(3))))");
@@ -24,14 +23,14 @@ namespace Rook.Compiling.Syntax
             Parses("!false*true").IntoTree("(((!(false))) * (true))");
         }
 
-        [Test]
+        [Fact]
         public void RanksMultiplicativeBeforeAdditiveOperators()
         {
             Parses("1+2*3").IntoTree("((1) + (((2) * (3))))");
             Parses("1/2+3").IntoTree("((((1) / (2))) + (3))");
         }
 
-        [Test]
+        [Fact]
         public void RanksAdditiveBeforeRelationalOperators()
         {
             Parses("1<2+3").IntoTree("((1) < (((2) + (3))))");
@@ -40,28 +39,28 @@ namespace Rook.Compiling.Syntax
             Parses("1-2>=3").IntoTree("((((1) - (2))) >= (3))");
         }
 
-        [Test]
+        [Fact]
         public void RanksRelationalBeforeEqualityOperators()
         {
             Parses("true==2<3").IntoTree("((true) == (((2) < (3))))");
             Parses("1>2!=false").IntoTree("((((1) > (2))) != (false))");
         }
 
-        [Test]
+        [Fact]
         public void RanksEqualityBeforeLogicalAndOperator()
         {
             Parses("true&&2==3").IntoTree("((true) && (((2) == (3))))");
             Parses("true&&2!=3").IntoTree("((true) && (((2) != (3))))");
         }
 
-        [Test]
+        [Fact]
         public void RanksLogicalAndBeforeLogicalOrOperator()
         {
             Parses("true||false&&false").IntoTree("((true) || (((false) && (false))))");
             Parses("true&&false||false").IntoTree("((((true) && (false))) || (false))");
         }
 
-        [Test]
+        [Fact]
         public void RanksLogicalOrBeforeNullCoalescingOperator()
         {
             Parses("null??true||false").IntoTree("((null) ?? (((true) || (false))))");

@@ -1,5 +1,5 @@
 using System.Linq;
-using NUnit.Framework;
+using Should;
 
 namespace Rook.Compiling
 {
@@ -8,8 +8,7 @@ namespace Rook.Compiling
         protected abstract TCompiler Compiler { get; }
         protected CompilerResult result;
 
-        [SetUp]
-        public void SetUp()
+        protected CompilerTests()
         {
             result = null;
         }

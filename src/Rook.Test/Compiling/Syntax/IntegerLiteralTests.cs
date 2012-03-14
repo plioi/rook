@@ -1,11 +1,11 @@
-using NUnit.Framework;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class IntegerLiteralTests : ExpressionTests
     {
-        [Test]
+        [Fact]
         public void IsZeroOrPositiveSequenceOfDigits()
         {
             Parses("0").IntoTree("0");
@@ -15,14 +15,14 @@ namespace Rook.Compiling.Syntax
             Parses("2147483648").IntoTree("2147483648");
         }
 
-        [Test]
+        [Fact]
         public void HasIntegerType()
         {
             AssertType(Integer, "0");
             AssertType(Integer, "2147483647");
         }
 
-        [Test]
+        [Fact]
         public void CanCreateFullyTypedInstance()
         {
             var integer = (IntegerLiteral)Parse("12345");
@@ -32,7 +32,7 @@ namespace Rook.Compiling.Syntax
             typedInteger.Type.ShouldEqual(Integer);
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenOutOfRange()
         {
             AssertTypeCheckError(1, 1, "Invalid constant: 2147483648", "2147483648");

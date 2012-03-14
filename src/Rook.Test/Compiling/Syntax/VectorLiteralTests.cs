@@ -1,14 +1,14 @@
 using System.Linq;
-using NUnit.Framework;
 using Parsley;
 using Rook.Compiling.Types;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class VectorLiteralTests : ExpressionTests
     {
-        [Test]
+        [Fact]
         public void ContainsOneOrMoreExpressions()
         {
             FailsToParse("[", "");
@@ -20,20 +20,20 @@ namespace Rook.Compiling.Syntax
             Parses("[true, false||true, false]").IntoTree("[true, ((false) || (true)), false]");
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenItemExpressionTypesDoNotMatch()
         {
             AssertTypeCheckError(1, 2, "Type mismatch: expected int, found bool.", "[0, true]");
         }
 
-        [Test]
+        [Fact]
         public void HasVectorTypeBasedOnTheTypeOfItsItemExpressions()
         {
             AssertType(NamedType.Vector(Integer), "[0, 1, 2]");
             AssertType(NamedType.Vector(Boolean), "[true, false, true]");
         }
 
-        [Test]
+        [Fact]
         public void CanCreateFullyTypedInstance()
         {
             var node = (VectorLiteral)Parse("[foo, bar]");

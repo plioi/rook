@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using NUnit.Framework;
+using Parsley;
 
 namespace Rook.Compiling
 {
@@ -14,7 +14,7 @@ namespace Rook.Compiling
             foreach (var error in errors)
                 builder.AppendLine(ErrorSummary(error));
 
-            Assert.Fail(builder.ToString());
+            throw new Exception(builder.ToString());
         }
 
         public static void WithErrors(IEnumerable<CompilerError> errors, int line, int column, string expectedMessage)
@@ -28,7 +28,7 @@ namespace Rook.Compiling
             foreach (var error in errors)
                 builder.AppendLine("\t" + ErrorSummary(error));
 
-            Assert.Fail(builder.ToString());
+            throw new Exception(builder.ToString());
         }
 
         private static string ErrorSummary(CompilerError error)

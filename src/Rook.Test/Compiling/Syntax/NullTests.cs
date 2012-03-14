@@ -1,24 +1,24 @@
-using NUnit.Framework;
 using Rook.Compiling.Types;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class NullTests : ExpressionTests
     {
-        [Test]
+        [Fact]
         public void IsIdentifiedByKeyword()
         {
             Parses("null").IntoTree("null");
         }
 
-        [Test]
+        [Fact]
         public void HasUniqueTypeVariableAsItsType()
         {
             AssertType(NamedType.Nullable(new TypeVariable(17)), "null");
         }
 
-        [Test]
+        [Fact]
         public void CanCreateFullyTypedInstance()
         {
             var node = (Null)Parse("null");

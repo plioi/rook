@@ -1,12 +1,12 @@
-using NUnit.Framework;
 using Parsley;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class IfTests : ExpressionTests
     {
-        [Test]
+        [Fact]
         public void ContainsConditionExpressionAndTwoBodyExpressions()
         {
             FailsToParse("if", "").WithMessage("(1, 3): ( expected");
@@ -23,7 +23,7 @@ namespace Rook.Compiling.Syntax
             Parses("if (a || b) 1 else 0").IntoTree("(if (((a) || (b))) (1) else (0))");
         }
 
-        [Test]
+        [Fact]
         public void AssociatesElseExpressionWithNearestPrecedingIf()
         {
             const string source =
@@ -41,19 +41,19 @@ namespace Rook.Compiling.Syntax
             Parses(source).IntoTree("(if (x) ((if (y) (0) else (1))) else ((if (z) (2) else (3))))");
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenConditionExpressionIsNotBoolean()
         {
             AssertTypeCheckError(1, 1, "Type mismatch: expected bool, found int.", "if (0) false else true");
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenBodyExpressionTypesDoNotMatch()
         {
             AssertTypeCheckError(1, 1, "Type mismatch: expected int, found bool.", "if (true) 0 else true");
         }
 
-        [Test]
+        [Fact]
         public void HasATypeEqualToThatOfItsBodyExpressions()
         {
             AssertType(Integer, "if (true) 1 else 0");
@@ -61,7 +61,7 @@ namespace Rook.Compiling.Syntax
             AssertType(Integer, "if (true) if (true) 0 else 1 else if (false) 2 else 3");
         }
 
-        [Test]
+        [Fact]
         public void CanCreateFullyTypedInstance()
         {
             var node = (If)Parse("if (foo) bar else baz");

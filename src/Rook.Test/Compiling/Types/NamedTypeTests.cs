@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.Types
 {
-    [TestFixture]
     public class NamedTypeTests
     {
-        [Test]
+        [Fact]
         public void HasAName()
         {
             Create("A").Name.ShouldEqual("A");
             Create("B", Create("A")).Name.ShouldEqual("B");
         }
 
-        [Test]
+        [Fact]
         public void HasZeroOrMoreInnerTypes()
         {
             Create("A").InnerTypes.Count().ShouldEqual(0);
@@ -24,7 +24,7 @@ namespace Rook.Compiling.Types
             Create("C", Create("B", Create("A"))).InnerTypes.ShouldList(Create("B", Create("A")));
         }
 
-        [Test]
+        [Fact]
         public void HasAStringRepresentation()
         {
             Create("A").ToString().ShouldEqual("A");
@@ -32,7 +32,7 @@ namespace Rook.Compiling.Types
             Create("A", Create("B", Create("C"), Create("D"))).ToString().ShouldEqual("A<B<C, D>>");
         }
 
-        [Test]
+        [Fact]
         public void HasValueEqualitySemantics()
         {
             var type = Create("B", Create("A"));
@@ -45,7 +45,7 @@ namespace Rook.Compiling.Types
             type.GetHashCode().ShouldNotEqual(Create("B").GetHashCode());
         }
 
-        [Test]
+        [Fact]
         public void CanBeCreatedFromConvenienceFactories()
         {
             NamedType.Dynamic.ShouldEqual(Create("dynamic"));
@@ -61,7 +61,7 @@ namespace Rook.Compiling.Types
                 .ShouldEqual(Create("System.Func", Create("bool"), Create("System.Collections.Generic.IEnumerable", Create("bool")), Create("int")));
         }
 
-        [Test]
+        [Fact]
         public void CanDetermineWhetherTheTypeContainsASpecificTypeVariable()
         {
             var x = new TypeVariable(12345);
@@ -71,7 +71,7 @@ namespace Rook.Compiling.Types
             Create("A", Create("B", x)).Contains(x).ShouldBeTrue();
         }
 
-        [Test]
+        [Fact]
         public void CanFindAllDistinctOccurrencesOfContainedTypeVariables()
         {
             var x = new TypeVariable(0);
@@ -84,7 +84,7 @@ namespace Rook.Compiling.Types
             Create("A", Create("B", x, y), Create("C", y, z)).FindTypeVariables().ShouldList(x, y, z);
         }
 
-        [Test]
+        [Fact]
         public void CanPerformTypeVariableSubstitutios()
         {
             var a = new TypeVariable(0);

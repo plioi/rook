@@ -1,32 +1,31 @@
 ﻿using System;
-using NUnit.Framework;
+using Should;
+using Xunit;
 
 namespace Rook.Core
 {
-    [TestFixture]
     public class NullableTests
     {
-        [Test]
+        [Fact]
         public void CanWrapValueTypes()
         {
             var zero = new Nullable<int>(0);
             zero.Value.ShouldEqual(0);
         }
 
-        [Test]
+        [Fact]
         public void CanWrapReferenceTypes()
         {
             var o = new object();
             var nullable = new Nullable<object>(o);
-            nullable.Value.ShouldBeTheSameAs(o);
+            nullable.Value.ShouldBeSameAs(o);
         }
 
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException),
-            ExpectedMessage = "Value cannot be null.\r\nParameter name: value")]
+        [Fact]
         public void CannotWrapNullReferences()
         {
-            new Nullable<object>(null);
+            Action wrapNull = () => new Nullable<object>(null);
+            wrapNull.ShouldThrow<ArgumentNullException>("Value cannot be null.\r\nParameter name: value");
         }
     }
 }

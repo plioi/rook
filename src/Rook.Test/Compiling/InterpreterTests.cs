@@ -1,22 +1,21 @@
 ﻿using System.Linq;
 using System.Text;
-using NUnit.Framework;
 using Rook.Compiling.Syntax;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling
 {
-    [TestFixture]
     public class InterpreterTests
     {
-        private Interpreter interpreter;
+        private readonly Interpreter interpreter;
 
-        [SetUp]
-        public void SetUp()
+        public InterpreterTests()
         {
             interpreter = new Interpreter();
         }
 
-        [Test]
+        [Fact]
         public void ShouldDetermineWhetherSourceCodeParsesCompletelyAsAnExpressionOrFunction()
         {
             const string expression = "((5 + 2) > 5) && true";
@@ -30,7 +29,7 @@ namespace Rook.Compiling
             interpreter.CanParse(functionWithAdditionalContent).ShouldBeFalse();
         }
 
-        [Test]
+        [Fact]
         public void ShouldEvaluateSimpleExpressions()
         {
             var result = interpreter.Interpret("1");
@@ -38,7 +37,7 @@ namespace Rook.Compiling
             result.Errors.Count().ShouldEqual(0);
         }
 
-        [Test]
+        [Fact]
         public void ShouldFailWhenCannotParse()
         {
             var result = interpreter.Interpret("(5 + ");
@@ -47,7 +46,7 @@ namespace Rook.Compiling
             result.Errors.First().Message.ShouldEqual("Cannot evaluate this code: must be a function or expression.");
         }
 
-        [Test]
+        [Fact]
         public void ShouldFailWhenExpressionFailsTypeChecking()
         {
             var result = interpreter.Interpret("(5 + true)");
@@ -56,7 +55,7 @@ namespace Rook.Compiling
             result.Errors.First().Message.ShouldEqual("Type mismatch: expected int, found bool.");
         }
 
-        [Test]
+        [Fact]
         public void ShouldFailWhenFunctionFailsTypeChecking()
         {
             var result = interpreter.Interpret("int Square(int x) true");
@@ -65,27 +64,27 @@ namespace Rook.Compiling
             result.Errors.First().Message.ShouldEqual("Type mismatch: expected int, found bool.");
         }
 
-        [Test]
+        [Fact]
         public void ShouldEvaluateExpressionsAgainstPreviouslyInterpretedFunctions()
         {
             var square = interpreter.Interpret("int Square(int x) x*x");
             var cube = interpreter.Interpret("int Cube(int x) x*x*x");
-            square.Value.ShouldBeInstanceOf<Function>();
-            cube.Value.ShouldBeInstanceOf<Function>();
+            square.Value.ShouldBeType<Function>();
+            cube.Value.ShouldBeType<Function>();
 
             var result = interpreter.Interpret("Square(2) + Cube(3)");
             result.Value.ShouldEqual(31);
             result.Errors.Count().ShouldEqual(0);
         }
 
-        [Test]
+        [Fact]
         public void ShouldAllowFunctionDefinitionsToBeReplaced()
         {
             //First definitions compile but aren't defined accurately.
             var square = interpreter.Interpret("int Square(int x) x");
             var cube = interpreter.Interpret("int Cube(int x) x");
-            square.Value.ShouldBeInstanceOf<Function>();
-            cube.Value.ShouldBeInstanceOf<Function>();
+            square.Value.ShouldBeType<Function>();
+            cube.Value.ShouldBeType<Function>();
             var result = interpreter.Interpret("Square(2) + Cube(3)");
             result.Value.ShouldEqual(5);
             result.Errors.Count().ShouldEqual(0);
@@ -102,27 +101,27 @@ namespace Rook.Compiling
             //Third definitions compile and replace originals.
             square = interpreter.Interpret("int Square(int x) x*x");
             cube = interpreter.Interpret("int Cube(int x) x*x*x");
-            square.Value.ShouldBeInstanceOf<Function>();
-            cube.Value.ShouldBeInstanceOf<Function>();
+            square.Value.ShouldBeType<Function>();
+            cube.Value.ShouldBeType<Function>();
             result = interpreter.Interpret("Square(2) + Cube(3)");
             result.Value.ShouldEqual(31);
             result.Errors.Count().ShouldEqual(0);
         }
 
-        [Test]
+        [Fact]
         public void ShouldValidateFunctionsAgainstPreviouslyInterpretedFunctions()
         {
             var square = interpreter.Interpret("int Square(int x) x*x");
             var cube = interpreter.Interpret("int Cube(int x) Square(x)*x");
-            square.Value.ShouldBeInstanceOf<Function>();
-            cube.Value.ShouldBeInstanceOf<Function>();
+            square.Value.ShouldBeType<Function>();
+            cube.Value.ShouldBeType<Function>();
 
             var result = interpreter.Interpret("Square(2) + Cube(3)");
             result.Value.ShouldEqual(31);
             result.Errors.Count().ShouldEqual(0);
         }
 
-        [Test]
+        [Fact]
         public void ShouldTranslateFunctionsToTargetLanguage()
         {
             interpreter.Interpret("int Square(int x) x*x");
@@ -173,7 +172,7 @@ namespace Rook.Compiling
             interpreter.Translate().ShouldEqual(expectedWithMainExpression.ToString());
         }
 
-        [Test]
+        [Fact]
         public void DisallowsCallsToMainBecauseMainIsReservedForExpressionEvaluation()
         {
             interpreter.Interpret("5");
@@ -186,7 +185,7 @@ namespace Rook.Compiling
             result.Errors.First().Message.ShouldEqual("Reference to undefined identifier: Main");
         }
 
-        [Test]
+        [Fact]
         public void DisallowsExplicitDefinitionOfMainFunctionBecauseMainIsReservedForExpressionEvaluation()
         {
             var result = interpreter.Interpret("int Main(int x) x*x");

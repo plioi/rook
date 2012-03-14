@@ -1,18 +1,18 @@
-﻿using NUnit.Framework;
+﻿using Should;
+using Xunit;
 
 namespace Rook.Core
 {
-    [TestFixture]
     public class IdentityTests
     {
-        [Test]
+        [Fact]
         public void WrapsTheGivenValue()
         {
             var identity = new Identity<string>("value");
             identity.Value.ShouldEqual("value");
         }
 
-        [Test]
+        [Fact]
         public void AllowsMutationWhenGivenFunctionThatReturnsTheNextValue()
         {
             var identity = new Identity<int>(0);

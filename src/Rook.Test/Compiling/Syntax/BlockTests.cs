@@ -1,12 +1,12 @@
 using System.Linq;
-using NUnit.Framework;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class BlockTests : ExpressionTests
     {
-        [Test]
+        [Fact]
         public void ContainsOneOrMoreInnerExpressions()
         {
             FailsToParse("{}", "}");
@@ -16,7 +16,7 @@ namespace Rook.Compiling.Syntax
             Parses("{(1 + 2); (true || false);}").IntoTree("{((1) + (2)); ((true) || (false));}");
         }
 
-        [Test]
+        [Fact]
         public void AllowsOptionalLeadingVariableDeclarations()
         {
             FailsToParse("{int 0}", "int 0}");
@@ -28,14 +28,14 @@ namespace Rook.Compiling.Syntax
             Parses("{ int a = 0; bool b = true||false; false; 0; }").IntoTree("{int a = 0; bool b = ((true) || (false));false; 0;}");
         }
 
-        [Test]
+        [Fact]
         public void AllowsVariableDeclarationsToOmitExplicitTypeDeclaration()
         {
             Parses("{ a = 0; 1; }").IntoTree("{a = 0;1;}");
             Parses("{ a = 0; b = true||false; false; 0; }").IntoTree("{a = 0; b = ((true) || (false));false; 0;}");
         }
 
-        [Test]
+        [Fact]
         public void HasATypeEqualToTheTypeOfTheLastInnerExpression()
         {
             AssertType(Integer, "{ true; false; 1; }");
@@ -44,28 +44,28 @@ namespace Rook.Compiling.Syntax
             AssertType(Boolean, "{ 1; 2; 3; 4; test; }", test => Boolean);
         }
 
-        [Test]
+        [Fact]
         public void EvaluatesBodyExpressionTypesInANewScopeIncludingLocalVariableDeclarations()
         {
             AssertType(Integer, "{ int x = 0; x; }");
             AssertType(Boolean, "{ int x = 0; int y = 1; bool t = true; x==y || t; }");
         }
 
-        [Test]
+        [Fact]
         public void EvaluatesDeclarationExpressionsInANewScopeIncludingPrecedingVariableDeclarations()
         {
             AssertType(Integer, "{ int x = 0; int y = x+1; x+y; }");
             AssertType(Boolean, "{ int x = 0; bool b = x==0; !b; }");
         }
 
-        [Test]
+        [Fact]
         public void InfersLocalVariableTypeFromInitializationExpressionTypeWhenExplicitTypeDeclarationIsOmitted()
         {
             AssertType(Integer, "{ x = 0; x; }");
             AssertType(Boolean, "{ x = 0; y = 1; t = true; x==y || t; }");
         }
 
-        [Test]
+        [Fact]
         public void CanCreateFullyTypedInstance()
         {
             var node = (Block)Parse("{ int x = y; int z = 0; xz = x>z; x; z; xz; }");
@@ -93,25 +93,25 @@ namespace Rook.Compiling.Syntax
             typedNode.Type.ShouldEqual(Boolean);
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenAnyBodyExpressionFailsTypeChecking()
         {
             AssertTypeCheckError(1, 7, "Type mismatch: expected int, found bool.", "{ true+0; 0; }");
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenLocalVariableNamesAreNotUnique()
         {
             AssertTypeCheckError(1, 40, "Duplicate identifier: x", "{ int x = 0; int y = 1; int z = 2; int x = 3; true; }");
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenLocalVariableNamesShadowSurroundingScope()
         {
             AssertTypeCheckError(1, 29, "Duplicate identifier: z", "{ int x = 0; int y = 1; int z = 2; true; }", z => Integer);
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenDeclaredTypeDoesNotMatchInitializationExpressionType()
         {
             AssertTypeCheckError(1, 11, "Type mismatch: expected int, found bool.", "{ int x = false; x; }");

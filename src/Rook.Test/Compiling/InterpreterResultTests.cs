@@ -1,12 +1,12 @@
 ﻿using System.Linq;
-using NUnit.Framework;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling
 {
-    [TestFixture]
     public class InterpreterResultTests
     {
-        [Test]
+        [Fact]
         public void ShouldDescribeSuccessfulInterpretation()
         {
             object value = 123;
@@ -16,7 +16,7 @@ namespace Rook.Compiling
             result.Errors.Count().ShouldEqual(0);
         }
 
-        [Test]
+        [Fact]
         public void ShouldDescribeFailedInterpretation()
         {
             var errorA = new CompilerError(1, 10, "Error A");

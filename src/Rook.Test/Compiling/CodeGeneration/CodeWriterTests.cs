@@ -1,20 +1,19 @@
 ﻿using System.Text;
-using NUnit.Framework;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.CodeGeneration
 {
-    [TestFixture]
     public class CodeWriterTests
     {
-        private CodeWriter code;
+        private readonly CodeWriter code;
 
-        [SetUp]
-        public void SetUp()
+        public CodeWriterTests()
         {
             code = new CodeWriter();
         }
 
-        [Test]
+        [Fact]
         public void ShouldWriteLiteralText()
         {
             code.Literal("abc");
@@ -23,7 +22,7 @@ namespace Rook.Compiling.CodeGeneration
             code.ToString().ShouldEqual("abcdefghi");
         }
 
-        [Test]
+        [Fact]
         public void ShouldWriteLineEndings()
         {
             code.Literal("abc");
@@ -34,7 +33,7 @@ namespace Rook.Compiling.CodeGeneration
             code.ToString().ShouldEqual("abc\r\ndef\r\nghi");
         }
 
-        [Test]
+        [Fact]
         public void ShouldStartWithZeroIndentation()
         {
             code.Indentation();
@@ -42,7 +41,7 @@ namespace Rook.Compiling.CodeGeneration
             code.ToString().ShouldEqual("abc");
         }
 
-        [Test]
+        [Fact]
         public void ShouldManageIndentationLevelFromOpeningAndClosingBraceLines()
         {
             code.Line("0 Indentation");

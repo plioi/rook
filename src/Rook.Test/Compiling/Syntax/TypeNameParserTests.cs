@@ -1,10 +1,9 @@
-﻿using NUnit.Framework;
-using Parsley;
+﻿using Parsley;
 using Rook.Compiling.Types;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class TypeNameParserTests
     {
         private static readonly NamedType Integer = NamedType.Integer;
@@ -13,7 +12,7 @@ namespace Rook.Compiling.Syntax
         private static readonly NamedType Void = NamedType.Void;
         private static readonly NamedType Foo = new NamedType("Foo");
         
-        [Test]
+        [Fact]
         public void DemandsSimpleNameAtAMinimum()
         {
             FailsToParse("", "").WithMessage("(1, 1): type name expected");
@@ -22,7 +21,7 @@ namespace Rook.Compiling.Syntax
             FailsToParse("[]", "[]").WithMessage("(1, 1): type name expected");
         }
 
-        [Test]
+        [Fact]
         public void ParsesSimpleTypeNames()
         {
             Parses("int").IntoValue(Integer);
@@ -32,7 +31,7 @@ namespace Rook.Compiling.Syntax
             Parses("Foo").IntoValue(Foo);
         }
 
-        [Test]
+        [Fact]
         public void ParsesNullableTypeNames()
         {
             Parses("int?").IntoValue(NamedType.Nullable(Integer));
@@ -40,7 +39,7 @@ namespace Rook.Compiling.Syntax
             Parses("Foo?").IntoValue(NamedType.Nullable(Foo));
         }
 
-        [Test]
+        [Fact]
         public void ParsesEnumerableTypeNames()
         {
             Parses("int*").IntoValue(NamedType.Enumerable(Integer));
@@ -48,7 +47,7 @@ namespace Rook.Compiling.Syntax
             Parses("Foo**").IntoValue(NamedType.Enumerable(NamedType.Enumerable(Foo)));
         }
 
-        [Test]
+        [Fact]
         public void ParsesVectorTypeNames()
         {
             Parses("int[]").IntoValue(NamedType.Vector(Integer));
@@ -56,7 +55,7 @@ namespace Rook.Compiling.Syntax
             Parses("Foo[][]").IntoValue(NamedType.Vector(NamedType.Vector(Foo)));
         }
 
-        [Test]
+        [Fact]
         public void ParsesTypeNamesWithMixedModifiers()
         {
             Parses("int*?").IntoValue(NamedType.Nullable(NamedType.Enumerable(Integer)));

@@ -1,36 +1,35 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.Types
 {
-    [TestFixture]
     public class TypeVariableTests
     {
         private TypeVariable a, b;
 
-        [SetUp]
-        public void SetUp()
+        public TypeVariableTests()
         {
             a = new TypeVariable(0);
             b = new TypeVariable(1);
         }
 
-        [Test]
+        [Fact]
         public void HasAName()
         {
             a.Name.ShouldEqual("0");
             b.Name.ShouldEqual("1");
         }
 
-        [Test]
+        [Fact]
         public void HasZeroInnerTypes()
         {
             a.InnerTypes.Count().ShouldEqual(0);
             b.InnerTypes.Count().ShouldEqual(0);
         }
 
-        [Test]
+        [Fact]
         public void ContainsOnlyItself()
         {
             a.Contains(a).ShouldBeTrue();
@@ -40,14 +39,14 @@ namespace Rook.Compiling.Types
             b.Contains(a).ShouldBeFalse();
         }
 
-        [Test]
+        [Fact]
         public void YieldsOnlyItselfWhenAskedToFindTypeVariableOccurrences()
         {
             a.FindTypeVariables().ShouldList(a);
             b.FindTypeVariables().ShouldList(b);
         }
 
-        [Test]
+        [Fact]
         public void CanPerformTypeVariableSubstitutionOnItself()
         {
             IDictionary<TypeVariable, DataType> replaceAWithInteger =
@@ -57,13 +56,13 @@ namespace Rook.Compiling.Types
             b.ReplaceTypeVariables(replaceAWithInteger).ShouldEqual(b);
         }
 
-        [Test]
+        [Fact]
         public void HasValueEqualitySemantics()
         {
             a.ShouldEqual(a);
             a.ShouldEqual(new TypeVariable(0));
             a.ShouldNotEqual(b);
-            a.ShouldNotEqual(new NamedType("A"));
+            a.ShouldNotEqual((DataType)new NamedType("A"));
 
             a.GetHashCode().ShouldEqual(new TypeVariable(0).GetHashCode());
             a.GetHashCode().ShouldNotEqual(b.GetHashCode());

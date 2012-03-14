@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
+using Should;
 
 namespace Rook.Compiling.Syntax
 {
@@ -27,7 +28,7 @@ namespace Rook.Compiling.Syntax
 
         protected static void AssertTypeCheckError(TypeChecked<TSyntax> typeChecked, int line, int column, string expectedMessage)
         {
-            typeChecked.Syntax.ShouldBeNull("Expected type check error but found type checked syntax.");
+            typeChecked.Syntax.ShouldBeNull();
             typeChecked.HasErrors.ShouldBeTrue();
             
             if (typeChecked.Errors.Count() != 1)

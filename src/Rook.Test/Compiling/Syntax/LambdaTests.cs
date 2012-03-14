@@ -1,14 +1,14 @@
 ﻿using System.Linq;
-using NUnit.Framework;
 using Parsley;
 using Rook.Compiling.Types;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class LambdaTests : ExpressionTests
     {
-        [Test]
+        [Fact]
         public void HasABodyExpression()
         {
             FailsToParse("fn", "").WithMessage("(1, 3): ( expected");
@@ -19,7 +19,7 @@ namespace Rook.Compiling.Syntax
             Parses("fn () 1 + 2").IntoTree("fn () ((1) + (2))");
         }
 
-        [Test]
+        [Fact]
         public void HasAParameterList()
         {
             Parses("fn (int x) 1").IntoTree("fn (int x) 1");
@@ -27,7 +27,7 @@ namespace Rook.Compiling.Syntax
             Parses("fn (int x, int y) x+y").IntoTree("fn (int x, int y) ((x) + (y))");
         }
 
-        [Test]
+        [Fact]
         public void AllowsParametersToOmitExplicitTypeDeclaration()
         {
             Parses("fn (x) 1").IntoTree("fn (x) 1");
@@ -35,7 +35,7 @@ namespace Rook.Compiling.Syntax
             Parses("fn (int x, y, z) 1").IntoTree("fn (int x, y, z) 1");
         }
 
-        [Test]
+        [Fact]
         public void HasAFunctionTypeWithReturnTypeEqualToTheTypeOfTheBodyExpression()
         {
             AssertType(NamedType.Function(Integer), "fn () 1");
@@ -46,7 +46,7 @@ namespace Rook.Compiling.Syntax
             AssertType(NamedType.Function(new[] { Integer }, Boolean), "fn (int x) x+1 > 0");
         }
 
-        [Test]
+        [Fact]
         public void InfersParameterTypesFromUsages()
         {
             AssertType(NamedType.Function(new[] { Integer }, Integer), "fn (x) x+1");
@@ -54,7 +54,7 @@ namespace Rook.Compiling.Syntax
             AssertType(NamedType.Function(new[] { Integer }, Boolean), "fn (x) x+1 > 0");
         }
 
-        [Test]
+        [Fact]
         public void CanCreateFullyTypedInstance()
         {
             var node = (Lambda)Parse("fn (x, int y, bool z) x+y>0 && z");
@@ -72,19 +72,19 @@ namespace Rook.Compiling.Syntax
             typedNode.Type.ShouldEqual(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean));
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenBodyExpressionFailsTypeChecking()
         {
             AssertTypeCheckError(1, 11, "Type mismatch: expected int, found bool.", "fn () true+0");
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenParameterNamesAreNotUnique()
         {
             AssertTypeCheckError(1, 32, "Duplicate identifier: x", "fn (int x, bool y, int z, bool x) 0");
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenParameterNamesShadowSurroundingScope()
         {
             AssertTypeCheckError(1, 24, "Duplicate identifier: z", "fn (int x, bool y, int z) 0", z => Integer);

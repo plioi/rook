@@ -1,20 +1,20 @@
-﻿using NUnit.Framework;
-using Parsley;
+﻿using Parsley;
 using Rook.Compiling.Types;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class StringLiteralTests : ExpressionTests
     {
-        [Test]
+        [Fact]
         public void IsIdentifiedByQuotedContentCharacters()
         {
             Parses("\"\"").IntoTree("\"\"");
             Parses("\"abcdef\"").IntoTree("\"abcdef\"");
         }
 
-        [Test]
+        [Fact]
         public void ExposesBothTheQuotedLiteralAndTheAssociatedRawValue()
         {
             Parses("\"\"").IntoValue(syntaxTree =>
@@ -33,20 +33,20 @@ namespace Rook.Compiling.Syntax
             });
         }
 
-        [Test]
+        [Fact]
         public void HasPositionOfOpeningQuotationMark()
         {
             Parses("\"abcdef\"").IntoValue(
                 syntaxTree => ((StringLiteral) syntaxTree).Position.ShouldEqual(new Position(1, 1)));
         }
 
-        [Test]
+        [Fact]
         public void HasStringType()
         {
             AssertType(NamedType.String, "\"abcdef\"");
         }
 
-        [Test]
+        [Fact]
         public void AreAlwaysFullyTyped()
         {
             var str = (StringLiteral)Parse("\"abcdef\"");
@@ -54,7 +54,7 @@ namespace Rook.Compiling.Syntax
 
             var typedStr = (StringLiteral)str.WithTypes(Environment()).Syntax;
             typedStr.Type.ShouldEqual(NamedType.String);
-            typedStr.ShouldBeTheSameAs(str);
+            typedStr.ShouldBeSameAs(str);
         }
     }
 }

@@ -1,25 +1,25 @@
-using NUnit.Framework;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class BooleanLiteralTests : ExpressionTests
     {
-        [Test]
+        [Fact]
         public void IsIdentifiedByKeywords()
         {
             Parses("true").IntoTree("true");
             Parses("false").IntoTree("false");
         }
 
-        [Test]
+        [Fact]
         public void HasBooleanType()
         {
             AssertType(Boolean, "true");
             AssertType(Boolean, "false");
         }
 
-        [Test]
+        [Fact]
         public void AreAlwaysFullyTyped()
         {
             var boolean = (BooleanLiteral) Parse("false");
@@ -27,7 +27,7 @@ namespace Rook.Compiling.Syntax
 
             var typedBoolean = (BooleanLiteral) boolean.WithTypes(Environment()).Syntax;
             typedBoolean.Type.ShouldEqual(Boolean);
-            typedBoolean.ShouldBeTheSameAs(boolean);
+            typedBoolean.ShouldBeSameAs(boolean);
         }
     }
 }

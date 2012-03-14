@@ -1,19 +1,19 @@
-﻿using NUnit.Framework;
+﻿using System;
 using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling
 {
-    [TestFixture]
     public class EnvironmentTests
     {
         private static readonly NamedType Integer = NamedType.Integer;
         private static readonly NamedType Boolean = NamedType.Boolean;
 
-        private Environment root, ab, bc;
+        private readonly Environment root, ab, bc;
 
-        [SetUp]
-        public void SetUp()
+        public EnvironmentTests()
         {
             root = new Environment();
 
@@ -26,14 +26,14 @@ namespace Rook.Compiling
             bc["c"] = Boolean;
         }
 
-        [Test]
+        [Fact]
         public void StoresLocals()
         {
             AssertType(Integer, ab, "a");
             AssertType(Integer, ab, "b");
         }
 
-        [Test]
+        [Fact]
         public void DefersToSurroundingScopeAfterSearchingLocals()
         {
             AssertType(Integer, bc, "a");
@@ -41,7 +41,7 @@ namespace Rook.Compiling
             AssertType(Boolean, bc, "c");
         }
 
-        [Test]
+        [Fact]
         public void AllowsOverwritingInsideLocals()
         {
             ab["b"] = Boolean;
@@ -51,7 +51,7 @@ namespace Rook.Compiling
             AssertType(Integer, bc, "b");
         }
 
-        [Test]
+        [Fact]
         public void ProvidesContainmentPredicate()
         {
             ab.Contains("a").ShouldBeTrue();
@@ -65,7 +65,7 @@ namespace Rook.Compiling
             bc.Contains("z").ShouldBeFalse();
         }
 
-        [Test]
+        [Fact]
         public void ProvidesPrimitiveSignatures()
         {
             AssertType("System.Func<int, int, bool>", root, "<");
@@ -101,7 +101,7 @@ namespace Rook.Compiling
             AssertType("System.Func<Rook.Core.Collections.Vector<16>, int, 16, Rook.Core.Collections.Vector<16>>", root, "With");
         }
 
-        [Test]
+        [Fact]
         public void ProvidesStreamOfUniqueTypeVariables()
         {
             root.CreateTypeVariable().ShouldEqual(new TypeVariable(17));
@@ -112,15 +112,15 @@ namespace Rook.Compiling
             bc.CreateTypeVariable().ShouldEqual(new TypeVariable(22));
         }
 
-        [Test]
+        [Fact]
         public void ProvidesTypeNormalizerSharedWithAllLocalEnvironments()
         {
-            ab.TypeNormalizer.ShouldBeTheSameAs(root.TypeNormalizer);
-            bc.TypeNormalizer.ShouldBeTheSameAs(ab.TypeNormalizer);
-            new Environment().TypeNormalizer.ShouldNotBeTheSameAs(root.TypeNormalizer);
+            ab.TypeNormalizer.ShouldBeSameAs(root.TypeNormalizer);
+            bc.TypeNormalizer.ShouldBeSameAs(ab.TypeNormalizer);
+            new Environment().TypeNormalizer.ShouldNotBeSameAs(root.TypeNormalizer);
         }
 
-        [Test]
+        [Fact]
         public void CanBePopulatedWithAUniqueBinding()
         {
             root.TryIncludeUniqueBinding(new Parameter(null, Integer, "a")).ShouldBeTrue();
@@ -129,7 +129,7 @@ namespace Rook.Compiling
             AssertType(Boolean, root, "b");
         }
 
-        [Test]
+        [Fact]
         public void DemandsUniqueBindingsWhenIncludingUniqueBindings()
         {
             root.TryIncludeUniqueBinding(new Parameter(null, Integer, "a")).ShouldBeTrue();
@@ -138,7 +138,7 @@ namespace Rook.Compiling
             AssertType(Integer, root, "a");
         }
 
-        [Test]
+        [Fact]
         public void CanDetermineWhetherAGivenTypeVariableIsGenericWhenPreparedWithAKnownListOfNonGenericTypeVariables()
         {
             TypeVariable var0 = root.CreateTypeVariable();
@@ -171,9 +171,9 @@ namespace Rook.Compiling
             DataType value;
 
             if (environment.TryGet(key, out value))
-                value.ShouldBeTheSameAs(expectedType);
+                value.ShouldBeSameAs(expectedType);
             else
-                Assert.Fail();
+                throw new Exception("Failed to look up the type of '" + key + "' in the environment");
         }
 
         private static void AssertType(string expectedType, Environment environment, string key)
@@ -183,7 +183,7 @@ namespace Rook.Compiling
             if (environment.TryGet(key, out value))
                 expectedType.ShouldEqual(value.ToString());
             else
-                Assert.Fail();
+                throw new Exception("Failed to look up the type of '" + key + "' in the environment");
         }
     }
 }

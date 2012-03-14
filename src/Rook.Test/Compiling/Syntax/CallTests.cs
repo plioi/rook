@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
 using Rook.Compiling.Types;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    [TestFixture]
     public class CallTests : ExpressionTests
     {
-        [Test]
+        [Fact]
         public void FunctionCalls()
         {
             Parses("func()").IntoTree("(func())");
@@ -21,7 +21,7 @@ namespace Rook.Compiling.Syntax
             Parses("{func;}(1, 2)").IntoTree("({func;}(1, 2))");
         }
 
-        [Test]
+        [Fact]
         public void TreatsIndexOperatorsAsCallToIndexFunction()
         {
             Parses("vector[0]").IntoTree("(Index(vector, 0))");
@@ -33,7 +33,7 @@ namespace Rook.Compiling.Syntax
             Parses("{[0, 1];}[1]").IntoTree("(Index({[0, 1];}, 1))");
         }
 
-        [Test]
+        [Fact]
         public void TreatsSliceOperatorsAsCallToSliceFunction()
         {
             Parses("vector[0:5]").IntoTree("(Slice(vector, 0, 5))");
@@ -45,28 +45,28 @@ namespace Rook.Compiling.Syntax
             Parses("{[0, 1];}[0:1]").IntoTree("(Slice({[0, 1];}, 0, 1))");
         }
 
-        [Test]
+        [Fact]
         public void UnaryOperations()
         {
             Parses("-1").IntoTree("(-(1))");
             Parses("!false").IntoTree("(!(false))");
         }
 
-        [Test]
+        [Fact]
         public void MultiplicativeOperations()
         {
             Parses("1*2").IntoTree("((1) * (2))");
             Parses("1/2").IntoTree("((1) / (2))");
         }
 
-        [Test]
+        [Fact]
         public void AdditiveOperations()
         {
             Parses("1+2").IntoTree("((1) + (2))");
             Parses("1-2").IntoTree("((1) - (2))");
         }
 
-        [Test]
+        [Fact]
         public void RelationalOperations()
         {
             Parses("1<2").IntoTree("((1) < (2))");
@@ -75,32 +75,32 @@ namespace Rook.Compiling.Syntax
             Parses("1>=2").IntoTree("((1) >= (2))");
         }
 
-        [Test]
+        [Fact]
         public void EqualityOperations()
         {
             Parses("1==2").IntoTree("((1) == (2))");
             Parses("1!=2").IntoTree("((1) != (2))");
         }
 
-        [Test]
+        [Fact]
         public void LogicalAndOperations()
         {
             Parses("true&&false").IntoTree("((true) && (false))");
         }
 
-        [Test]
+        [Fact]
         public void LogicalOrOperations()
         {
             Parses("true||false").IntoTree("((true) || (false))");
         }
 
-        [Test]
+        [Fact]
         public void NullCoalescingOperations()
         {
             Parses("null??0").IntoTree("((null) ?? (0))");
         }
 
-        [Test]
+        [Fact]
         public void TreatsBinaryOperationsAsLeftAssociative()
         {
             Parses("1*2*3").IntoTree("((((1) * (2))) * (3))");
@@ -118,7 +118,7 @@ namespace Rook.Compiling.Syntax
             Parses("x??y??z").IntoTree("((((x) ?? (y))) ?? (z))");
         }
 
-        [Test]
+        [Fact]
         public void HasATypeEqualToTheReturnTypeOfTheCallableObject()
         {
             AssertType(Integer, "func()", func => Function(Integer));
@@ -126,7 +126,7 @@ namespace Rook.Compiling.Syntax
             AssertType(Integer, "func(false, 1)", func => Function(new[] { Boolean, Integer }, Integer));
         }
 
-        [Test]
+        [Fact]
         public void HasATypeEqualToTheInferredReturnTypeOfGenericCallableObjects()
         {
             var x = new TypeVariable(123456);
@@ -135,13 +135,13 @@ namespace Rook.Compiling.Syntax
             AssertType(Boolean, "func([true, false])", func => Function(new[] {Vector(x)}, x));
         }
 
-        [Test]
+        [Fact]
         public void TypeChecksArgumentExpressionsAgainstTheSurroundingScope()
         {
             AssertType(Integer, "func(yes, zero)", func => Function(new[] {Boolean, Integer}, Integer), yes => Boolean, zero => Integer);
         }
 
-        [Test]
+        [Fact]
         public void CanCreateFullyTypedInstance()
         {
             var node = (Call)Parse("func(yes, zero)");
@@ -157,7 +157,7 @@ namespace Rook.Compiling.Syntax
             typedNode.Type.ShouldEqual(Integer);
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingForIncorrectNumberOfArguments()
         {
             NamedType twoArgsToInteger =
@@ -169,7 +169,7 @@ namespace Rook.Compiling.Syntax
                 "foo(true, 1, false)", foo => twoArgsToInteger);
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingForMismatchedArgumentTypes()
         {
             NamedType integerToBoolean =
@@ -181,7 +181,7 @@ namespace Rook.Compiling.Syntax
                 "even(true)", even => integerToBoolean);
         }
 
-        [Test]
+        [Fact]
         public void FailsTypeCheckingWhenAttemptingToCallANoncallableObject()
         {
             AssertTypeCheckError(

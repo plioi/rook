@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using System.Reflection;
-using NUnit.Framework;
+using Should;
+using Xunit;
 
 namespace Rook.Compiling
 {
-    [TestFixture]
     public class CompilerResultTests
     {
-        [Test]
+        [Fact]
         public void ShouldDescribeSuccessfulCompilation()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -17,7 +17,7 @@ namespace Rook.Compiling
             result.Errors.Count().ShouldEqual(0);
         }
 
-        [Test]
+        [Fact]
         public void ShouldDescribeFailedCompilation()
         {
             var errorA = new CompilerError(1, 10, "Error A");
