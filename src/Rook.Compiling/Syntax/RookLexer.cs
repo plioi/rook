@@ -4,7 +4,7 @@ namespace Rook.Compiling.Syntax
 {
     public class RookLexer : Lexer
     {
-        private static readonly TokenKind IntralineWhitespace = new TokenKind("intra-line whitespace", @"[ \t]+", skippable: true);
+        private static readonly Pattern IntralineWhitespace = new Pattern("intra-line whitespace", @"[ \t]+", skippable: true);
 
         public static readonly Keyword @int = new Keyword("int");
         public static readonly Keyword @bool = new Keyword("bool");
@@ -17,14 +17,14 @@ namespace Rook.Compiling.Syntax
         public static readonly Keyword @true = new Keyword("true");
         public static readonly Keyword @false = new Keyword("false");
 
-        public static readonly TokenKind Integer = new TokenKind("integer", @"
+        public static readonly Pattern Integer = new Pattern("integer", @"
             0(?!\d) #Zero, not followed by other digits.
 
             |
 
             [1-9]\d* #Nonzero integer.
         ");
-        public static readonly TokenKind StringLiteral = new TokenKind("string literal", @"
+        public static readonly Pattern StringLiteral = new Pattern("string literal", @"
             # Open quote:
             ""
 
@@ -38,8 +38,8 @@ namespace Rook.Compiling.Syntax
             # Close quote:
             ""
         ");
-        public static readonly TokenKind Identifier = new TokenKind("identifier", @"[a-zA-Z]+[a-zA-Z0-9]*");
-        public static readonly TokenKind EndOfLine = new TokenKind("end of line", @"(\n|;)\s*");
+        public static readonly Pattern Identifier = new Pattern("identifier", @"[a-zA-Z]+[a-zA-Z0-9]*");
+        public static readonly Pattern EndOfLine = new Pattern("end of line", @"(\n|;)\s*");
         public static readonly Operator LeftParen = new Operator("(");
         public static readonly Operator RightParen = new Operator(")");
         public static readonly Operator Multiply = new Operator("*");
