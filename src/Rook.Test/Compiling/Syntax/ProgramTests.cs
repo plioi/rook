@@ -20,7 +20,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void DemandsEndOfInputAfterLastValidFunction()
         {
-            FailsToParse("int life() 42; int univ", "").WithMessage("(1, 24): ( expected");
+            FailsToParse("int life() 42; int univ").AtEndOfInput().WithMessage("(1, 24): ( expected");
         }
 
         [Fact]

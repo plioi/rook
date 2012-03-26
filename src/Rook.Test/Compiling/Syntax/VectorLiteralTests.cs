@@ -11,9 +11,9 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void ContainsOneOrMoreExpressions()
         {
-            FailsToParse("[", "");
-            FailsToParse("[]", "[]");
-            FailsToParse("[0", "").WithMessage("(1, 3): ] expected");
+            FailsToParse("[").AtEndOfInput();
+            FailsToParse("[]").LeavingUnparsedTokens("[]");
+            FailsToParse("[0").AtEndOfInput().WithMessage("(1, 3): ] expected");
             Parses("[0]").IntoTree("[0]");
             Parses("[0, 1]").IntoTree("[0, 1]");
             Parses("[0, 1+2, 3]").IntoTree("[0, ((1) + (2)), 3]");

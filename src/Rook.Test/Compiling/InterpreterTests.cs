@@ -38,6 +38,14 @@ namespace Rook.Compiling
         }
 
         [Fact]
+        public void ShouldAllowEndLineCausedByUserHittingReturn()
+        {
+            var result = interpreter.Interpret("1\n");
+            result.Value.ShouldEqual(1);
+            result.Errors.Count().ShouldEqual(0);
+        }
+
+        [Fact]
         public void ShouldFailWhenCannotParse()
         {
             var result = interpreter.Interpret("(5 + ");

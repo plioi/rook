@@ -91,12 +91,13 @@ namespace Rook.Compiling
             return new Program(pos, new[] { function }.Concat(functionsExceptPotentialOverwrite));
         }
 
-        private static bool TryParse<T>(Lexer tokens, Parser<T> parser, out T syntax) where T : SyntaxTree
+        private static bool TryParse<T>(TokenStream tokens, Parser<T> parser, out T syntax) where T : SyntaxTree
         {
             var reply = parser.Parse(tokens);
 
-            if (!reply.Success ||
-                reply.UnparsedTokens.ToString().Trim().Length > 0)
+            bool nonWhitespaceRemains = reply.UnparsedTokens.Any(x => x.Literal.Trim().Length > 0);
+
+            if (!reply.Success || nonWhitespaceRemains)
             {
                 syntax = default(T);
                 return false;

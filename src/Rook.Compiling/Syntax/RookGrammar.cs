@@ -41,7 +41,7 @@ namespace Rook.Compiling.Syntax
             Expressions();
 
             EndOfLine.Rule =
-                Label(Choice(Token(RookLexer.EndOfLine), Token(Lexer.EndOfInput)), "end of line");
+                Label(Choice(Token(RookLexer.EndOfLine), Token(TokenKind.EndOfInput)), "end of line");
 
             Identifier.Rule =
                 Token(RookLexer.Identifier);

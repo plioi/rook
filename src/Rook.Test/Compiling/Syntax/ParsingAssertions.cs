@@ -10,9 +10,9 @@ namespace Rook.Compiling.Syntax
             return parser.Parses(new RookLexer(source));
         }
 
-        public static Reply<T> FailsToParse<T>(this Parser<T> parser, string source, string expectedUnparsedSource)
+        public static Reply<T> FailsToParse<T>(this Parser<T> parser, string source)
         {
-            return parser.FailsToParse(new RookLexer(source), expectedUnparsedSource);
+            return parser.FailsToParse(new RookLexer(source));
         }
 
         public static void IntoTree<TSyntax>(this Reply<TSyntax> reply, string expectedSyntaxTree) where TSyntax : SyntaxTree

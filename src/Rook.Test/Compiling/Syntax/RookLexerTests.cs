@@ -10,7 +10,7 @@ namespace Rook.Compiling.Syntax
         {
             new RookLexer("0").ShouldYieldTokens(RookLexer.Integer, "0");
             new RookLexer("1").ShouldYieldTokens(RookLexer.Integer, "1");
-            new RookLexer("01").ShouldYieldTokens(Lexer.Unknown, "01");
+            new RookLexer("01").ShouldYieldTokens(TokenKind.Unknown, "01");
             new RookLexer("10").ShouldYieldTokens(RookLexer.Integer, "10");
             new RookLexer("2147483647").ShouldYieldTokens(RookLexer.Integer, "2147483647");
 

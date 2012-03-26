@@ -11,9 +11,9 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasABodyExpression()
         {
-            FailsToParse("fn", "").WithMessage("(1, 3): ( expected");
-            FailsToParse("fn (", "").WithMessage("(1, 5): ) expected");
-            FailsToParse("fn ()", "");
+            FailsToParse("fn").AtEndOfInput().WithMessage("(1, 3): ( expected");
+            FailsToParse("fn (").AtEndOfInput().WithMessage("(1, 5): ) expected");
+            FailsToParse("fn ()").AtEndOfInput();
 
             Parses("fn () 1").IntoTree("fn () 1");
             Parses("fn () 1 + 2").IntoTree("fn () ((1) + (2))");

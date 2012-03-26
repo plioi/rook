@@ -21,9 +21,9 @@ namespace Rook.Compiling.Syntax
             return Parser.Parses(source);
         }
 
-        protected Reply<TSyntax> FailsToParse(string source, string expectedUnparsedSource)
+        protected Reply<TSyntax> FailsToParse(string source)
         {
-            return Parser.FailsToParse(source, expectedUnparsedSource);
+            return Parser.FailsToParse(source);
         }
 
         protected static void AssertTypeCheckError(TypeChecked<TSyntax> typeChecked, int line, int column, string expectedMessage)

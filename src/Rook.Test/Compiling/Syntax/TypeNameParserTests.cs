@@ -15,10 +15,10 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void DemandsSimpleNameAtAMinimum()
         {
-            FailsToParse("", "").WithMessage("(1, 1): type name expected");
-            FailsToParse("?", "?").WithMessage("(1, 1): type name expected");
-            FailsToParse("*", "*").WithMessage("(1, 1): type name expected");
-            FailsToParse("[]", "[]").WithMessage("(1, 1): type name expected");
+            FailsToParse("").AtEndOfInput().WithMessage("(1, 1): type name expected");
+            FailsToParse("?").LeavingUnparsedTokens("?").WithMessage("(1, 1): type name expected");
+            FailsToParse("*").LeavingUnparsedTokens("*").WithMessage("(1, 1): type name expected");
+            FailsToParse("[]").LeavingUnparsedTokens("[]").WithMessage("(1, 1): type name expected");
         }
 
         [Fact]
@@ -68,9 +68,9 @@ namespace Rook.Compiling.Syntax
             Parses("bool[]*").IntoValue(NamedType.Enumerable(NamedType.Vector(Boolean)));
         }
 
-        private static Reply<NamedType> FailsToParse(string source, string expectedUnparsedSource)
+        private static Reply<NamedType> FailsToParse(string source)
         {
-            return new RookGrammar().TypeName.FailsToParse(source, expectedUnparsedSource);
+            return new RookGrammar().TypeName.FailsToParse(source);
         }
 
         private static Reply<NamedType> Parses(string source)

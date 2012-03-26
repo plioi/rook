@@ -13,13 +13,13 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void DemandsCompleteFunctionDefinition()
         {
-            FailsToParse("", "").WithMessage("(1, 1): type name expected");
-            FailsToParse("int", "");
-            FailsToParse("int foo", "").WithMessage("(1, 8): ( expected");
-            FailsToParse("int foo(", "").WithMessage("(1, 9): ) expected");
-            FailsToParse("int foo(x)", "");
-            FailsToParse("int foo(int)", "int)").WithMessage("(1, 9): ) expected");
-            FailsToParse("int foo()", "");
+            FailsToParse("").AtEndOfInput().WithMessage("(1, 1): type name expected");
+            FailsToParse("int").AtEndOfInput();
+            FailsToParse("int foo").AtEndOfInput().WithMessage("(1, 8): ( expected");
+            FailsToParse("int foo(").AtEndOfInput().WithMessage("(1, 9): ) expected");
+            FailsToParse("int foo(x)").AtEndOfInput();
+            FailsToParse("int foo(int)").LeavingUnparsedTokens("int", ")").WithMessage("(1, 9): ) expected");
+            FailsToParse("int foo()").AtEndOfInput();
             Parses("int foo() 1").IntoTree("int foo() 1");
         }
 

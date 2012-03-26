@@ -9,14 +9,14 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void ContainsConditionExpressionAndTwoBodyExpressions()
         {
-            FailsToParse("if", "").WithMessage("(1, 3): ( expected");
-            FailsToParse("if (", "");
-            FailsToParse("if (false", "").WithMessage("(1, 10): ) expected");
-            FailsToParse("if (1)", "");
-            FailsToParse("if (true) 0", "");
-            FailsToParse("if (true) 0 1", "1");
-            FailsToParse("if (true) 0 else", "");
-            FailsToParse("if false 0 1", "false 0 1").WithMessage("(1, 4): ( expected");
+            FailsToParse("if").AtEndOfInput().WithMessage("(1, 3): ( expected");
+            FailsToParse("if (").AtEndOfInput();
+            FailsToParse("if (false").AtEndOfInput().WithMessage("(1, 10): ) expected");
+            FailsToParse("if (1)").AtEndOfInput();
+            FailsToParse("if (true) 0").AtEndOfInput();
+            FailsToParse("if (true) 0 1").LeavingUnparsedTokens("1");
+            FailsToParse("if (true) 0 else").AtEndOfInput();
+            FailsToParse("if false 0 1").LeavingUnparsedTokens("false", "0", "1").WithMessage("(1, 4): ( expected");
 
             Parses("if (true) 0 else 1").IntoTree("(if (true) (0) else (1))");
             Parses("if (false) 1 else 0").IntoTree("(if (false) (1) else (0))");

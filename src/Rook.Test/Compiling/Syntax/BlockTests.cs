@@ -1,4 +1,5 @@
 using System.Linq;
+using Parsley;
 using Should;
 using Xunit;
 
@@ -9,7 +10,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void ContainsOneOrMoreInnerExpressions()
         {
-            FailsToParse("{}", "}");
+            FailsToParse("{}").LeavingUnparsedTokens("}");
             Parses("{1;}").IntoTree("{1;}");
             Parses("{1; true;}").IntoTree("{1; true;}");
             Parses("{1 + 2; true || false;}").IntoTree("{((1) + (2)); ((true) || (false));}");
@@ -19,11 +20,11 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void AllowsOptionalLeadingVariableDeclarations()
         {
-            FailsToParse("{int 0}", "int 0}");
-            FailsToParse("{int x 0}", "int x 0}");
-            FailsToParse("{int x = 0}", "int x = 0}");
-            FailsToParse("{int x = 0 0}", "int x = 0 0}");
-            FailsToParse("{int a = 0;}", "}");
+            FailsToParse("{int 0}").LeavingUnparsedTokens("int", "0", "}");
+            FailsToParse("{int x 0}").LeavingUnparsedTokens("int", "x", "0", "}");
+            FailsToParse("{int x = 0}").LeavingUnparsedTokens("int", "x", "=", "0", "}");
+            FailsToParse("{int x = 0 0}").LeavingUnparsedTokens("int", "x", "=", "0", "0", "}");
+            FailsToParse("{int a = 0;}").LeavingUnparsedTokens("}");
             Parses("{ int a = 0; 1; }").IntoTree("{int a = 0;1;}");
             Parses("{ int a = 0; bool b = true||false; false; 0; }").IntoTree("{int a = 0; bool b = ((true) || (false));false; 0;}");
         }
