@@ -83,10 +83,5 @@ namespace Rook.Compiling.Syntax
                 Vector, LeftSquareBrace, RightSquareBrace, Colon,
                 NullCoalesce, Question,
                 EndOfLine).Tokenize(new Text(source))) { }
-
-        public override string ToString()
-        {
-            throw new NotSupportedException();
-        }
     }
 }
