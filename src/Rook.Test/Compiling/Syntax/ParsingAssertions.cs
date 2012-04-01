@@ -7,19 +7,19 @@ namespace Rook.Compiling.Syntax
     {
         public static Reply<T> Parses<T>(this Parser<T> parser, string source)
         {
-            var tokens = new RookLexer().Tokenize(new Text(source));
-            return parser.Parses(new TokenStream(tokens));
+            var tokens = new RookLexer().Tokenize(source);
+            return parser.Parses(tokens);
         }
 
         public static Reply<T> FailsToParse<T>(this Parser<T> parser, string source)
         {
-            var tokens = new RookLexer().Tokenize(new Text(source));
-            return parser.FailsToParse(new TokenStream(tokens));
+            var tokens = new RookLexer().Tokenize(source);
+            return parser.FailsToParse(tokens);
         }
 
         public static void IntoTree<TSyntax>(this Reply<TSyntax> reply, string expectedSyntaxTree) where TSyntax : SyntaxTree
         {
-            reply.IntoValue(syntaxTree => syntaxTree.Visit(new Serializer()).ShouldEqual(expectedSyntaxTree));
+            reply.WithValue(syntaxTree => syntaxTree.Visit(new Serializer()).ShouldEqual(expectedSyntaxTree));
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void ExposesBothTheQuotedLiteralAndTheAssociatedRawValue()
         {
-            Parses("\"\"").IntoValue(syntaxTree =>
+            Parses("\"\"").WithValue(syntaxTree =>
             {
                 var str = (StringLiteral)syntaxTree;
                 str.QuotedLiteral.ShouldEqual("\"\"");
@@ -25,7 +25,7 @@ namespace Rook.Compiling.Syntax
             });
 
             const string literal = "\"abc \\\" \\\\ \\n \\r \\t \\u263a def\"";
-            Parses(literal).IntoValue(syntaxTree =>
+            Parses(literal).WithValue(syntaxTree =>
             {
                 var str = (StringLiteral) syntaxTree;
                 str.QuotedLiteral.ShouldEqual(literal);
@@ -36,7 +36,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasPositionOfOpeningQuotationMark()
         {
-            Parses("\"abcdef\"").IntoValue(
+            Parses("\"abcdef\"").WithValue(
                 syntaxTree => ((StringLiteral) syntaxTree).Position.ShouldEqual(new Position(1, 1)));
         }
 

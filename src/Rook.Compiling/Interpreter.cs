@@ -23,7 +23,7 @@ namespace Rook.Compiling
 
         public bool CanParse(string code)
         {
-            var tokens = new TokenStream(new RookLexer().Tokenize(new Text(code)));
+            var tokens = new TokenStream(new RookLexer().Tokenize(code));
             Function function;
             Expression expression;
 
@@ -33,7 +33,7 @@ namespace Rook.Compiling
 
         public InterpreterResult Interpret(string code)
         {
-            var tokens = new TokenStream(new RookLexer().Tokenize(new Text(code)));
+            var tokens = new TokenStream(new RookLexer().Tokenize(code));
             var pos = tokens.Position;
             
             Expression expression;
@@ -95,9 +95,7 @@ namespace Rook.Compiling
         {
             var reply = parser.Parse(tokens);
 
-            bool nonWhitespaceRemains = reply.UnparsedTokens.Any(x => x.Literal.Trim().Length > 0);
-
-            if (!reply.Success || nonWhitespaceRemains)
+            if (!reply.Success || NonWhitespaceRemains(reply))
             {
                 syntax = default(T);
                 return false;
@@ -105,6 +103,21 @@ namespace Rook.Compiling
 
             syntax = reply.Value;
             return true;
+        }
+
+        private static bool NonWhitespaceRemains<T>(Reply<T> reply)
+        {
+            var stream = reply.UnparsedTokens;
+
+            while (stream.Current.Kind != TokenKind.EndOfInput)
+            {
+                if (stream.Current.Literal.Trim().Length > 0)
+                    return true;
+
+                stream = stream.Advance();
+            }
+
+            return false;
         }
 
         private Environment EnvironmentForExpression()

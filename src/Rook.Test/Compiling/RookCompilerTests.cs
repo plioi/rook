@@ -39,7 +39,7 @@ namespace Rook.Compiling
         [Fact]
         public void ShouldBuildProgramsFromSyntaxTrees()
         {
-            var tokens = new RookLexer().Tokenize(new Text("int Main() 123;"));
+            var tokens = new RookLexer().Tokenize("int Main() 123;");
             var program = new RookGrammar().Program.Parse(new TokenStream(tokens)).Value;
             Build(program);
             AssertErrors(0);

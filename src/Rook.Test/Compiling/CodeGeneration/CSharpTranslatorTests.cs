@@ -226,7 +226,7 @@ namespace Rook.Compiling.CodeGeneration
         private static string Translate<T>(Parser<T> parser, string rookSource)
             where T : SyntaxTree
         {
-            var tokens = new RookLexer().Tokenize(new Text(rookSource));
+            var tokens = new RookLexer().Tokenize(rookSource);
             var code = new CodeWriter();
             WriteAction write = parser.Parse(new TokenStream(tokens)).Value.Visit(new CSharpTranslator());
             write(code);

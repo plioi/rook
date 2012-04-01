@@ -24,48 +24,48 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void ParsesSimpleTypeNames()
         {
-            Parses("int").IntoValue(Integer);
-            Parses("bool").IntoValue(Boolean);
-            Parses("string").IntoValue(String);
-            Parses("void").IntoValue(Void);
-            Parses("Foo").IntoValue(Foo);
+            Parses("int").WithValue(Integer);
+            Parses("bool").WithValue(Boolean);
+            Parses("string").WithValue(String);
+            Parses("void").WithValue(Void);
+            Parses("Foo").WithValue(Foo);
         }
 
         [Fact]
         public void ParsesNullableTypeNames()
         {
-            Parses("int?").IntoValue(NamedType.Nullable(Integer));
-            Parses("bool?").IntoValue(NamedType.Nullable(Boolean));
-            Parses("Foo?").IntoValue(NamedType.Nullable(Foo));
+            Parses("int?").WithValue(NamedType.Nullable(Integer));
+            Parses("bool?").WithValue(NamedType.Nullable(Boolean));
+            Parses("Foo?").WithValue(NamedType.Nullable(Foo));
         }
 
         [Fact]
         public void ParsesEnumerableTypeNames()
         {
-            Parses("int*").IntoValue(NamedType.Enumerable(Integer));
-            Parses("bool*").IntoValue(NamedType.Enumerable(Boolean));
-            Parses("Foo**").IntoValue(NamedType.Enumerable(NamedType.Enumerable(Foo)));
+            Parses("int*").WithValue(NamedType.Enumerable(Integer));
+            Parses("bool*").WithValue(NamedType.Enumerable(Boolean));
+            Parses("Foo**").WithValue(NamedType.Enumerable(NamedType.Enumerable(Foo)));
         }
 
         [Fact]
         public void ParsesVectorTypeNames()
         {
-            Parses("int[]").IntoValue(NamedType.Vector(Integer));
-            Parses("bool[]").IntoValue(NamedType.Vector(Boolean));
-            Parses("Foo[][]").IntoValue(NamedType.Vector(NamedType.Vector(Foo)));
+            Parses("int[]").WithValue(NamedType.Vector(Integer));
+            Parses("bool[]").WithValue(NamedType.Vector(Boolean));
+            Parses("Foo[][]").WithValue(NamedType.Vector(NamedType.Vector(Foo)));
         }
 
         [Fact]
         public void ParsesTypeNamesWithMixedModifiers()
         {
-            Parses("int*?").IntoValue(NamedType.Nullable(NamedType.Enumerable(Integer)));
-            Parses("bool?*").IntoValue(NamedType.Enumerable(NamedType.Nullable(Boolean)));
+            Parses("int*?").WithValue(NamedType.Nullable(NamedType.Enumerable(Integer)));
+            Parses("bool?*").WithValue(NamedType.Enumerable(NamedType.Nullable(Boolean)));
 
-            Parses("int[]?").IntoValue(NamedType.Nullable(NamedType.Vector(Integer)));
-            Parses("bool?[]").IntoValue(NamedType.Vector(NamedType.Nullable(Boolean)));
+            Parses("int[]?").WithValue(NamedType.Nullable(NamedType.Vector(Integer)));
+            Parses("bool?[]").WithValue(NamedType.Vector(NamedType.Nullable(Boolean)));
 
-            Parses("int*[]").IntoValue(NamedType.Vector(NamedType.Enumerable(Integer)));
-            Parses("bool[]*").IntoValue(NamedType.Enumerable(NamedType.Vector(Boolean)));
+            Parses("int*[]").WithValue(NamedType.Vector(NamedType.Enumerable(Integer)));
+            Parses("bool[]*").WithValue(NamedType.Enumerable(NamedType.Vector(Boolean)));
         }
 
         private static Reply<NamedType> FailsToParse(string source)
