@@ -1,4 +1,5 @@
-﻿using Rook.Compiling.Syntax;
+﻿using Parsley;
+using Rook.Compiling.Syntax;
 using Should;
 using Xunit;
 
@@ -38,7 +39,8 @@ namespace Rook.Compiling
         [Fact]
         public void ShouldBuildProgramsFromSyntaxTrees()
         {
-            Program program = new RookGrammar().Program.Parse(new RookLexer("int Main() 123;")).Value;
+            var tokens = new RookLexer().Tokenize(new Text("int Main() 123;"));
+            var program = new RookGrammar().Program.Parse(new TokenStream(tokens)).Value;
             Build(program);
             AssertErrors(0);
             ExecuteMain().ShouldEqual(123);

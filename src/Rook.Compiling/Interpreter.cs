@@ -23,7 +23,7 @@ namespace Rook.Compiling
 
         public bool CanParse(string code)
         {
-            var tokens = new RookLexer(code);
+            var tokens = new TokenStream(new RookLexer().Tokenize(new Text(code)));
             Function function;
             Expression expression;
 
@@ -33,7 +33,7 @@ namespace Rook.Compiling
 
         public InterpreterResult Interpret(string code)
         {
-            var tokens = new RookLexer(code);
+            var tokens = new TokenStream(new RookLexer().Tokenize(new Text(code)));
             var pos = tokens.Position;
             
             Expression expression;

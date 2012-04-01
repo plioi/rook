@@ -3,7 +3,7 @@ using Parsley;
 
 namespace Rook.Compiling.Syntax
 {
-    public class RookLexer : TokenStream
+    public class RookLexer : Lexer
     {
         private static readonly Pattern IntralineWhitespace = new Pattern("intra-line whitespace", @"[ \t]+", skippable: true);
 
@@ -67,21 +67,20 @@ namespace Rook.Compiling.Syntax
         public static readonly Operator NullCoalesce = new Operator("??");
         public static readonly Operator Question = new Operator("?");
 
-        public RookLexer(string source)
-            :base(new Lexer(
-                IntralineWhitespace,
-                @int, @bool, @string, @void, @null, @if, @else, @fn, @true, @false,
-                Integer, StringLiteral, Identifier,
-                LeftParen, RightParen,
-                Multiply, Divide,
-                Add, Subtract,
-                LessThanOrEqual, LessThan, GreaterThanOrEqual, GreaterThan,
-                Equal, NotEqual,
-                Or, And, Not,
-                Assignment, Comma,
-                LeftBrace, RightBrace,
-                Vector, LeftSquareBrace, RightSquareBrace, Colon,
-                NullCoalesce, Question,
-                EndOfLine).Tokenize(new Text(source))) { }
+        public RookLexer()
+            :base(IntralineWhitespace,
+                  @int, @bool, @string, @void, @null, @if, @else, @fn, @true, @false,
+                  Integer, StringLiteral, Identifier,
+                  LeftParen, RightParen,
+                  Multiply, Divide,
+                  Add, Subtract,
+                  LessThanOrEqual, LessThan, GreaterThanOrEqual, GreaterThan,
+                  Equal, NotEqual,
+                  Or, And, Not,
+                  Assignment, Comma,
+                  LeftBrace, RightBrace,
+                  Vector, LeftSquareBrace, RightSquareBrace, Colon,
+                  NullCoalesce, Question,
+                  EndOfLine) { }
     }
 }

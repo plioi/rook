@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Should;
 
 namespace Rook
@@ -32,6 +33,16 @@ namespace Rook
         {
             Action action = () => shouldThrow();
             action.ShouldThrow<TException>(expectedMessage);
+        }
+
+        public static void ShouldList<T>(this IEnumerable<T> actual, params Action<T>[] itemExpectations)
+        {
+            var array = actual.ToArray();
+
+            array.Length.ShouldEqual(itemExpectations.Length);
+
+            for (int i = 0; i < array.Length; i++)
+                itemExpectations[i](array[i]);
         }
     }
 }

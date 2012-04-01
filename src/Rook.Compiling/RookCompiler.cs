@@ -38,7 +38,8 @@ namespace Rook.Compiling
 
         private static Reply<Program> Parse(string rookCode)
         {
-            return new RookGrammar().Program.Parse(new RookLexer(rookCode));
+            var tokens = new RookLexer().Tokenize(new Text(rookCode));
+            return new RookGrammar().Program.Parse(new TokenStream(tokens));
         }
 
         private static TypeChecked<Program> TypeCheck(Program program)

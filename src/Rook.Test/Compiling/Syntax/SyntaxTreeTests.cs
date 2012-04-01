@@ -13,7 +13,8 @@ namespace Rook.Compiling.Syntax
 
         protected TSyntax Parse(string source)
         {
-            return Parser.Parse(new RookLexer(source)).Value;
+            var tokens = new RookLexer().Tokenize(new Text(source));
+            return Parser.Parse(new TokenStream(tokens)).Value;
         }
 
         protected Reply<TSyntax> Parses(string source)
