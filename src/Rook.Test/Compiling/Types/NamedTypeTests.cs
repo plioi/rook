@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Should;
 using Xunit;
 
@@ -17,7 +16,7 @@ namespace Rook.Compiling.Types
         [Fact]
         public void HasZeroOrMoreInnerTypes()
         {
-            Create("A").InnerTypes.Count().ShouldEqual(0);
+            Create("A").InnerTypes.ShouldBeEmpty();
 
             Create("B", Create("A")).InnerTypes.ShouldList(Create("A"));
 
@@ -90,16 +89,11 @@ namespace Rook.Compiling.Types
             var a = new TypeVariable(0);
             var b = new TypeVariable(1);
 
-            IDictionary<TypeVariable, DataType> replaceAWithInteger =
-                new Dictionary<TypeVariable, DataType> { { a, NamedType.Integer } };
+            var replaceAWithInteger = new Dictionary<TypeVariable, DataType> { { a, NamedType.Integer } };
+            var replaceBWithA = new Dictionary<TypeVariable, DataType> { { b, a } };
+            var replaceBoth = new Dictionary<TypeVariable, DataType> { { a, NamedType.Integer }, { b, a } };
 
-            IDictionary<TypeVariable, DataType> replaceBWithA =
-                new Dictionary<TypeVariable, DataType> { { b, a } };
-
-            IDictionary<TypeVariable, DataType> replaceBoth =
-                new Dictionary<TypeVariable, DataType> { { a, NamedType.Integer }, { b, a } };
-
-            DataType concrete = Create("A", Create("B"));
+            var concrete = Create("A", Create("B"));
             concrete.ReplaceTypeVariables(replaceAWithInteger).ShouldEqual(concrete);
             concrete.ReplaceTypeVariables(replaceBWithA).ShouldEqual(concrete);
             concrete.ReplaceTypeVariables(replaceBoth).ShouldEqual(concrete);

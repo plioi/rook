@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using Parsley;
 using Should;
 using Xunit;
@@ -15,7 +14,7 @@ namespace Rook.Compiling
             var result = new CompilerResult(assembly);
 
             result.CompiledAssembly.ShouldEqual(assembly);
-            result.Errors.Count().ShouldEqual(0);
+            result.Errors.ShouldBeEmpty();
         }
 
         [Fact]

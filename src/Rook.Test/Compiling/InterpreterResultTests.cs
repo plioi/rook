@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Parsley;
+﻿using Parsley;
 using Should;
 using Xunit;
 
@@ -14,7 +13,7 @@ namespace Rook.Compiling
             var result = new InterpreterResult(value);
 
             result.Value.ShouldEqual(value);
-            result.Errors.Count().ShouldEqual(0);
+            result.Errors.ShouldBeEmpty();
         }
 
         [Fact]

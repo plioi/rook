@@ -55,19 +55,21 @@ namespace Rook.Compiling.CodeGeneration
             code.EndLine();
             code.Line("}");
             code.Line("}");
-            code.Line("0 Indnetation");
+            code.Line("0 Indentation");
 
-            var expected = new StringBuilder();
-            expected.AppendLine("0 Indentation");
-            expected.AppendLine("{");
-            expected.AppendLine("    1 Indentation");
-            expected.AppendLine("    1 Indentation With Interior {Braces}");
-            expected.AppendLine("    {");
-            expected.AppendLine("        2 Indentation");
-            expected.AppendLine("        Manually Indented");
-            expected.AppendLine("    }");
-            expected.AppendLine("}");
-            expected.AppendLine("0 Indnetation");
+            var expected = new StringBuilder()
+                .AppendLine("0 Indentation")
+                .AppendLine("{")
+                .AppendLine("    1 Indentation")
+                .AppendLine("    1 Indentation With Interior {Braces}")
+                .AppendLine("    {")
+                .AppendLine("        2 Indentation")
+                .AppendLine("        Manually Indented")
+                .AppendLine("    }")
+                .AppendLine("}")
+                .AppendLine("0 Indentation");
+
+            code.ToString().ShouldEqual(expected.ToString());
         }
     }
 }

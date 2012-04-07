@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Text;
+﻿using System.Text;
 using Rook.Compiling.Syntax;
 using Should;
 using Xunit;
@@ -34,7 +33,7 @@ namespace Rook.Compiling
         {
             var result = interpreter.Interpret("1");
             result.Value.ShouldEqual(1);
-            result.Errors.Count().ShouldEqual(0);
+            result.Errors.ShouldBeEmpty();
         }
 
         [Fact]
@@ -42,7 +41,7 @@ namespace Rook.Compiling
         {
             var result = interpreter.Interpret("1\n");
             result.Value.ShouldEqual(1);
-            result.Errors.Count().ShouldEqual(0);
+            result.Errors.ShouldBeEmpty();
         }
 
         [Fact]
@@ -50,8 +49,7 @@ namespace Rook.Compiling
         {
             var result = interpreter.Interpret("(5 + ");
             result.Value.ShouldBeNull();
-            result.Errors.Count().ShouldEqual(1);
-            result.Errors.First().Message.ShouldEqual("Cannot evaluate this code: must be a function or expression.");
+            result.Errors.ShouldList(error => error.Message.ShouldEqual("Cannot evaluate this code: must be a function or expression."));
         }
 
         [Fact]
@@ -59,8 +57,7 @@ namespace Rook.Compiling
         {
             var result = interpreter.Interpret("(5 + true)");
             result.Value.ShouldBeNull();
-            result.Errors.Count().ShouldEqual(1);
-            result.Errors.First().Message.ShouldEqual("Type mismatch: expected int, found bool.");
+            result.Errors.ShouldList(error => error.Message.ShouldEqual("Type mismatch: expected int, found bool."));
         }
 
         [Fact]
@@ -68,8 +65,7 @@ namespace Rook.Compiling
         {
             var result = interpreter.Interpret("int Square(int x) true");
             result.Value.ShouldBeNull();
-            result.Errors.Count().ShouldEqual(1);
-            result.Errors.First().Message.ShouldEqual("Type mismatch: expected int, found bool.");
+            result.Errors.ShouldList(error => error.Message.ShouldEqual("Type mismatch: expected int, found bool."));
         }
 
         [Fact]
@@ -82,7 +78,7 @@ namespace Rook.Compiling
 
             var result = interpreter.Interpret("Square(2) + Cube(3)");
             result.Value.ShouldEqual(31);
-            result.Errors.Count().ShouldEqual(0);
+            result.Errors.ShouldBeEmpty();
         }
 
         [Fact]
@@ -95,7 +91,7 @@ namespace Rook.Compiling
             cube.Value.ShouldBeType<Function>();
             var result = interpreter.Interpret("Square(2) + Cube(3)");
             result.Value.ShouldEqual(5);
-            result.Errors.Count().ShouldEqual(0);
+            result.Errors.ShouldBeEmpty();
 
             //Second definitions don't compile.  Previous definitions persist.
             square = interpreter.Interpret("int Square(int x) false");
@@ -104,7 +100,7 @@ namespace Rook.Compiling
             cube.Value.ShouldBeNull();
             result = interpreter.Interpret("Square(2) + Cube(3)");
             result.Value.ShouldEqual(5);
-            result.Errors.Count().ShouldEqual(0);
+            result.Errors.ShouldBeEmpty();
 
             //Third definitions compile and replace originals.
             square = interpreter.Interpret("int Square(int x) x*x");
@@ -113,7 +109,7 @@ namespace Rook.Compiling
             cube.Value.ShouldBeType<Function>();
             result = interpreter.Interpret("Square(2) + Cube(3)");
             result.Value.ShouldEqual(31);
-            result.Errors.Count().ShouldEqual(0);
+            result.Errors.ShouldBeEmpty();
         }
 
         [Fact]
@@ -126,7 +122,7 @@ namespace Rook.Compiling
 
             var result = interpreter.Interpret("Square(2) + Cube(3)");
             result.Value.ShouldEqual(31);
-            result.Errors.Count().ShouldEqual(0);
+            result.Errors.ShouldBeEmpty();
         }
 
         [Fact]
@@ -189,8 +185,7 @@ namespace Rook.Compiling
 
             var result = interpreter.Interpret("Main()");
             result.Value.ShouldBeNull();
-            result.Errors.Count().ShouldEqual(1);
-            result.Errors.First().Message.ShouldEqual("Reference to undefined identifier: Main");
+            result.Errors.ShouldList(error => error.Message.ShouldEqual("Reference to undefined identifier: Main"));
         }
 
         [Fact]
@@ -198,8 +193,7 @@ namespace Rook.Compiling
         {
             var result = interpreter.Interpret("int Main(int x) x*x");
             result.Value.ShouldBeNull();
-            result.Errors.Count().ShouldEqual(1);
-            result.Errors.First().Message.ShouldEqual("The Main function is reserved for expression evaluation, and cannot be explicitly defined.");
+            result.Errors.ShouldList(error => error.Message.ShouldEqual("The Main function is reserved for expression evaluation, and cannot be explicitly defined."));
         }
     }
 }

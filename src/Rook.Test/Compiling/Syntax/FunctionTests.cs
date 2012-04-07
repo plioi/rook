@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Parsley;
+﻿using Parsley;
 using Rook.Compiling.Types;
 using Should;
 using Xunit;

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Should;
 using Xunit;
 
@@ -7,7 +6,8 @@ namespace Rook.Compiling.Types
 {
     public class TypeVariableTests
     {
-        private TypeVariable a, b;
+        private readonly TypeVariable a;
+        private readonly TypeVariable b;
 
         public TypeVariableTests()
         {
@@ -25,8 +25,8 @@ namespace Rook.Compiling.Types
         [Fact]
         public void HasZeroInnerTypes()
         {
-            a.InnerTypes.Count().ShouldEqual(0);
-            b.InnerTypes.Count().ShouldEqual(0);
+            a.InnerTypes.ShouldBeEmpty();
+            b.InnerTypes.ShouldBeEmpty();
         }
 
         [Fact]
@@ -49,8 +49,7 @@ namespace Rook.Compiling.Types
         [Fact]
         public void CanPerformTypeVariableSubstitutionOnItself()
         {
-            IDictionary<TypeVariable, DataType> replaceAWithInteger =
-                new Dictionary<TypeVariable, DataType> { { a, NamedType.Integer } };
+            var replaceAWithInteger = new Dictionary<TypeVariable, DataType> { { a, NamedType.Integer } };
 
             a.ReplaceTypeVariables(replaceAWithInteger).ShouldEqual(NamedType.Integer);
             b.ReplaceTypeVariables(replaceAWithInteger).ShouldEqual(b);
