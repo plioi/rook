@@ -86,7 +86,8 @@ namespace Rook.Compiling.Syntax
 
         private void AssertTypeCheckError(int line, int column, string expectedMessage, string source)
         {
-            AssertTypeCheckError(Parse(source).WithTypes(), line, column, expectedMessage);
+            var expectedPosition = new Position(line, column);
+            AssertTypeCheckError(Parse(source).WithTypes(), expectedPosition, expectedMessage);
         }
     }
 }

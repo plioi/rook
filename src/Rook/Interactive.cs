@@ -68,7 +68,7 @@ namespace Rook
             }
             
             foreach (var error in result.Errors)
-                Console.WriteLine("{0}, {1}: {2}", error.Line, error.Column, error.Message);
+                Console.WriteLine("{0}: {1}", error.Position, error.Message);
 
             Console.WriteLine();
         }

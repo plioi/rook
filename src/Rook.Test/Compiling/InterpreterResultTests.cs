@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Parsley;
 using Should;
 using Xunit;
 
@@ -19,8 +20,8 @@ namespace Rook.Compiling
         [Fact]
         public void ShouldDescribeFailedInterpretation()
         {
-            var errorA = new CompilerError(1, 10, "Error A");
-            var errorB = new CompilerError(2, 20, "Error B");
+            var errorA = new CompilerError(new Position(1, 10), "Error A");
+            var errorB = new CompilerError(new Position(2, 20), "Error B");
             var result = new InterpreterResult(errorA, errorB);
 
             result.Value.ShouldBeNull();

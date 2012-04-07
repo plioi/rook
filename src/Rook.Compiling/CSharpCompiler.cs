@@ -1,6 +1,7 @@
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using Microsoft.CSharp;
+using Parsley;
 
 namespace Rook.Compiling
 {
@@ -38,7 +39,7 @@ namespace Rook.Compiling
         private static IEnumerable<CompilerError> MapErrors(CompilerErrorCollection errors)
         {
             foreach (System.CodeDom.Compiler.CompilerError error in errors)
-                yield return new CompilerError(error.Line, error.Column, error.ErrorText);
+                yield return new CompilerError(new Position(error.Line, error.Column), error.ErrorText);
         }
     }
 }

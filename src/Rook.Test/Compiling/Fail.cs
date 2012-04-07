@@ -17,11 +17,11 @@ namespace Rook.Compiling
             throw new Exception(builder.ToString());
         }
 
-        public static void WithErrors(IEnumerable<CompilerError> errors, int line, int column, string expectedMessage)
+        public static void WithErrors(IEnumerable<CompilerError> errors, Position expectedPosition, string expectedMessage)
         {
             var builder = new StringBuilder();
             builder.AppendLine("Expected error:");
-            builder.AppendLine("\t" + ErrorSummary(new CompilerError(line, column, expectedMessage)));
+            builder.AppendLine("\t" + ErrorSummary(new CompilerError(expectedPosition, expectedMessage)));
 
             builder.AppendLine();
             builder.AppendLine("Actual errors:");
@@ -33,7 +33,7 @@ namespace Rook.Compiling
 
         private static string ErrorSummary(CompilerError error)
         {
-            return String.Format("({0}, {1}): {2}", error.Line, error.Column, error.Message);
+            return String.Format("{0}: {1}", error.Position, error.Message);
         }
     }
 }

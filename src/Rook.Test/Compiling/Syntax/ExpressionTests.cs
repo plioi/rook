@@ -20,7 +20,8 @@ namespace Rook.Compiling.Syntax
 
         protected void AssertTypeCheckError(int line, int column, string expectedMessage, string source, params TypeMapping[] symbols)
         {
-            AssertTypeCheckError(TypeCheck(source, symbols), line, column, expectedMessage);
+            var expectedPosition = new Position(line, column);
+            AssertTypeCheckError(TypeCheck(source, symbols), expectedPosition, expectedMessage);
         }
 
         private TypeChecked<Expression> TypeCheck(string source, TypeMapping[] symbols)

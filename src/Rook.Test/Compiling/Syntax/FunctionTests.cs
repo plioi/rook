@@ -129,10 +129,10 @@ namespace Rook.Compiling.Syntax
             return Parse(source).WithTypes(Environment(symbols));
         }
 
-        private void AssertTypeCheckError(int line, int column, string expectedMessage, string source,
-                                          params TypeMapping[] symbols)
+        private void AssertTypeCheckError(int line, int column, string expectedMessage, string source, params TypeMapping[] symbols)
         {
-            AssertTypeCheckError(TypeCheck(source, symbols), line, column, expectedMessage);
+            var expectedPosition = new Position(line, column);
+            AssertTypeCheckError(TypeCheck(source, symbols), expectedPosition, expectedMessage);
         }
     }
 }

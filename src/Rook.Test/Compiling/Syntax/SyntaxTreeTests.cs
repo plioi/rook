@@ -27,21 +27,21 @@ namespace Rook.Compiling.Syntax
             return Parser.FailsToParse(source);
         }
 
-        protected static void AssertTypeCheckError(TypeChecked<TSyntax> typeChecked, int line, int column, string expectedMessage)
+        protected static void AssertTypeCheckError(TypeChecked<TSyntax> typeChecked, Position expectedPosition, string expectedMessage)
         {
             typeChecked.Syntax.ShouldBeNull();
             typeChecked.HasErrors.ShouldBeTrue();
             
             if (typeChecked.Errors.Count() != 1)
             {
-                Fail.WithErrors(typeChecked.Errors, line, column, expectedMessage);
+                Fail.WithErrors(typeChecked.Errors, expectedPosition, expectedMessage);
             }
             else
             {
-                CompilerError error = typeChecked.Errors.First();
+                var error = typeChecked.Errors.First();
 
-                if (line != error.Line || column != error.Column || expectedMessage != error.Message)
-                    Fail.WithErrors(typeChecked.Errors, line, column, expectedMessage);
+                if (expectedPosition != error.Position || expectedMessage != error.Message)
+                    Fail.WithErrors(typeChecked.Errors, expectedPosition, expectedMessage);
             }
         }
 

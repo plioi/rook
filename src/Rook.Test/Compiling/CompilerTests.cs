@@ -1,4 +1,5 @@
 using System.Linq;
+using Parsley;
 using Should;
 
 namespace Rook.Compiling
@@ -35,8 +36,9 @@ namespace Rook.Compiling
 
         protected void AssertError(int line, int column, string expectedMessage)
         {
-            if (!result.Errors.Any(x => x.Line == line && x.Column == column && x.Message == expectedMessage))
-                Fail.WithErrors(result.Errors, line, column, expectedMessage);
+            var expectedPosition = new Position(line, column);
+            if (!result.Errors.Any(x => x.Position == expectedPosition && x.Message == expectedMessage))
+                Fail.WithErrors(result.Errors, expectedPosition, expectedMessage);
         }
 
         protected object ExecuteMain()

@@ -141,7 +141,7 @@ namespace Rook.Compiling
 
         private static InterpreterResult Error(string message)
         {
-            return new InterpreterResult(new CompilerError(1, 1, message));
+            return new InterpreterResult(new CompilerError(new Position(1, 1), message));
         }
     }
 }

@@ -58,8 +58,7 @@ namespace Rook.Core
             return items.Count();
         }
 
-        protected static IEnumerable<TOutput> Select<TInput, TOutput>(IEnumerable<TInput> items,
-                                                                      Func<TInput, TOutput> selector)
+        protected static IEnumerable<TOutput> Select<TInput, TOutput>(IEnumerable<TInput> items, Func<TInput, TOutput> selector)
         {
             return items.Select(selector);
         }
@@ -86,9 +85,7 @@ namespace Rook.Core
             return vector[index];
         }
 
-        protected static Vector<T> Slice<T>(Vector<T> vector,
-                                            int startIndexInclusive,
-                                            int endIndexExclusive)
+        protected static Vector<T> Slice<T>(Vector<T> vector, int startIndexInclusive, int endIndexExclusive)
         {
             return vector.Slice(startIndexInclusive, endIndexExclusive);
         }
