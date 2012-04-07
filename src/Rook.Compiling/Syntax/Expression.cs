@@ -1,10 +1,7 @@
-﻿using Rook.Compiling.Types;
-
-namespace Rook.Compiling.Syntax
+﻿namespace Rook.Compiling.Syntax
 {
-    public interface Expression : SyntaxTree
+    public interface Expression : TypedSyntaxTree
     {
-        DataType Type { get; }
         TypeChecked<Expression> WithTypes(Environment environment);
     }
 }

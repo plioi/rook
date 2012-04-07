@@ -1,4 +1,5 @@
 ﻿using Parsley;
+using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
 {
@@ -6,5 +7,10 @@ namespace Rook.Compiling.Syntax
     {
         Position Position { get; }
         TResult Visit<TResult>(Visitor<TResult> visitor);
+    }
+
+    public interface TypedSyntaxTree : SyntaxTree
+    {
+        DataType Type { get; }
     }
 }

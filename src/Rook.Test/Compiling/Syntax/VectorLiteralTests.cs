@@ -1,4 +1,3 @@
-using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
 using Should;
@@ -37,13 +36,11 @@ namespace Rook.Compiling.Syntax
         public void CanCreateFullyTypedInstance()
         {
             var node = (VectorLiteral)Parse("[foo, bar]");
-            node.Items.ElementAt(0).Type.ShouldBeNull();
-            node.Items.ElementAt(1).Type.ShouldBeNull();
+            node.Items.ShouldHaveTypes(null, null);
             node.Type.ShouldBeNull();
 
             var typedNode = (VectorLiteral)node.WithTypes(Environment(foo => Boolean, bar => Boolean)).Syntax;
-            typedNode.Items.ElementAt(0).Type.ShouldEqual(Boolean);
-            typedNode.Items.ElementAt(1).Type.ShouldEqual(Boolean);
+            typedNode.Items.ShouldHaveTypes(Boolean, Boolean);
             typedNode.Type.ShouldEqual(NamedType.Vector(Boolean));
         }
     }

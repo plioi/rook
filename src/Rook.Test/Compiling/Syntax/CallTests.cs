@@ -146,14 +146,12 @@ namespace Rook.Compiling.Syntax
         {
             var node = (Call)Parse("func(yes, zero)");
             node.Callable.Type.ShouldBeNull();
-            node.Arguments.ElementAt(0).Type.ShouldBeNull();
-            node.Arguments.ElementAt(1).Type.ShouldBeNull();
+            node.Arguments.ShouldHaveTypes(null, null);
             node.Type.ShouldBeNull();
 
             var typedNode = (Call)node.WithTypes(Environment(func => Function(new[] {Boolean, Integer}, Integer), yes => Boolean, zero => Integer)).Syntax;
             typedNode.Callable.Type.ShouldEqual(NamedType.Function(new[] { Boolean, Integer }, Integer));
-            typedNode.Arguments.ElementAt(0).Type.ShouldEqual(Boolean);
-            typedNode.Arguments.ElementAt(1).Type.ShouldEqual(Integer);
+            typedNode.Arguments.ShouldHaveTypes(Boolean, Integer);
             typedNode.Type.ShouldEqual(Integer);
         }
 

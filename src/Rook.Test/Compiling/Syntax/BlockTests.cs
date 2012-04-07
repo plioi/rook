@@ -70,27 +70,15 @@ namespace Rook.Compiling.Syntax
         public void CanCreateFullyTypedInstance()
         {
             var node = (Block)Parse("{ int x = y; int z = 0; xz = x>z; x; z; xz; }");
-            node.VariableDeclarations.ElementAt(0).Type.ShouldEqual(Integer);
-            node.VariableDeclarations.ElementAt(0).Value.Type.ShouldBeNull();
-            node.VariableDeclarations.ElementAt(1).Type.ShouldEqual(Integer);
-            node.VariableDeclarations.ElementAt(1).Value.Type.ShouldBeNull();
-            node.VariableDeclarations.ElementAt(2).Type.ShouldBeNull();//Implicitly typed.
-            node.VariableDeclarations.ElementAt(2).Value.Type.ShouldBeNull();
-            node.InnerExpressions.ElementAt(0).Type.ShouldBeNull();
-            node.InnerExpressions.ElementAt(1).Type.ShouldBeNull();
-            node.InnerExpressions.ElementAt(2).Type.ShouldBeNull();
+            node.VariableDeclarations.ShouldHaveTypes(Integer, Integer, null/*Implicitly typed.*/);
+            node.VariableDeclarations.Select(x => x.Value).ShouldHaveTypes(null, null, null);
+            node.InnerExpressions.ShouldHaveTypes(null, null, null);
             node.Type.ShouldBeNull();
 
             var typedNode = (Block)node.WithTypes(Environment(y => Integer)).Syntax;
-            typedNode.VariableDeclarations.ElementAt(0).Type.ShouldEqual(Integer);
-            typedNode.VariableDeclarations.ElementAt(0).Value.Type.ShouldEqual(Integer);
-            typedNode.VariableDeclarations.ElementAt(1).Type.ShouldEqual(Integer);
-            typedNode.VariableDeclarations.ElementAt(1).Value.Type.ShouldEqual(Integer);
-            typedNode.VariableDeclarations.ElementAt(2).Type.ShouldEqual(Boolean);
-            typedNode.VariableDeclarations.ElementAt(2).Value.Type.ShouldEqual(Boolean);
-            typedNode.InnerExpressions.ElementAt(0).Type.ShouldEqual(Integer);
-            typedNode.InnerExpressions.ElementAt(1).Type.ShouldEqual(Integer);
-            typedNode.InnerExpressions.ElementAt(2).Type.ShouldEqual(Boolean);
+            typedNode.VariableDeclarations.ShouldHaveTypes(Integer, Integer, Boolean);
+            typedNode.VariableDeclarations.Select(x => x.Value).ShouldHaveTypes(Integer, Integer, Boolean);
+            typedNode.InnerExpressions.ShouldHaveTypes(Integer, Integer, Boolean);
             typedNode.Type.ShouldEqual(Boolean);
         }
 

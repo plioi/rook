@@ -3,7 +3,7 @@ using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
 {
-    public class VariableDeclaration : SyntaxTree, Binding
+    public class VariableDeclaration : TypedSyntaxTree, Binding
     {
         public Position Position { get; private set; }
         public DataType Type { get; private set; }

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Parsley;
+﻿using Parsley;
 using Rook.Compiling.Types;
 using Should;
 using Xunit;
@@ -58,16 +57,12 @@ namespace Rook.Compiling.Syntax
         public void CanCreateFullyTypedInstance()
         {
             var node = (Lambda)Parse("fn (x, int y, bool z) x+y>0 && z");
-            node.Parameters.ElementAt(0).Type.ShouldBeNull();
-            node.Parameters.ElementAt(1).Type.ShouldEqual(Integer);
-            node.Parameters.ElementAt(2).Type.ShouldEqual(Boolean);
+            node.Parameters.ShouldHaveTypes(null, Integer, Boolean);
             node.Body.Type.ShouldBeNull();
             node.Type.ShouldBeNull();
 
             var typedNode = (Lambda)node.WithTypes(Environment()).Syntax;
-            typedNode.Parameters.ElementAt(0).Type.ShouldEqual(Integer);
-            typedNode.Parameters.ElementAt(1).Type.ShouldEqual(Integer);
-            typedNode.Parameters.ElementAt(2).Type.ShouldEqual(Boolean);
+            typedNode.Parameters.ShouldHaveTypes(Integer, Integer, Boolean);
             typedNode.Body.Type.ShouldEqual(Boolean);
             typedNode.Type.ShouldEqual(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean));
         }

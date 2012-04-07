@@ -80,17 +80,13 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void CanCreateFullyTypedInstance()
         {
-            Function node = Parse("bool foo(int x, int y, bool z) x+y>0 && z");
-            node.Parameters.ElementAt(0).Type.ShouldEqual(Integer);
-            node.Parameters.ElementAt(1).Type.ShouldEqual(Integer);
-            node.Parameters.ElementAt(2).Type.ShouldEqual(Boolean);
+            var node = Parse("bool foo(int x, int y, bool z) x+y>0 && z");
+            node.Parameters.ShouldHaveTypes(Integer, Integer, Boolean);
             node.Body.Type.ShouldBeNull();
             node.Type.ShouldBeNull();
 
-            Function typedNode = node.WithTypes(Environment()).Syntax;
-            typedNode.Parameters.ElementAt(0).Type.ShouldEqual(Integer);
-            typedNode.Parameters.ElementAt(1).Type.ShouldEqual(Integer);
-            typedNode.Parameters.ElementAt(2).Type.ShouldEqual(Boolean);
+            var typedNode = node.WithTypes(Environment()).Syntax;
+            typedNode.Parameters.ShouldHaveTypes(Integer, Integer, Boolean);
             typedNode.Body.Type.ShouldEqual(Boolean);
             typedNode.Type.ShouldEqual(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean));
         }
