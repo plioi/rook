@@ -37,20 +37,20 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasAFunctionTypeWithReturnTypeEqualToTheTypeOfTheBodyExpression()
         {
-            AssertType(NamedType.Function(Integer), "fn () 1");
-            AssertType(NamedType.Function(Boolean), "fn () true");
-            AssertType(NamedType.Function(Integer), "fn () x", x => Integer);
-            AssertType(NamedType.Function(Boolean), "fn () x", x => Boolean);
-            AssertType(NamedType.Function(new[] { Integer }, Integer), "fn (int x) x+1");
-            AssertType(NamedType.Function(new[] { Integer }, Boolean), "fn (int x) x+1 > 0");
+            Type("fn () 1").ShouldEqual(NamedType.Function(Integer));
+            Type("fn () true").ShouldEqual(NamedType.Function(Boolean));
+            Type("fn () x", x => Integer).ShouldEqual(NamedType.Function(Integer));
+            Type("fn () x", x => Boolean).ShouldEqual(NamedType.Function(Boolean));
+            Type("fn (int x) x+1").ShouldEqual(NamedType.Function(new[] { Integer }, Integer));
+            Type("fn (int x) x+1 > 0").ShouldEqual(NamedType.Function(new[] { Integer }, Boolean));
         }
 
         [Fact]
         public void InfersParameterTypesFromUsages()
         {
-            AssertType(NamedType.Function(new[] { Integer }, Integer), "fn (x) x+1");
-            AssertType(NamedType.Function(new[] { Integer, Integer }, Integer), "fn (x, y) x+y");
-            AssertType(NamedType.Function(new[] { Integer }, Boolean), "fn (x) x+1 > 0");
+            Type("fn (x) x+1").ShouldEqual(NamedType.Function(new[] { Integer }, Integer));
+            Type("fn (x, y) x+y").ShouldEqual(NamedType.Function(new[] { Integer, Integer }, Integer));
+            Type("fn (x) x+1 > 0").ShouldEqual(NamedType.Function(new[] { Integer }, Boolean));
         }
 
         [Fact]

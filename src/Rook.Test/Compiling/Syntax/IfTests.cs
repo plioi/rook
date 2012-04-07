@@ -56,9 +56,9 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasATypeEqualToThatOfItsBodyExpressions()
         {
-            AssertType(Integer, "if (true) 1 else 0");
-            AssertType(Boolean, "if (true) true else false");
-            AssertType(Integer, "if (true) if (true) 0 else 1 else if (false) 2 else 3");
+            Type("if (true) 1 else 0").ShouldEqual(Integer);
+            Type("if (true) true else false").ShouldEqual(Boolean);
+            Type("if (true) if (true) 0 else 1 else if (false) 2 else 3").ShouldEqual(Integer);
         }
 
         [Fact]

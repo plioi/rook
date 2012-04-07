@@ -43,7 +43,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasStringType()
         {
-            AssertType(NamedType.String, "\"abcdef\"");
+            Type("\"abcdef\"").ShouldEqual(NamedType.String);
         }
 
         [Fact]

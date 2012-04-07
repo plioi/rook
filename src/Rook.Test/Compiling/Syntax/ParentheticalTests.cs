@@ -1,4 +1,5 @@
 using Parsley;
+using Should;
 using Xunit;
 
 namespace Rook.Compiling.Syntax
@@ -11,7 +12,7 @@ namespace Rook.Compiling.Syntax
             Parses("(1)").IntoTree("1");
             Parses("(a)").IntoTree("a");
 
-            AssertType(Integer, "((1))");
+            Type("((1))").ShouldEqual(Integer);
         }
 
         [Fact]

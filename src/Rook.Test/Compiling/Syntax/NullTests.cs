@@ -15,7 +15,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasUniqueTypeVariableAsItsType()
         {
-            AssertType(NamedType.Nullable(new TypeVariable(17)), "null");
+            Type("null").ShouldEqual(NamedType.Nullable(new TypeVariable(17)));
         }
 
         [Fact]

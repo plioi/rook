@@ -39,31 +39,31 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasATypeEqualToTheTypeOfTheLastInnerExpression()
         {
-            AssertType(Integer, "{ true; false; 1; }");
-            AssertType(Boolean, "{ 1; 2; 3; 4; true; }");
-            AssertType(Integer, "{ 1; 2; 3; 4; test; }", test => Integer);
-            AssertType(Boolean, "{ 1; 2; 3; 4; test; }", test => Boolean);
+            Type("{ true; false; 1; }").ShouldEqual(Integer);
+            Type("{ 1; 2; 3; 4; true; }").ShouldEqual(Boolean);
+            Type("{ 1; 2; 3; 4; test; }", test => Integer).ShouldEqual(Integer);
+            Type("{ 1; 2; 3; 4; test; }", test => Boolean).ShouldEqual(Boolean);
         }
 
         [Fact]
         public void EvaluatesBodyExpressionTypesInANewScopeIncludingLocalVariableDeclarations()
         {
-            AssertType(Integer, "{ int x = 0; x; }");
-            AssertType(Boolean, "{ int x = 0; int y = 1; bool t = true; x==y || t; }");
+            Type("{ int x = 0; x; }").ShouldEqual(Integer);
+            Type("{ int x = 0; int y = 1; bool t = true; x==y || t; }").ShouldEqual(Boolean);
         }
 
         [Fact]
         public void EvaluatesDeclarationExpressionsInANewScopeIncludingPrecedingVariableDeclarations()
         {
-            AssertType(Integer, "{ int x = 0; int y = x+1; x+y; }");
-            AssertType(Boolean, "{ int x = 0; bool b = x==0; !b; }");
+            Type("{ int x = 0; int y = x+1; x+y; }").ShouldEqual(Integer);
+            Type("{ int x = 0; bool b = x==0; !b; }").ShouldEqual(Boolean);
         }
 
         [Fact]
         public void InfersLocalVariableTypeFromInitializationExpressionTypeWhenExplicitTypeDeclarationIsOmitted()
         {
-            AssertType(Integer, "{ x = 0; x; }");
-            AssertType(Boolean, "{ x = 0; y = 1; t = true; x==y || t; }");
+            Type("{ x = 0; x; }").ShouldEqual(Integer);
+            Type("{ x = 0; y = 1; t = true; x==y || t; }").ShouldEqual(Boolean);
         }
 
         [Fact]

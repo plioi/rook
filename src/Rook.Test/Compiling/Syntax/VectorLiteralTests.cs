@@ -28,8 +28,8 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasVectorTypeBasedOnTheTypeOfItsItemExpressions()
         {
-            AssertType(NamedType.Vector(Integer), "[0, 1, 2]");
-            AssertType(NamedType.Vector(Boolean), "[true, false, true]");
+            Type("[0, 1, 2]").ShouldEqual(NamedType.Vector(Integer));
+            Type("[true, false, true]").ShouldEqual(NamedType.Vector(Boolean));
         }
 
         [Fact]

@@ -15,8 +15,8 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasBooleanType()
         {
-            AssertType(Boolean, "true");
-            AssertType(Boolean, "false");
+            Type("true").ShouldEqual(Boolean);
+            Type("false").ShouldEqual(Boolean);
         }
 
         [Fact]

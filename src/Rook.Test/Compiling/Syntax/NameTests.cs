@@ -16,18 +16,18 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasATypeProvidedByTheEnvironmentInScope()
         {
-            AssertType(Boolean, "foo", foo => Boolean, bar => Integer);
-            AssertType(Integer, "bar", foo => Boolean, bar => Integer);
+            Type("foo", foo => Boolean, bar => Integer).ShouldEqual(Boolean);
+            Type("bar", foo => Boolean, bar => Integer).ShouldEqual(Integer);
         }
 
         [Fact]
         public void HasATypeInWhichTypeVariablesAreFreshenedOnEachEnvironmentLookup()
         {
-            AssertType(new TypeVariable(17), "foo", foo => new TypeVariable(1));
+            Type("foo", foo => new TypeVariable(1)).ShouldEqual(new TypeVariable(17));
 
-            NamedType expectedTypeAfterLookup = new NamedType("A", new TypeVariable(17), new TypeVariable(18), new NamedType("B", new TypeVariable(17), new TypeVariable(18)));
-            NamedType definedType = new NamedType("A", new TypeVariable(1), new TypeVariable(2), new NamedType("B", new TypeVariable(1), new TypeVariable(2)));
-            AssertType(expectedTypeAfterLookup, "foo", foo => definedType);
+            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(17), new TypeVariable(18), new NamedType("B", new TypeVariable(17), new TypeVariable(18)));
+            var definedType = new NamedType("A", new TypeVariable(1), new TypeVariable(2), new NamedType("B", new TypeVariable(1), new TypeVariable(2)));
+            Type("foo", foo => definedType).ShouldEqual(expectedTypeAfterLookup);
         }
 
         [Fact]
@@ -35,14 +35,14 @@ namespace Rook.Compiling.Syntax
         {
             //Prevents type '2' from being freshened on type lookup by marking it as non-generic in the environment:
 
-            NamedType expectedTypeAfterLookup = new NamedType("A", new TypeVariable(17), new TypeVariable(2), new NamedType("B", new TypeVariable(17), new TypeVariable(2)));
-            NamedType definedType = new NamedType("A", new TypeVariable(1), new TypeVariable(2), new NamedType("B", new TypeVariable(1), new TypeVariable(2)));
+            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(17), new TypeVariable(2), new NamedType("B", new TypeVariable(17), new TypeVariable(2)));
+            var definedType = new NamedType("A", new TypeVariable(1), new TypeVariable(2), new NamedType("B", new TypeVariable(1), new TypeVariable(2)));
 
             var environment = new Environment();
             environment.TreatAsNonGeneric(new[] { new TypeVariable(2) });
             environment["foo"] = definedType;
 
-            AssertType(expectedTypeAfterLookup, "foo", environment);
+            Type("foo", environment).ShouldEqual(expectedTypeAfterLookup);
         }
 
         [Fact]

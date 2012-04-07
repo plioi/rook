@@ -1,21 +1,20 @@
 ﻿using Parsley;
 using Rook.Compiling.Types;
-using Should;
 
 namespace Rook.Compiling.Syntax
 {
     public abstract class ExpressionTests : SyntaxTreeTests<Expression>
     {
         protected override Parser<Expression> Parser { get { return RookGrammar.Expression; } }
-        
-        protected void AssertType(DataType expectedType, string source, params TypeMapping[] symbols)
+
+        protected DataType Type(string source, params TypeMapping[] symbols)
         {
-            TypeCheck(source, symbols).Syntax.Type.ShouldEqual(expectedType);
+            return TypeCheck(source, symbols).Syntax.Type;
         }
 
-        protected void AssertType(DataType expectedType, string source, Environment environment)
+        protected DataType Type(string source, Environment environment)
         {
-            TypeCheck(source, environment).Syntax.Type.ShouldEqual(expectedType);
+            return TypeCheck(source, environment).Syntax.Type;
         }
 
         protected void AssertTypeCheckError(int line, int column, string expectedMessage, string source, params TypeMapping[] symbols)

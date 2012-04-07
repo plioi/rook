@@ -121,9 +121,9 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasATypeEqualToTheReturnTypeOfTheCallableObject()
         {
-            AssertType(Integer, "func()", func => Function(Integer));
-            AssertType(Boolean, "func(1)", func => Function(new[] { Integer }, Boolean));
-            AssertType(Integer, "func(false, 1)", func => Function(new[] { Boolean, Integer }, Integer));
+            Type("func()", func => Function(Integer)).ShouldEqual(Integer);
+            Type("func(1)", func => Function(new[] { Integer }, Boolean)).ShouldEqual(Boolean);
+            Type("func(false, 1)", func => Function(new[] { Boolean, Integer }, Integer)).ShouldEqual(Integer);
         }
 
         [Fact]
@@ -131,14 +131,14 @@ namespace Rook.Compiling.Syntax
         {
             var x = new TypeVariable(123456);
 
-            AssertType(Integer, "func([1, 2, 3])", func => Function(new[] {Vector(x)}, x));
-            AssertType(Boolean, "func([true, false])", func => Function(new[] {Vector(x)}, x));
+            Type("func([1, 2, 3])", func => Function(new[] { Vector(x) }, x)).ShouldEqual(Integer);
+            Type("func([true, false])", func => Function(new[] { Vector(x) }, x)).ShouldEqual(Boolean);
         }
 
         [Fact]
         public void TypeChecksArgumentExpressionsAgainstTheSurroundingScope()
         {
-            AssertType(Integer, "func(yes, zero)", func => Function(new[] {Boolean, Integer}, Integer), yes => Boolean, zero => Integer);
+            Type("func(yes, zero)", func => Function(new[] { Boolean, Integer }, Integer), yes => Boolean, zero => Integer).ShouldEqual(Integer);
         }
 
         [Fact]

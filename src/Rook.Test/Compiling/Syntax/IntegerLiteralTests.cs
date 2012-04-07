@@ -18,8 +18,8 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasIntegerType()
         {
-            AssertType(Integer, "0");
-            AssertType(Integer, "2147483647");
+            Type("0").ShouldEqual(Integer);
+            Type("2147483647").ShouldEqual(Integer);
         }
 
         [Fact]
