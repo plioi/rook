@@ -116,7 +116,7 @@ namespace Rook.Compiling.Syntax
 
         private DataType Type(string source, params TypeMapping[] symbols)
         {
-            return Parse(source).WithTypes(Environment(symbols)).Syntax.Type;
+            return TypeChecking(source, symbols).Syntax.Type;
         }
 
         private TypeChecked<Function> TypeChecking(string source, params TypeMapping[] symbols)
