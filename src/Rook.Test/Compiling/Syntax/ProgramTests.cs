@@ -34,19 +34,39 @@ namespace Rook.Compiling.Syntax
             var typeCheckedProgram = program.WithTypes();
             var typedProgram = typeCheckedProgram.Syntax;
 
-            program.Functions.ElementAt(0).Type.ShouldBeNull();
-            ((If)program.Functions.ElementAt(0).Body).Type.ShouldBeNull();
-            program.Functions.ElementAt(1).Type.ShouldBeNull();
-            ((If)program.Functions.ElementAt(1).Body).Type.ShouldBeNull();
-            program.Functions.ElementAt(2).Type.ShouldBeNull();
-            ((If)program.Functions.ElementAt(2).Body).Type.ShouldBeNull();
+            program.Functions.ShouldList(
+                even =>
+                {
+                    even.Type.ShouldBeNull();
+                    even.Body.Type.ShouldBeNull();
+                },
+                odd =>
+                {
+                    odd.Type.ShouldBeNull();
+                    odd.Body.Type.ShouldBeNull();
+                },
+                main =>
+                {
+                    main.Type.ShouldBeNull();
+                    main.Body.Type.ShouldBeNull();
+                });
 
-            typedProgram.Functions.ElementAt(0).Type.ToString().ShouldEqual("System.Func<int, bool>");
-            ((If)typedProgram.Functions.ElementAt(0).Body).Type.ShouldEqual(Boolean);
-            typedProgram.Functions.ElementAt(1).Type.ToString().ShouldEqual("System.Func<int, bool>");
-            ((If)typedProgram.Functions.ElementAt(1).Body).Type.ShouldEqual(Boolean);
-            typedProgram.Functions.ElementAt(2).Type.ToString().ShouldEqual("System.Func<int>");
-            ((If)typedProgram.Functions.ElementAt(2).Body).Type.ShouldEqual(Integer);
+            typedProgram.Functions.ShouldList(
+                even =>
+                {
+                    even.Type.ToString().ShouldEqual("System.Func<int, bool>");
+                    even.Body.Type.ShouldEqual(Boolean);
+                },
+                odd =>
+                {
+                    odd.Type.ToString().ShouldEqual("System.Func<int, bool>");
+                    odd.Body.Type.ShouldEqual(Boolean);
+                },
+                main =>
+                {
+                    main.Type.ToString().ShouldEqual("System.Func<int>");
+                    main.Body.Type.ShouldEqual(Integer);
+                });
         }
 
         [Fact]
