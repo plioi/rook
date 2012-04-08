@@ -116,22 +116,12 @@ namespace Rook.Compiling.Syntax
 
         private DataType Type(string source, params TypeMapping[] symbols)
         {
-            return TypeCheck(source, symbols).Syntax.Type;
+            return Parse(source).WithTypes(Environment(symbols)).Syntax.Type;
         }
 
-        private TypeChecked<Function> TypeCheck(string source, TypeMapping[] symbols)
+        private TypeChecked<Function> TypeChecking(string source, params TypeMapping[] symbols)
         {
             return Parse(source).WithTypes(Environment(symbols));
-        }
-
-        protected TypeChecked<Function> TypeChecking(string source, params TypeMapping[] symbols)
-        {
-            return TypeChecking(source, Environment(symbols));
-        }
-
-        protected TypeChecked<Function> TypeChecking(string source, Environment environment)
-        {
-            return Parse(source).WithTypes(environment);
         }
     }
 }
