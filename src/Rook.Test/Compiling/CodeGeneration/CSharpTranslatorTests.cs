@@ -228,6 +228,7 @@ namespace Rook.Compiling.CodeGeneration
         {
             var tokens = new RookLexer().Tokenize(rookSource);
             var code = new CodeWriter();
+            //TODO: What if there is remaining unparsed input upon the call to Parse?
             WriteAction write = parser.Parse(new TokenStream(tokens)).Value.Visit(new CSharpTranslator());
             write(code);
             return code.ToString();

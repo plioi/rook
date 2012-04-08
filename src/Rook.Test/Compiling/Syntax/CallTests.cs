@@ -158,34 +158,25 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingForIncorrectNumberOfArguments()
         {
-            NamedType twoArgsToInteger =
-                NamedType.Function(new[] {NamedType.Boolean, NamedType.Integer}, NamedType.Integer);
+            var twoArgsToInteger = NamedType.Function(new[] {NamedType.Boolean, NamedType.Integer}, NamedType.Integer);
 
-            AssertTypeCheckError(
-                1, 1,
-                "Type mismatch: expected System.Func<bool, int, int>, found System.Func<bool, int, bool, int>.",
-                "foo(true, 1, false)", foo => twoArgsToInteger);
+            TypeChecking("foo(true, 1, false)", foo => twoArgsToInteger).ShouldFail(
+                "Type mismatch: expected System.Func<bool, int, int>, found System.Func<bool, int, bool, int>.", 1, 1);
         }
 
         [Fact]
         public void FailsTypeCheckingForMismatchedArgumentTypes()
         {
-            NamedType integerToBoolean =
-                NamedType.Function(new[] {NamedType.Integer}, NamedType.Boolean);
+            var integerToBoolean = NamedType.Function(new[] {NamedType.Integer}, NamedType.Boolean);
 
-            AssertTypeCheckError(
-                1, 1,
-                "Type mismatch: expected int, found bool.",
-                "even(true)", even => integerToBoolean);
+            TypeChecking("even(true)", even => integerToBoolean).ShouldFail(
+                "Type mismatch: expected int, found bool.", 1, 1);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenAttemptingToCallANoncallableObject()
         {
-            AssertTypeCheckError(
-                1, 1,
-                "Attempted to call a noncallable object.",
-                "zero()", zero => Integer);
+            TypeChecking("zero()", zero => Integer).ShouldFail("Attempted to call a noncallable object.", 1, 1);
         }
 
         private static DataType Function(IEnumerable<DataType> parameterTypes, DataType returnType)

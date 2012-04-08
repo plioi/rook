@@ -1,7 +1,5 @@
-﻿using System.Linq;
-using Parsley;
+﻿using Parsley;
 using Rook.Compiling.Types;
-using Should;
 
 namespace Rook.Compiling.Syntax
 {
@@ -14,6 +12,7 @@ namespace Rook.Compiling.Syntax
         protected TSyntax Parse(string source)
         {
             var tokens = new RookLexer().Tokenize(source);
+            //TODO: What if there is remaining unparsed input upon the call to Parse?
             return Parser.Parse(new TokenStream(tokens)).Value;
         }
 
@@ -25,24 +24,6 @@ namespace Rook.Compiling.Syntax
         protected Reply<TSyntax> FailsToParse(string source)
         {
             return Parser.FailsToParse(source);
-        }
-
-        protected static void AssertTypeCheckError(TypeChecked<TSyntax> typeChecked, Position expectedPosition, string expectedMessage)
-        {
-            typeChecked.Syntax.ShouldBeNull();
-            typeChecked.HasErrors.ShouldBeTrue();
-            
-            if (typeChecked.Errors.Count() != 1)
-            {
-                Fail.WithErrors(typeChecked.Errors, expectedPosition, expectedMessage);
-            }
-            else
-            {
-                var error = typeChecked.Errors.First();
-
-                if (expectedPosition != error.Position || expectedMessage != error.Message)
-                    Fail.WithErrors(typeChecked.Errors, expectedPosition, expectedMessage);
-            }
         }
 
         protected abstract Parser<TSyntax> Parser { get; }

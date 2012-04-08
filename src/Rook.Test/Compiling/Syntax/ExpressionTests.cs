@@ -9,26 +9,20 @@ namespace Rook.Compiling.Syntax
 
         protected DataType Type(string source, params TypeMapping[] symbols)
         {
-            return TypeCheck(source, symbols).Syntax.Type;
+            return TypeChecking(source, symbols).Syntax.Type;
         }
 
         protected DataType Type(string source, Environment environment)
         {
-            return TypeCheck(source, environment).Syntax.Type;
+            return TypeChecking(source, environment).Syntax.Type;
         }
 
-        protected void AssertTypeCheckError(int line, int column, string expectedMessage, string source, params TypeMapping[] symbols)
+        protected TypeChecked<Expression> TypeChecking(string source, params TypeMapping[] symbols)
         {
-            var expectedPosition = new Position(line, column);
-            AssertTypeCheckError(TypeCheck(source, symbols), expectedPosition, expectedMessage);
+            return TypeChecking(source, Environment(symbols));
         }
 
-        private TypeChecked<Expression> TypeCheck(string source, TypeMapping[] symbols)
-        {
-            return TypeCheck(source, Environment(symbols));
-        }
-
-        private TypeChecked<Expression> TypeCheck(string source, Environment environment)
+        protected TypeChecked<Expression> TypeChecking(string source, Environment environment)
         {
             return Parse(source).WithTypes(environment);
         }

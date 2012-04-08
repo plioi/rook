@@ -93,25 +93,25 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingWhenBodyExpressionFailsTypeChecking()
         {
-            AssertTypeCheckError(1, 15, "Type mismatch: expected int, found bool.", "int foo() true+0");
+            TypeChecking("int foo() true+0").ShouldFail("Type mismatch: expected int, found bool.", 1, 15);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenParameterNamesAreNotUnique()
         {
-            AssertTypeCheckError(1, 34, "Duplicate identifier: x", "int foo(int x, int y, int z, int x) true");
+            TypeChecking("int foo(int x, int y, int z, int x) true").ShouldFail("Duplicate identifier: x", 1, 34);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenParameterNamesShadowSurroundingScope()
         {
-            AssertTypeCheckError(1, 27, "Duplicate identifier: z", "int foo(int x, int y, int z) true;", z => Integer);
+            TypeChecking("int foo(int x, int y, int z) true;", z => Integer).ShouldFail("Duplicate identifier: z", 1, 27);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenDeclaredReturnTypeDoesNotMatchBodyExpressionType()
         {
-            AssertTypeCheckError(1, 5, "Type mismatch: expected int, found bool.", "int foo (int x) false");
+            TypeChecking("int foo (int x) false").ShouldFail("Type mismatch: expected int, found bool.", 1, 5);
         }
 
         private DataType Type(string source, params TypeMapping[] symbols)
@@ -124,10 +124,14 @@ namespace Rook.Compiling.Syntax
             return Parse(source).WithTypes(Environment(symbols));
         }
 
-        private void AssertTypeCheckError(int line, int column, string expectedMessage, string source, params TypeMapping[] symbols)
+        protected TypeChecked<Function> TypeChecking(string source, params TypeMapping[] symbols)
         {
-            var expectedPosition = new Position(line, column);
-            AssertTypeCheckError(TypeCheck(source, symbols), expectedPosition, expectedMessage);
+            return TypeChecking(source, Environment(symbols));
+        }
+
+        protected TypeChecked<Function> TypeChecking(string source, Environment environment)
+        {
+            return Parse(source).WithTypes(environment);
         }
     }
 }

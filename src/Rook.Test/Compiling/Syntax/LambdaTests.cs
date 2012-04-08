@@ -70,19 +70,19 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingWhenBodyExpressionFailsTypeChecking()
         {
-            AssertTypeCheckError(1, 11, "Type mismatch: expected int, found bool.", "fn () true+0");
+            TypeChecking("fn () true+0").ShouldFail("Type mismatch: expected int, found bool.", 1, 11);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenParameterNamesAreNotUnique()
         {
-            AssertTypeCheckError(1, 32, "Duplicate identifier: x", "fn (int x, bool y, int z, bool x) 0");
+            TypeChecking("fn (int x, bool y, int z, bool x) 0").ShouldFail("Duplicate identifier: x", 1, 32);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenParameterNamesShadowSurroundingScope()
         {
-            AssertTypeCheckError(1, 24, "Duplicate identifier: z", "fn (int x, bool y, int z) 0", z => Integer);
+            TypeChecking("fn (int x, bool y, int z) 0", z => Integer).ShouldFail("Duplicate identifier: z", 1, 24);
         }
     }
 }

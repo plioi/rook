@@ -85,25 +85,25 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingWhenAnyBodyExpressionFailsTypeChecking()
         {
-            AssertTypeCheckError(1, 7, "Type mismatch: expected int, found bool.", "{ true+0; 0; }");
+            TypeChecking("{ true+0; 0; }").ShouldFail("Type mismatch: expected int, found bool.", 1, 7);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenLocalVariableNamesAreNotUnique()
         {
-            AssertTypeCheckError(1, 40, "Duplicate identifier: x", "{ int x = 0; int y = 1; int z = 2; int x = 3; true; }");
+            TypeChecking("{ int x = 0; int y = 1; int z = 2; int x = 3; true; }").ShouldFail("Duplicate identifier: x", 1, 40);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenLocalVariableNamesShadowSurroundingScope()
         {
-            AssertTypeCheckError(1, 29, "Duplicate identifier: z", "{ int x = 0; int y = 1; int z = 2; true; }", z => Integer);
+            TypeChecking("{ int x = 0; int y = 1; int z = 2; true; }", z => Integer).ShouldFail("Duplicate identifier: z", 1, 29);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenDeclaredTypeDoesNotMatchInitializationExpressionType()
         {
-            AssertTypeCheckError(1, 11, "Type mismatch: expected int, found bool.", "{ int x = false; x; }");
+            TypeChecking("{ int x = false; x; }").ShouldFail("Type mismatch: expected int, found bool.", 1, 11);
         }
     }
 }

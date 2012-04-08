@@ -44,13 +44,13 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingWhenConditionExpressionIsNotBoolean()
         {
-            AssertTypeCheckError(1, 1, "Type mismatch: expected bool, found int.", "if (0) false else true");
+            TypeChecking("if (0) false else true").ShouldFail("Type mismatch: expected bool, found int.", 1, 1);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenBodyExpressionTypesDoNotMatch()
         {
-            AssertTypeCheckError(1, 1, "Type mismatch: expected int, found bool.", "if (true) 0 else true");
+            TypeChecking("if (true) 0 else true").ShouldFail("Type mismatch: expected int, found bool.", 1, 1);
         }
 
         [Fact]

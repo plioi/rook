@@ -52,42 +52,26 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsValidationWhenFunctionsFailValidation()
         {
-            AssertTypeCheckError(
-                1, 24,
-                "Type mismatch: expected int, found bool.",
-                "int a() 0; int b() true+0; int Main() 1;");
+            TypeChecking("int a() 0; int b() true+0; int Main() 1;").ShouldFail("Type mismatch: expected int, found bool.", 1, 24);
 
-            AssertTypeCheckError(
-                1, 29,
-                "Duplicate identifier: x",
-                "int Main() { int x = 0; int x = 1; x; };");
+            TypeChecking("int Main() { int x = 0; int x = 1; x; };").ShouldFail("Duplicate identifier: x", 1, 29);
 
-            AssertTypeCheckError(
-                1, 13,
-                "Attempted to call a noncallable object.",
-                "int Main() (1)();");
+            TypeChecking("int Main() (1)();").ShouldFail("Attempted to call a noncallable object.", 1, 13);
 
-            AssertTypeCheckError(
-                1, 35,
-                "Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.",
-                "int Square(int x) x*x; int Main() Square(1, 2);");
+            TypeChecking("int Square(int x) x*x; int Main() Square(1, 2);").ShouldFail("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 35);
 
-            AssertTypeCheckError(
-                1, 12,
-                "Reference to undefined identifier: Square",
-                "int Main() Square(2);");
+            TypeChecking("int Main() Square(2);").ShouldFail("Reference to undefined identifier: Square", 1, 12);
         }
 
         [Fact]
         public void FailsValidationWhenFunctionNamesAreNotUnique()
         {
-            AssertTypeCheckError(1, 27, "Duplicate identifier: a", "int a() 0; int b() 1; int a() 2; int Main() 1;");
+            TypeChecking("int a() 0; int b() 1; int a() 2; int Main() 1;").ShouldFail("Duplicate identifier: a", 1, 27);
         }
 
-        private void AssertTypeCheckError(int line, int column, string expectedMessage, string source)
+        private TypeChecked<Program> TypeChecking(string source)
         {
-            var expectedPosition = new Position(line, column);
-            AssertTypeCheckError(Parse(source).WithTypes(), expectedPosition, expectedMessage);
+            return Parse(source).WithTypes();
         }
     }
 }

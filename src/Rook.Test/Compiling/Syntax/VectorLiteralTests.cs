@@ -22,7 +22,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingWhenItemExpressionTypesDoNotMatch()
         {
-            AssertTypeCheckError(1, 2, "Type mismatch: expected int, found bool.", "[0, true]");
+            TypeChecking("[0, true]").ShouldFail("Type mismatch: expected int, found bool.", 1, 2);
         }
 
         [Fact]

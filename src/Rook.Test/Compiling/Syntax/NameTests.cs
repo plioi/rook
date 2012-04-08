@@ -58,7 +58,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingForIdentifiersNotInScope()
         {
-            AssertTypeCheckError(1, 1, "Reference to undefined identifier: foo", "foo");
+            TypeChecking("foo").ShouldFail("Reference to undefined identifier: foo", 1, 1);
         }
     }
 }
