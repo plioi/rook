@@ -1,0 +1,11 @@
+﻿int Square(int x) x*x;
+int Sum(int x, int y, int z) x+y+z;
+
+void Main()
+{
+    Print( Square(2) == 4 );
+    Print( 2.Square() == 4 );
+
+    Print( Sum(1, 2, 3) == 6 );
+    Print( 1.Sum(2, 3) == 6 );
+}

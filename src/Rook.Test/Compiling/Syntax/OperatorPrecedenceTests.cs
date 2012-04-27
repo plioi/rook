@@ -15,6 +15,13 @@ namespace Rook.Compiling.Syntax
         }
 
         [Fact]
+        public void RanksMethodInvocationBeforeUnaryOperators()
+        {
+            Parses("-x.Square()").IntoTree("(-((Square(x))))");
+            Parses("!x.Even()").IntoTree("(!((Even(x))))");
+        }
+
+        [Fact]
         public void RanksUnaryBeforeMultiplicativeOperators()
         {
             Parses("2*-3").IntoTree("((2) * ((-(3))))");

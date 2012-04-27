@@ -1,13 +1,13 @@
 ﻿bool EnumerableEqual(int* a, int* b)
 {
-    if (!Any(a))
-        !Any(b)
+    if (!a.Any())
+        !b.Any()
     else
-        Count(a) == Count(b) && First(a) == First(b) && EnumerableEqual(Skip(a, 1), Skip(b, 1))
+        a.Count() == b.Count() && a.First() == b.First() && EnumerableEqual(a.Skip(1), b.Skip(1))
 }
 
 bool Equal(int[] a, int[] b)
-    EnumerableEqual(Each(a), Each(b))
+    EnumerableEqual(a.Each(), b.Each())
 
 void Main()
 {
@@ -20,13 +20,13 @@ void Main()
     Print(Equal([5, 6, 7, 8, 9], lastFive))
     Print(Equal([3, 4, 5, 6, 7], interiorFive))
 
-    Print(Equal([0, 1, 2, 3, 4, 100], Append(firstFive, 100)))
-    Print(Equal([5, 6, 7, 8, 9, 100], Append(lastFive, 100)))
-    Print(Equal([3, 4, 5, 6, 7, 100], Append(interiorFive, 100)))
+    Print(Equal([0, 1, 2, 3, 4, 100], firstFive.Append(100)))
+    Print(Equal([5, 6, 7, 8, 9, 100], lastFive.Append(100)))
+    Print(Equal([3, 4, 5, 6, 7, 100], interiorFive.Append(100)))
 
-    Print(Equal([100, 1, 2, 3, 4], With(firstFive, 0, 100)))
-    Print(Equal([5, 6, 7, 8, 100], With(lastFive, 4, 100)))
-    Print(Equal([3, 4, 100, 6, 7], With(interiorFive, 2, 100)))
+    Print(Equal([100, 1, 2, 3, 4], firstFive.With(0, 100)))
+    Print(Equal([5, 6, 7, 8, 100], lastFive.With(4, 100)))
+    Print(Equal([3, 4, 100, 6, 7], interiorFive.With(2, 100)))
 
     Print(firstFive[0])
     Print(lastFive[1])

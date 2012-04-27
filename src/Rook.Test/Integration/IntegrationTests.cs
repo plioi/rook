@@ -14,6 +14,7 @@ namespace Rook.Integration
         [Fact] public void ArithmeticExpression() { Run("ArithmeticExpression"); }
         [Fact] public void BooleanExpression() { Run("BooleanExpression"); }
         [Fact] public void FunctionCall() { Run("FunctionCall"); }
+        [Fact] public void MethodInvocation() { Run("MethodInvocation"); }
         [Fact] public void BlockExpression() { Run("BlockExpression"); }
         [Fact] public void Closure() { Run("Closure"); }
         [Fact] public void Recursion() { Run("Recursion"); }

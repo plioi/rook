@@ -71,7 +71,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void ShouldRecognizeOperatorsGreedily()
         {
-            Tokenize("<=>=<>!====*/+-&&||!{}[][,]()???:")
+            Tokenize("<=>=<>!====*/+-&&||!{}[][,]()???:.")
                 .ShouldList(t => t.ShouldEqual(RookLexer.LessThanOrEqual, "<="),
                             t => t.ShouldEqual(RookLexer.GreaterThanOrEqual, ">="),
                             t => t.ShouldEqual(RookLexer.LessThan, "<"),
@@ -96,7 +96,8 @@ namespace Rook.Compiling.Syntax
                             t => t.ShouldEqual(RookLexer.RightParen, ")"),
                             t => t.ShouldEqual(RookLexer.NullCoalesce, "??"),
                             t => t.ShouldEqual(RookLexer.Question, "?"),
-                            t => t.ShouldEqual(RookLexer.Colon, ":"));
+                            t => t.ShouldEqual(RookLexer.Colon, ":"),
+                            t => t.ShouldEqual(RookLexer.MemberAccess, "."));
         }
 
         [Fact]

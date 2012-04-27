@@ -65,6 +65,7 @@ namespace Rook.Compiling.Syntax
         public static readonly Operator Colon = new Operator(":");
         public static readonly Operator NullCoalesce = new Operator("??");
         public static readonly Operator Question = new Operator("?");
+        public static readonly Operator MemberAccess = new Operator(".");
 
         public RookLexer()
             :base(IntralineWhitespace,
@@ -79,7 +80,7 @@ namespace Rook.Compiling.Syntax
                   Assignment, Comma,
                   LeftBrace, RightBrace,
                   Vector, LeftSquareBrace, RightSquareBrace, Colon,
-                  NullCoalesce, Question,
+                  NullCoalesce, Question, MemberAccess,
                   EndOfLine) { }
     }
 }

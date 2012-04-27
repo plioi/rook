@@ -166,6 +166,7 @@ namespace Rook.Compiling.Syntax
 
             Extend(RookLexer.LeftParen, 12, Call);
             Extend(RookLexer.LeftSquareBrace, 12, Subscript);
+            Extend(RookLexer.MemberAccess, 12, MethodInvocation);
 
             Prefix(RookLexer.Subtract, 11);
             Prefix(RookLexer.Not, 11);
@@ -227,6 +228,14 @@ namespace Rook.Compiling.Syntax
                    select new Call(callable.Position,
                                    new Name(callable.Position, arguments.Count() == 1 ? "Index" : "Slice"),
                                    new[] { callable }.Concat(arguments));
+        }
+
+        private Parser<Expression> MethodInvocation(Expression instance)
+        {
+            return from dot in Token(RookLexer.MemberAccess)
+                   from member in Name
+                   from arguments in Tuple(Expression)
+                   select new Call(member.Position, member, new[] {instance}.Concat(arguments));
         }
 
         private static Parser<T> Between<T>(string openOperator, Parser<T> parser, string closeOperator)

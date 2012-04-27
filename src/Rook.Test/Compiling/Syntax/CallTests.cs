@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Parsley;
 using Rook.Compiling.Types;
 using Should;
 using Xunit;
@@ -19,6 +20,14 @@ namespace Rook.Compiling.Syntax
             Parses("(func)(1, 2, 3)").IntoTree("(func(1, 2, 3))");
             Parses("(getFunc(true, false))(1)").IntoTree("((getFunc(true, false))(1))");
             Parses("{func;}(1, 2)").IntoTree("({func;}(1, 2))");
+        }
+
+        [Fact]
+        public void TreatsMethodInvocationAsCallToNamedFunctionWithSpecialFirstArgument()
+        {
+            Parses("2.method()").IntoTree("(method(2))");
+            Parses("1.method(2, 3)").IntoTree("(method(1, 2, 3))");
+            FailsToParse("1.(method)()").LeavingUnparsedTokens("(", "method", ")", "(", ")").WithMessage("(1, 3): identifier expected");
         }
 
         [Fact]
