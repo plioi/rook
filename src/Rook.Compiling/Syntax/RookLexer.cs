@@ -16,6 +16,7 @@ namespace Rook.Compiling.Syntax
         public static readonly Keyword @fn = new Keyword("fn");
         public static readonly Keyword @true = new Keyword("true");
         public static readonly Keyword @false = new Keyword("false");
+        public static readonly Keyword @class = new Keyword("class");
 
         public static readonly Pattern Integer = new Pattern("integer", @"
             0(?!\d) #Zero, not followed by other digits.
@@ -69,7 +70,7 @@ namespace Rook.Compiling.Syntax
 
         public RookLexer()
             :base(IntralineWhitespace,
-                  @int, @bool, @string, @void, @null, @if, @else, @fn, @true, @false,
+                  @int, @bool, @string, @void, @null, @if, @else, @fn, @true, @false, @class,
                   Integer, StringLiteral, Identifier,
                   LeftParen, RightParen,
                   Multiply, Divide,

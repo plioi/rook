@@ -47,7 +47,7 @@ namespace Rook.Compiling.Syntax
             Identifier.Parses("a0").WithValue(Token(RookLexer.Identifier, "a0"));
             Identifier.Parses("a01").WithValue(Token(RookLexer.Identifier, "a01"));
 
-            var keywords = new[] {"true", "false", "int", "bool", "void", "null", "if", "else", "fn"};
+            var keywords = new[] {"true", "false", "int", "bool", "string", "void", "null", "if", "else", "fn", "class"};
 
             Identifier.FailsToParse("0").LeavingUnparsedTokens("0");
             foreach (string keyword in keywords)
