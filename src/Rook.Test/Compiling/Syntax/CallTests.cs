@@ -27,6 +27,7 @@ namespace Rook.Compiling.Syntax
         {
             Parses("2.method()").IntoTree("(method(2))");
             Parses("1.method(2, 3)").IntoTree("(method(1, 2, 3))");
+            Parses("2.method(3).another(4, 5)").IntoTree("(another((method(2, 3)), 4, 5))");
             FailsToParse("1.(method)()").LeavingUnparsedTokens("(", "method", ")", "(", ")").WithMessage("(1, 3): identifier expected");
         }
 
