@@ -22,6 +22,13 @@ namespace Rook.Compiling.CodeGeneration
             return Each(namespaces.Select(ns => Line("using @;", Literal(ns))));
         }
 
+        public WriteAction Visit(Class @class)
+        {
+            return Each(
+                Line("public class @", Translate(@class.Name)),
+                Block());
+        }
+
         public WriteAction Visit(Function function)
         {
             return

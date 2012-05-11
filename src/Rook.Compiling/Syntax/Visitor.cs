@@ -3,6 +3,7 @@
     public interface Visitor<out TResult>
     {
         TResult Visit(Program program);
+        TResult Visit(Class @class);
         TResult Visit(Function function);
         TResult Visit(Name name);
         TResult Visit(Parameter parameter);

@@ -8,6 +8,7 @@ namespace Rook.Compiling.Syntax
     public class RookGrammar : Grammar
     {
         public readonly GrammarRule<Program> Program = new GrammarRule<Program>();
+        public readonly GrammarRule<Class> Class = new GrammarRule<Class>();
         public readonly GrammarRule<Function> Function = new GrammarRule<Function>();
         public readonly GrammarRule<NamedType> TypeName = new GrammarRule<NamedType>();
         public readonly GrammarRule<Token> EndOfLine = new GrammarRule<Token>();
@@ -53,6 +54,11 @@ namespace Rook.Compiling.Syntax
                 from leadingEndOfLine in Optional(Token(RookLexer.EndOfLine))
                 from functions in ZeroOrMore(Function.TerminatedBy(EndOfLine)).TerminatedBy(EndOfInput)
                 select new Program(new Position(1, 1), functions);
+
+            Class.Rule =
+                from @class in Token(RookLexer.@class)
+                from name in Name
+                select new Class(@class.Position, name);
 
             Function.Rule =
                 from returnType in TypeName

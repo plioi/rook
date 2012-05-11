@@ -84,6 +84,7 @@
     <Compile Include="Compiling\InterpreterTests.cs" />
     <Compile Include="Compiling\RookCompilerTests.cs" />
     <Compile Include="Compiling\CodeGeneration\CSharpTranslatorTests.cs" />
+    <Compile Include="Compiling\Syntax\ClassTests.cs" />
     <Compile Include="Compiling\Syntax\IntegerLiteralTests.cs" />
     <Compile Include="Compiling\Syntax\LambdaTests.cs" />
     <Compile Include="Compiling\Syntax\NullTests.cs" />

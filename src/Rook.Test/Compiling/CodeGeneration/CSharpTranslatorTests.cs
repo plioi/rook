@@ -54,6 +54,15 @@ namespace Rook.Compiling.CodeGeneration
         }
 
         [Fact]
+        public void ShouldTranslateClasses()
+        {
+            Expect("public class Foo");
+            Expect("{");
+            Expect("}");
+            AssertTranslation(rookGrammar.Class, "class Foo");
+        }
+
+        [Fact]
         public void ShouldTranslateFunctionsWithoutArguments()
         {
             Expect("public static bool Negatory()");
