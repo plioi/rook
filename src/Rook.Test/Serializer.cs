@@ -9,7 +9,20 @@ namespace Rook
     {
         public string Visit(Program program)
         {
-            return Translate(program.Functions, Environment.NewLine+Environment.NewLine);
+            var blankLine = Environment.NewLine + Environment.NewLine;
+
+            var classes = Translate(program.Classes, blankLine);
+            var functions = Translate(program.Functions, blankLine);
+
+            var list = new List<string>();
+
+            if (classes != "")
+                list.Add(classes);
+
+            if (functions != "")
+                list.Add(functions);
+
+            return String.Join(blankLine, list);
         }
 
         public string Visit(Class @class)

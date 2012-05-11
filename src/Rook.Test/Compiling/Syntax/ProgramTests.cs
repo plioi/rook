@@ -10,11 +10,27 @@ namespace Rook.Compiling.Syntax
         protected override Parser<Program> Parser { get { return RookGrammar.Program; } }
 
         [Fact]
+        public void ParsesZeroOrMoreClasses()
+        {
+            Parses(" \t\r\n").IntoTree("");
+            Parses(" \t\r\n class Foo; class Bar; class Baz; \t\r\n")
+                .IntoTree("class Foo\r\n\r\nclass Bar\r\n\r\nclass Baz");
+        }
+
+        [Fact]
         public void ParsesZeroOrMoreFunctions()
         {
             Parses(" \t\r\n").IntoTree("");
             Parses(" \t\r\n int life() 42; int universe() 42; int everything() 42; \t\r\n")
                 .IntoTree("int life() 42\r\n\r\nint universe() 42\r\n\r\nint everything() 42");
+        }
+
+        [Fact]
+        public void DemandsClassesAppearBeforeFunctions()
+        {
+            Parses(" \t\r\n class Foo; class Bar; int life() 42; int universe() 42; int everything() 42; \t\r\n")
+                .IntoTree("class Foo\r\n\r\nclass Bar\r\n\r\nint life() 42\r\n\r\nint universe() 42\r\n\r\nint everything() 42");
+            FailsToParse("int square(x) x*x; class Foo").LeavingUnparsedTokens("class", "Foo").WithMessage("(1, 20): end of input expected");
         }
 
         [Fact]

@@ -21,6 +21,8 @@ namespace Rook.Compiling.CodeGeneration
         public void ShouldTranslatePrograms()
         {
             var program = new StringBuilder()
+                .AppendLine("class Foo")
+                .AppendLine("class Bar")
                 .AppendLine("int Life() 14")
                 .AppendLine("int Universe() 14")
                 .AppendLine("int Everything() 14")
@@ -33,6 +35,12 @@ namespace Rook.Compiling.CodeGeneration
             Expect("");
             Expect("public class Program : Prelude");
             Expect("{");
+            Expect("    public class Foo");
+            Expect("    {");
+            Expect("    }");
+            Expect("    public class Bar");
+            Expect("    {");
+            Expect("    }");
             Expect("    public static int Life()");
             Expect("    {");
             Expect("        return 14;");

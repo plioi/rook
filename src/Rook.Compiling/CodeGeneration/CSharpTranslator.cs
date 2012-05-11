@@ -9,12 +9,15 @@ namespace Rook.Compiling.CodeGeneration
     {
         public WriteAction Visit(Program program)
         {
+            var classes = program.Classes.Select(Translate);
+            var functions = program.Functions.Select(Translate);
+
             return
                 Each(
                     Using("System", "System.Collections.Generic", "Rook.Core", "Rook.Core.Collections"),
                     EndLine(),
                     Line("public class Program : Prelude"),
-                    Block(program.Functions.Select(Translate)));
+                    Block(classes.Concat(functions)));
         }
 
         private static WriteAction Using(params string[] namespaces)

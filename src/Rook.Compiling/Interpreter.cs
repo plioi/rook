@@ -49,7 +49,7 @@ namespace Rook.Compiling
 
         public string Translate()
         {
-            var program = new Program(new Text("").Position, functions.Values);
+            var program = new Program(new Text("").Position, /*TODO: classes*/new Class[]{}, functions.Values);
             Program typeCheckedProgram = program.WithTypes().Syntax;
             var code = new CodeWriter();
             WriteAction write = typeCheckedProgram.Visit(new CSharpTranslator());
@@ -88,7 +88,7 @@ namespace Rook.Compiling
         private Program ProgramWithNewFunction(Function function, Position pos)
         {
             var functionsExceptPotentialOverwrite = functions.Values.Where(f => f.Name.Identifier != function.Name.Identifier);
-            return new Program(pos, new[] { function }.Concat(functionsExceptPotentialOverwrite));
+            return new Program(pos, /*TODO: classes*/new Class[]{}, new[] { function }.Concat(functionsExceptPotentialOverwrite));
         }
 
         private static bool TryParse<T>(TokenStream tokens, Parser<T> parser, out T syntax) where T : SyntaxTree

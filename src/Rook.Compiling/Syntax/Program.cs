@@ -7,11 +7,13 @@ namespace Rook.Compiling.Syntax
     public class Program : SyntaxTree
     {
         public Position Position { get; private set; }
+        public IEnumerable<Class> Classes { get; private set; }
         public IEnumerable<Function> Functions { get; private set; }
 
-        public Program(Position position, IEnumerable<Function> functions)
+        public Program(Position position, IEnumerable<Class> classes, IEnumerable<Function> functions)
         {
             Position = position;
+            Classes = classes;
             Functions = functions;
         }
 
@@ -34,7 +36,7 @@ namespace Rook.Compiling.Syntax
             if (errors.Any())
                 return TypeChecked<Program>.Failure(errors);
 
-            return TypeChecked<Program>.Success(new Program(Position, typeCheckedFunctions.Functions()));
+            return TypeChecked<Program>.Success(new Program(Position, /*TODO: type checked classes*/new Class[]{}, typeCheckedFunctions.Functions()));
         }
     }
 }
