@@ -3,7 +3,7 @@ using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
 {
-    public class Class : TypedSyntaxTree
+    public class Class : TypedSyntaxTree, Binding
     {
         public Position Position { get; private set; }
         public Name Name { get; private set; }
@@ -32,6 +32,11 @@ namespace Rook.Compiling.Syntax
         private static NamedType ConstructorFunctionType(Name name)
         {
             return NamedType.Function(new NamedType(name.Identifier));
+        }
+
+        string Binding.Identifier
+        {
+            get { return Name.Identifier; }
         }
     }
 }

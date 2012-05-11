@@ -11,6 +11,11 @@ namespace Rook.Compiling.Syntax
             return typeCheckedItems.SelectMany(typeCheckedItem => typeCheckedItem.Errors);
         }
 
+        public static IEnumerable<Class> Classes(this IEnumerable<TypeChecked<Class>> typeCheckedClasses)
+        {
+            return typeCheckedClasses.Select(x => x.Syntax);
+        }
+
         public static IEnumerable<Function> Functions(this IEnumerable<TypeChecked<Function>> typeCheckedFunctions)
         {
             return typeCheckedFunctions.Select(x => x.Syntax);
@@ -29,6 +34,11 @@ namespace Rook.Compiling.Syntax
         public static IEnumerable<TypeChecked<Function>> WithTypes(this IEnumerable<Function> functions, Environment environment)
         {
             return functions.Select(x => x.WithTypes(environment)).ToArray();
+        } 
+
+        public static IEnumerable<TypeChecked<Class>> WithTypes(this IEnumerable<Class> classes, Environment environment)
+        {
+            return classes.Select(x => x.WithTypes(environment)).ToArray();
         }
 
         public static IEnumerable<DataType> Types(this IEnumerable<Expression> expressions)

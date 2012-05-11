@@ -26,17 +26,27 @@ namespace Rook.Compiling.Syntax
         {
             var environment = new Environment();
 
+            foreach (var @class in Classes)
+                if (!environment.TryIncludeUniqueBinding(@class))
+                    return TypeChecked<Program>.DuplicateIdentifierError(@class);
+
             foreach (var function in Functions)
                 if (!environment.TryIncludeUniqueBinding(function))
                     return TypeChecked<Program>.DuplicateIdentifierError(function);
 
-            IEnumerable<TypeChecked<Function>> typeCheckedFunctions = Functions.WithTypes(environment);
+            var typeCheckedClasses = Classes.WithTypes(environment);
 
-            var errors = typeCheckedFunctions.Errors();
+            //TODO: After nonempty classes are supported, uncomment the following Concat call.
+            //      Empty classes could not possibly have errors of their own, so there is no
+            //      way to write a unit test exposing the need for this Concat yet.
+
+            var typeCheckedFunctions = Functions.WithTypes(environment);
+
+            var errors = typeCheckedFunctions.Errors()/*.Concat(typeCheckedClasses.Errors())*/;
             if (errors.Any())
                 return TypeChecked<Program>.Failure(errors);
 
-            return TypeChecked<Program>.Success(new Program(Position, /*TODO: type checked classes*/new Class[]{}, typeCheckedFunctions.Functions()));
+            return TypeChecked<Program>.Success(new Program(Position, typeCheckedClasses.Classes(), typeCheckedFunctions.Functions()));
         }
     }
 }

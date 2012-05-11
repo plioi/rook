@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Parsley;
+﻿using Parsley;
+using Rook.Compiling.Types;
 using Should;
 using Xunit;
 
@@ -34,21 +34,31 @@ namespace Rook.Compiling.Syntax
         }
 
         [Fact]
-        public void DemandsEndOfInputAfterLastValidFunction()
+        public void DemandsEndOfInputAfterLastValidClassOrFunction()
         {
             FailsToParse("int life() 42; int univ").AtEndOfInput().WithMessage("(1, 24): ( expected");
+            FailsToParse("class Foo; class").AtEndOfInput().WithMessage("(1, 17): identifier expected");
         }
 
         [Fact]
-        public void ParsesAndTypesMutuallyRecursivePrograms()
+        public void TypesAllClassesAndFunctions()
         {
+            var fooConstructorType = NamedType.Function(new NamedType("Foo"));
+            var barConstructorType = NamedType.Function(new NamedType("Bar"));
+
             var program = Parse(
-                @"bool even(int n) if (n==0) true else odd(n-1);
+                @"class Foo
+                  class Bar
+                  bool even(int n) if (n==0) true else odd(n-1);
                   bool odd(int n) if (n==0) false else even(n-1);
                   int Main() if (even(4)) 0 else 1;");
 
             var typeCheckedProgram = program.WithTypes();
             var typedProgram = typeCheckedProgram.Syntax;
+
+            program.Classes.ShouldList(
+                foo => foo.Type.ShouldEqual(fooConstructorType),
+                bar => bar.Type.ShouldEqual(barConstructorType));
 
             program.Functions.ShouldList(
                 even =>
@@ -66,6 +76,10 @@ namespace Rook.Compiling.Syntax
                     main.Type.ShouldBeNull();
                     main.Body.Type.ShouldBeNull();
                 });
+
+            typedProgram.Classes.ShouldList(
+                foo => foo.Type.ShouldEqual(fooConstructorType),
+                bar => bar.Type.ShouldEqual(barConstructorType));
 
             typedProgram.Functions.ShouldList(
                 even =>
@@ -100,9 +114,11 @@ namespace Rook.Compiling.Syntax
         }
 
         [Fact]
-        public void FailsValidationWhenFunctionNamesAreNotUnique()
+        public void FailsValidationWhenFunctionAndClassNamesAreNotUnique()
         {
             TypeChecking("int a() 0; int b() 1; int a() 2; int Main() 1;").ShouldFail("Duplicate identifier: a", 1, 27);
+            TypeChecking("class Foo; class Bar; class Foo").ShouldFail("Duplicate identifier: Foo", 1, 23);
+            TypeChecking("class Zero; int Zero() 0;").ShouldFail("Duplicate identifier: Zero", 1, 17);
         }
 
         private TypeChecked<Program> TypeChecking(string source)
