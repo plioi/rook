@@ -59,6 +59,7 @@ namespace Rook.Compiling.Syntax
             Tokenize("else").Single().ShouldEqual(RookLexer.@else, "else");
             Tokenize("fn").Single().ShouldEqual(RookLexer.@fn, "fn");
             Tokenize("class").Single().ShouldEqual(RookLexer.@class, "class");
+            Tokenize("new").Single().ShouldEqual(RookLexer.@new, "new");
         }
 
         [Fact]
