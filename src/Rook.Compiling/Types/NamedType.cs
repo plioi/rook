@@ -58,6 +58,11 @@ namespace Rook.Compiling.Types
             return Function(new DataType[] {}, returnType);
         }
 
+        public static NamedType Constructor(DataType constructedType)
+        {
+            return new NamedType("Rook.Core.Constructor", constructedType);
+        }
+
         private static IEnumerable<DataType> Enumerate(IEnumerable<DataType> parameterTypes, DataType returnType)
         {
             foreach (var type in parameterTypes)

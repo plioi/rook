@@ -1,3 +1,4 @@
+using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
 
@@ -26,15 +27,16 @@ namespace Rook.Compiling.Syntax
             if (typeCheckedTypeName.HasErrors)
                 return typeCheckedTypeName;
 
-            //TODO: It isn't enough to just have a known identifier.
-            //      The identifier should be the name of a known class.
-            //      See how Call type checks by expecting a Func type.
-            //      New should check by expecting a class type.
-            //      Consider changing the meaning of "the type of a class decaration".
-
             var typedTypeName = (Name)typeCheckedTypeName.Syntax;
 
-            return TypeChecked<Expression>.Success(new New(Position, typedTypeName, new NamedType(TypeName.Identifier)));
+            var constructorType = typedTypeName.Type as NamedType;
+
+            if (constructorType == null || constructorType.Name != "Rook.Core.Constructor")
+                return TypeChecked<Expression>.TypeNameExpectedForConstructionError(TypeName.Position, TypeName);
+
+            var constructedType = constructorType.InnerTypes.Last();
+
+            return TypeChecked<Expression>.Success(new New(Position, typedTypeName, constructedType));
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)

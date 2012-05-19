@@ -58,6 +58,7 @@ namespace Rook.Compiling.Types
             NamedType.Function(NamedType.Integer).ShouldEqual(Create("System.Func", Create("int")));
             NamedType.Function(new[] { NamedType.Boolean, NamedType.Enumerable(NamedType.Boolean) }, NamedType.Integer)
                 .ShouldEqual(Create("System.Func", Create("bool"), Create("System.Collections.Generic.IEnumerable", Create("bool")), Create("int")));
+            NamedType.Constructor(Create("A")).ShouldEqual(Create("Rook.Core.Constructor", Create("A")));
         }
 
         [Fact]

@@ -18,9 +18,9 @@ namespace Rook.Compiling.Syntax
         }
 
         [Fact]
-        public void HasATypeCorrespondingWithTheDefaultConstructorFunction()
+        public void HasATypeCorrespondingWithTheDefaultConstructor()
         {
-            var constructorReturningFoo = NamedType.Function(new NamedType("Foo"));
+            var constructorReturningFoo = NamedType.Constructor(new NamedType("Foo"));
 
             Type("class Foo").ShouldEqual(constructorReturningFoo);
         }
@@ -28,7 +28,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void AreAlwaysFullyTyped()
         {
-            var constructorReturningFoo = NamedType.Function(new NamedType("Foo"));
+            var constructorReturningFoo = NamedType.Constructor(new NamedType("Foo"));
 
             var @class = Parse("class Foo");
             @class.Type.ShouldEqual(constructorReturningFoo);

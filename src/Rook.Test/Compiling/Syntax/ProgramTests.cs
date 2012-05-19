@@ -43,8 +43,8 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void TypesAllClassesAndFunctions()
         {
-            var fooConstructorType = NamedType.Function(new NamedType("Foo"));
-            var barConstructorType = NamedType.Function(new NamedType("Bar"));
+            var fooConstructorType = NamedType.Constructor(new NamedType("Foo"));
+            var barConstructorType = NamedType.Constructor(new NamedType("Bar"));
 
             var program = Parse(
                 @"class Foo
