@@ -24,6 +24,7 @@ namespace Rook.Integration
         [Fact] public void Void() { Run("Void"); }
         [Fact] public void Nullable() { Run("Nullable"); }
         [Fact] public void String() { Run("String"); }
+        [Fact] public void Classes() { Run("Classes"); }
 
         #region Integration Test Runner
 

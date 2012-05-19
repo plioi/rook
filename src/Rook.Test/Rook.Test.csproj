@@ -158,6 +158,12 @@
     <None Include="Samples\Closure.rook.out">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Samples\Classes.rook">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\Classes.rook.out">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Samples\MethodInvocation.rook">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
