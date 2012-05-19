@@ -76,6 +76,9 @@ namespace Rook.Compiling
 
             functions[main.Name.Identifier] = main;
 
+            if (compilerResult.Errors.Any())
+                return new InterpreterResult(compilerResult.Errors);
+
             return new InterpreterResult(CallMain(compilerResult.CompiledAssembly));
         }
 
@@ -83,6 +86,9 @@ namespace Rook.Compiling
         {
             if (function.Name.Identifier == "Main")
                 return Error("The Main function is reserved for expression evaluation, and cannot be explicitly defined.");
+
+            if (functions.ContainsKey("Main"))
+                functions.Remove("Main");
 
             var compilerResult = compiler.Build(ProgramWithNewFunction(function, pos));
             if (compilerResult.Errors.Any())
@@ -100,6 +106,9 @@ namespace Rook.Compiling
         {
             if (@class.Name.Identifier == "Main")
                 return Error("The Main function is reserved for expression evaluation, and cannot be explicitly defined.");
+
+            if (functions.ContainsKey("Main"))
+                functions.Remove("Main");
 
             var compilerResult = compiler.Build(ProgramWithNewClass(@class, pos));
             if (compilerResult.Errors.Any())
