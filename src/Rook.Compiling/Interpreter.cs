@@ -12,22 +12,26 @@ namespace Rook.Compiling
     {
         private readonly RookGrammar grammar;
         private readonly RookCompiler compiler;
+        private readonly Dictionary<string, Class> classes;
         private readonly Dictionary<string, Function> functions;
 
         public Interpreter()
         {
             grammar = new RookGrammar();
             compiler = new RookCompiler(CompilerParameters.ForBasicEvaluation());
+            classes = new Dictionary<string, Class>();
             functions = new Dictionary<string, Function>();
         }
 
         public bool CanParse(string code)
         {
             var tokens = new TokenStream(new RookLexer().Tokenize(code));
+            Class @class;
             Function function;
             Expression expression;
 
-            return TryParse(tokens, grammar.Function, out function) ||
+            return TryParse(tokens, grammar.Class, out @class) ||
+                   TryParse(tokens, grammar.Function, out function) ||
                    TryParse(tokens, grammar.Expression, out expression);
         }
 
@@ -44,12 +48,16 @@ namespace Rook.Compiling
             if (TryParse(tokens, grammar.Function, out function))
                 return InterpretFunction(function, pos);
 
-            return Error("Cannot evaluate this code: must be a function or expression.");
+            Class @class;
+            if (TryParse(tokens, grammar.Class, out @class))
+                return InterpretClass(@class, pos);
+
+            return Error("Cannot evaluate this code: must be a class, function or expression.");
         }
 
         public string Translate()
         {
-            var program = new Program(new Text("").Position, /*TODO: classes*/new Class[]{}, functions.Values);
+            var program = new Program(new Text("").Position, classes.Values, functions.Values);
             Program typeCheckedProgram = program.WithTypes().Syntax;
             var code = new CodeWriter();
             WriteAction write = typeCheckedProgram.Visit(new CSharpTranslator());
@@ -82,13 +90,41 @@ namespace Rook.Compiling
 
             functions[function.Name.Identifier] = function;
 
+            if (classes.ContainsKey(function.Name.Identifier))
+                classes.Remove(function.Name.Identifier);
+
             return new InterpreterResult(function);
+        }
+
+        private InterpreterResult InterpretClass(Class @class, Position pos)
+        {
+            if (@class.Name.Identifier == "Main")
+                return Error("The Main function is reserved for expression evaluation, and cannot be explicitly defined.");
+
+            var compilerResult = compiler.Build(ProgramWithNewClass(@class, pos));
+            if (compilerResult.Errors.Any())
+                return new InterpreterResult(compilerResult.Errors);
+
+            classes[@class.Name.Identifier] = @class;
+
+            if (functions.ContainsKey(@class.Name.Identifier))
+                functions.Remove(@class.Name.Identifier);
+
+            return new InterpreterResult(@class);
         }
 
         private Program ProgramWithNewFunction(Function function, Position pos)
         {
+            var classesExceptPotentialOverwrite = classes.Values.Where(c => c.Name.Identifier != function.Name.Identifier);
             var functionsExceptPotentialOverwrite = functions.Values.Where(f => f.Name.Identifier != function.Name.Identifier);
-            return new Program(pos, /*TODO: classes*/new Class[]{}, new[] { function }.Concat(functionsExceptPotentialOverwrite));
+            return new Program(pos, classesExceptPotentialOverwrite, new[] { function }.Concat(functionsExceptPotentialOverwrite));
+        }
+
+        private Program ProgramWithNewClass(Class @class, Position pos)
+        {
+            var classesExceptPotentialOverwrite = classes.Values.Where(c => c.Name.Identifier != @class.Name.Identifier);
+            var functionsExceptPotentialOverwrite = functions.Values.Where(f => f.Name.Identifier != @class.Name.Identifier);
+            return new Program(pos, new[]{@class}.Concat(classesExceptPotentialOverwrite), functionsExceptPotentialOverwrite);
         }
 
         private static bool TryParse<T>(TokenStream tokens, Parser<T> parser, out T syntax) where T : SyntaxTree
@@ -123,6 +159,9 @@ namespace Rook.Compiling
         private Environment EnvironmentForExpression()
         {
             var environment = new Environment();
+            foreach (var c in classes.Values)
+                if (c.Name.Identifier != "Main")
+                    environment.TryIncludeUniqueBinding(c);
             foreach (var f in functions.Values)
                 if (f.Name.Identifier != "Main")
                     environment.TryIncludeUniqueBinding(f);

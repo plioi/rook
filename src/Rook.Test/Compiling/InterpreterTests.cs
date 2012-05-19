@@ -15,17 +15,22 @@ namespace Rook.Compiling
         }
 
         [Fact]
-        public void ShouldDetermineWhetherSourceCodeParsesCompletelyAsAnExpressionOrFunction()
+        public void ShouldDetermineWhetherSourceCodeParsesCompletelyAsAnExpressionOrFunctionOrClass()
         {
             const string expression = "((5 + 2) > 5) && true";
             const string function = "int Square(int x) x*x";
+            const string @class = "class Foo";
             const string incompleteExpression = "(5 + ";
             const string functionWithAdditionalContent = function + function;
+            const string classWithAdditionalContent = @class + @class;
 
             interpreter.CanParse(expression).ShouldBeTrue();
             interpreter.CanParse(function).ShouldBeTrue();
+            interpreter.CanParse(@class).ShouldBeTrue();
+
             interpreter.CanParse(incompleteExpression).ShouldBeFalse();
             interpreter.CanParse(functionWithAdditionalContent).ShouldBeFalse();
+            interpreter.CanParse(classWithAdditionalContent).ShouldBeFalse();
         }
 
         [Fact]
@@ -49,7 +54,7 @@ namespace Rook.Compiling
         {
             var result = interpreter.Interpret("(5 + ");
             result.Value.ShouldBeNull();
-            result.Errors.ShouldList(error => error.Message.ShouldEqual("Cannot evaluate this code: must be a function or expression."));
+            result.Errors.ShouldList(error => error.Message.ShouldEqual("Cannot evaluate this code: must be a class, function or expression."));
         }
 
         [Fact]
@@ -69,21 +74,30 @@ namespace Rook.Compiling
         }
 
         [Fact]
-        public void ShouldEvaluateExpressionsAgainstPreviouslyInterpretedFunctions()
+        public void ShouldEvaluateExpressionsAgainstPreviouslyInterpretedClassesAndFunctions()
         {
+            var foo = interpreter.Interpret("class Foo");
             var square = interpreter.Interpret("int Square(int x) x*x");
             var cube = interpreter.Interpret("int Cube(int x) x*x*x");
+            foo.Value.ShouldBeType<Class>();
             square.Value.ShouldBeType<Function>();
             cube.Value.ShouldBeType<Function>();
 
             var result = interpreter.Interpret("Square(2) + Cube(3)");
             result.Value.ShouldEqual(31);
             result.Errors.ShouldBeEmpty();
+
+            result = interpreter.Interpret("new Foo()");
+            result.Value.ToString().ShouldEqual("Program+Foo");
+            result.Errors.ShouldBeEmpty();
         }
 
         [Fact]
         public void ShouldAllowFunctionDefinitionsToBeReplaced()
         {
+            //TODO: Test coverage for classes also being replaceable,
+            //      and for classes/functions to replace each other.
+
             //First definitions compile but aren't defined accurately.
             var square = interpreter.Interpret("int Square(int x) x");
             var cube = interpreter.Interpret("int Cube(int x) x");
@@ -126,8 +140,9 @@ namespace Rook.Compiling
         }
 
         [Fact]
-        public void ShouldTranslateFunctionsToTargetLanguage()
+        public void ShouldTranslateClassesAndFunctionsToTargetLanguage()
         {
+            interpreter.Interpret("class Foo");
             interpreter.Interpret("int Square(int x) x*x");
             interpreter.Interpret("int Cube(int x) Square(x)*x");
 
@@ -139,6 +154,9 @@ namespace Rook.Compiling
                 .AppendLine()
                 .AppendLine("public class Program : Prelude")
                 .AppendLine("{")
+                .AppendLine("    public class Foo")
+                .AppendLine("    {")
+                .AppendLine("    }")
                 .AppendLine("    public static int Square(int x)")
                 .AppendLine("    {")
                 .AppendLine("        return ((x) * (x));")
@@ -160,6 +178,9 @@ namespace Rook.Compiling
                 .AppendLine()
                 .AppendLine("public class Program : Prelude")
                 .AppendLine("{")
+                .AppendLine("    public class Foo")
+                .AppendLine("    {")
+                .AppendLine("    }")
                 .AppendLine("    public static int Square(int x)")
                 .AppendLine("    {")
                 .AppendLine("        return ((x) * (x));")
@@ -186,6 +207,14 @@ namespace Rook.Compiling
             var result = interpreter.Interpret("Main()");
             result.Value.ShouldBeNull();
             result.Errors.ShouldList(error => error.Message.ShouldEqual("Reference to undefined identifier: Main"));
+        }
+
+        [Fact]
+        public void DisallowsExplicitDefinitionOfMainClassBecauseMainIsReservedForExpressionEvaluation()
+        {
+            var result = interpreter.Interpret("class Main");
+            result.Value.ShouldBeNull();
+            result.Errors.ShouldList(error => error.Message.ShouldEqual("The Main function is reserved for expression evaluation, and cannot be explicitly defined."));
         }
 
         [Fact]
