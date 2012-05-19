@@ -103,6 +103,11 @@ namespace Rook
                                  Translate(arguments, ", "));
         }
 
+        public string Visit(New @new)
+        {
+            return String.Format("(new {0}())", Translate(@new.TypeName));
+        }
+
         public string Visit(BooleanLiteral booleanLiteral)
         {
             return booleanLiteral.Value ? "true" : "false";

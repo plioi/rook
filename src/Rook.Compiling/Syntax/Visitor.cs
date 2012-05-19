@@ -12,6 +12,7 @@
         TResult Visit(If conditional);
         TResult Visit(VariableDeclaration variableDeclaration);
         TResult Visit(Call call);
+        TResult Visit(New @new);
         TResult Visit(BooleanLiteral booleanLiteral);
         TResult Visit(IntegerLiteral integerLiteral);
         TResult Visit(StringLiteral stringLiteral);

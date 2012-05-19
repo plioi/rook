@@ -191,6 +191,12 @@ namespace Rook.Compiling.CodeGeneration
         }
 
         [Fact]
+        public void ShouldTranslateConstructorCalls()
+        {
+            AssertTranslation("(new Foo())", rookGrammar.Expression, "new Foo()");
+        }
+
+        [Fact]
         public void ShouldTranslateBooleanLiterals()
         {
             AssertTranslation("true", rookGrammar.Expression, "true");

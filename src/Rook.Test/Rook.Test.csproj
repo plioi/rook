@@ -87,6 +87,7 @@
     <Compile Include="Compiling\Syntax\ClassTests.cs" />
     <Compile Include="Compiling\Syntax\IntegerLiteralTests.cs" />
     <Compile Include="Compiling\Syntax\LambdaTests.cs" />
+    <Compile Include="Compiling\Syntax\NewTests.cs" />
     <Compile Include="Compiling\Syntax\NullTests.cs" />
     <Compile Include="Compiling\Syntax\RookLexerTests.cs" />
     <Compile Include="Compiling\Syntax\ParsingAssertions.cs" />

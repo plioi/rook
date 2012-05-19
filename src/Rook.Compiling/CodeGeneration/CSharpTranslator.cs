@@ -129,6 +129,11 @@ namespace Rook.Compiling.CodeGeneration
             return Format("(@(@))", Translate(callable), Translate(arguments, ", "));
         }
 
+        public WriteAction Visit(New @new)
+        {
+            return Format("(new @())", Translate(@new.TypeName));
+        }
+
         public WriteAction Visit(BooleanLiteral booleanLiteral)
         {
             return Literal(booleanLiteral.Value ? "true" : "false");

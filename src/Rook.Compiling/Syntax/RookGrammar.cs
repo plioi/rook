@@ -27,6 +27,7 @@ namespace Rook.Compiling.Syntax
         public readonly GrammarRule<Expression> Lambda = new GrammarRule<Expression>();
         public readonly GrammarRule<Expression> VectorLiteral = new GrammarRule<Expression>();
         public readonly GrammarRule<Expression> Block = new GrammarRule<Expression>();
+        public readonly GrammarRule<Expression> New = new GrammarRule<Expression>();
         public readonly GrammarRule<VariableDeclaration> VariableDeclaration = new GrammarRule<VariableDeclaration>();
         public readonly GrammarRule<VariableDeclaration> ExplicitlyTypedVariableDeclaration = new GrammarRule<VariableDeclaration>();
         public readonly GrammarRule<VariableDeclaration> ImplicitlyTypedVariableDeclaration = new GrammarRule<VariableDeclaration>();
@@ -127,6 +128,13 @@ namespace Rook.Compiling.Syntax
                 from close in Token("}")
                 select new Block(open.Position, variableDeclarations, innerExpressions);
 
+            New.Rule =
+                from _new_ in Token(RookLexer.@new)
+                from typeName in Name
+                from left in Token(RookLexer.LeftParen)
+                from right in Token(RookLexer.RightParen)
+                select new New(_new_.Position, typeName);
+
             Lambda.Rule =
                 from _fn_ in Token(RookLexer.@fn)
                 from parameters in Tuple(Parameter)
@@ -171,6 +179,7 @@ namespace Rook.Compiling.Syntax
             Unit(RookLexer.fn, Lambda);
             Unit(RookLexer.LeftBrace, Block);
             Unit(RookLexer.LeftParen, Parenthetical);
+            Unit(RookLexer.@new, New);
 
             Extend(RookLexer.LeftParen, 12, Call);
             Extend(RookLexer.LeftSquareBrace, 12, Subscript);
