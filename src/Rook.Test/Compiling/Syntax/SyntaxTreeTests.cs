@@ -11,9 +11,7 @@ namespace Rook.Compiling.Syntax
 
         protected TSyntax Parse(string source)
         {
-            var tokens = new RookLexer().Tokenize(source);
-            //TODO: What if there is remaining unparsed input upon the call to Parse?
-            return Parser.Parse(new TokenStream(tokens)).Value;
+            return Parses(source).Value;
         }
 
         protected Reply<TSyntax> Parses(string source)

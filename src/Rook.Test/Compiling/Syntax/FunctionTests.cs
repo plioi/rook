@@ -105,7 +105,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingWhenParameterNamesShadowSurroundingScope()
         {
-            TypeChecking("int foo(int x, int y, int z) true;", z => Integer).ShouldFail("Duplicate identifier: z", 1, 27);
+            TypeChecking("int foo(int x, int y, int z) true", z => Integer).ShouldFail("Duplicate identifier: z", 1, 27);
         }
 
         [Fact]
