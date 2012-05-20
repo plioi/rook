@@ -41,9 +41,9 @@ namespace Rook.Compiling
                 Fail.WithErrors(result.Errors, expectedPosition, expectedMessage);
         }
 
-        protected object ExecuteMain()
+        protected object Execute()
         {
-            return result.CompiledAssembly.GetType("Program").GetMethod("Main").Invoke(null, null);
+            return result.CompiledAssembly.Execute();
         }
     }
 }

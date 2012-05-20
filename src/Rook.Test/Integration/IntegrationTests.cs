@@ -42,7 +42,7 @@ namespace Rook.Integration
 
         private static string ActualOutput(string testName)
         {
-            return ExecuteMain(Build(RookCode(testName))).ToString();
+            return Execute(Build(RookCode(testName))).ToString();
         }
 
         private static string RookCode(string testName)
@@ -60,15 +60,15 @@ namespace Rook.Integration
             return result.CompiledAssembly;
         }
 
-        private static object ExecuteMain(Assembly assembly)
+        private static object Execute(Assembly assembly)
         {
             var stringBuilder = new StringBuilder();
             using (TextWriter writer = new StringWriter(stringBuilder))
             {
                 TextWriter standardOut = Console.Out;
                 Console.SetOut(writer);
-                
-                object result = assembly.GetType("Program").GetMethod("Main").Invoke(null, null);
+
+                object result = assembly.Execute();
 
                 Console.SetOut(standardOut);
 

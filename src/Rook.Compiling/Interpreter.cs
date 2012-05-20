@@ -79,7 +79,7 @@ namespace Rook.Compiling
             if (compilerResult.Errors.Any())
                 return new InterpreterResult(compilerResult.Errors);
 
-            return new InterpreterResult(CallMain(compilerResult.CompiledAssembly));
+            return new InterpreterResult(compilerResult.CompiledAssembly.Execute());
         }
 
         private InterpreterResult InterpretFunction(Function function, Position pos)
@@ -180,11 +180,6 @@ namespace Rook.Compiling
         private static Function WrapAsMain(Expression typedExpression, Position pos)
         {
             return new Function(pos, (NamedType)typedExpression.Type, new Name(pos, "Main"), Enumerable.Empty<Parameter>(), typedExpression);
-        }
-
-        private static object CallMain(Assembly assembly)
-        {
-            return assembly.GetType("Program").GetMethod("Main").Invoke(null, null);
         }
 
         private static InterpreterResult Error(string message)

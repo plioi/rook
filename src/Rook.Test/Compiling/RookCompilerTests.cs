@@ -33,7 +33,7 @@ namespace Rook.Compiling
         {
             Build("int Main() 123;");
             AssertErrors(0);
-            ExecuteMain().ShouldEqual(123);
+            Execute().ShouldEqual(123);
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace Rook.Compiling
             var program = new RookGrammar().Program.Parse(new TokenStream(tokens)).Value;
             Build(program);
             AssertErrors(0);
-            ExecuteMain().ShouldEqual(123);
+            Execute().ShouldEqual(123);
         }
 
         private void Build(Program program)

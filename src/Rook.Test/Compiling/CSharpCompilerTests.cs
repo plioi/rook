@@ -28,7 +28,7 @@ namespace Rook.Compiling
         {
             Build(ValidProgram);
             AssertErrors(0);
-            ExecuteMain().ShouldEqual(123);
+            Execute().ShouldEqual(123);
         }
 
         [Fact]
