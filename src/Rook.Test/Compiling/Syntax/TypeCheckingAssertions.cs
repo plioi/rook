@@ -17,14 +17,11 @@ namespace Rook.Compiling.Syntax
         {
             var expectedPosition = new Position(expectedLine, expectedColumn);
 
-            //TODO: If !typeChecked.HasErrors, fail with a description
-            //      of the unexpectedly successful type checking.
-
-            typeChecked.Syntax.ShouldBeNull();
-            typeChecked.HasErrors.ShouldBeTrue();
-
             if (typeChecked.Errors.Count() != 1)
             {
+                if (typeChecked.HasErrors)
+                    typeChecked.Syntax.ShouldBeNull();
+
                 Fail.WithErrors(typeChecked.Errors, expectedPosition, expectedMessage);
             }
             else

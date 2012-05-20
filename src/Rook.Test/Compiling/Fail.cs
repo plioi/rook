@@ -10,6 +10,8 @@ namespace Rook.Compiling
         public static void WithErrors(IEnumerable<CompilerError> errors)
         {
             var builder = new StringBuilder();
+            builder.AppendLine();
+            builder.AppendLine();
 
             foreach (var error in errors)
                 builder.AppendLine(ErrorSummary(error));
@@ -20,13 +22,23 @@ namespace Rook.Compiling
         public static void WithErrors(IEnumerable<CompilerError> errors, Position expectedPosition, string expectedMessage)
         {
             var builder = new StringBuilder();
+            builder.AppendLine();
+            builder.AppendLine();
             builder.AppendLine("Expected error:");
             builder.AppendLine("\t" + ErrorSummary(new CompilerError(expectedPosition, expectedMessage)));
 
             builder.AppendLine();
             builder.AppendLine("Actual errors:");
+
+            bool anyError = false;
             foreach (var error in errors)
+            {
                 builder.AppendLine("\t" + ErrorSummary(error));
+                anyError = true;
+            }
+
+            if (!anyError)
+                builder.AppendLine("\t" + "None");
 
             throw new Exception(builder.ToString());
         }
