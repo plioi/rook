@@ -95,7 +95,6 @@
     <Compile Include="Compiling\Syntax\TypeCheckingAssertions.cs" />
     <Compile Include="Core\Collections\ArrayVectorTests.cs" />
     <Compile Include="Core\Collections\SliceVectorTests.cs" />
-    <Compile Include="Core\IdentityTests.cs" />
     <Compile Include="Core\NullableTests.cs" />
     <Compile Include="Core\ValueTests.cs" />
     <Compile Include="Serializer.cs" />
