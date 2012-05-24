@@ -30,7 +30,7 @@ namespace Rook.Compiling.Syntax
         {
             Parses(" \t\r\n class Foo; class Bar; int life() 42; int universe() 42; int everything() 42; \t\r\n")
                 .IntoTree("class Foo\r\n\r\nclass Bar\r\n\r\nint life() 42\r\n\r\nint universe() 42\r\n\r\nint everything() 42");
-            FailsToParse("int square(x) x*x; class Foo").LeavingUnparsedTokens("class", "Foo").WithMessage("(1, 20): end of input expected");
+            FailsToParse("int square(int x) x*x; class Foo").LeavingUnparsedTokens("class", "Foo").WithMessage("(1, 24): end of input expected");
         }
 
         [Fact]

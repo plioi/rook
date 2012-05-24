@@ -20,7 +20,6 @@ namespace Rook.Compiling.Syntax
         private readonly GrammarRule<NamedType> KeywordType = new GrammarRule<NamedType>();
         private readonly GrammarRule<Parameter> ExplicitlyTypedParameter = new GrammarRule<Parameter>();
         private readonly GrammarRule<Parameter> ImplicitlyTypedParameter = new GrammarRule<Parameter>();
-        public readonly GrammarRule<Parameter> Parameter = new GrammarRule<Parameter>();
 
         public readonly GrammarRule<Expression> Parenthetical = new GrammarRule<Expression>();
         public readonly GrammarRule<Expression> If = new GrammarRule<Expression>();
@@ -66,7 +65,7 @@ namespace Rook.Compiling.Syntax
             Function.Rule =
                 from returnType in TypeName
                 from name in Name
-                from parameters in Tuple(Parameter).TerminatedBy(Optional(EndOfLine))
+                from parameters in Tuple(ExplicitlyTypedParameter).TerminatedBy(Optional(EndOfLine))
                 from body in Expression
                 select new Function(name.Position, returnType, name, parameters, body);
         }
@@ -103,9 +102,6 @@ namespace Rook.Compiling.Syntax
             ImplicitlyTypedParameter.Rule =
                 from identifier in Identifier
                 select new Parameter(identifier.Position, identifier.Literal);
-
-            Parameter.Rule =
-                Choice(Attempt(ExplicitlyTypedParameter), ImplicitlyTypedParameter);
         }
 
         private void Expressions()
@@ -137,7 +133,7 @@ namespace Rook.Compiling.Syntax
 
             Lambda.Rule =
                 from _fn_ in Token(RookLexer.@fn)
-                from parameters in Tuple(Parameter)
+                from parameters in Tuple(Choice(Attempt(ExplicitlyTypedParameter), ImplicitlyTypedParameter))
                 from body in Expression
                 select new Lambda(_fn_.Position, parameters, body);
 

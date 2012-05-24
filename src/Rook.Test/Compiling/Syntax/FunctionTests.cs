@@ -16,10 +16,16 @@ namespace Rook.Compiling.Syntax
             FailsToParse("int").AtEndOfInput();
             FailsToParse("int foo").AtEndOfInput().WithMessage("(1, 8): ( expected");
             FailsToParse("int foo(").AtEndOfInput().WithMessage("(1, 9): ) expected");
-            FailsToParse("int foo(x)").AtEndOfInput();
-            FailsToParse("int foo(int)").LeavingUnparsedTokens("int", ")").WithMessage("(1, 9): ) expected");
             FailsToParse("int foo()").AtEndOfInput();
             Parses("int foo() 1").IntoTree("int foo() 1");
+            Parses("int foo(int x) x").IntoTree("int foo(int x) x");
+        }
+
+        [Fact]
+        public void DemandsParametersIncludeExplicitTypeDeclaration()
+        {
+            FailsToParse("int foo(x)").LeavingUnparsedTokens(")").WithMessage("(1, 10): identifier expected");
+            FailsToParse("int foo(int)").LeavingUnparsedTokens(")").WithMessage("(1, 12): identifier expected");
         }
 
         [Fact]
@@ -43,14 +49,6 @@ namespace Rook.Compiling.Syntax
             Parses("int foo(int x) 1").IntoTree("int foo(int x) 1");
             Parses("int foo(int x, bool y) 1").IntoTree("int foo(int x, bool y) 1");
             Parses("int foo(int x, bool y, int z) 1").IntoTree("int foo(int x, bool y, int z) 1");
-        }
-
-        [Fact]
-        public void AllowsParametersToOmitExplicitTypeDeclaration()
-        {
-            Parses("int foo(x) 1").IntoTree("int foo(x) 1");
-            Parses("int foo(x, bool y) 1").IntoTree("int foo(x, bool y) 1");
-            Parses("int foo(int x, y, z) 1").IntoTree("int foo(int x, y, z) 1");
         }
 
         [Fact]
