@@ -1,4 +1,6 @@
 ﻿class Math
+{
+}
 
 int Square(Math math, int x) x*x
 int Cube(Math math, int x) x*x*x

@@ -14,7 +14,9 @@ namespace Rook.Compiling.Syntax
         {
             FailsToParse("").AtEndOfInput().WithMessage("(1, 1): class expected");
             FailsToParse("class").AtEndOfInput().WithMessage("(1, 6): identifier expected");
-            Parses("class Foo").IntoTree("class Foo");
+            FailsToParse("class Foo").AtEndOfInput().WithMessage("(1, 10): { expected");
+            FailsToParse("class Foo {").AtEndOfInput().WithMessage("(1, 12): } expected");
+            Parses("class Foo { }").IntoTree("class Foo { }");
         }
 
         [Fact]
@@ -22,7 +24,7 @@ namespace Rook.Compiling.Syntax
         {
             var constructorReturningFoo = NamedType.Constructor(new NamedType("Foo"));
 
-            Type("class Foo").ShouldEqual(constructorReturningFoo);
+            Type("class Foo { }").ShouldEqual(constructorReturningFoo);
         }
 
         [Fact]
@@ -30,7 +32,7 @@ namespace Rook.Compiling.Syntax
         {
             var constructorReturningFoo = NamedType.Constructor(new NamedType("Foo"));
 
-            var @class = Parse("class Foo");
+            var @class = Parse("class Foo { }");
             @class.Type.ShouldEqual(constructorReturningFoo);
 
             var typedClass = @class.WithTypes(Environment()).Syntax;

@@ -13,8 +13,8 @@ namespace Rook.Compiling.Syntax
         public void ParsesZeroOrMoreClasses()
         {
             Parses(" \t\r\n").IntoTree("");
-            Parses(" \t\r\n class Foo; class Bar; class Baz; \t\r\n")
-                .IntoTree("class Foo\r\n\r\nclass Bar\r\n\r\nclass Baz");
+            Parses(" \t\r\n class Foo { }; class Bar { }; class Baz { }; \t\r\n")
+                .IntoTree("class Foo { }\r\n\r\nclass Bar { }\r\n\r\nclass Baz { }");
         }
 
         [Fact]
@@ -28,16 +28,16 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void DemandsClassesAppearBeforeFunctions()
         {
-            Parses(" \t\r\n class Foo; class Bar; int life() 42; int universe() 42; int everything() 42; \t\r\n")
-                .IntoTree("class Foo\r\n\r\nclass Bar\r\n\r\nint life() 42\r\n\r\nint universe() 42\r\n\r\nint everything() 42");
-            FailsToParse("int square(int x) x*x; class Foo").LeavingUnparsedTokens("class", "Foo").WithMessage("(1, 24): end of input expected");
+            Parses(" \t\r\n class Foo { }; class Bar { }; int life() 42; int universe() 42; int everything() 42; \t\r\n")
+                .IntoTree("class Foo { }\r\n\r\nclass Bar { }\r\n\r\nint life() 42\r\n\r\nint universe() 42\r\n\r\nint everything() 42");
+            FailsToParse("int square(int x) x*x; class Foo { }").LeavingUnparsedTokens("class", "Foo", "{", "}").WithMessage("(1, 24): end of input expected");
         }
 
         [Fact]
         public void DemandsEndOfInputAfterLastValidClassOrFunction()
         {
             FailsToParse("int life() 42; int univ").AtEndOfInput().WithMessage("(1, 24): ( expected");
-            FailsToParse("class Foo; class").AtEndOfInput().WithMessage("(1, 17): identifier expected");
+            FailsToParse("class Foo { }; class").AtEndOfInput().WithMessage("(1, 21): identifier expected");
         }
 
         [Fact]
@@ -47,8 +47,8 @@ namespace Rook.Compiling.Syntax
             var barConstructorType = NamedType.Constructor(new NamedType("Bar"));
 
             var program = Parse(
-                @"class Foo
-                  class Bar
+                @"class Foo { }
+                  class Bar { }
                   bool even(int n) if (n==0) true else odd(n-1);
                   bool odd(int n) if (n==0) false else even(n-1);
                   int Main() if (even(4)) 0 else 1;");
@@ -117,8 +117,8 @@ namespace Rook.Compiling.Syntax
         public void FailsValidationWhenFunctionAndClassNamesAreNotUnique()
         {
             TypeChecking("int a() 0; int b() 1; int a() 2; int Main() 1;").ShouldFail("Duplicate identifier: a", 1, 27);
-            TypeChecking("class Foo; class Bar; class Foo").ShouldFail("Duplicate identifier: Foo", 1, 23);
-            TypeChecking("class Zero; int Zero() 0;").ShouldFail("Duplicate identifier: Zero", 1, 17);
+            TypeChecking("class Foo { }; class Bar { }; class Foo { }").ShouldFail("Duplicate identifier: Foo", 1, 31);
+            TypeChecking("class Zero { }; int Zero() 0;").ShouldFail("Duplicate identifier: Zero", 1, 21);
         }
 
         private TypeChecked<Program> TypeChecking(string source)

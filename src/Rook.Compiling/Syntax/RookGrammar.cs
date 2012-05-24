@@ -59,7 +59,9 @@ namespace Rook.Compiling.Syntax
 
             Class.Rule =
                 from @class in Token(RookLexer.@class)
-                from name in Name
+                from name in Name.TerminatedBy(Optional(EndOfLine))
+                from open in Token("{").TerminatedBy(Optional(EndOfLine))
+                from close in Token("}")
                 select new Class(@class.Position, name);
 
             Function.Rule =

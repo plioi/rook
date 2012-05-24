@@ -27,7 +27,7 @@ namespace Rook
 
         public string Visit(Class @class)
         {
-            return String.Format("class {0}", Translate(@class.Name));
+            return String.Format("class {0} {{ }}", Translate(@class.Name));
         }
  
         public string Visit(Function function)

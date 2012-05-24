@@ -19,7 +19,7 @@ namespace Rook.Compiling
         {
             const string expression = "((5 + 2) > 5) && true";
             const string function = "int Square(int x) x*x";
-            const string @class = "class Foo";
+            const string @class = "class Foo { }";
             const string incompleteExpression = "(5 + ";
             const string functionWithAdditionalContent = function + function;
             const string classWithAdditionalContent = @class + @class;
@@ -76,7 +76,7 @@ namespace Rook.Compiling
         [Fact]
         public void ShouldEvaluateExpressionsAgainstPreviouslyInterpretedClassesAndFunctions()
         {
-            var foo = interpreter.Interpret("class Foo");
+            var foo = interpreter.Interpret("class Foo { }");
             var square = interpreter.Interpret("int Square(int x) x*x");
             var cube = interpreter.Interpret("int Cube(int x) x*x*x");
             foo.Value.ShouldBeType<Class>();
@@ -142,7 +142,7 @@ namespace Rook.Compiling
         [Fact]
         public void ShouldTranslateClassesAndFunctionsToTargetLanguage()
         {
-            interpreter.Interpret("class Foo");
+            interpreter.Interpret("class Foo { }");
             interpreter.Interpret("int Square(int x) x*x");
             interpreter.Interpret("int Cube(int x) Square(x)*x");
 
@@ -212,7 +212,7 @@ namespace Rook.Compiling
         [Fact]
         public void DisallowsExplicitDefinitionOfMainClassBecauseMainIsReservedForExpressionEvaluation()
         {
-            var result = interpreter.Interpret("class Main");
+            var result = interpreter.Interpret("class Main { }");
             result.Value.ShouldBeNull();
             result.Errors.ShouldList(error => error.Message.ShouldEqual("The Main function is reserved for expression evaluation, and cannot be explicitly defined."));
         }
