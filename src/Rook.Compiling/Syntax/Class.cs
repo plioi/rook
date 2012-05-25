@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Parsley;
 using Rook.Compiling.Types;
 
@@ -7,15 +8,17 @@ namespace Rook.Compiling.Syntax
     {
         public Position Position { get; private set; }
         public Name Name { get; private set; }
+        public IEnumerable<Function> Methods { get; private set; }
         public DataType Type { get; private set; }
 
-        public Class(Position position, Name name)
-            : this(position, name, ConstructorFunctionType(name)) { }
+        public Class(Position position, Name name, IEnumerable<Function> methods)
+            : this(position, name, methods, ConstructorFunctionType(name)) { }
 
-        private Class(Position position, Name name, DataType type)
+        private Class(Position position, Name name, IEnumerable<Function> methods, DataType type)
         {
             Position = position;
             Name = name;
+            Methods = methods;
             Type = type;
         }
 

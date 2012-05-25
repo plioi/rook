@@ -61,8 +61,9 @@ namespace Rook.Compiling.Syntax
                 from @class in Token(RookLexer.@class)
                 from name in Name.TerminatedBy(Optional(EndOfLine))
                 from open in Token("{").TerminatedBy(Optional(EndOfLine))
+                from methods in ZeroOrMore(Function.TerminatedBy(EndOfLine))
                 from close in Token("}")
-                select new Class(@class.Position, name);
+                select new Class(@class.Position, name, methods);
 
             Function.Rule =
                 from returnType in TypeName

@@ -16,7 +16,20 @@ namespace Rook.Compiling.Syntax
             FailsToParse("class").AtEndOfInput().WithMessage("(1, 6): identifier expected");
             FailsToParse("class Foo").AtEndOfInput().WithMessage("(1, 10): { expected");
             FailsToParse("class Foo {").AtEndOfInput().WithMessage("(1, 12): } expected");
-            Parses("class Foo { }").IntoTree("class Foo { }");
+            Parses("class Foo {}").IntoTree("class Foo {}");
+        }
+
+        [Fact]
+        public void ParsesMethods()
+        {
+            Parses("class Hitchhiker {int life() 42; int universe() 42; int everything() 42;}")
+                .IntoTree("class Hitchhiker {int life() 42; int universe() 42; int everything() 42}");
+        }
+
+        [Fact]
+        public void DemandsEndOfClassAfterLastValidMethod()
+        {
+            FailsToParse("class Hitchhiker { int life() 42;").AtEndOfInput().WithMessage("(1, 34): } expected");
         }
 
         [Fact]
