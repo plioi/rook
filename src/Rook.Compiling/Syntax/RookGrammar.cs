@@ -52,8 +52,8 @@ namespace Rook.Compiling.Syntax
         {
             Program.Rule =
                 from leadingEndOfLine in Optional(Token(RookLexer.EndOfLine))
-                from classes in ZeroOrMore(Class.TerminatedBy(EndOfLine))
-                from functions in ZeroOrMore(Function.TerminatedBy(EndOfLine))
+                from classes in ZeroOrMore(Class)
+                from functions in ZeroOrMore(Function)
                 from end in EndOfInput
                 select new Program(new Position(1, 1), classes, functions);
 
@@ -61,8 +61,9 @@ namespace Rook.Compiling.Syntax
                 from @class in Token(RookLexer.@class)
                 from name in Name.TerminatedBy(Optional(EndOfLine))
                 from open in Token("{").TerminatedBy(Optional(EndOfLine))
-                from methods in ZeroOrMore(Function.TerminatedBy(EndOfLine))
+                from methods in ZeroOrMore(Function)
                 from close in Token("}")
+                from end in EndOfLine
                 select new Class(@class.Position, name, methods);
 
             Function.Rule =
@@ -70,6 +71,7 @@ namespace Rook.Compiling.Syntax
                 from name in Name
                 from parameters in Tuple(ExplicitlyTypedParameter).TerminatedBy(Optional(EndOfLine))
                 from body in Expression
+                from end in EndOfLine
                 select new Function(name.Position, returnType, name, parameters, body);
         }
 
