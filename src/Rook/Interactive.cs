@@ -54,7 +54,11 @@ namespace Rook
         {
             if (!result.Errors.Any() && result.Value != Core.Void.Value)
             {
-                if (result.Value is IEnumerable && !(result.Value is string))
+                if (result.Value == null)
+                {
+                    Console.WriteLine("null");
+                }
+                else if (result.Value is IEnumerable && !(result.Value is string))
                 {
                     string commaSeparated = String.Join(", ", ((IEnumerable) result.Value).Cast<object>().ToArray());
 
