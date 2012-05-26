@@ -7,17 +7,17 @@ namespace Rook.Core
 {
     public abstract class Prelude
     {
-        protected static T _Block<T>(Func<T> func)
+        protected static T __block__<T>(Func<T> func)
         {
             return func();
         }
 
-        protected static void _Evaluate(object expression)
+        protected static void __evaluate__(object expression)
         {
             
         }
 
-        protected static Vector<T> _Vector<T>(params T[] items)
+        protected static Vector<T> __vector__<T>(params T[] items)
         {
             return new ArrayVector<T>(items);
         }

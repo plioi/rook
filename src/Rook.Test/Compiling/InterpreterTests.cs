@@ -88,7 +88,7 @@ namespace Rook.Compiling
             result.Errors.ShouldBeEmpty();
 
             result = interpreter.Interpret("new Foo()");
-            result.Value.ToString().ShouldEqual("Program+Foo");
+            result.Value.ToString().ShouldEqual("__program__+Foo");
             result.Errors.ShouldBeEmpty();
         }
 
@@ -152,7 +152,7 @@ namespace Rook.Compiling
                 .AppendLine("using Rook.Core;")
                 .AppendLine("using Rook.Core.Collections;")
                 .AppendLine()
-                .AppendLine("public class Program : Prelude")
+                .AppendLine("public class __program__ : Prelude")
                 .AppendLine("{")
                 .AppendLine("    public class Foo")
                 .AppendLine("    {")
@@ -176,7 +176,7 @@ namespace Rook.Compiling
                 .AppendLine("using Rook.Core;")
                 .AppendLine("using Rook.Core.Collections;")
                 .AppendLine()
-                .AppendLine("public class Program : Prelude")
+                .AppendLine("public class __program__ : Prelude")
                 .AppendLine("{")
                 .AppendLine("    public class Foo")
                 .AppendLine("    {")

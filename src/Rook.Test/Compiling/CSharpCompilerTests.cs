@@ -36,7 +36,7 @@ namespace Rook.Compiling
         {
             Build(InvalidProgram);
             AssertErrors(2);
-            AssertError(3, 25, "'Program.Main()' has the wrong signature to be an entry point");
+            AssertError(3, 25, "'__program__.Main()' has the wrong signature to be an entry point");
         }
 
         private static string ValidProgram
@@ -46,7 +46,7 @@ namespace Rook.Compiling
                 return new StringBuilder()
                     .AppendLine("using System;")
                     .AppendLine("using Microsoft.CSharp;")
-                    .AppendLine("public class Program")
+                    .AppendLine("public class __program__")
                     .AppendLine("{")
                     .AppendLine("   public static int Main()")
                     .AppendLine("   {")
@@ -65,7 +65,7 @@ namespace Rook.Compiling
             get
             {
                 return new StringBuilder()
-                    .AppendLine("public class Program")
+                    .AppendLine("public class __program__")
                     .AppendLine("{")
                     .AppendLine("   public static string Main()")
                     .AppendLine("   {")

@@ -16,7 +16,7 @@ namespace Rook.Compiling.CodeGeneration
                 Each(
                     Using("System", "System.Collections.Generic", "Rook.Core", "Rook.Core.Collections"),
                     EndLine(),
-                    Line("public class Program : Prelude"),
+                    Line("public class " + ReservedName.__program__ + " : Prelude"),
                     Block(classes.Concat(functions)));
         }
 
@@ -55,19 +55,18 @@ namespace Rook.Compiling.CodeGeneration
 
         public WriteAction Visit(Block block)
         {
-            IEnumerable<VariableDeclaration> variableDeclarations = block.VariableDeclarations;
-            IEnumerable<Expression > expressions = block.InnerExpressions;
+            var variableDeclarations = block.VariableDeclarations;
+            var expressions = block.InnerExpressions.ToArray();
 
-            int count = expressions.Count();
-            IEnumerable<Expression> sideEffectExpressions = expressions.Take(count - 1);
-            Expression resultExpression = expressions.Last();
+            var sideEffectExpressions = expressions.Take(expressions.Length - 1);
+            var resultExpression = expressions.Last();
 
             return Each(
-                Literal("_Block(() =>"),
+                Literal(ReservedName.__block__+"(() =>"),
                 EndLine(),
                 Block(
                     Each(variableDeclarations.Select(declaration => Line("", Translate(declaration)))),
-                    Each(sideEffectExpressions.Select(expression => Line("_Evaluate(@);", Translate(expression)))),
+                    Each(sideEffectExpressions.Select(expression => Line(ReservedName.__evaluate__+"(@);", Translate(expression)))),
                     Line("return @;", Translate(resultExpression))
                     ),
                 Indentation(),
@@ -99,10 +98,10 @@ namespace Rook.Compiling.CodeGeneration
         public WriteAction Visit(Call call)
         {
             var callable = call.Callable;
-            var arguments = call.Arguments;
+            var arguments = call.Arguments.ToArray();
             bool isOperator = call.IsOperator;
 
-            if (isOperator && arguments.Count() != 1)
+            if (isOperator && arguments.Length != 1)
             {
                 var nameCallable = callable as Name;
 
@@ -113,17 +112,17 @@ namespace Rook.Compiling.CodeGeneration
                     if (nameCallable.Identifier == "??")
                     {
                         return Format("(((@) != null) ? ((@).Value) : (@))",
-                                      Translate(arguments.ElementAt(0)),
-                                      Translate(arguments.ElementAt(0)),
-                                      Translate(arguments.ElementAt(1)));
+                                      Translate(arguments[0]),
+                                      Translate(arguments[0]),
+                                      Translate(arguments[1]));
                         
                     }
                 }
 
                 return Format("((@) @ (@))",
-                              Translate(arguments.ElementAt(0)),
+                              Translate(arguments[0]),
                               Translate(callable),
-                              Translate(arguments.ElementAt(1)));
+                              Translate(arguments[1]));
             }
 
             return Format("(@(@))", Translate(callable), Translate(arguments, ", "));
@@ -156,7 +155,7 @@ namespace Rook.Compiling.CodeGeneration
 
         public WriteAction Visit(VectorLiteral vectorLiteral)
         {
-            return Format("_Vector(@)", Translate(vectorLiteral.Items, ", "));
+            return Format(ReservedName.__vector__ + "(@)", Translate(vectorLiteral.Items, ", "));
         }
 
         private static WriteAction Translate(NamedType type)

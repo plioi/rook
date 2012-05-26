@@ -6,7 +6,7 @@ namespace Rook.Compiling
     {
         public static object Execute(this Assembly assembly)
         {
-            return assembly.GetType("Program").GetMethod("Main").Invoke(null, null);
+            return assembly.GetType(ReservedName.__program__).GetMethod("Main").Invoke(null, null);
         }
     }
 }

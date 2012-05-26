@@ -33,7 +33,7 @@ namespace Rook.Compiling.CodeGeneration
             Expect("using Rook.Core;");
             Expect("using Rook.Core.Collections;");
             Expect("");
-            Expect("public class Program : Prelude");
+            Expect("public class __program__ : Prelude");
             Expect("{");
             Expect("    public class Foo");
             Expect("    {");
@@ -110,7 +110,7 @@ namespace Rook.Compiling.CodeGeneration
         [Fact]
         public void ShouldTranslateBlocksWithOneInnerExpression()
         {
-            Expect("_Block(() =>");
+            Expect("__block__(() =>");
             Expect("{");
             Expect("    return 0;");
             Expect("}");
@@ -121,10 +121,10 @@ namespace Rook.Compiling.CodeGeneration
         [Fact]
         public void ShouldTranslateBlocksWithMultipleInnerExpressions()
         {
-            Expect("_Block(() =>");
+            Expect("__block__(() =>");
             Expect("{");
-            Expect("    _Evaluate(true);");
-            Expect("    _Evaluate(((true) || (false)));");
+            Expect("    __evaluate__(true);");
+            Expect("    __evaluate__(((true) || (false)));");
             Expect("    return 0;");
             Expect("}");
             Expect(")");
@@ -134,12 +134,12 @@ namespace Rook.Compiling.CodeGeneration
         [Fact]
         public void ShouldTranslateBlocksWithLocalVariableDeclarations()
         {
-            Expect("_Block(() =>");
+            Expect("__block__(() =>");
             Expect("{");
             Expect("    int a = 1;");
             Expect("    int b = 2;");
             Expect("    int c = ((a) + (b));");
-            Expect("    _Evaluate(((a) + (b)));");
+            Expect("    __evaluate__(((a) + (b)));");
             Expect("    return ((c) == (3));");
             Expect("}");
             Expect(")");
@@ -225,9 +225,9 @@ namespace Rook.Compiling.CodeGeneration
         [Fact]
         public void ShouldTranslateVectorLiterals()
         {
-            AssertTranslation("_Vector(0)", rookGrammar.Expression, "[0]");
-            AssertTranslation("_Vector(0, ((1) + (2)))", rookGrammar.Expression, "[0, 1+2]");
-            AssertTranslation("_Vector(true, ((false) || (true)), false)", rookGrammar.Expression, "[true, false||true, false]");
+            AssertTranslation("__vector__(0)", rookGrammar.Expression, "[0]");
+            AssertTranslation("__vector__(0, ((1) + (2)))", rookGrammar.Expression, "[0, 1+2]");
+            AssertTranslation("__vector__(true, ((false) || (true)), false)", rookGrammar.Expression, "[true, false||true, false]");
         }
 
         private void Expect(string line)
