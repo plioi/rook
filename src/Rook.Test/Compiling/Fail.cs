@@ -14,7 +14,7 @@ namespace Rook.Compiling
             builder.AppendLine();
 
             foreach (var error in errors)
-                builder.AppendLine(ErrorSummary(error));
+                builder.AppendLine(error.ToString());
 
             throw new Exception(builder.ToString());
         }
@@ -25,7 +25,7 @@ namespace Rook.Compiling
             builder.AppendLine();
             builder.AppendLine();
             builder.AppendLine("Expected error:");
-            builder.AppendLine("\t" + ErrorSummary(new CompilerError(expectedPosition, expectedMessage)));
+            builder.AppendLine("\t" + new CompilerError(expectedPosition, expectedMessage));
 
             builder.AppendLine();
             builder.AppendLine("Actual errors:");
@@ -33,7 +33,7 @@ namespace Rook.Compiling
             bool anyError = false;
             foreach (var error in errors)
             {
-                builder.AppendLine("\t" + ErrorSummary(error));
+                builder.AppendLine("\t" + error);
                 anyError = true;
             }
 
@@ -41,11 +41,6 @@ namespace Rook.Compiling
                 builder.AppendLine("\t" + "None");
 
             throw new Exception(builder.ToString());
-        }
-
-        private static string ErrorSummary(CompilerError error)
-        {
-            return String.Format("{0}: {1}", error.Position, error.Message);
         }
     }
 }

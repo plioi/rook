@@ -69,7 +69,7 @@ namespace Rook.Compiling
         {
             var typedCheckedExpression = expression.WithTypes(EnvironmentForExpression());
             if (typedCheckedExpression.HasErrors)
-                return new InterpreterResult(typedCheckedExpression.Errors);
+                return new InterpreterResult(Language.Rook, typedCheckedExpression.Errors);
                 
             var main = WrapAsMain(typedCheckedExpression.Syntax, pos);
             var compilerResult = compiler.Build(ProgramWithNewFunction(main, pos));
@@ -77,7 +77,7 @@ namespace Rook.Compiling
             functions[main.Name.Identifier] = main;
 
             if (compilerResult.Errors.Any())
-                return new InterpreterResult(compilerResult.Errors);
+                return new InterpreterResult(compilerResult.Language, compilerResult.Errors);
 
             return new InterpreterResult(compilerResult.CompiledAssembly.Execute());
         }
@@ -92,7 +92,7 @@ namespace Rook.Compiling
 
             var compilerResult = compiler.Build(ProgramWithNewFunction(function, pos));
             if (compilerResult.Errors.Any())
-                return new InterpreterResult(compilerResult.Errors);
+                return new InterpreterResult(compilerResult.Language, compilerResult.Errors);
 
             functions[function.Name.Identifier] = function;
 
@@ -112,7 +112,7 @@ namespace Rook.Compiling
 
             var compilerResult = compiler.Build(ProgramWithNewClass(@class, pos));
             if (compilerResult.Errors.Any())
-                return new InterpreterResult(compilerResult.Errors);
+                return new InterpreterResult(compilerResult.Language, compilerResult.Errors);
 
             classes[@class.Name.Identifier] = @class;
 
@@ -184,7 +184,7 @@ namespace Rook.Compiling
 
         private static InterpreterResult Error(string message)
         {
-            return new InterpreterResult(new CompilerError(new Position(1, 1), message));
+            return new InterpreterResult(Language.Rook, new CompilerError(new Position(1, 1), message));
         }
     }
 }

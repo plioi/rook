@@ -9,20 +9,23 @@ namespace Rook.Compiling
         {
             Value = value;
             Errors = Enumerable.Empty<CompilerError>();
+            Language = Language.Rook;
         }
 
-        public InterpreterResult(params CompilerError[] errors)
-           : this((IEnumerable<CompilerError>)errors)
+        public InterpreterResult(Language language, params CompilerError[] errors)
+           : this(language, (IEnumerable<CompilerError>)errors)
         {
         }
 
-        public InterpreterResult(IEnumerable<CompilerError> errors)
+        public InterpreterResult(Language language, IEnumerable<CompilerError> errors)
         {
             Value = null;
             Errors = errors;
+            Language = language;
         }
 
         public object Value { get; private set; }
         public IEnumerable<CompilerError> Errors { get; private set; }
+        public Language Language { get; private set; }
     }
 }

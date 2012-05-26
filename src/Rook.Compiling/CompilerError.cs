@@ -1,3 +1,4 @@
+using System;
 using Parsley;
 
 namespace Rook.Compiling
@@ -12,5 +13,10 @@ namespace Rook.Compiling
 
         public Position Position { get; private set; }
         public string Message { get; private set; }
+
+        public override string ToString()
+        {
+            return String.Format("{0}: {1}", Position, Message);
+        }
     }
 }

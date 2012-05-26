@@ -31,7 +31,7 @@ namespace Rook.Compiling
             var results = provider.CompileAssemblyFromSource(csharpParameters, code);
 
             if (results.Errors.HasErrors)
-                return new CompilerResult(MapErrors(results.Errors));
+                return new CompilerResult(Language.CSharp, MapErrors(results.Errors));
 
             return new CompilerResult(results.CompiledAssembly);
         }

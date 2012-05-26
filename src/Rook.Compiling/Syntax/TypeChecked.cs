@@ -49,7 +49,7 @@ namespace Rook.Compiling.Syntax
 
         public static TypeChecked<T> ObjectNotCallableError(Position position)
         {
-            return Failure(new CompilerError(position, String.Format("Attempted to call a noncallable object.")));
+            return Failure(new CompilerError(position, "Attempted to call a noncallable object."));
         }
 
         public static TypeChecked<T> TypeNameExpectedForConstructionError(Position position, Name invalidTypeName)

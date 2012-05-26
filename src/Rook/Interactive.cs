@@ -70,9 +70,11 @@ namespace Rook
                 else
                     Console.WriteLine(result.Value);
             }
-            
+
+            var language = result.Language == Language.Rook ? "" : String.Format("({0}) ", result.Language);
+
             foreach (var error in result.Errors)
-                Console.WriteLine("{0}: {1}", error.Position, error.Message);
+                Console.WriteLine(language + error);
 
             Console.WriteLine();
         }

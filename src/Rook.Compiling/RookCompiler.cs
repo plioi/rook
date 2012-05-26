@@ -22,7 +22,7 @@ namespace Rook.Compiling
             if (reply.Success)
                 return Build(reply.Value);
 
-            return new CompilerResult(new CompilerError(reply.UnparsedTokens.Position, reply.ErrorMessages.ToString()));
+            return new CompilerResult(Language.Rook, new CompilerError(reply.UnparsedTokens.Position, reply.ErrorMessages.ToString()));
         }
 
         public CompilerResult Build(Program program)
@@ -30,7 +30,7 @@ namespace Rook.Compiling
             TypeChecked<Program> typeCheckedProgram = TypeCheck(program);
             
             if (typeCheckedProgram.HasErrors)
-                return new CompilerResult(typeCheckedProgram.Errors);
+                return new CompilerResult(Language.Rook, typeCheckedProgram.Errors);
 
             string translatedCode = Translate(typeCheckedProgram.Syntax);
             return csCompiler.Build(translatedCode);
