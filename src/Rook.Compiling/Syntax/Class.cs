@@ -33,7 +33,7 @@ namespace Rook.Compiling.Syntax
             var localEnvironment = new Environment(environment);
 
             foreach (var method in Methods)
-                if (!environment.TryIncludeUniqueBinding(method))
+                if (!localEnvironment.TryIncludeUniqueBinding(method))
                     return TypeChecked<Class>.DuplicateIdentifierError(method);
 
             var typeCheckedMethods = Methods.WithTypes(localEnvironment);
