@@ -2,16 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Parsley;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
 {
     public class TypeChecked<T> where T : SyntaxTree
     {
         public T Syntax { get; private set; }
-        public IEnumerable<CompilerError> Errors { get; private set;}
+        public Vector<CompilerError> Errors { get; private set;}
         public bool HasErrors { get { return Errors.Any(); } }
 
-        private TypeChecked(T syntax, IEnumerable<CompilerError> errors)
+        private TypeChecked(T syntax, Vector<CompilerError> errors)
         {
             Syntax = syntax;
             Errors = errors;
@@ -19,15 +20,15 @@ namespace Rook.Compiling.Syntax
 
         public static TypeChecked<T> Success(T syntax)
         {
-            return new TypeChecked<T>(syntax, Enumerable.Empty<CompilerError>());
+            return new TypeChecked<T>(syntax, Enumerable.Empty<CompilerError>().ToVector());
         }
 
         private static TypeChecked<T> Failure(CompilerError error)
         {
-            return new TypeChecked<T>(default(T), new[] {error});
+            return new TypeChecked<T>(default(T), new[] { error }.ToVector());
         }
 
-        public static TypeChecked<T> Failure(IEnumerable<CompilerError> errors)
+        public static TypeChecked<T> Failure(Vector<CompilerError> errors)
         {
             return new TypeChecked<T>(default(T), errors);
         }
@@ -59,7 +60,7 @@ namespace Rook.Compiling.Syntax
 
         public static TypeChecked<T> Failure(Position position, IEnumerable<string> errors)
         {
-            return Failure(errors.Select(error => new CompilerError(position, error)));
+            return Failure(errors.Select(error => new CompilerError(position, error)).ToVector());
         }
     }
 }

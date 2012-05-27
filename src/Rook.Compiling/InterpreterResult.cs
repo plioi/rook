@@ -1,5 +1,6 @@
-using System.Collections.Generic;
 using System.Linq;
+using Rook.Compiling.Syntax;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling
 {
@@ -8,16 +9,14 @@ namespace Rook.Compiling
         public InterpreterResult(object value)
         {
             Value = value;
-            Errors = Enumerable.Empty<CompilerError>();
+            Errors = Enumerable.Empty<CompilerError>().ToVector();
             Language = Language.Rook;
         }
 
         public InterpreterResult(Language language, params CompilerError[] errors)
-           : this(language, (IEnumerable<CompilerError>)errors)
-        {
-        }
+            : this(language, errors.ToVector()) { }
 
-        public InterpreterResult(Language language, IEnumerable<CompilerError> errors)
+        public InterpreterResult(Language language, Vector<CompilerError> errors)
         {
             Value = null;
             Errors = errors;
@@ -25,7 +24,7 @@ namespace Rook.Compiling
         }
 
         public object Value { get; private set; }
-        public IEnumerable<CompilerError> Errors { get; private set; }
+        public Vector<CompilerError> Errors { get; private set; }
         public Language Language { get; private set; }
     }
 }

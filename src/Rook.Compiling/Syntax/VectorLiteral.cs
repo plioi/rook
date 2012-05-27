@@ -2,19 +2,20 @@
 using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
 {
     public class VectorLiteral : Expression
     {
         public Position Position { get; private set; }
-        public IEnumerable<Expression> Items { get; private set; }
+        public Vector<Expression> Items { get; private set; }
         public DataType Type { get; private set; }
 
         public VectorLiteral(Position position, IEnumerable<Expression> items)
-            : this(position, items, null) { }
+            : this(position, items.ToVector(), null) { }
 
-        private VectorLiteral(Position position, IEnumerable<Expression> items, DataType type)
+        private VectorLiteral(Position position, Vector<Expression> items, DataType type)
         {
             Position = position;
             Items = items;

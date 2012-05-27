@@ -1,49 +1,55 @@
 using System.Collections.Generic;
 using System.Linq;
 using Rook.Compiling.Types;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
 {
     public static class TypeCheckingExtensions
     {
-        public static CompilerError[] Errors<T>(this IEnumerable<TypeChecked<T>> typeCheckedItems) where T : SyntaxTree
+        public static Vector<T> ToVector<T>(this IEnumerable<T> items)
         {
-            return typeCheckedItems.SelectMany(typeCheckedItem => typeCheckedItem.Errors).ToArray();
+            return new ArrayVector<T>(items.ToArray());
         }
 
-        public static Class[] Classes(this IEnumerable<TypeChecked<Class>> typeCheckedClasses)
+        public static Vector<CompilerError> Errors<T>(this Vector<TypeChecked<T>> typeCheckedItems) where T : SyntaxTree
         {
-            return typeCheckedClasses.Select(x => x.Syntax).ToArray();
+            return typeCheckedItems.SelectMany(typeCheckedItem => typeCheckedItem.Errors).ToVector();
         }
 
-        public static Function[] Functions(this IEnumerable<TypeChecked<Function>> typeCheckedFunctions)
+        public static Vector<Class> Classes(this Vector<TypeChecked<Class>> typeCheckedClasses)
         {
-            return typeCheckedFunctions.Select(x => x.Syntax).ToArray();
+            return typeCheckedClasses.Select(x => x.Syntax).ToVector();
         }
 
-        public static Expression[] Expressions(this IEnumerable<TypeChecked<Expression>> typeCheckedExpressions)
+        public static Vector<Function> Functions(this Vector<TypeChecked<Function>> typeCheckedFunctions)
         {
-            return typeCheckedExpressions.Select(x => x.Syntax).ToArray();
+            return typeCheckedFunctions.Select(x => x.Syntax).ToVector();
         }
 
-        public static TypeChecked<Expression>[] WithTypes(this IEnumerable<Expression> expressions, Environment environment)
+        public static Vector<Expression> Expressions(this Vector<TypeChecked<Expression>> typeCheckedExpressions)
         {
-            return expressions.Select(x => x.WithTypes(environment)).ToArray();
+            return typeCheckedExpressions.Select(x => x.Syntax).ToVector();
         }
 
-        public static TypeChecked<Function>[] WithTypes(this IEnumerable<Function> functions, Environment environment)
+        public static Vector<TypeChecked<Expression>> WithTypes(this Vector<Expression> expressions, Environment environment)
         {
-            return functions.Select(x => x.WithTypes(environment)).ToArray();
+            return expressions.Select(x => x.WithTypes(environment)).ToVector();
+        }
+
+        public static Vector<TypeChecked<Function>> WithTypes(this Vector<Function> functions, Environment environment)
+        {
+            return functions.Select(x => x.WithTypes(environment)).ToVector();
         } 
 
-        public static TypeChecked<Class>[] WithTypes(this IEnumerable<Class> classes, Environment environment)
+        public static Vector<TypeChecked<Class>> WithTypes(this Vector<Class> classes, Environment environment)
         {
-            return classes.Select(x => x.WithTypes(environment)).ToArray();
+            return classes.Select(x => x.WithTypes(environment)).ToVector();
         }
 
-        public static DataType[] Types(this IEnumerable<Expression> expressions)
+        public static Vector<DataType> Types(this Vector<Expression> expressions)
         {
-            return expressions.Select(x => x.Type).ToArray();
+            return expressions.Select(x => x.Type).ToVector();
         }
     }
 }

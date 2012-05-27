@@ -2,20 +2,21 @@
 using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
 {
     public class Lambda : Expression
     {
         public Position Position { get; private set; }
-        public IEnumerable<Parameter> Parameters { get; private set; }
+        public Vector<Parameter> Parameters { get; private set; }
         public Expression Body { get; private set; }
         public DataType Type { get; private set; }
 
         public Lambda(Position position, IEnumerable<Parameter> parameters, Expression body)
-        : this(position, parameters, body, null) { }
+        : this(position, parameters.ToVector(), body, null) { }
 
-        private Lambda(Position position, IEnumerable<Parameter> parameters, Expression body, DataType type)
+        private Lambda(Position position, Vector<Parameter> parameters, Expression body, DataType type)
         {
             Position = position;
             Parameters = parameters;
@@ -75,9 +76,9 @@ namespace Rook.Compiling.Syntax
             return decoratedParameters.ToArray();
         }
 
-        private static Parameter[] NormalizeTypes(IEnumerable<Parameter> typedParameters, Environment localEnvironment)
+        private static Vector<Parameter> NormalizeTypes(IEnumerable<Parameter> typedParameters, Environment localEnvironment)
         {
-            return typedParameters.Select(p => new Parameter(p.Position, localEnvironment.TypeNormalizer.Normalize(p.Type), p.Identifier)).ToArray();
+            return typedParameters.Select(p => new Parameter(p.Position, localEnvironment.TypeNormalizer.Normalize(p.Type), p.Identifier)).ToVector();
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)

@@ -2,20 +2,21 @@ using System.Collections.Generic;
 using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
 {
     public class Block : Expression
     {
         public Position Position { get; private set; }
-        public IEnumerable<VariableDeclaration> VariableDeclarations { get; private set; }
-        public IEnumerable<Expression> InnerExpressions { get; private set; }
+        public Vector<VariableDeclaration> VariableDeclarations { get; private set; }
+        public Vector<Expression> InnerExpressions { get; private set; }
         public DataType Type { get; private set; }
 
         public Block(Position position, IEnumerable<VariableDeclaration> variableDeclarations, IEnumerable<Expression> innerExpressions)
-            : this(position, variableDeclarations, innerExpressions, null) { }
+            : this(position, variableDeclarations.ToVector(), innerExpressions.ToVector(), null) { }
 
-        private Block(Position position, IEnumerable<VariableDeclaration> variableDeclarations, IEnumerable<Expression> innerExpressions, DataType type)
+        private Block(Position position, Vector<VariableDeclaration> variableDeclarations, Vector<Expression> innerExpressions, DataType type)
         {
             Position = position;
             VariableDeclarations = variableDeclarations;
@@ -72,7 +73,7 @@ namespace Rook.Compiling.Syntax
 
             var blockType = typedInnerExpressions.Last().Type;
 
-            return TypeChecked<Expression>.Success(new Block(Position, typedVariableDeclarations, typedInnerExpressions, blockType));
+            return TypeChecked<Expression>.Success(new Block(Position, typedVariableDeclarations.ToVector(), typedInnerExpressions, blockType));
         }
     }
 }

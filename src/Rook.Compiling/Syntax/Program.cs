@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Parsley;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
 {
     public class Program : SyntaxTree
     {
         public Position Position { get; private set; }
-        public IEnumerable<Class> Classes { get; private set; }
-        public IEnumerable<Function> Functions { get; private set; }
+        public Vector<Class> Classes { get; private set; }
+        public Vector<Function> Functions { get; private set; }
 
         public Program(Position position, IEnumerable<Class> classes, IEnumerable<Function> functions)
         {
             Position = position;
-            Classes = classes;
-            Functions = functions;
+            Classes = classes.ToVector();
+            Functions = functions.ToVector();
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)
@@ -41,7 +42,7 @@ namespace Rook.Compiling.Syntax
             var functionErrors = typeCheckedFunctions.Errors();
 
             if (classErrors.Any() || functionErrors.Any())
-                return TypeChecked<Program>.Failure(classErrors.Concat(functionErrors));
+                return TypeChecked<Program>.Failure(classErrors.Concat(functionErrors).ToVector());
 
             return TypeChecked<Program>.Success(new Program(Position, typeCheckedClasses.Classes(), typeCheckedFunctions.Functions()));
         }

@@ -30,7 +30,7 @@ namespace Rook.Compiling.Syntax
             TypeChecked<Expression> typeCheckedWhenTrue = BodyWhenTrue.WithTypes(environment);
             TypeChecked<Expression> typeCheckedWhenFalse = BodyWhenFalse.WithTypes(environment);
 
-            var errors = new[] {typeCheckedCondition, typeCheckedWhenTrue, typeCheckedWhenFalse}.Errors();
+            var errors = new[] {typeCheckedCondition, typeCheckedWhenTrue, typeCheckedWhenFalse}.ToVector().Errors();
             if (errors.Any())
                 return TypeChecked<Expression>.Failure(errors);
 

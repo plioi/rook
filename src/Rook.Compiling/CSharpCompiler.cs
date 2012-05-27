@@ -2,6 +2,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using Microsoft.CSharp;
 using Parsley;
+using Rook.Compiling.Syntax;
 
 namespace Rook.Compiling
 {
@@ -31,7 +32,7 @@ namespace Rook.Compiling
             var results = provider.CompileAssemblyFromSource(csharpParameters, code);
 
             if (results.Errors.HasErrors)
-                return new CompilerResult(Language.CSharp, MapErrors(results.Errors));
+                return new CompilerResult(Language.CSharp, MapErrors(results.Errors).ToVector());
 
             return new CompilerResult(results.CompiledAssembly);
         }

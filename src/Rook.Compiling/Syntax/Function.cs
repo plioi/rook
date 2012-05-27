@@ -2,6 +2,7 @@
 using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
 {
@@ -10,14 +11,14 @@ namespace Rook.Compiling.Syntax
         public Position Position { get; private set; }
         public NamedType ReturnType { get; private set; }
         public Name Name { get; private set; }
-        public IEnumerable<Parameter> Parameters { get; private set; }
+        public Vector<Parameter> Parameters { get; private set; }
         public Expression Body { get; private set; }
         public DataType Type { get; private set; }
 
         public Function(Position position, NamedType returnType, Name name, IEnumerable<Parameter> parameters, Expression body)
-            : this(position, returnType, name, parameters, body, null) { }
+            : this(position, returnType, name, parameters.ToVector(), body, null) { }
 
-        private Function(Position position, NamedType returnType, Name name, IEnumerable<Parameter> parameters, Expression body, DataType type)
+        private Function(Position position, NamedType returnType, Name name, Vector<Parameter> parameters, Expression body, DataType type)
         {
             Position = position;
             ReturnType = returnType;
