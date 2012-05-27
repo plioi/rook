@@ -37,12 +37,12 @@ namespace Rook.Compiling.Syntax
             var typedVariableDeclarations = new List<VariableDeclaration>();
             foreach (var variable in VariableDeclarations)
             {
-                TypeChecked<Expression> typeCheckedValue = variable.Value.WithTypes(localEnvironment);
+                var typeCheckedValue = variable.Value.WithTypes(localEnvironment);
 
                 if (typeCheckedValue.HasErrors)
                     return TypeChecked<Expression>.Failure(typeCheckedValue.Errors);
 
-                Expression typedValue = typeCheckedValue.Syntax;
+                var typedValue = typeCheckedValue.Syntax;
                 
                 Binding binding = variable;
                 if (variable.IsImplicitlyTyped())
@@ -57,20 +57,20 @@ namespace Rook.Compiling.Syntax
                                                                       typedValue));
 
                 var normalizer = environment.TypeNormalizer;
-                var unifyErrors = normalizer.Unify(binding.Type, typedValue.Type);
+                var unifyErrors = normalizer.Unify(binding.Type, typedValue.Type).ToArray();
                 if (unifyErrors.Any())
                     return TypeChecked<Expression>.Failure(variable.Value.Position, unifyErrors);
             }
 
-            IEnumerable<TypeChecked<Expression>> typeCheckedInnerExpressions = InnerExpressions.WithTypes(localEnvironment);
+            var typeCheckedInnerExpressions = InnerExpressions.WithTypes(localEnvironment);
 
             var errors = typeCheckedInnerExpressions.Errors();
             if (errors.Any())
                 return TypeChecked<Expression>.Failure(errors);
 
-            IEnumerable<Expression> typedInnerExpressions = typeCheckedInnerExpressions.Expressions();
+            var typedInnerExpressions = typeCheckedInnerExpressions.Expressions();
 
-            DataType blockType = typedInnerExpressions.Last().Type;
+            var blockType = typedInnerExpressions.Last().Type;
 
             return TypeChecked<Expression>.Success(new Block(Position, typedVariableDeclarations, typedInnerExpressions, blockType));
         }

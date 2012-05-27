@@ -6,44 +6,44 @@ namespace Rook.Compiling.Syntax
 {
     public static class TypeCheckingExtensions
     {
-        public static IEnumerable<CompilerError> Errors<T>(this IEnumerable<TypeChecked<T>> typeCheckedItems) where T : SyntaxTree
+        public static CompilerError[] Errors<T>(this IEnumerable<TypeChecked<T>> typeCheckedItems) where T : SyntaxTree
         {
-            return typeCheckedItems.SelectMany(typeCheckedItem => typeCheckedItem.Errors);
+            return typeCheckedItems.SelectMany(typeCheckedItem => typeCheckedItem.Errors).ToArray();
         }
 
-        public static IEnumerable<Class> Classes(this IEnumerable<TypeChecked<Class>> typeCheckedClasses)
+        public static Class[] Classes(this IEnumerable<TypeChecked<Class>> typeCheckedClasses)
         {
-            return typeCheckedClasses.Select(x => x.Syntax);
+            return typeCheckedClasses.Select(x => x.Syntax).ToArray();
         }
 
-        public static IEnumerable<Function> Functions(this IEnumerable<TypeChecked<Function>> typeCheckedFunctions)
+        public static Function[] Functions(this IEnumerable<TypeChecked<Function>> typeCheckedFunctions)
         {
-            return typeCheckedFunctions.Select(x => x.Syntax);
+            return typeCheckedFunctions.Select(x => x.Syntax).ToArray();
         }
 
-        public static IEnumerable<Expression> Expressions(this IEnumerable<TypeChecked<Expression>> typeCheckedExpressions)
+        public static Expression[] Expressions(this IEnumerable<TypeChecked<Expression>> typeCheckedExpressions)
         {
-            return typeCheckedExpressions.Select(x => x.Syntax);
+            return typeCheckedExpressions.Select(x => x.Syntax).ToArray();
         }
 
-        public static IEnumerable<TypeChecked<Expression>> WithTypes(this IEnumerable<Expression> expressions, Environment environment)
+        public static TypeChecked<Expression>[] WithTypes(this IEnumerable<Expression> expressions, Environment environment)
         {
             return expressions.Select(x => x.WithTypes(environment)).ToArray();
         }
 
-        public static IEnumerable<TypeChecked<Function>> WithTypes(this IEnumerable<Function> functions, Environment environment)
+        public static TypeChecked<Function>[] WithTypes(this IEnumerable<Function> functions, Environment environment)
         {
             return functions.Select(x => x.WithTypes(environment)).ToArray();
         } 
 
-        public static IEnumerable<TypeChecked<Class>> WithTypes(this IEnumerable<Class> classes, Environment environment)
+        public static TypeChecked<Class>[] WithTypes(this IEnumerable<Class> classes, Environment environment)
         {
             return classes.Select(x => x.WithTypes(environment)).ToArray();
         }
 
-        public static IEnumerable<DataType> Types(this IEnumerable<Expression> expressions)
+        public static DataType[] Types(this IEnumerable<Expression> expressions)
         {
-            return expressions.Select(x => x.Type);
+            return expressions.Select(x => x.Type).ToArray();
         }
     }
 }

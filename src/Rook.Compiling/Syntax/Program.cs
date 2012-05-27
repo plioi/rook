@@ -37,9 +37,11 @@ namespace Rook.Compiling.Syntax
             var typeCheckedClasses = Classes.WithTypes(environment);
             var typeCheckedFunctions = Functions.WithTypes(environment);
 
-            var errors = typeCheckedFunctions.Errors().Concat(typeCheckedClasses.Errors());
-            if (errors.Any())
-                return TypeChecked<Program>.Failure(errors);
+            var classErrors = typeCheckedClasses.Errors();
+            var functionErrors = typeCheckedFunctions.Errors();
+
+            if (classErrors.Any() || functionErrors.Any())
+                return TypeChecked<Program>.Failure(classErrors.Concat(functionErrors));
 
             return TypeChecked<Program>.Success(new Program(Position, typeCheckedClasses.Classes(), typeCheckedFunctions.Functions()));
         }

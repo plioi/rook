@@ -23,21 +23,21 @@ namespace Rook.Compiling.Syntax
 
         public TypeChecked<Expression> WithTypes(Environment environment)
         {
-            IEnumerable<TypeChecked<Expression>> typeCheckedItems = Items.WithTypes(environment);
+            var typeCheckedItems = Items.WithTypes(environment);
 
             var errors = typeCheckedItems.Errors();
             if (errors.Any())
                 return TypeChecked<Expression>.Failure(errors);
 
-            IEnumerable<Expression> typedItems = typeCheckedItems.Expressions();
-            IEnumerable<DataType> types = typedItems.Types();
+            var typedItems = typeCheckedItems.Expressions();
+            var types = typedItems.Types();
 
-            DataType firstItemType = types.First();
+            var firstItemType = types.First();
 
             //TODO: Instead of using Position in the errors, use the itemType.Position of the unification(s) that failed.
             var normalizer = environment.TypeNormalizer;
             var unifyErrors = new List<string>();
-            foreach (DataType itemType in types)
+            foreach (var itemType in types)
                 unifyErrors.AddRange(normalizer.Unify(firstItemType, itemType));
 
             if (unifyErrors.Any())

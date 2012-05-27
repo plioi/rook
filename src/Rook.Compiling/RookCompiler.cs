@@ -17,7 +17,7 @@ namespace Rook.Compiling
 
         public CompilerResult Build(string code)
         {
-            Reply<Program> reply = Parse(code);
+            var reply = Parse(code);
 
             if (reply.Success)
                 return Build(reply.Value);
@@ -27,7 +27,7 @@ namespace Rook.Compiling
 
         public CompilerResult Build(Program program)
         {
-            TypeChecked<Program> typeCheckedProgram = TypeCheck(program);
+            var typeCheckedProgram = TypeCheck(program);
             
             if (typeCheckedProgram.HasErrors)
                 return new CompilerResult(Language.Rook, typeCheckedProgram.Errors);

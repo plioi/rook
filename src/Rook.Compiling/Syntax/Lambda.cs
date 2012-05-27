@@ -51,7 +51,7 @@ namespace Rook.Compiling.Syntax
             return TypeChecked<Expression>.Success(new Lambda(Position, normalizedParameters, typedBody, NamedType.Function(parameterTypes, typedBody.Type)));
         }
 
-        private static IEnumerable<Parameter> ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters, Environment localEnvironment)
+        private static Parameter[] ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters, Environment localEnvironment)
         {
             var decoratedParameters = new List<Parameter>();
             var typeVariables = new List<TypeVariable>();
@@ -72,12 +72,12 @@ namespace Rook.Compiling.Syntax
 
             localEnvironment.TreatAsNonGeneric(typeVariables);
 
-            return decoratedParameters;
+            return decoratedParameters.ToArray();
         }
 
-        private static IEnumerable<Parameter> NormalizeTypes(IEnumerable<Parameter> typedParameters, Environment localEnvironment)
+        private static Parameter[] NormalizeTypes(IEnumerable<Parameter> typedParameters, Environment localEnvironment)
         {
-            return typedParameters.Select(p => new Parameter(p.Position, localEnvironment.TypeNormalizer.Normalize(p.Type), p.Identifier));
+            return typedParameters.Select(p => new Parameter(p.Position, localEnvironment.TypeNormalizer.Normalize(p.Type), p.Identifier)).ToArray();
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)

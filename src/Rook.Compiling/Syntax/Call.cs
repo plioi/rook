@@ -34,14 +34,14 @@ namespace Rook.Compiling.Syntax
         public TypeChecked<Expression> WithTypes(Environment environment)
         {
             TypeChecked<Expression> typeCheckedCallable = Callable.WithTypes(environment);
-            IEnumerable<TypeChecked<Expression>> typeCheckedArguments = Arguments.WithTypes(environment);
+            var typeCheckedArguments = Arguments.WithTypes(environment);
 
             var errors = new[] {typeCheckedCallable}.Concat(typeCheckedArguments).Errors();
             if (errors.Any())
                 return TypeChecked<Expression>.Failure(errors);
 
             Expression typedCallable = typeCheckedCallable.Syntax;
-            IEnumerable<Expression> typedArguments = typeCheckedArguments.Expressions();
+            var typedArguments = typeCheckedArguments.Expressions();
 
             DataType calleeType = typedCallable.Type;
             NamedType calleeFunctionType = calleeType as NamedType;
@@ -50,10 +50,10 @@ namespace Rook.Compiling.Syntax
                 return TypeChecked<Expression>.ObjectNotCallableError(Position);
 
             DataType returnType = calleeType.InnerTypes.Last();
-            DataType[] argumentTypes = typedArguments.Types().ToArray();
+            DataType[] argumentTypes = typedArguments.Types();
 
             var normalizer = environment.TypeNormalizer;
-            var unifyErrors = normalizer.Unify(calleeType, NamedType.Function(argumentTypes, returnType));
+            var unifyErrors = normalizer.Unify(calleeType, NamedType.Function(argumentTypes, returnType)).ToArray();
             if (unifyErrors.Any())
                 return TypeChecked<Expression>.Failure(Position, unifyErrors);
 

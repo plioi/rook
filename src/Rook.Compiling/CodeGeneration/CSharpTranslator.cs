@@ -173,8 +173,8 @@ namespace Rook.Compiling.CodeGeneration
         {
             WriteAction sep = code => code.Literal(separator);
 
-            IEnumerable<WriteAction> translatedItems = items.Select(Translate);
-            int count = translatedItems.Count();
+            WriteAction[] translatedItems = items.Select(Translate).ToArray();
+            int count = translatedItems.Length;
 
             if (count > 0)
                 return Each(
