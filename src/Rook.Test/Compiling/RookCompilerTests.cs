@@ -29,7 +29,7 @@ namespace Rook.Compiling
         }
 
         [Fact]
-        public void ShouldBuildProgramsFromSourceCode()
+        public void ShouldBuildAssembliesFromSourceCode()
         {
             Build("int Main() 123;");
             AssertErrors(0);
@@ -37,18 +37,18 @@ namespace Rook.Compiling
         }
 
         [Fact]
-        public void ShouldBuildProgramsFromSyntaxTrees()
+        public void ShouldBuildAssembliesFromSyntaxTrees()
         {
             var tokens = new RookLexer().Tokenize("int Main() 123;");
-            var program = new RookGrammar().Program.Parse(new TokenStream(tokens)).Value;
-            Build(program);
+            var compilationUnit = new RookGrammar().CompilationUnit.Parse(new TokenStream(tokens)).Value;
+            Build(compilationUnit);
             AssertErrors(0);
             Execute().ShouldEqual(123);
         }
 
-        private void Build(Program program)
+        private void Build(CompilationUnit compilationUnit)
         {
-            UseResult(Compiler.Build(program));
+            UseResult(Compiler.Build(compilationUnit));
         }
     }
 }

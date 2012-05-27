@@ -7,7 +7,7 @@ namespace Rook.Compiling.Syntax
 {
     public class RookGrammar : Grammar
     {
-        public readonly GrammarRule<Program> Program = new GrammarRule<Program>();
+        public readonly GrammarRule<CompilationUnit> CompilationUnit = new GrammarRule<CompilationUnit>();
         public readonly GrammarRule<Class> Class = new GrammarRule<Class>();
         public readonly GrammarRule<Function> Function = new GrammarRule<Function>();
         public readonly GrammarRule<NamedType> TypeName = new GrammarRule<NamedType>();
@@ -50,12 +50,12 @@ namespace Rook.Compiling.Syntax
 
         private void TopLevelConstructs()
         {
-            Program.Rule =
+            CompilationUnit.Rule =
                 from leadingEndOfLine in Optional(Token(RookLexer.EndOfLine))
                 from classes in ZeroOrMore(Class)
                 from functions in ZeroOrMore(Function)
                 from end in EndOfInput
-                select new Program(new Position(1, 1), classes, functions);
+                select new CompilationUnit(new Position(1, 1), classes, functions);
 
             Class.Rule =
                 from @class in Token(RookLexer.@class)

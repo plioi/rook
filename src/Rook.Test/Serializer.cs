@@ -7,10 +7,10 @@ namespace Rook
 {
     public class Serializer : Visitor<string>
     {
-        public string Visit(Program program)
+        public string Visit(CompilationUnit compilationUnit)
         {
-            var classes = Translate(program.Classes, "; ");
-            var functions = Translate(program.Functions, "; ");
+            var classes = Translate(compilationUnit.Classes, "; ");
+            var functions = Translate(compilationUnit.Functions, "; ");
 
             var list = new List<string>();
 

@@ -101,7 +101,7 @@
     <Compile Include="Syntax\Name.cs" />
     <Compile Include="Syntax\Null.cs" />
     <Compile Include="Syntax\Parameter.cs" />
-    <Compile Include="Syntax\Program.cs" />
+    <Compile Include="Syntax\CompilationUnit.cs" />
     <Compile Include="Syntax\SyntaxTree.cs" />
     <Compile Include="Syntax\TypeChecked.cs" />
     <Compile Include="Syntax\TypeCheckingExtensions.cs" />

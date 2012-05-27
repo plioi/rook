@@ -111,7 +111,7 @@
     <Compile Include="Compiling\Syntax\OperatorPrecedenceTests.cs" />
     <Compile Include="Compiling\Syntax\ParentheticalTests.cs" />
     <Compile Include="Compiling\Syntax\SyntaxTreeTests.cs" />
-    <Compile Include="Compiling\Syntax\ProgramTests.cs" />
+    <Compile Include="Compiling\Syntax\CompilationUnitTests.cs" />
     <Compile Include="Compiling\Syntax\TokenParserTests.cs" />
     <Compile Include="Compiling\Syntax\TypeNameParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

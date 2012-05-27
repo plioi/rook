@@ -7,10 +7,10 @@ namespace Rook.Compiling.CodeGeneration
 {
     public class CSharpTranslator : Visitor<WriteAction>
     {
-        public WriteAction Visit(Program program)
+        public WriteAction Visit(CompilationUnit compilationUnit)
         {
-            var classes = program.Classes.Select(Translate);
-            var functions = program.Functions.Select(Translate);
+            var classes = compilationUnit.Classes.Select(Translate);
+            var functions = compilationUnit.Functions.Select(Translate);
 
             return
                 Each(

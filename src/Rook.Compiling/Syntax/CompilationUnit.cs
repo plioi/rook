@@ -5,13 +5,13 @@ using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
 {
-    public class Program : SyntaxTree
+    public class CompilationUnit : SyntaxTree
     {
         public Position Position { get; private set; }
         public Vector<Class> Classes { get; private set; }
         public Vector<Function> Functions { get; private set; }
 
-        public Program(Position position, IEnumerable<Class> classes, IEnumerable<Function> functions)
+        public CompilationUnit(Position position, IEnumerable<Class> classes, IEnumerable<Function> functions)
         {
             Position = position;
             Classes = classes.ToVector();
@@ -23,17 +23,17 @@ namespace Rook.Compiling.Syntax
             return visitor.Visit(this);
         }
 
-        public TypeChecked<Program> WithTypes()
+        public TypeChecked<CompilationUnit> WithTypes()
         {
             var environment = new Environment();
 
             foreach (var @class in Classes)
                 if (!environment.TryIncludeUniqueBinding(@class))
-                    return TypeChecked<Program>.DuplicateIdentifierError(@class);
+                    return TypeChecked<CompilationUnit>.DuplicateIdentifierError(@class);
 
             foreach (var function in Functions)
                 if (!environment.TryIncludeUniqueBinding(function))
-                    return TypeChecked<Program>.DuplicateIdentifierError(function);
+                    return TypeChecked<CompilationUnit>.DuplicateIdentifierError(function);
 
             var typeCheckedClasses = Classes.WithTypes(environment);
             var typeCheckedFunctions = Functions.WithTypes(environment);
@@ -42,9 +42,9 @@ namespace Rook.Compiling.Syntax
             var functionErrors = typeCheckedFunctions.Errors();
 
             if (classErrors.Any() || functionErrors.Any())
-                return TypeChecked<Program>.Failure(classErrors.Concat(functionErrors).ToVector());
+                return TypeChecked<CompilationUnit>.Failure(classErrors.Concat(functionErrors).ToVector());
 
-            return TypeChecked<Program>.Success(new Program(Position, typeCheckedClasses.Classes(), typeCheckedFunctions.Functions()));
+            return TypeChecked<CompilationUnit>.Success(new CompilationUnit(Position, typeCheckedClasses.Classes(), typeCheckedFunctions.Functions()));
         }
     }
 }

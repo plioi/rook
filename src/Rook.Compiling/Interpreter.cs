@@ -56,10 +56,10 @@ namespace Rook.Compiling
 
         public string Translate()
         {
-            var program = new Program(new Text("").Position, classes.Values, functions.Values);
-            Program typeCheckedProgram = program.WithTypes().Syntax;
+            var compilationUnit = new CompilationUnit(new Text("").Position, classes.Values, functions.Values);
+            var typedCompilationUnit = compilationUnit.WithTypes().Syntax;
             var code = new CodeWriter();
-            WriteAction write = typeCheckedProgram.Visit(new CSharpTranslator());
+            WriteAction write = typedCompilationUnit.Visit(new CSharpTranslator());
             write(code);
             return code.ToString();
         }
@@ -71,7 +71,7 @@ namespace Rook.Compiling
                 return new InterpreterResult(Language.Rook, typedCheckedExpression.Errors);
                 
             var main = WrapAsMain(typedCheckedExpression.Syntax, pos);
-            var compilerResult = compiler.Build(ProgramWithNewFunction(main, pos));
+            var compilerResult = compiler.Build(CompilationUnitWithNewFunction(main, pos));
 
             functions[main.Name.Identifier] = main;
 
@@ -89,7 +89,7 @@ namespace Rook.Compiling
             if (functions.ContainsKey("Main"))
                 functions.Remove("Main");
 
-            var compilerResult = compiler.Build(ProgramWithNewFunction(function, pos));
+            var compilerResult = compiler.Build(CompilationUnitWithNewFunction(function, pos));
             if (compilerResult.Errors.Any())
                 return new InterpreterResult(compilerResult.Language, compilerResult.Errors);
 
@@ -109,7 +109,7 @@ namespace Rook.Compiling
             if (functions.ContainsKey("Main"))
                 functions.Remove("Main");
 
-            var compilerResult = compiler.Build(ProgramWithNewClass(@class, pos));
+            var compilerResult = compiler.Build(CompilationUnitWithNewClass(@class, pos));
             if (compilerResult.Errors.Any())
                 return new InterpreterResult(compilerResult.Language, compilerResult.Errors);
 
@@ -121,18 +121,18 @@ namespace Rook.Compiling
             return new InterpreterResult(@class);
         }
 
-        private Program ProgramWithNewFunction(Function function, Position pos)
+        private CompilationUnit CompilationUnitWithNewFunction(Function function, Position pos)
         {
             var classesExceptPotentialOverwrite = classes.Values.Where(c => c.Name.Identifier != function.Name.Identifier);
             var functionsExceptPotentialOverwrite = functions.Values.Where(f => f.Name.Identifier != function.Name.Identifier);
-            return new Program(pos, classesExceptPotentialOverwrite, new[] { function }.Concat(functionsExceptPotentialOverwrite));
+            return new CompilationUnit(pos, classesExceptPotentialOverwrite, new[] { function }.Concat(functionsExceptPotentialOverwrite));
         }
 
-        private Program ProgramWithNewClass(Class @class, Position pos)
+        private CompilationUnit CompilationUnitWithNewClass(Class @class, Position pos)
         {
             var classesExceptPotentialOverwrite = classes.Values.Where(c => c.Name.Identifier != @class.Name.Identifier);
             var functionsExceptPotentialOverwrite = functions.Values.Where(f => f.Name.Identifier != @class.Name.Identifier);
-            return new Program(pos, new[]{@class}.Concat(classesExceptPotentialOverwrite), functionsExceptPotentialOverwrite);
+            return new CompilationUnit(pos, new[]{@class}.Concat(classesExceptPotentialOverwrite), functionsExceptPotentialOverwrite);
         }
 
         private static bool TryParse<T>(TokenStream tokens, Parser<T> parser, out T syntax) where T : SyntaxTree

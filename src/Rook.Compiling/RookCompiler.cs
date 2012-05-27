@@ -25,32 +25,32 @@ namespace Rook.Compiling
             return new CompilerResult(Language.Rook, new CompilerError(reply.UnparsedTokens.Position, reply.ErrorMessages.ToString()));
         }
 
-        public CompilerResult Build(Program program)
+        public CompilerResult Build(CompilationUnit compilationUnit)
         {
-            var typeCheckedProgram = TypeCheck(program);
+            var typeCheckedCompilationUnit = TypeCheck(compilationUnit);
             
-            if (typeCheckedProgram.HasErrors)
-                return new CompilerResult(Language.Rook, typeCheckedProgram.Errors);
+            if (typeCheckedCompilationUnit.HasErrors)
+                return new CompilerResult(Language.Rook, typeCheckedCompilationUnit.Errors);
 
-            string translatedCode = Translate(typeCheckedProgram.Syntax);
+            string translatedCode = Translate(typeCheckedCompilationUnit.Syntax);
             return csCompiler.Build(translatedCode);
         }
 
-        private static Reply<Program> Parse(string rookCode)
+        private static Reply<CompilationUnit> Parse(string rookCode)
         {
             var tokens = new RookLexer().Tokenize(rookCode);
-            return new RookGrammar().Program.Parse(new TokenStream(tokens));
+            return new RookGrammar().CompilationUnit.Parse(new TokenStream(tokens));
         }
 
-        private static TypeChecked<Program> TypeCheck(Program program)
+        private static TypeChecked<CompilationUnit> TypeCheck(CompilationUnit compilationUnit)
         {
-            return program.WithTypes();
+            return compilationUnit.WithTypes();
         }
 
-        private string Translate(Program typedProgram)
+        private string Translate(CompilationUnit typedCompilationUnit)
         {
             var code = new CodeWriter();
-            WriteAction write = typedProgram.Visit(csTranslator);
+            WriteAction write = typedCompilationUnit.Visit(csTranslator);
             write(code);
             return code.ToString();
         }

@@ -5,9 +5,9 @@ using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
-    public class ProgramTests : SyntaxTreeTests<Program>
+    public class CompilationUnitTests : SyntaxTreeTests<CompilationUnit>
     {
-        protected override Parser<Program> Parser { get { return RookGrammar.Program; } }
+        protected override Parser<CompilationUnit> Parser { get { return RookGrammar.CompilationUnit; } }
 
         [Fact]
         public void ParsesZeroOrMoreClasses()
@@ -46,21 +46,21 @@ namespace Rook.Compiling.Syntax
             var fooConstructorType = NamedType.Constructor(new NamedType("Foo"));
             var barConstructorType = NamedType.Constructor(new NamedType("Bar"));
 
-            var program = Parse(
+            var compilationUnit = Parse(
                 @"class Foo { }
                   class Bar { }
                   bool Even(int n) if (n==0) true else Odd(n-1);
                   bool Odd(int n) if (n==0) false else Even(n-1);
                   int Main() if (Even(4)) 0 else 1;");
 
-            var typeCheckedProgram = program.WithTypes();
-            var typedProgram = typeCheckedProgram.Syntax;
+            var typeCheckedCompilationUnit = compilationUnit.WithTypes();
+            var typedCompilationUnit = typeCheckedCompilationUnit.Syntax;
 
-            program.Classes.ShouldList(
+            compilationUnit.Classes.ShouldList(
                 foo => foo.Type.ShouldEqual(fooConstructorType),
                 bar => bar.Type.ShouldEqual(barConstructorType));
 
-            program.Functions.ShouldList(
+            compilationUnit.Functions.ShouldList(
                 even =>
                 {
                     even.Name.Identifier.ShouldEqual("Even");
@@ -80,11 +80,11 @@ namespace Rook.Compiling.Syntax
                     main.Body.Type.ShouldBeNull();
                 });
 
-            typedProgram.Classes.ShouldList(
+            typedCompilationUnit.Classes.ShouldList(
                 foo => foo.Type.ShouldEqual(fooConstructorType),
                 bar => bar.Type.ShouldEqual(barConstructorType));
 
-            typedProgram.Functions.ShouldList(
+            typedCompilationUnit.Functions.ShouldList(
                 even =>
                 {
                     even.Name.Identifier.ShouldEqual("Even");
@@ -141,7 +141,7 @@ namespace Rook.Compiling.Syntax
             TypeChecking("class Zero { }; int Zero() 0;").ShouldFail("Duplicate identifier: Zero", 1, 21);
         }
 
-        private TypeChecked<Program> TypeChecking(string source)
+        private TypeChecked<CompilationUnit> TypeChecking(string source)
         {
             return Parse(source).WithTypes();
         }

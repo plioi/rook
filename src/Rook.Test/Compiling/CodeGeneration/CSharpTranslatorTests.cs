@@ -18,9 +18,9 @@ namespace Rook.Compiling.CodeGeneration
         }
 
         [Fact]
-        public void ShouldTranslatePrograms()
+        public void ShouldTranslateCompilationUnits()
         {
-            var program = new StringBuilder()
+            var compilationUnit = new StringBuilder()
                 .AppendLine("class Foo { }")
                 .AppendLine("class Bar { }")
                 .AppendLine("int Life() 14")
@@ -58,7 +58,7 @@ namespace Rook.Compiling.CodeGeneration
             Expect("        return (((((Life())) + ((Universe())))) + ((Everything())));");
             Expect("    }");
             Expect("}");
-            AssertTranslation(rookGrammar.Program, program.ToString());
+            AssertTranslation(rookGrammar.CompilationUnit, compilationUnit.ToString());
         }
 
         [Fact]
