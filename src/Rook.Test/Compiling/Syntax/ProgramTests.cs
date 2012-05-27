@@ -49,9 +49,9 @@ namespace Rook.Compiling.Syntax
             var program = Parse(
                 @"class Foo { }
                   class Bar { }
-                  bool even(int n) if (n==0) true else odd(n-1);
-                  bool odd(int n) if (n==0) false else even(n-1);
-                  int Main() if (even(4)) 0 else 1;");
+                  bool Even(int n) if (n==0) true else Odd(n-1);
+                  bool Odd(int n) if (n==0) false else Even(n-1);
+                  int Main() if (Even(4)) 0 else 1;");
 
             var typeCheckedProgram = program.WithTypes();
             var typedProgram = typeCheckedProgram.Syntax;
@@ -63,16 +63,19 @@ namespace Rook.Compiling.Syntax
             program.Functions.ShouldList(
                 even =>
                 {
+                    even.Name.Identifier.ShouldEqual("Even");
                     even.Type.ShouldBeNull();
                     even.Body.Type.ShouldBeNull();
                 },
                 odd =>
                 {
+                    odd.Name.Identifier.ShouldEqual("Odd");
                     odd.Type.ShouldBeNull();
                     odd.Body.Type.ShouldBeNull();
                 },
                 main =>
                 {
+                    main.Name.Identifier.ShouldEqual("Main");
                     main.Type.ShouldBeNull();
                     main.Body.Type.ShouldBeNull();
                 });
@@ -84,16 +87,19 @@ namespace Rook.Compiling.Syntax
             typedProgram.Functions.ShouldList(
                 even =>
                 {
+                    even.Name.Identifier.ShouldEqual("Even");
                     even.Type.ToString().ShouldEqual("System.Func<int, bool>");
                     even.Body.Type.ShouldEqual(Boolean);
                 },
                 odd =>
                 {
+                    odd.Name.Identifier.ShouldEqual("Odd");
                     odd.Type.ToString().ShouldEqual("System.Func<int, bool>");
                     odd.Body.Type.ShouldEqual(Boolean);
                 },
                 main =>
                 {
+                    main.Name.Identifier.ShouldEqual("Main");
                     main.Type.ToString().ShouldEqual("System.Func<int>");
                     main.Body.Type.ShouldEqual(Integer);
                 });
@@ -111,6 +117,20 @@ namespace Rook.Compiling.Syntax
             TypeChecking("int Square(int x) x*x; int Main() Square(1, 2);").ShouldFail("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 35);
 
             TypeChecking("int Main() Square(2);").ShouldFail("Reference to undefined identifier: Square", 1, 12);
+        }
+
+        [Fact]
+        public void FailsValidationWhenClassesFailValidation()
+        {
+            TypeChecking("class Foo { int A() 0; int B() true+0; }").ShouldFail("Type mismatch: expected int, found bool.", 1, 36);
+
+            TypeChecking("class Foo { int A() { int x = 0; int x = 1; x; }; }").ShouldFail("Duplicate identifier: x", 1, 38);
+
+            TypeChecking("class Foo { int A() (1)(); }").ShouldFail("Attempted to call a noncallable object.", 1, 22);
+
+            TypeChecking("class Foo { int Square(int x) x*x; int Mismatch() Square(1, 2); }").ShouldFail("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 51);
+
+            TypeChecking("class Foo { int A() Square(2); }").ShouldFail("Reference to undefined identifier: Square", 1, 21);
         }
 
         [Fact]

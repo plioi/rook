@@ -35,14 +35,9 @@ namespace Rook.Compiling.Syntax
                     return TypeChecked<Program>.DuplicateIdentifierError(function);
 
             var typeCheckedClasses = Classes.WithTypes(environment);
-
-            //TODO: After nonempty classes are supported, uncomment the following Concat call.
-            //      Empty classes could not possibly have errors of their own, so there is no
-            //      way to write a unit test exposing the need for this Concat yet.
-
             var typeCheckedFunctions = Functions.WithTypes(environment);
 
-            var errors = typeCheckedFunctions.Errors()/*.Concat(typeCheckedClasses.Errors())*/;
+            var errors = typeCheckedFunctions.Errors().Concat(typeCheckedClasses.Errors());
             if (errors.Any())
                 return TypeChecked<Program>.Failure(errors);
 

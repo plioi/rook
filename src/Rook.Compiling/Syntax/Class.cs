@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
 
@@ -29,7 +30,19 @@ namespace Rook.Compiling.Syntax
 
         public TypeChecked<Class> WithTypes(Environment environment)
         {
-            return TypeChecked<Class>.Success(this);
+            var localEnvironment = new Environment(environment);
+
+            foreach (var method in Methods)
+                if (!environment.TryIncludeUniqueBinding(method))
+                    return TypeChecked<Class>.DuplicateIdentifierError(method);
+
+            var typeCheckedMethods = Methods.WithTypes(localEnvironment);
+
+            var errors = typeCheckedMethods.Errors();
+            if (errors.Any())
+                return TypeChecked<Class>.Failure(errors);
+
+            return TypeChecked<Class>.Success(new Class(Position, Name, typeCheckedMethods.Functions()));
         }
 
         private static NamedType ConstructorFunctionType(Name name)
