@@ -29,7 +29,7 @@ namespace Rook.Compiling.CodeGeneration
         {
             return Each(
                 Line("public class @", Translate(@class.Name)),
-                Block());
+                Block(@class.Methods.Select(Translate)));
         }
 
         public WriteAction Visit(Function function)

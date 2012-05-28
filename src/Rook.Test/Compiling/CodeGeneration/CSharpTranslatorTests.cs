@@ -22,7 +22,7 @@ namespace Rook.Compiling.CodeGeneration
         {
             var compilationUnit = new StringBuilder()
                 .AppendLine("class Foo { }")
-                .AppendLine("class Bar { }")
+                .AppendLine("class Bar { int I() 0; bool B() false; }")
                 .AppendLine("int Life() 14")
                 .AppendLine("int Universe() 14")
                 .AppendLine("int Everything() 14")
@@ -40,6 +40,14 @@ namespace Rook.Compiling.CodeGeneration
             Expect("    }");
             Expect("    public class Bar");
             Expect("    {");
+            Expect("        public static int I()");
+            Expect("        {");
+            Expect("            return 0;");
+            Expect("        }");
+            Expect("        public static bool B()");
+            Expect("        {");
+            Expect("            return false;");
+            Expect("        }");
             Expect("    }");
             Expect("    public static int Life()");
             Expect("    {");
@@ -66,8 +74,16 @@ namespace Rook.Compiling.CodeGeneration
         {
             Expect("public class Foo");
             Expect("{");
+            Expect("    public static int I()");
+            Expect("    {");
+            Expect("        return 0;");
+            Expect("    }");
+            Expect("    public static bool B()");
+            Expect("    {");
+            Expect("        return false;");
+            Expect("    }");
             Expect("}");
-            AssertTranslation(rookGrammar.Class, "class Foo { }");
+            AssertTranslation(rookGrammar.Class, "class Foo { int I() 0; bool B() false; }");
         }
 
         [Fact]
