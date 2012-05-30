@@ -25,7 +25,8 @@ namespace Rook.Compiling.Syntax
 
         public TypeChecked<CompilationUnit> WithTypes()
         {
-            var environment = new Environment();
+            var rootEnvironment = new Environment();
+            var environment = Environment.CreateEnvironmentWithBuiltins(rootEnvironment);
 
             foreach (var @class in Classes)
                 if (!environment.TryIncludeUniqueBinding(@class))

@@ -38,82 +38,90 @@ namespace Rook.Compiling
         }
 
         public Environment()
-            : this(null)
+            : this(null) { }
+
+        public static Environment CreateEnvironmentWithBuiltins(Environment parent)
         {
+            //TODO: If given environment is not a root, throw!
+
+            var environment = new Environment(parent);
+
             DataType @int = NamedType.Integer;
             DataType @bool = NamedType.Boolean;
 
-            DataType integerOperation = NamedType.Function(new[] {@int, @int}, @int);
-            DataType integerComparison = NamedType.Function(new[] {@int, @int}, @bool);
-            DataType booleanOperation = NamedType.Function(new[] {@bool, @bool}, @bool);
+            DataType integerOperation = NamedType.Function(new[] { @int, @int }, @int);
+            DataType integerComparison = NamedType.Function(new[] { @int, @int }, @bool);
+            DataType booleanOperation = NamedType.Function(new[] { @bool, @bool }, @bool);
 
-            this["<"] = integerComparison;
-            this["<="] = integerComparison;
-            this[">"] = integerComparison;
-            this[">="] = integerComparison;
-            this["=="] = integerComparison;
-            this["!="] = integerComparison;
+            environment["<"] = integerComparison;
+            environment["<="] = integerComparison;
+            environment[">"] = integerComparison;
+            environment[">="] = integerComparison;
+            environment["=="] = integerComparison;
+            environment["!="] = integerComparison;
 
-            this["+"] = integerOperation;
-            this["*"] = integerOperation;
-            this["/"] = integerOperation;
-            this["-"] = integerOperation;
+            environment["+"] = integerOperation;
+            environment["*"] = integerOperation;
+            environment["/"] = integerOperation;
+            environment["-"] = integerOperation;
 
-            this["&&"] = booleanOperation;
-            this["||"] = booleanOperation;
-            this["!"] = NamedType.Function(new[] {@bool}, @bool);
+            environment["&&"] = booleanOperation;
+            environment["||"] = booleanOperation;
+            environment["!"] = NamedType.Function(new[] { @bool }, @bool);
 
             TypeVariable x;
             TypeVariable y;
 
-            x = CreateTypeVariable();
-            this["??"] = NamedType.Function(new DataType[] {NamedType.Nullable(x), x}, x);
+            x = environment.CreateTypeVariable();
+            environment["??"] = NamedType.Function(new DataType[] { NamedType.Nullable(x), x }, x);
 
-            x = CreateTypeVariable();
-            this["Print"] = NamedType.Function(new[] {x}, NamedType.Void);
+            x = environment.CreateTypeVariable();
+            environment["Print"] = NamedType.Function(new[] { x }, NamedType.Void);
 
-            x = CreateTypeVariable();
-            this["Nullable"] = NamedType.Function(new[] {x}, NamedType.Nullable(x));
+            x = environment.CreateTypeVariable();
+            environment["Nullable"] = NamedType.Function(new[] { x }, NamedType.Nullable(x));
 
-            x = CreateTypeVariable();
-            this["First"] = NamedType.Function(new[] {NamedType.Enumerable(x)}, x);
+            x = environment.CreateTypeVariable();
+            environment["First"] = NamedType.Function(new[] { NamedType.Enumerable(x) }, x);
 
-            x = CreateTypeVariable();
-            this["Take"] = NamedType.Function(new[] {NamedType.Enumerable(x), @int}, NamedType.Enumerable(x));
+            x = environment.CreateTypeVariable();
+            environment["Take"] = NamedType.Function(new[] { NamedType.Enumerable(x), @int }, NamedType.Enumerable(x));
 
-            x = CreateTypeVariable();
-            this["Skip"] = NamedType.Function(new[] {NamedType.Enumerable(x), @int}, NamedType.Enumerable(x));
+            x = environment.CreateTypeVariable();
+            environment["Skip"] = NamedType.Function(new[] { NamedType.Enumerable(x), @int }, NamedType.Enumerable(x));
 
-            x = CreateTypeVariable();
-            this["Any"] = NamedType.Function(new[] {NamedType.Enumerable(x)}, @bool);
+            x = environment.CreateTypeVariable();
+            environment["Any"] = NamedType.Function(new[] { NamedType.Enumerable(x) }, @bool);
 
-            x = CreateTypeVariable();
-            this["Count"] = NamedType.Function(new[] {NamedType.Enumerable(x)}, @int);
+            x = environment.CreateTypeVariable();
+            environment["Count"] = NamedType.Function(new[] { NamedType.Enumerable(x) }, @int);
 
-            x = CreateTypeVariable();
-            y = CreateTypeVariable();
-            this["Select"] = NamedType.Function(new[] {NamedType.Enumerable(x), NamedType.Function(new[] {x}, y)}, NamedType.Enumerable(y));
+            x = environment.CreateTypeVariable();
+            y = environment.CreateTypeVariable();
+            environment["Select"] = NamedType.Function(new[] { NamedType.Enumerable(x), NamedType.Function(new[] { x }, y) }, NamedType.Enumerable(y));
 
-            x = CreateTypeVariable();
-            this["Where"] = NamedType.Function(new[] {NamedType.Enumerable(x), NamedType.Function(new[] {x}, @bool)}, NamedType.Enumerable(x));
+            x = environment.CreateTypeVariable();
+            environment["Where"] = NamedType.Function(new[] { NamedType.Enumerable(x), NamedType.Function(new[] { x }, @bool) }, NamedType.Enumerable(x));
 
-            x = CreateTypeVariable();
-            this["Yield"] = NamedType.Function(new DataType[] {x, NamedType.Enumerable(x)}, NamedType.Enumerable(x));
+            x = environment.CreateTypeVariable();
+            environment["Yield"] = NamedType.Function(new DataType[] { x, NamedType.Enumerable(x) }, NamedType.Enumerable(x));
 
-            x = CreateTypeVariable();
-            this["Each"] = NamedType.Function(new[] {NamedType.Vector(x)}, NamedType.Enumerable(x));
+            x = environment.CreateTypeVariable();
+            environment["Each"] = NamedType.Function(new[] { NamedType.Vector(x) }, NamedType.Enumerable(x));
 
-            x = CreateTypeVariable();
-            this["Index"] = NamedType.Function(new[] { NamedType.Vector(x), @int }, x);
+            x = environment.CreateTypeVariable();
+            environment["Index"] = NamedType.Function(new[] { NamedType.Vector(x), @int }, x);
 
-            x = CreateTypeVariable();
-            this["Slice"] = NamedType.Function(new[] {NamedType.Vector(x), @int, @int}, NamedType.Vector(x));
+            x = environment.CreateTypeVariable();
+            environment["Slice"] = NamedType.Function(new[] { NamedType.Vector(x), @int, @int }, NamedType.Vector(x));
 
-            x = CreateTypeVariable();
-            this["Append"] = NamedType.Function(new DataType[] {NamedType.Vector(x), x}, NamedType.Vector(x));
+            x = environment.CreateTypeVariable();
+            environment["Append"] = NamedType.Function(new DataType[] { NamedType.Vector(x), x }, NamedType.Vector(x));
 
-            x = CreateTypeVariable();
-            this["With"] = NamedType.Function(new[] {NamedType.Vector(x), @int, x}, NamedType.Vector(x));
+            x = environment.CreateTypeVariable();
+            environment["With"] = NamedType.Function(new[] { NamedType.Vector(x), @int, x }, NamedType.Vector(x));
+
+            return environment;
         }
 
         public DataType this[string key]

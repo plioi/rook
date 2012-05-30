@@ -38,7 +38,8 @@ namespace Rook.Compiling.Syntax
             var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(17), new TypeVariable(2), new NamedType("B", new TypeVariable(17), new TypeVariable(2)));
             var definedType = new NamedType("A", new TypeVariable(1), new TypeVariable(2), new NamedType("B", new TypeVariable(1), new TypeVariable(2)));
 
-            var environment = new Environment();
+            var rootEnvironment = new Environment();
+            var environment = Compiling.Environment.CreateEnvironmentWithBuiltins(rootEnvironment);
             environment.TreatAsNonGeneric(new[] { new TypeVariable(2) });
             environment["foo"] = definedType;
 

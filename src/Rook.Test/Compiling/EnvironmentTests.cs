@@ -66,50 +66,52 @@ namespace Rook.Compiling
         }
 
         [Fact]
-        public void ProvidesPrimitiveSignatures()
+        public void ProvidesFactoryMethodToCreateChildEnvironmentWithBuiltinSignatures()
         {
-            AssertType("System.Func<int, int, bool>", root, "<");
-            AssertType("System.Func<int, int, bool>", root, "<=");
-            AssertType("System.Func<int, int, bool>", root, ">");
-            AssertType("System.Func<int, int, bool>", root, ">=");
-            AssertType("System.Func<int, int, bool>", root, "==");
-            AssertType("System.Func<int, int, bool>", root, "!=");
+            var environment = Environment.CreateEnvironmentWithBuiltins(root);
 
-            AssertType("System.Func<int, int, int>", root, "+");
-            AssertType("System.Func<int, int, int>", root, "-");
-            AssertType("System.Func<int, int, int>", root, "*");
-            AssertType("System.Func<int, int, int>", root, "/");
+            AssertType("System.Func<int, int, bool>", environment, "<");
+            AssertType("System.Func<int, int, bool>", environment, "<=");
+            AssertType("System.Func<int, int, bool>", environment, ">");
+            AssertType("System.Func<int, int, bool>", environment, ">=");
+            AssertType("System.Func<int, int, bool>", environment, "==");
+            AssertType("System.Func<int, int, bool>", environment, "!=");
 
-            AssertType("System.Func<bool, bool, bool>", root, "||");
-            AssertType("System.Func<bool, bool, bool>", root, "&&");
-            AssertType("System.Func<bool, bool>", root, "!");
+            AssertType("System.Func<int, int, int>", environment, "+");
+            AssertType("System.Func<int, int, int>", environment, "-");
+            AssertType("System.Func<int, int, int>", environment, "*");
+            AssertType("System.Func<int, int, int>", environment, "/");
 
-            AssertType("System.Func<Rook.Core.Nullable<0>, 0, 0>", root, "??");
-            AssertType("System.Func<1, Rook.Core.Void>", root, "Print");
-            AssertType("System.Func<2, Rook.Core.Nullable<2>>", root, "Nullable");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<3>, 3>", root, "First");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<4>, int, System.Collections.Generic.IEnumerable<4>>", root, "Take");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<5>, int, System.Collections.Generic.IEnumerable<5>>", root, "Skip");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<6>, bool>", root, "Any");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<7>, int>", root, "Count");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<8>, System.Func<8, 9>, System.Collections.Generic.IEnumerable<9>>", root, "Select");
-            AssertType("System.Func<11, System.Collections.Generic.IEnumerable<11>, System.Collections.Generic.IEnumerable<11>>", root, "Yield");
-            AssertType("System.Func<Rook.Core.Collections.Vector<12>, System.Collections.Generic.IEnumerable<12>>", root, "Each");
-            AssertType("System.Func<Rook.Core.Collections.Vector<13>, int, 13>", root, "Index");
-            AssertType("System.Func<Rook.Core.Collections.Vector<14>, int, int, Rook.Core.Collections.Vector<14>>", root, "Slice");
-            AssertType("System.Func<Rook.Core.Collections.Vector<15>, 15, Rook.Core.Collections.Vector<15>>", root, "Append");
-            AssertType("System.Func<Rook.Core.Collections.Vector<16>, int, 16, Rook.Core.Collections.Vector<16>>", root, "With");
+            AssertType("System.Func<bool, bool, bool>", environment, "||");
+            AssertType("System.Func<bool, bool, bool>", environment, "&&");
+            AssertType("System.Func<bool, bool>", environment, "!");
+
+            AssertType("System.Func<Rook.Core.Nullable<0>, 0, 0>", environment, "??");
+            AssertType("System.Func<1, Rook.Core.Void>", environment, "Print");
+            AssertType("System.Func<2, Rook.Core.Nullable<2>>", environment, "Nullable");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<3>, 3>", environment, "First");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<4>, int, System.Collections.Generic.IEnumerable<4>>", environment, "Take");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<5>, int, System.Collections.Generic.IEnumerable<5>>", environment, "Skip");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<6>, bool>", environment, "Any");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<7>, int>", environment, "Count");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<8>, System.Func<8, 9>, System.Collections.Generic.IEnumerable<9>>", environment, "Select");
+            AssertType("System.Func<11, System.Collections.Generic.IEnumerable<11>, System.Collections.Generic.IEnumerable<11>>", environment, "Yield");
+            AssertType("System.Func<Rook.Core.Collections.Vector<12>, System.Collections.Generic.IEnumerable<12>>", environment, "Each");
+            AssertType("System.Func<Rook.Core.Collections.Vector<13>, int, 13>", environment, "Index");
+            AssertType("System.Func<Rook.Core.Collections.Vector<14>, int, int, Rook.Core.Collections.Vector<14>>", environment, "Slice");
+            AssertType("System.Func<Rook.Core.Collections.Vector<15>, 15, Rook.Core.Collections.Vector<15>>", environment, "Append");
+            AssertType("System.Func<Rook.Core.Collections.Vector<16>, int, 16, Rook.Core.Collections.Vector<16>>", environment, "With");
         }
 
         [Fact]
         public void ProvidesStreamOfUniqueTypeVariables()
         {
-            root.CreateTypeVariable().ShouldEqual(new TypeVariable(17));
-            root.CreateTypeVariable().ShouldEqual(new TypeVariable(18));
-            ab.CreateTypeVariable().ShouldEqual(new TypeVariable(19));
-            bc.CreateTypeVariable().ShouldEqual(new TypeVariable(20));
-            ab.CreateTypeVariable().ShouldEqual(new TypeVariable(21));
-            bc.CreateTypeVariable().ShouldEqual(new TypeVariable(22));
+            root.CreateTypeVariable().ShouldEqual(new TypeVariable(0));
+            root.CreateTypeVariable().ShouldEqual(new TypeVariable(1));
+            ab.CreateTypeVariable().ShouldEqual(new TypeVariable(2));
+            bc.CreateTypeVariable().ShouldEqual(new TypeVariable(3));
+            ab.CreateTypeVariable().ShouldEqual(new TypeVariable(4));
+            bc.CreateTypeVariable().ShouldEqual(new TypeVariable(5));
         }
 
         [Fact]

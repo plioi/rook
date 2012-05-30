@@ -31,7 +31,8 @@ namespace Rook.Compiling.Syntax
         protected static Environment Environment(params TypeMapping[] symbols)
         {
             var rootEnvironment = new Environment();
-            var environment = new Environment(rootEnvironment);
+            var environmentWithBuiltins = Compiling.Environment.CreateEnvironmentWithBuiltins(rootEnvironment);
+            var environment = new Environment(environmentWithBuiltins);
 
             foreach (var symbol in symbols)
             {

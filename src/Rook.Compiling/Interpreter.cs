@@ -166,7 +166,9 @@ namespace Rook.Compiling
 
         private Environment EnvironmentForExpression()
         {
-            var environment = new Environment();
+            var rootEnvironment = new Environment();
+            var environment = Environment.CreateEnvironmentWithBuiltins(rootEnvironment);
+
             foreach (var c in classes.Values)
                 if (c.Name.Identifier != "Main")
                     environment.TryIncludeUniqueBinding(c);
