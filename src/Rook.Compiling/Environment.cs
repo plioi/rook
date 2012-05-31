@@ -10,6 +10,7 @@ namespace Rook.Compiling
         public readonly Func<TypeVariable> CreateTypeVariable;
 
         private readonly IDictionary<string, DataType> locals;
+        private readonly IDictionary<DataType, Environment> typeMemberEnvironments;
         private readonly List<TypeVariable> localNonGenericTypeVariables;
         private readonly Environment parent;
         private readonly TypeNormalizer typeNormalizer;
@@ -35,10 +36,27 @@ namespace Rook.Compiling
             }
 
             typeNormalizer = parent == null ? new TypeNormalizer() : parent.typeNormalizer;
+            typeMemberEnvironments = parent == null ? new Dictionary<DataType, Environment>() : parent.typeMemberEnvironments;
         }
 
         public Environment()
-            : this(null) { }
+            : this((Environment)null)
+        {
+        }
+
+        public Environment(IEnumerable<TypeMemberBinding> typeMemberBindings)
+            : this((Environment)null)
+        {
+            foreach (var typeMemberBinding in typeMemberBindings)
+            {
+                var typeMemberEnvironment = new Environment();
+
+                foreach (var member in typeMemberBinding.Members)
+                    typeMemberEnvironment.TryIncludeUniqueBinding(member);
+
+                typeMemberEnvironments.Add(typeMemberBinding.Type, typeMemberEnvironment);
+            }
+        }
 
         public static Environment CreateEnvironmentWithBuiltins(Environment parent)
         {
@@ -130,6 +148,18 @@ namespace Rook.Compiling
         }
 
         public TypeNormalizer TypeNormalizer { get { return typeNormalizer; } }
+
+        public bool TryGetMember(DataType typeKey, string memberKey, out DataType value)
+        {
+            if (typeMemberEnvironments.ContainsKey(typeKey))
+            {
+                var typeMemberEnvironment = typeMemberEnvironments[typeKey];
+                return typeMemberEnvironment.TryGet(memberKey, out value);
+            }
+
+            value = null;
+            return false;
+        }
 
         public bool TryGet(string key, out DataType value)
         {

@@ -1,6 +1,8 @@
 ﻿using System;
+using Parsley;
 using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
+using Rook.Core.Collections;
 using Should;
 using Xunit;
 
@@ -104,6 +106,39 @@ namespace Rook.Compiling
         }
 
         [Fact]
+        public void IncludesOptionalSetOfTypeMemberBindingsInTheRootEnvironment()
+        {
+            var foo = new NamedType("Foo");
+            var math = new NamedType("Math");
+
+            var fooBinding = new StubTypeMemberBinding(foo,
+                                                       new StubBinding("I", NamedType.Function(Integer)),
+                                                       new StubBinding("B", NamedType.Function(Boolean)));
+
+
+            var mathBinding = new StubTypeMemberBinding(math,
+                                                        new StubBinding("Square", NamedType.Function(new[] {Integer}, Integer)),
+                                                        new StubBinding("Even", NamedType.Function(new[] {Integer}, Boolean)));
+
+            var rootWithTypes = new Environment(new[] {fooBinding, mathBinding});
+            var childEnvironment = new Environment(rootWithTypes);
+
+            AssertMemberType(NamedType.Function(Integer), rootWithTypes, foo, "I");
+            AssertMemberType(NamedType.Function(Boolean), rootWithTypes, foo, "B");
+            AssertMemberType(NamedType.Function(new[] { Integer }, Integer), rootWithTypes, math, "Square");
+            AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), rootWithTypes, math, "Even");
+
+            AssertMemberType(NamedType.Function(Integer), childEnvironment, foo, "I");
+            AssertMemberType(NamedType.Function(Boolean), childEnvironment, foo, "B");
+            AssertMemberType(NamedType.Function(new[] { Integer }, Integer), childEnvironment, math, "Square");
+            AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), childEnvironment, math, "Even");
+
+            DataType expectedFailure;
+            rootWithTypes.TryGetMember(new NamedType("UnknownType"), "UnknownMethod", out expectedFailure).ShouldBeFalse();
+            expectedFailure.ShouldBeNull();
+        }
+
+        [Fact]
         public void ProvidesStreamOfUniqueTypeVariables()
         {
             root.CreateTypeVariable().ShouldEqual(new TypeVariable(0));
@@ -178,6 +213,16 @@ namespace Rook.Compiling
                 throw new Exception("Failed to look up the type of '" + key + "' in the environment");
         }
 
+        private static void AssertMemberType(DataType expectedType, Environment environment, DataType typeKey, string memberKey)
+        {
+            DataType value;
+
+            if (environment.TryGetMember(typeKey, memberKey, out value))
+                value.ShouldEqual(expectedType);
+            else
+                throw new Exception("Failed to look up the type of '" + typeKey + "+" + memberKey + "' in the environment");
+        }
+
         private static void AssertType(string expectedType, Environment environment, string key)
         {
             DataType value;
@@ -186,6 +231,32 @@ namespace Rook.Compiling
                 expectedType.ShouldEqual(value.ToString());
             else
                 throw new Exception("Failed to look up the type of '" + key + "' in the environment");
+        }
+
+        private class StubTypeMemberBinding : TypeMemberBinding
+        {
+            public StubTypeMemberBinding(DataType type, params Binding[] members)
+            {
+                Type = type;
+                Members = members.ToVector();
+            }
+
+            public DataType Type { get; private set; }
+            public Vector<Binding> Members { get; private set; }
+        }
+
+        private class StubBinding : Binding
+        {
+            public StubBinding(string identifier, DataType type)
+            {
+                Position = null;
+                Identifier = identifier;
+                Type = type;
+            }
+
+            public Position Position{ get; private set; }
+            public string Identifier{ get; private set; }
+            public DataType Type { get; private set; }
         }
     }
 }
