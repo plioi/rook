@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Parsley;
+using Rook.Compiling.Types;
 using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
@@ -25,7 +26,8 @@ namespace Rook.Compiling.Syntax
 
         public TypeChecked<CompilationUnit> WithTypes()
         {
-            var rootEnvironment = new Environment();
+            var rootEnvironment = new Environment(Classes);
+
             var environment = Environment.CreateEnvironmentWithBuiltins(rootEnvironment);
 
             foreach (var @class in Classes)

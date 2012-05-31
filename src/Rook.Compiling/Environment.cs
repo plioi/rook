@@ -49,12 +49,15 @@ namespace Rook.Compiling
         {
             foreach (var typeMemberBinding in typeMemberBindings)
             {
-                var typeMemberEnvironment = new Environment();
+                var typeKey = typeMemberBinding.Type;
+
+                if (!typeMemberEnvironments.ContainsKey(typeKey))
+                    typeMemberEnvironments[typeKey] = new Environment();
+
+                var typeMemberEnvironment = typeMemberEnvironments[typeKey];
 
                 foreach (var member in typeMemberBinding.Members)
                     typeMemberEnvironment.TryIncludeUniqueBinding(member);
-
-                typeMemberEnvironments.Add(typeMemberBinding.Type, typeMemberEnvironment);
             }
         }
 
