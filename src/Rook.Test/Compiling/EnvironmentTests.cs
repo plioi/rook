@@ -133,8 +133,8 @@ namespace Rook.Compiling
             AssertMemberType(NamedType.Function(new[] { Integer }, Integer), childEnvironment, math, "Square");
             AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), childEnvironment, math, "Even");
 
-            DataType expectedFailure;
-            rootWithTypes.TryGetMember(new NamedType("UnknownType"), "UnknownMethod", out expectedFailure).ShouldBeFalse();
+            Environment expectedFailure;
+            rootWithTypes.TryGetMemberEnvironment(new NamedType("UnknownType"), out expectedFailure).ShouldBeFalse();
             expectedFailure.ShouldBeNull();
         }
 
@@ -208,17 +208,17 @@ namespace Rook.Compiling
             DataType value;
 
             if (environment.TryGet(key, out value))
-                value.ShouldBeSameAs(expectedType);
+                value.ShouldEqual(expectedType);
             else
                 throw new Exception("Failed to look up the type of '" + key + "' in the environment");
         }
 
         private static void AssertMemberType(DataType expectedType, Environment environment, DataType typeKey, string memberKey)
         {
-            DataType value;
+            Environment typeMemberEnvironment;
 
-            if (environment.TryGetMember(typeKey, memberKey, out value))
-                value.ShouldEqual(expectedType);
+            if (environment.TryGetMemberEnvironment(typeKey, out typeMemberEnvironment))
+                AssertType(expectedType, typeMemberEnvironment, memberKey);
             else
                 throw new Exception("Failed to look up the type of '" + typeKey + "+" + memberKey + "' in the environment");
         }

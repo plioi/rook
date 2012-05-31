@@ -152,15 +152,15 @@ namespace Rook.Compiling
 
         public TypeNormalizer TypeNormalizer { get { return typeNormalizer; } }
 
-        public bool TryGetMember(DataType typeKey, string memberKey, out DataType value)
+        public bool TryGetMemberEnvironment(DataType typeKey, out Environment typeMemberEnvironment)
         {
             if (typeMemberEnvironments.ContainsKey(typeKey))
             {
-                var typeMemberEnvironment = typeMemberEnvironments[typeKey];
-                return typeMemberEnvironment.TryGet(memberKey, out value);
+                typeMemberEnvironment = typeMemberEnvironments[typeKey];
+                return true;
             }
 
-            value = null;
+            typeMemberEnvironment = null;
             return false;
         }
 
