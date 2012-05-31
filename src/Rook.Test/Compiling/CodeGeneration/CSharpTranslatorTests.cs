@@ -40,11 +40,11 @@ namespace Rook.Compiling.CodeGeneration
             Expect("    }");
             Expect("    public class Bar");
             Expect("    {");
-            Expect("        public static int I()");
+            Expect("        public int I()");
             Expect("        {");
             Expect("            return 0;");
             Expect("        }");
-            Expect("        public static bool B()");
+            Expect("        public bool B()");
             Expect("        {");
             Expect("            return false;");
             Expect("        }");
@@ -74,11 +74,11 @@ namespace Rook.Compiling.CodeGeneration
         {
             Expect("public class Foo");
             Expect("{");
-            Expect("    public static int I()");
+            Expect("    public int I()");
             Expect("    {");
             Expect("        return 0;");
             Expect("    }");
-            Expect("    public static bool B()");
+            Expect("    public bool B()");
             Expect("    {");
             Expect("        return false;");
             Expect("    }");

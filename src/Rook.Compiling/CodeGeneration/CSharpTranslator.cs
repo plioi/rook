@@ -29,18 +29,23 @@ namespace Rook.Compiling.CodeGeneration
         {
             return Each(
                 Line("public class @", Translate(@class.Name)),
-                Block(@class.Methods.Select(Translate)));
+                Block(@class.Methods.Select(m => Translate(m, isStatic: false))));
         }
 
         public WriteAction Visit(Function function)
         {
-            return
-                Each(
-                    Line("public static @ @(@)",
-                         Translate(function.ReturnType),
-                         Translate(function.Name),
-                         Translate(function.Parameters, ", ")),
-                    Block(Line("return @;", Translate(function.Body))));
+            return Translate(function, isStatic: true);
+        }
+
+        private WriteAction Translate(Function function, bool isStatic)
+        {
+            return Each(
+                Line("public@ @ @(@)",
+                     Literal(isStatic ? " static" : ""),
+                     Translate(function.ReturnType),
+                     Translate(function.Name),
+                     Translate(function.Parameters, ", ")),
+                Block(Line("return @;", Translate(function.Body))));
         }
 
         public WriteAction Visit(Name name)
