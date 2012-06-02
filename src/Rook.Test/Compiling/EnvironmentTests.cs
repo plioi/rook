@@ -97,12 +97,12 @@ namespace Rook.Compiling
             AssertType("System.Func<System.Collections.Generic.IEnumerable<6>, bool>", environment, "Any");
             AssertType("System.Func<System.Collections.Generic.IEnumerable<7>, int>", environment, "Count");
             AssertType("System.Func<System.Collections.Generic.IEnumerable<8>, System.Func<8, 9>, System.Collections.Generic.IEnumerable<9>>", environment, "Select");
-            AssertType("System.Func<11, System.Collections.Generic.IEnumerable<11>, System.Collections.Generic.IEnumerable<11>>", environment, "Yield");
-            AssertType("System.Func<Rook.Core.Collections.Vector<12>, System.Collections.Generic.IEnumerable<12>>", environment, "Each");
-            AssertType("System.Func<Rook.Core.Collections.Vector<13>, int, 13>", environment, "Index");
-            AssertType("System.Func<Rook.Core.Collections.Vector<14>, int, int, Rook.Core.Collections.Vector<14>>", environment, "Slice");
-            AssertType("System.Func<Rook.Core.Collections.Vector<15>, 15, Rook.Core.Collections.Vector<15>>", environment, "Append");
-            AssertType("System.Func<Rook.Core.Collections.Vector<16>, int, 16, Rook.Core.Collections.Vector<16>>", environment, "With");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<10>, System.Func<10, bool>, System.Collections.Generic.IEnumerable<10>>", environment, "Where");
+            AssertType("System.Func<Rook.Core.Collections.Vector<11>, System.Collections.Generic.IEnumerable<11>>", environment, "Each");
+            AssertType("System.Func<Rook.Core.Collections.Vector<12>, int, 12>", environment, "Index");
+            AssertType("System.Func<Rook.Core.Collections.Vector<13>, int, int, Rook.Core.Collections.Vector<13>>", environment, "Slice");
+            AssertType("System.Func<Rook.Core.Collections.Vector<14>, 14, Rook.Core.Collections.Vector<14>>", environment, "Append");
+            AssertType("System.Func<Rook.Core.Collections.Vector<15>, int, 15, Rook.Core.Collections.Vector<15>>", environment, "With");
         }
 
         [Fact]

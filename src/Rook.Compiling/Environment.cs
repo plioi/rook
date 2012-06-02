@@ -125,9 +125,6 @@ namespace Rook.Compiling
             environment["Where"] = NamedType.Function(new[] { NamedType.Enumerable(x), NamedType.Function(new[] { x }, @bool) }, NamedType.Enumerable(x));
 
             x = environment.CreateTypeVariable();
-            environment["Yield"] = NamedType.Function(new DataType[] { x, NamedType.Enumerable(x) }, NamedType.Enumerable(x));
-
-            x = environment.CreateTypeVariable();
             environment["Each"] = NamedType.Function(new[] { NamedType.Vector(x) }, NamedType.Enumerable(x));
 
             x = environment.CreateTypeVariable();

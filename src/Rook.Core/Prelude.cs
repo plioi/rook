@@ -68,13 +68,6 @@ namespace Rook.Core
             return items.Where(predicate);
         }
 
-        protected static IEnumerable<T> Yield<T>(T first, IEnumerable<T> rest)
-        {
-            yield return first;
-            foreach(T item in rest)
-                yield return item;
-        }
-
         protected static IEnumerable<T> Each<T>(Vector<T> vector)
         {
             return vector;

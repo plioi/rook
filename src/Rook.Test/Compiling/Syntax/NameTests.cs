@@ -23,9 +23,9 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasATypeInWhichTypeVariablesAreFreshenedOnEachEnvironmentLookup()
         {
-            Type("foo", foo => new TypeVariable(1)).ShouldEqual(new TypeVariable(17));
+            Type("foo", foo => new TypeVariable(1)).ShouldEqual(new TypeVariable(16));
 
-            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(17), new TypeVariable(18), new NamedType("B", new TypeVariable(17), new TypeVariable(18)));
+            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(16), new TypeVariable(17), new NamedType("B", new TypeVariable(16), new TypeVariable(17)));
             var definedType = new NamedType("A", new TypeVariable(1), new TypeVariable(2), new NamedType("B", new TypeVariable(1), new TypeVariable(2)));
             Type("foo", foo => definedType).ShouldEqual(expectedTypeAfterLookup);
         }
@@ -35,7 +35,7 @@ namespace Rook.Compiling.Syntax
         {
             //Prevents type '2' from being freshened on type lookup by marking it as non-generic in the environment:
 
-            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(17), new TypeVariable(2), new NamedType("B", new TypeVariable(17), new TypeVariable(2)));
+            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(16), new TypeVariable(2), new NamedType("B", new TypeVariable(16), new TypeVariable(2)));
             var definedType = new NamedType("A", new TypeVariable(1), new TypeVariable(2), new NamedType("B", new TypeVariable(1), new TypeVariable(2)));
 
             var rootEnvironment = new Environment();
