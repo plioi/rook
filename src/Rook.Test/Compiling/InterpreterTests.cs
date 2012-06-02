@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 using Rook.Compiling.Syntax;
 using Should;
 using Xunit;
@@ -50,11 +51,19 @@ namespace Rook.Compiling
         }
 
         [Fact]
+        public void ShouldDisallowUnparsedTokensAfterSuccessfullyParsingLeadingTokens()
+        {
+            var result = interpreter.Interpret("1 1");
+            result.Value.ShouldBeNull();
+            result.Errors.Single().ToString().ShouldEqual("(1, 1): Cannot evaluate this code: must be a class, function or expression.");
+        }
+
+        [Fact]
         public void ShouldFailWhenCannotParse()
         {
             var result = interpreter.Interpret("(5 + ");
             result.Value.ShouldBeNull();
-            result.Errors.ShouldList(error => error.Message.ShouldEqual("Cannot evaluate this code: must be a class, function or expression."));
+            result.Errors.Single().ToString().ShouldEqual("(1, 1): Cannot evaluate this code: must be a class, function or expression.");
         }
 
         [Fact]
@@ -62,7 +71,7 @@ namespace Rook.Compiling
         {
             var result = interpreter.Interpret("(5 + true)");
             result.Value.ShouldBeNull();
-            result.Errors.ShouldList(error => error.Message.ShouldEqual("Type mismatch: expected int, found bool."));
+            result.Errors.Single().ToString().ShouldEqual("(1, 4): Type mismatch: expected int, found bool.");
         }
 
         [Fact]
@@ -70,7 +79,15 @@ namespace Rook.Compiling
         {
             var result = interpreter.Interpret("int Square(int x) true");
             result.Value.ShouldBeNull();
-            result.Errors.ShouldList(error => error.Message.ShouldEqual("Type mismatch: expected int, found bool."));
+            result.Errors.Single().ToString().ShouldEqual("(1, 5): Type mismatch: expected int, found bool.");
+        }
+
+        [Fact]
+        public void ShouldFailWhenClassFailsTypeChecking()
+        {
+            var result = interpreter.Interpret("class Math { int Square(int x) true; }");
+            result.Value.ShouldBeNull();
+            result.Errors.Single().ToString().ShouldEqual("(1, 18): Type mismatch: expected int, found bool.");
         }
 
         [Fact]
@@ -93,11 +110,8 @@ namespace Rook.Compiling
         }
 
         [Fact]
-        public void ShouldAllowFunctionDefinitionsToBeReplaced()
+        public void ShouldAllowClassAndFunctionDefinitionsToBeReplaced()
         {
-            //TODO: Test coverage for classes also being replaceable,
-            //      and for classes/functions to replace each other.
-
             //First definitions compile but aren't defined accurately.
             var square = interpreter.Interpret("int Square(int x) x");
             var cube = interpreter.Interpret("int Cube(int x) x");
@@ -117,6 +131,48 @@ namespace Rook.Compiling
             result.Errors.ShouldBeEmpty();
 
             //Third definitions compile and replace originals.
+            square = interpreter.Interpret("int Square(int x) x*x");
+            cube = interpreter.Interpret("int Cube(int x) x*x*x");
+            square.Value.ShouldBeType<Function>();
+            cube.Value.ShouldBeType<Function>();
+            result = interpreter.Interpret("Square(2) + Cube(3)");
+            result.Value.ShouldEqual(31);
+            result.Errors.ShouldBeEmpty();
+
+            //Class definition replaces function with the same name.
+            square = interpreter.Interpret("class Square { }");
+            result = interpreter.Interpret("Cube(3)");
+            square.Value.ShouldBeType<Class>();
+            cube.Value.ShouldBeType<Function>();
+            result.Value.ShouldEqual(27);
+            result.Errors.ShouldBeEmpty();
+            result = interpreter.Interpret("new Square()");
+            result.Value.ToString().ShouldEqual("__program__+Square");
+            result.Errors.ShouldBeEmpty();
+
+            //Class definition doesn't compile.  Previous definitions persist.
+            interpreter.Interpret("class Cube { syntax error }");
+            result = interpreter.Interpret("Cube(3)");
+            result.Value.ShouldEqual(27);
+            result.Errors.ShouldBeEmpty();
+            result = interpreter.Interpret("new Square()");
+            result.Value.ToString().ShouldEqual("__program__+Square");
+            result.Errors.ShouldBeEmpty();
+
+            //Class definition replaces original.
+            interpreter.Interpret("class Square { int Sqr(int x) x*x; }");
+            result = interpreter.Interpret("Cube(3)");
+            result.Value.ShouldEqual(27);
+            result.Errors.ShouldBeEmpty();
+            result = interpreter.Interpret("new Square()");
+            result.Value.ToString().ShouldEqual("__program__+Square");
+            result.Errors.ShouldBeEmpty();
+            //TODO: Prove the new class definition won, once we can invoke methods:
+            //  result = interpreter.Interpret("new Square().Sqr(2)");
+            //  result.Value.ShouldEqual(4);
+            //  result.Errors.ShouldBeEmpty();
+
+            //Function definition replaces class with the same name.
             square = interpreter.Interpret("int Square(int x) x*x");
             cube = interpreter.Interpret("int Cube(int x) x*x*x");
             square.Value.ShouldBeType<Function>();
@@ -206,7 +262,7 @@ namespace Rook.Compiling
 
             var result = interpreter.Interpret("Main()");
             result.Value.ShouldBeNull();
-            result.Errors.ShouldList(error => error.Message.ShouldEqual("Reference to undefined identifier: Main"));
+            result.Errors.Single().ToString().ShouldEqual("(1, 1): Reference to undefined identifier: Main");
         }
 
         [Fact]
@@ -214,7 +270,7 @@ namespace Rook.Compiling
         {
             var result = interpreter.Interpret("class Main { }");
             result.Value.ShouldBeNull();
-            result.Errors.ShouldList(error => error.Message.ShouldEqual("The Main function is reserved for expression evaluation, and cannot be explicitly defined."));
+            result.Errors.Single().ToString().ShouldEqual("(1, 1): The Main function is reserved for expression evaluation, and cannot be explicitly defined.");
         }
 
         [Fact]
@@ -222,7 +278,7 @@ namespace Rook.Compiling
         {
             var result = interpreter.Interpret("int Main(int x) x*x");
             result.Value.ShouldBeNull();
-            result.Errors.ShouldList(error => error.Message.ShouldEqual("The Main function is reserved for expression evaluation, and cannot be explicitly defined."));
+            result.Errors.Single().ToString().ShouldEqual("(1, 1): The Main function is reserved for expression evaluation, and cannot be explicitly defined.");
         }
     }
 }
