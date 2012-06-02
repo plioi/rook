@@ -31,18 +31,16 @@ namespace Rook.Compiling.Syntax
                 return TypeChecked<Expression>.Failure(errors);
 
             var typedItems = typeCheckedItems.Expressions();
-            var types = typedItems.Types();
 
-            var firstItemType = types.First();
+            var firstItemType = typedItems.First().Type;
 
-            //TODO: Instead of using Position in the errors, use the itemType.Position of the unification(s) that failed.
             var normalizer = environment.TypeNormalizer;
-            var unifyErrors = new List<string>();
-            foreach (var itemType in types)
-                unifyErrors.AddRange(normalizer.Unify(firstItemType, itemType));
+            var unifyErrors = new List<CompilerError>();
+            foreach (var typedItem in typedItems)
+                unifyErrors.AddRange(normalizer.Unify(firstItemType, typedItem));
 
-            if (unifyErrors.Any())
-                return TypeChecked<Expression>.Failure(Position, unifyErrors);
+            if (unifyErrors.Count > 0)
+                return TypeChecked<Expression>.Failure(unifyErrors.ToVector());
 
             return TypeChecked<Expression>.Success(new VectorLiteral(Position, typedItems, NamedType.Vector(firstItemType)));
         }

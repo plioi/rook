@@ -57,10 +57,5 @@ namespace Rook.Compiling.Syntax
         {
             return Failure(new CompilerError(position, String.Format("Cannot construct '{0}' because it is not a type.", invalidTypeName.Identifier)));
         }
-
-        public static TypeChecked<T> Failure(Position position, IEnumerable<string> errors)
-        {
-            return Failure(errors.Select(error => new CompilerError(position, error)).ToVector());
-        }
     }
 }

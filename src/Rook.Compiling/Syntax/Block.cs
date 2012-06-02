@@ -41,7 +41,7 @@ namespace Rook.Compiling.Syntax
                 var typeCheckedValue = variable.Value.WithTypes(localEnvironment);
 
                 if (typeCheckedValue.HasErrors)
-                    return TypeChecked<Expression>.Failure(typeCheckedValue.Errors);
+                    return typeCheckedValue;
 
                 var typedValue = typeCheckedValue.Syntax;
                 
@@ -57,10 +57,10 @@ namespace Rook.Compiling.Syntax
                                                                       variable.Identifier,
                                                                       typedValue));
 
-                var normalizer = environment.TypeNormalizer;
-                var unifyErrors = normalizer.Unify(binding.Type, typedValue.Type).ToArray();
-                if (unifyErrors.Any())
-                    return TypeChecked<Expression>.Failure(variable.Value.Position, unifyErrors);
+                var unifyErrors = environment.TypeNormalizer.Unify(binding.Type, typedValue);
+
+                if (unifyErrors.Count > 0)
+                    return TypeChecked<Expression>.Failure(unifyErrors);
             }
 
             var typeCheckedInnerExpressions = InnerExpressions.WithTypes(localEnvironment);

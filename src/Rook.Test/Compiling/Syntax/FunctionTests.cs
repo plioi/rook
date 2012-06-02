@@ -109,7 +109,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingWhenDeclaredReturnTypeDoesNotMatchBodyExpressionType()
         {
-            TypeChecking("int foo (int x) false").ShouldFail("Type mismatch: expected int, found bool.", 1, 5);
+            TypeChecking("int foo (int x) false").ShouldFail("Type mismatch: expected int, found bool.", 1, 17);
         }
 
         private DataType Type(string source, params TypeMapping[] symbols)

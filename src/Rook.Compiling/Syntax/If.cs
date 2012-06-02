@@ -30,26 +30,21 @@ namespace Rook.Compiling.Syntax
             TypeChecked<Expression> typeCheckedWhenTrue = BodyWhenTrue.WithTypes(environment);
             TypeChecked<Expression> typeCheckedWhenFalse = BodyWhenFalse.WithTypes(environment);
 
-            var errors = new[] {typeCheckedCondition, typeCheckedWhenTrue, typeCheckedWhenFalse}.ToVector().Errors();
-            if (errors.Any())
-                return TypeChecked<Expression>.Failure(errors);
+            if (typeCheckedCondition.HasErrors || typeCheckedWhenTrue.HasErrors || typeCheckedWhenFalse.HasErrors)
+                return TypeChecked<Expression>.Failure(new[] {typeCheckedCondition, typeCheckedWhenTrue, typeCheckedWhenFalse}.ToVector().Errors());
 
             Expression typedCondition = typeCheckedCondition.Syntax;
             Expression typedWhenTrue = typeCheckedWhenTrue.Syntax;
             Expression typedWhenFalse = typeCheckedWhenFalse.Syntax;
 
-            DataType typeOfCondition = typedCondition.Type;
-            DataType typeWhenTrue = typedWhenTrue.Type;
-            DataType typeWhenFalse = typedWhenFalse.Type;
-
-            //TODO: Instead of using Position for the errors, attach Condition.Position or BodyWhenFalse.Position depending on which unification(s) failed.
             var normalizer = environment.TypeNormalizer;
-            var unifyErrorsA = normalizer.Unify(NamedType.Boolean, typeOfCondition);
-            var unifyErrorsB = normalizer.Unify(typeWhenTrue, typeWhenFalse);
-            if (unifyErrorsA.Any() || unifyErrorsB.Any())
-                return TypeChecked<Expression>.Failure(Position, unifyErrorsA.Concat(unifyErrorsB));
+            var unifyErrorsA = normalizer.Unify(NamedType.Boolean, typedCondition);
+            var unifyErrorsB = normalizer.Unify(typedWhenTrue.Type, typedWhenFalse);
 
-            return TypeChecked<Expression>.Success(new If(Position, typedCondition, typedWhenTrue, typedWhenFalse, typeWhenTrue));
+            if (unifyErrorsA.Any() || unifyErrorsB.Any())
+                return TypeChecked<Expression>.Failure(unifyErrorsA.Concat(unifyErrorsB).ToVector());
+
+            return TypeChecked<Expression>.Success(new If(Position, typedCondition, typedWhenTrue, typedWhenFalse, typedWhenTrue.Type));
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)

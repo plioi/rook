@@ -79,7 +79,7 @@ namespace Rook.Compiling
         {
             var result = interpreter.Interpret("int Square(int x) true");
             result.Value.ShouldBeNull();
-            result.Errors.Single().ToString().ShouldEqual("(1, 5): Type mismatch: expected int, found bool.");
+            result.Errors.Single().ToString().ShouldEqual("(1, 19): Type mismatch: expected int, found bool.");
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace Rook.Compiling
         {
             var result = interpreter.Interpret("class Math { int Square(int x) true; }");
             result.Value.ShouldBeNull();
-            result.Errors.Single().ToString().ShouldEqual("(1, 18): Type mismatch: expected int, found bool.");
+            result.Errors.Single().ToString().ShouldEqual("(1, 32): Type mismatch: expected int, found bool.");
         }
 
         [Fact]

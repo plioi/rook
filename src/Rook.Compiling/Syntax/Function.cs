@@ -53,17 +53,14 @@ namespace Rook.Compiling.Syntax
                 if (!localEnvironment.TryIncludeUniqueBinding(parameter))
                     return TypeChecked<Function>.DuplicateIdentifierError(parameter);
 
-            TypeChecked<Expression> typeCheckedBody = Body.WithTypes(localEnvironment);
-
+            var typeCheckedBody = Body.WithTypes(localEnvironment);
             if (typeCheckedBody.HasErrors)
                 return TypeChecked<Function>.Failure(typeCheckedBody.Errors);
 
-            Expression typedBody = typeCheckedBody.Syntax;
-
-            var normalizer = environment.TypeNormalizer;
-            var unifyErrors = normalizer.Unify(ReturnType, typedBody.Type);
-            if (unifyErrors.Any())
-                return TypeChecked<Function>.Failure(Position, unifyErrors);
+            var typedBody = typeCheckedBody.Syntax;
+            var unifyErrors = environment.TypeNormalizer.Unify(ReturnType, typedBody);
+            if (unifyErrors.Count > 0)
+                return TypeChecked<Function>.Failure(unifyErrors);
 
             return TypeChecked<Function>.Success(new Function(Position, ReturnType, Name, Parameters, typedBody, DeclaredType));
         }

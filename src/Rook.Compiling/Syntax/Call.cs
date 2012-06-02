@@ -50,15 +50,17 @@ namespace Rook.Compiling.Syntax
             if (calleeFunctionType == null || calleeFunctionType.Name != "System.Func")
                 return TypeChecked<Expression>.ObjectNotCallableError(Position);
 
-            DataType returnType = calleeType.InnerTypes.Last();
-            var argumentTypes = typedArguments.Types();
+            var returnType = calleeType.InnerTypes.Last();
+            var argumentTypes = typedArguments.Select(x => x.Type).ToVector();
 
             var normalizer = environment.TypeNormalizer;
-            var unifyErrors = normalizer.Unify(calleeType, NamedType.Function(argumentTypes, returnType)).ToArray();
-            if (unifyErrors.Any())
-                return TypeChecked<Expression>.Failure(Position, unifyErrors);
+            var unifyErrors = new List<CompilerError>(
+                normalizer.Unify(calleeType, NamedType.Function(argumentTypes, returnType))
+                    .Select(error => new CompilerError(Position, error)));
+            if (unifyErrors.Count > 0)
+                return TypeChecked<Expression>.Failure(unifyErrors.ToVector());
 
-            DataType callType = normalizer.Normalize(returnType);
+            var callType = normalizer.Normalize(returnType);
 
             return TypeChecked<Expression>.Success(new Call(Position, typedCallable, typedArguments, IsOperator, callType));
         }

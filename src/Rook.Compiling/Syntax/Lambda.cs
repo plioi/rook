@@ -40,7 +40,7 @@ namespace Rook.Compiling.Syntax
             TypeChecked<Expression> typeCheckedBody = Body.WithTypes(localEnvironment);
 
             if (typeCheckedBody.HasErrors)
-                return TypeChecked<Expression>.Failure(typeCheckedBody.Errors);
+                return typeCheckedBody;
 
             Expression typedBody = typeCheckedBody.Syntax;
 

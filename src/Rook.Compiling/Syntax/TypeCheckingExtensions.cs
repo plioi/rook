@@ -47,9 +47,10 @@ namespace Rook.Compiling.Syntax
             return classes.Select(x => x.WithTypes(environment)).ToVector();
         }
 
-        public static Vector<DataType> Types(this Vector<Expression> expressions)
+        public static Vector<CompilerError> Unify(this TypeNormalizer normalizer, DataType type, TypedSyntaxTree typedSyntaxTree)
         {
-            return expressions.Select(x => x.Type).ToVector();
+            return normalizer.Unify(type, typedSyntaxTree.Type)
+                .Select(error => new CompilerError(typedSyntaxTree.Position, error)).ToVector();
         }
     }
 }
