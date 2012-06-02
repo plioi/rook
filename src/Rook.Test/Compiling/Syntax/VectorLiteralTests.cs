@@ -20,6 +20,12 @@ namespace Rook.Compiling.Syntax
         }
 
         [Fact]
+        public void FailsTypeCheckingWhenItemExpressionsFailTypeChecking()
+        {
+            TypeChecking("[a]").ShouldFail("Reference to undefined identifier: a", 1, 2);
+        }
+
+        [Fact]
         public void FailsTypeCheckingWhenItemExpressionTypesDoNotMatch()
         {
             TypeChecking("[0, true]").ShouldFail("Type mismatch: expected int, found bool.", 1, 2);

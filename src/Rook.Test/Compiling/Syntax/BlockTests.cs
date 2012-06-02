@@ -83,6 +83,12 @@ namespace Rook.Compiling.Syntax
         }
 
         [Fact]
+        public void FailsTypeCheckingWhenLocalVariableInitializationExpressionFailsTypeChecking()
+        {
+            TypeChecking("{ int x = a; x; }").ShouldFail("Reference to undefined identifier: a", 1, 11);
+        }
+
+        [Fact]
         public void FailsTypeCheckingWhenAnyBodyExpressionFailsTypeChecking()
         {
             TypeChecking("{ true+0; 0; }").ShouldFail("Type mismatch: expected int, found bool.", 1, 7);

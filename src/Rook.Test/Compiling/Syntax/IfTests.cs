@@ -42,6 +42,24 @@ namespace Rook.Compiling.Syntax
         }
 
         [Fact]
+        public void FailsTypeCheckingWhenConditionExpressionFailsTypeChecking()
+        {
+            TypeChecking("if (a) true else false").ShouldFail("Reference to undefined identifier: a", 1, 5);
+        }
+
+        [Fact]
+        public void FailsTypeCheckingWhenFirstBodyExpressionFailsTypeChecking()
+        {
+            TypeChecking("if (true) a else false").ShouldFail("Reference to undefined identifier: a", 1, 11);
+        }
+
+        [Fact]
+        public void FailsTypeCheckingWhenSecondBodyExpressionFailsTypeChecking()
+        {
+            TypeChecking("if (true) true else a").ShouldFail("Reference to undefined identifier: a", 1, 21);
+        }
+
+        [Fact]
         public void FailsTypeCheckingWhenConditionExpressionIsNotBoolean()
         {
             TypeChecking("if (0) false else true").ShouldFail("Type mismatch: expected bool, found int.", 1, 1);
