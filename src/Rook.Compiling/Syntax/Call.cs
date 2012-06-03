@@ -32,10 +32,10 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Environment environment)
+        public TypeChecked<Expression> WithTypes(Scope scope)
         {
-            TypeChecked<Expression> typeCheckedCallable = Callable.WithTypes(environment);
-            var typeCheckedArguments = Arguments.WithTypes(environment);
+            TypeChecked<Expression> typeCheckedCallable = Callable.WithTypes(scope);
+            var typeCheckedArguments = Arguments.WithTypes(scope);
 
             var errors = new[] {typeCheckedCallable}.Concat(typeCheckedArguments).ToVector().Errors();
             if (errors.Any())
@@ -53,7 +53,7 @@ namespace Rook.Compiling.Syntax
             var returnType = calleeType.InnerTypes.Last();
             var argumentTypes = typedArguments.Select(x => x.Type).ToVector();
 
-            var normalizer = environment.TypeNormalizer;
+            var normalizer = scope.TypeNormalizer;
             var unifyErrors = new List<CompilerError>(
                 normalizer.Unify(calleeType, NamedType.Function(argumentTypes, returnType))
                     .Select(error => new CompilerError(Position, error)));

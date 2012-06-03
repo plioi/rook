@@ -15,7 +15,7 @@ namespace Rook.Compiling.Syntax
             Value = value;
         }
 
-        public TypeChecked<Expression> WithTypes(Environment environment)
+        public TypeChecked<Expression> WithTypes(Scope scope)
         {
             return TypeChecked<Expression>.Success(this);
         }

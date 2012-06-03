@@ -26,20 +26,20 @@ namespace Rook.Compiling.Syntax
 
         public TypeChecked<CompilationUnit> WithTypes()
         {
-            var rootEnvironment = new Environment(Classes);
+            var rootScope = new Scope(Classes);
 
-            var environment = Environment.CreateEnvironmentWithBuiltins(rootEnvironment);
+            var scope = Scope.CreateScopeWithBuiltins(rootScope);
 
             foreach (var @class in Classes)
-                if (!environment.TryIncludeUniqueBinding(@class))
+                if (!scope.TryIncludeUniqueBinding(@class))
                     return TypeChecked<CompilationUnit>.DuplicateIdentifierError(@class);
 
             foreach (var function in Functions)
-                if (!environment.TryIncludeUniqueBinding(function))
+                if (!scope.TryIncludeUniqueBinding(function))
                     return TypeChecked<CompilationUnit>.DuplicateIdentifierError(function);
 
-            var typeCheckedClasses = Classes.WithTypes(environment);
-            var typeCheckedFunctions = Functions.WithTypes(environment);
+            var typeCheckedClasses = Classes.WithTypes(scope);
+            var typeCheckedFunctions = Functions.WithTypes(scope);
 
             var classErrors = typeCheckedClasses.Errors();
             var functionErrors = typeCheckedFunctions.Errors();

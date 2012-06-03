@@ -22,9 +22,9 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Environment environment)
+        public TypeChecked<Expression> WithTypes(Scope scope)
         {
-            var typeCheckedItems = Items.WithTypes(environment);
+            var typeCheckedItems = Items.WithTypes(scope);
 
             var errors = typeCheckedItems.Errors();
             if (errors.Any())
@@ -34,7 +34,7 @@ namespace Rook.Compiling.Syntax
 
             var firstItemType = typedItems.First().Type;
 
-            var normalizer = environment.TypeNormalizer;
+            var normalizer = scope.TypeNormalizer;
             var unifyErrors = new List<CompilerError>();
             foreach (var typedItem in typedItems)
                 unifyErrors.AddRange(normalizer.Unify(firstItemType, typedItem));

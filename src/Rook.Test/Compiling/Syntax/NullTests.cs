@@ -24,7 +24,7 @@ namespace Rook.Compiling.Syntax
             var node = (Null)Parse("null");
             node.Type.ShouldBeNull();
 
-            var typedNode = (Null)node.WithTypes(Environment()).Syntax;
+            var typedNode = (Null)node.WithTypes(Scope()).Syntax;
             typedNode.Type.ShouldEqual(NamedType.Nullable(new TypeVariable(16)));
         }
     }

@@ -25,7 +25,7 @@ namespace Rook.Compiling.Syntax
             var boolean = (BooleanLiteral) Parse("false");
             boolean.Type.ShouldEqual(Boolean);
 
-            var typedBoolean = (BooleanLiteral) boolean.WithTypes(Environment()).Syntax;
+            var typedBoolean = (BooleanLiteral) boolean.WithTypes(Scope()).Syntax;
             typedBoolean.Type.ShouldEqual(Boolean);
             typedBoolean.ShouldBeSameAs(boolean);
         }

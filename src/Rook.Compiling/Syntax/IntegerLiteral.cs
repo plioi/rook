@@ -19,7 +19,7 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Environment environment)
+        public TypeChecked<Expression> WithTypes(Scope scope)
         {
             int value;
 

@@ -24,27 +24,27 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Environment environment)
+        public TypeChecked<Expression> WithTypes(Scope scope)
         {
-            //TODO: Factor suspicious similarity between this and Function.WithTypes(Environment);
-            //TODO: Factor suspicious similarity between this and Block.WithTypes(Environment);
+            //TODO: Factor suspicious similarity between this and Function.WithTypes(Scope);
+            //TODO: Factor suspicious similarity between this and Block.WithTypes(Scope);
 
-            var localEnvironment = new Environment(environment);
+            var localScope = new Scope(scope);
 
-            var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters, localEnvironment);
+            var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters, localScope);
 
             foreach (var parameter in typedParameters)
-                if (!localEnvironment.TryIncludeUniqueBinding(parameter))
+                if (!localScope.TryIncludeUniqueBinding(parameter))
                     return TypeChecked<Expression>.DuplicateIdentifierError(parameter);
 
-            TypeChecked<Expression> typeCheckedBody = Body.WithTypes(localEnvironment);
+            TypeChecked<Expression> typeCheckedBody = Body.WithTypes(localScope);
 
             if (typeCheckedBody.HasErrors)
                 return typeCheckedBody;
 
             Expression typedBody = typeCheckedBody.Syntax;
 
-            var normalizedParameters = NormalizeTypes(typedParameters, localEnvironment);
+            var normalizedParameters = NormalizeTypes(typedParameters, localScope);
             //TODO: Determine whether I should also normalize typedBody.Type for the return below.
 
             DataType[] parameterTypes = normalizedParameters.Select(p => p.Type).ToArray();
@@ -52,7 +52,7 @@ namespace Rook.Compiling.Syntax
             return TypeChecked<Expression>.Success(new Lambda(Position, normalizedParameters, typedBody, NamedType.Function(parameterTypes, typedBody.Type)));
         }
 
-        private static Parameter[] ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters, Environment localEnvironment)
+        private static Parameter[] ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters, Scope localScope)
         {
             var decoratedParameters = new List<Parameter>();
             var typeVariables = new List<TypeVariable>();
@@ -61,7 +61,7 @@ namespace Rook.Compiling.Syntax
             {
                 if (parameter.IsImplicitlyTyped())
                 {
-                    TypeVariable typeVariable = localEnvironment.CreateTypeVariable();
+                    TypeVariable typeVariable = localScope.CreateTypeVariable();
                     typeVariables.Add(typeVariable);
                     decoratedParameters.Add(new Parameter(parameter.Position, typeVariable, parameter.Identifier));
                 }
@@ -71,14 +71,14 @@ namespace Rook.Compiling.Syntax
                 }
             }
 
-            localEnvironment.TreatAsNonGeneric(typeVariables);
+            localScope.TreatAsNonGeneric(typeVariables);
 
             return decoratedParameters.ToArray();
         }
 
-        private static Vector<Parameter> NormalizeTypes(IEnumerable<Parameter> typedParameters, Environment localEnvironment)
+        private static Vector<Parameter> NormalizeTypes(IEnumerable<Parameter> typedParameters, Scope localScope)
         {
-            return typedParameters.Select(p => new Parameter(p.Position, localEnvironment.TypeNormalizer.Normalize(p.Type), p.Identifier)).ToVector();
+            return typedParameters.Select(p => new Parameter(p.Position, localScope.TypeNormalizer.Normalize(p.Type), p.Identifier)).ToVector();
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)

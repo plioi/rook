@@ -66,7 +66,7 @@ namespace Rook.Compiling
 
         private InterpreterResult InterpretExpression(Expression expression, Position pos)
         {
-            var typedCheckedExpression = expression.WithTypes(EnvironmentForExpression());
+            var typedCheckedExpression = expression.WithTypes(ScopeForExpression());
             if (typedCheckedExpression.HasErrors)
                 return new InterpreterResult(Language.Rook, typedCheckedExpression.Errors);
                 
@@ -164,18 +164,18 @@ namespace Rook.Compiling
             return false;
         }
 
-        private Environment EnvironmentForExpression()
+        private Scope ScopeForExpression()
         {
-            var rootEnvironment = new Environment();
-            var environment = Environment.CreateEnvironmentWithBuiltins(rootEnvironment);
+            var rootScope = new Scope();
+            var scope = Scope.CreateScopeWithBuiltins(rootScope);
 
             foreach (var c in classes.Values)
                 if (c.Name.Identifier != "Main")
-                    environment.TryIncludeUniqueBinding(c);
+                    scope.TryIncludeUniqueBinding(c);
             foreach (var f in functions.Values)
                 if (f.Name.Identifier != "Main")
-                    environment.TryIncludeUniqueBinding(f);
-            return environment;
+                    scope.TryIncludeUniqueBinding(f);
+            return scope;
         }
 
         private static Function WrapAsMain(Expression typedExpression, Position pos)

@@ -61,7 +61,7 @@ namespace Rook.Compiling.Syntax
             node.Body.Type.ShouldBeNull();
             node.Type.ShouldBeNull();
 
-            var typedNode = (Lambda)node.WithTypes(Environment()).Syntax;
+            var typedNode = (Lambda)node.WithTypes(Scope()).Syntax;
             typedNode.Parameters.ShouldHaveTypes(Integer, Integer, Boolean);
             typedNode.Body.Type.ShouldEqual(Boolean);
             typedNode.Type.ShouldEqual(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean));

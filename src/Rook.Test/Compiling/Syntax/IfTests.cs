@@ -88,7 +88,7 @@ namespace Rook.Compiling.Syntax
             node.BodyWhenFalse.Type.ShouldBeNull();
             node.Type.ShouldBeNull();
             
-            var typedNode = (If)node.WithTypes(Environment(foo => Boolean, bar => Boolean, baz => Boolean)).Syntax;
+            var typedNode = (If)node.WithTypes(Scope(foo => Boolean, bar => Boolean, baz => Boolean)).Syntax;
             typedNode.Condition.Type.ShouldEqual(Boolean);
             typedNode.BodyWhenTrue.Type.ShouldEqual(Boolean);
             typedNode.BodyWhenFalse.Type.ShouldEqual(Boolean);

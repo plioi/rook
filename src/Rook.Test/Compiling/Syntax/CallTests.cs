@@ -159,7 +159,7 @@ namespace Rook.Compiling.Syntax
             node.Arguments.ShouldHaveTypes(null, null);
             node.Type.ShouldBeNull();
 
-            var typedNode = (Call)node.WithTypes(Environment(func => Function(new[] {Boolean, Integer}, Integer), yes => Boolean, zero => Integer)).Syntax;
+            var typedNode = (Call)node.WithTypes(Scope(func => Function(new[] {Boolean, Integer}, Integer), yes => Boolean, zero => Integer)).Syntax;
             typedNode.Callable.Type.ShouldEqual(NamedType.Function(new[] { Boolean, Integer }, Integer));
             typedNode.Arguments.ShouldHaveTypes(Boolean, Integer);
             typedNode.Type.ShouldEqual(Integer);

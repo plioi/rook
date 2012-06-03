@@ -21,24 +21,24 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Environment environment)
+        public TypeChecked<Expression> WithTypes(Scope scope)
         {
             DataType type;
 
             //TODO: We should probably normalize 'type' before freshening its variables.
 
-            if (environment.TryGet(Identifier, out type))
-                return TypeChecked<Expression>.Success(new Name(Position, Identifier, FreshenGenericTypeVariables(environment, type)));
+            if (scope.TryGet(Identifier, out type))
+                return TypeChecked<Expression>.Success(new Name(Position, Identifier, FreshenGenericTypeVariables(scope, type)));
 
             return TypeChecked<Expression>.UndefinedIdentifierError(Position, Identifier);
         }
 
-        private static DataType FreshenGenericTypeVariables(Environment environment, DataType type)
+        private static DataType FreshenGenericTypeVariables(Scope scope, DataType type)
         {
             var substitutions = new Dictionary<TypeVariable, DataType>();
-            var genericTypeVariables = type.FindTypeVariables().Where(environment.IsGeneric);
+            var genericTypeVariables = type.FindTypeVariables().Where(scope.IsGeneric);
             foreach (var genericTypeVariable in genericTypeVariables)
-                substitutions[genericTypeVariable] = environment.CreateTypeVariable();
+                substitutions[genericTypeVariable] = scope.CreateTypeVariable();
 
             return type.ReplaceTypeVariables(substitutions);
         }

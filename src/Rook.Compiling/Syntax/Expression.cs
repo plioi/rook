@@ -2,6 +2,6 @@
 {
     public interface Expression : TypedSyntaxTree
     {
-        TypeChecked<Expression> WithTypes(Environment environment);
+        TypeChecked<Expression> WithTypes(Scope scope);
     }
 }

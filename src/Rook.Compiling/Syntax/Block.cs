@@ -29,16 +29,16 @@ namespace Rook.Compiling.Syntax
             return visitor.Visit(this);
         }
 
-        public TypeChecked<Expression> WithTypes(Environment environment)
+        public TypeChecked<Expression> WithTypes(Scope scope)
         {
-            //TODO: Factor suspicious similarity between this and Lambda.WithTypes(Environment);
+            //TODO: Factor suspicious similarity between this and Lambda.WithTypes(Scope);
 
-            var localEnvironment = new Environment(environment);
+            var localScope = new Scope(scope);
 
             var typedVariableDeclarations = new List<VariableDeclaration>();
             foreach (var variable in VariableDeclarations)
             {
-                var typeCheckedValue = variable.Value.WithTypes(localEnvironment);
+                var typeCheckedValue = variable.Value.WithTypes(localScope);
 
                 if (typeCheckedValue.HasErrors)
                     return typeCheckedValue;
@@ -49,7 +49,7 @@ namespace Rook.Compiling.Syntax
                 if (variable.IsImplicitlyTyped())
                     binding = new VariableDeclaration(variable.Position, /*Replaces implicit type.*/ typedValue.Type, variable.Identifier, variable.Value);
 
-                if (!localEnvironment.TryIncludeUniqueBinding(binding))
+                if (!localScope.TryIncludeUniqueBinding(binding))
                     return TypeChecked<Expression>.DuplicateIdentifierError(binding);
                 
                 typedVariableDeclarations.Add(new VariableDeclaration(variable.Position,
@@ -57,13 +57,13 @@ namespace Rook.Compiling.Syntax
                                                                       variable.Identifier,
                                                                       typedValue));
 
-                var unifyErrors = environment.TypeNormalizer.Unify(binding.Type, typedValue);
+                var unifyErrors = scope.TypeNormalizer.Unify(binding.Type, typedValue);
 
                 if (unifyErrors.Count > 0)
                     return TypeChecked<Expression>.Failure(unifyErrors);
             }
 
-            var typeCheckedInnerExpressions = InnerExpressions.WithTypes(localEnvironment);
+            var typeCheckedInnerExpressions = InnerExpressions.WithTypes(localScope);
 
             var errors = typeCheckedInnerExpressions.Errors();
             if (errors.Any())

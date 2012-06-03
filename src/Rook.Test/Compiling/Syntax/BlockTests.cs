@@ -75,7 +75,7 @@ namespace Rook.Compiling.Syntax
             node.InnerExpressions.ShouldHaveTypes(null, null, null);
             node.Type.ShouldBeNull();
 
-            var typedNode = (Block)node.WithTypes(Environment(y => Integer)).Syntax;
+            var typedNode = (Block)node.WithTypes(Scope(y => Integer)).Syntax;
             typedNode.VariableDeclarations.ShouldHaveTypes(Integer, Integer, Boolean);
             typedNode.VariableDeclarations.Select(x => x.Value).ShouldHaveTypes(Integer, Integer, Boolean);
             typedNode.InnerExpressions.ShouldHaveTypes(Integer, Integer, Boolean);

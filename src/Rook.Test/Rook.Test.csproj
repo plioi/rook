@@ -98,7 +98,7 @@
     <Compile Include="Core\NullableTests.cs" />
     <Compile Include="Core\ValueTests.cs" />
     <Compile Include="Serializer.cs" />
-    <Compile Include="Compiling\EnvironmentTests.cs" />
+    <Compile Include="Compiling\ScopeTests.cs" />
     <Compile Include="Integration\IntegrationTests.cs" />
     <Compile Include="Compiling\Syntax\VectorLiteralTests.cs" />
     <Compile Include="Compiling\Syntax\BlockTests.cs" />

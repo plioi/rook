@@ -110,7 +110,7 @@
     <Compile Include="Syntax\Visitor.cs" />
     <Compile Include="Types\DataType.cs" />
     <Compile Include="Types\NamedType.cs" />
-    <Compile Include="Environment.cs" />
+    <Compile Include="Scope.cs" />
     <Compile Include="Types\TypeNormalizer.cs" />
     <Compile Include="Types\TypeVariable.cs" />
   </ItemGroup>

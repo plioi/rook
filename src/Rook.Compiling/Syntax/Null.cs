@@ -17,9 +17,9 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Environment environment)
+        public TypeChecked<Expression> WithTypes(Scope scope)
         {
-            var result = new Null(Position, NamedType.Nullable(environment.CreateTypeVariable()));
+            var result = new Null(Position, NamedType.Nullable(scope.CreateTypeVariable()));
             return TypeChecked<Expression>.Success(result);
         }
 

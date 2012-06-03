@@ -14,14 +14,14 @@ namespace Rook.Compiling.Syntax
         }
 
         [Fact]
-        public void HasATypeProvidedByTheEnvironmentInScope()
+        public void HasATypeProvidedByTheGivenScope()
         {
             Type("foo", foo => Boolean, bar => Integer).ShouldEqual(Boolean);
             Type("bar", foo => Boolean, bar => Integer).ShouldEqual(Integer);
         }
 
         [Fact]
-        public void HasATypeInWhichTypeVariablesAreFreshenedOnEachEnvironmentLookup()
+        public void HasATypeInWhichTypeVariablesAreFreshenedOnEachScopeLookup()
         {
             Type("foo", foo => new TypeVariable(1)).ShouldEqual(new TypeVariable(16));
 
@@ -31,19 +31,19 @@ namespace Rook.Compiling.Syntax
         }
 
         [Fact]
-        public void HasATypeInWhichOnlyGenericTypeVariablesAreFreshenedOnEachEnvironmentLookup()
+        public void HasATypeInWhichOnlyGenericTypeVariablesAreFreshenedOnEachScopeLookup()
         {
-            //Prevents type '2' from being freshened on type lookup by marking it as non-generic in the environment:
+            //Prevents type '2' from being freshened on type lookup by marking it as non-generic in the scope:
 
             var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(16), new TypeVariable(2), new NamedType("B", new TypeVariable(16), new TypeVariable(2)));
             var definedType = new NamedType("A", new TypeVariable(1), new TypeVariable(2), new NamedType("B", new TypeVariable(1), new TypeVariable(2)));
 
-            var rootEnvironment = new Environment();
-            var environment = Compiling.Environment.CreateEnvironmentWithBuiltins(rootEnvironment);
-            environment.TreatAsNonGeneric(new[] { new TypeVariable(2) });
-            environment["foo"] = definedType;
+            var rootScope = new Scope();
+            var scope = Compiling.Scope.CreateScopeWithBuiltins(rootScope);
+            scope.TreatAsNonGeneric(new[] { new TypeVariable(2) });
+            scope["foo"] = definedType;
 
-            Type("foo", environment).ShouldEqual(expectedTypeAfterLookup);
+            Type("foo", scope).ShouldEqual(expectedTypeAfterLookup);
         }
 
         [Fact]
@@ -52,7 +52,7 @@ namespace Rook.Compiling.Syntax
             var node = (Name)Parse("foo");
             node.Type.ShouldBeNull();
 
-            var typedNode = (Name)node.WithTypes(Environment(foo => Boolean)).Syntax;
+            var typedNode = (Name)node.WithTypes(Scope(foo => Boolean)).Syntax;
             typedNode.Type.ShouldEqual(Boolean);
         }
 

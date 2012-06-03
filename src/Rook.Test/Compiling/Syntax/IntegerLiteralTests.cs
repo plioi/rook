@@ -28,7 +28,7 @@ namespace Rook.Compiling.Syntax
             var integer = (IntegerLiteral)Parse("12345");
             integer.Type.ShouldBeNull();
 
-            var typedInteger = (IntegerLiteral)integer.WithTypes(Environment()).Syntax;
+            var typedInteger = (IntegerLiteral)integer.WithTypes(Scope()).Syntax;
             typedInteger.Type.ShouldEqual(Integer);
         }
 

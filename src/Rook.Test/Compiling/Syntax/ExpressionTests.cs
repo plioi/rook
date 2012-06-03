@@ -12,19 +12,19 @@ namespace Rook.Compiling.Syntax
             return TypeChecking(source, symbols).Syntax.Type;
         }
 
-        protected DataType Type(string source, Environment environment)
+        protected DataType Type(string source, Scope scope)
         {
-            return TypeChecking(source, environment).Syntax.Type;
+            return TypeChecking(source, scope).Syntax.Type;
         }
 
         protected TypeChecked<Expression> TypeChecking(string source, params TypeMapping[] symbols)
         {
-            return TypeChecking(source, Environment(symbols));
+            return TypeChecking(source, Scope(symbols));
         }
 
-        protected TypeChecked<Expression> TypeChecking(string source, Environment environment)
+        protected TypeChecked<Expression> TypeChecking(string source, Scope scope)
         {
-            return Parse(source).WithTypes(environment);
+            return Parse(source).WithTypes(scope);
         }
     }
 }

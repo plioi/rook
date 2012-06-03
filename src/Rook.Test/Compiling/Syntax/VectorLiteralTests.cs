@@ -45,7 +45,7 @@ namespace Rook.Compiling.Syntax
             node.Items.ShouldHaveTypes(null, null);
             node.Type.ShouldBeNull();
 
-            var typedNode = (VectorLiteral)node.WithTypes(Environment(foo => Boolean, bar => Boolean)).Syntax;
+            var typedNode = (VectorLiteral)node.WithTypes(Scope(foo => Boolean, bar => Boolean)).Syntax;
             typedNode.Items.ShouldHaveTypes(Boolean, Boolean);
             typedNode.Type.ShouldEqual(NamedType.Vector(Boolean));
         }

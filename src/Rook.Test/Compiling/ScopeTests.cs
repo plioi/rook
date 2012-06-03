@@ -8,22 +8,22 @@ using Xunit;
 
 namespace Rook.Compiling
 {
-    public class EnvironmentTests
+    public class ScopeTests
     {
         private static readonly NamedType Integer = NamedType.Integer;
         private static readonly NamedType Boolean = NamedType.Boolean;
 
-        private readonly Environment root, ab, bc;
+        private readonly Scope root, ab, bc;
 
-        public EnvironmentTests()
+        public ScopeTests()
         {
-            root = new Environment();
+            root = new Scope();
 
-            ab = new Environment(root);
+            ab = new Scope(root);
             ab["a"] = Integer;
             ab["b"] = Integer;
 
-            bc = new Environment(ab);
+            bc = new Scope(ab);
             bc["b"] = Boolean;
             bc["c"] = Boolean;
         }
@@ -68,45 +68,45 @@ namespace Rook.Compiling
         }
 
         [Fact]
-        public void ProvidesFactoryMethodToCreateChildEnvironmentWithBuiltinSignatures()
+        public void ProvidesFactoryMethodToCreateChildScopeWithBuiltinSignatures()
         {
-            var environment = Environment.CreateEnvironmentWithBuiltins(root);
+            var scope = Scope.CreateScopeWithBuiltins(root);
 
-            AssertType("System.Func<int, int, bool>", environment, "<");
-            AssertType("System.Func<int, int, bool>", environment, "<=");
-            AssertType("System.Func<int, int, bool>", environment, ">");
-            AssertType("System.Func<int, int, bool>", environment, ">=");
-            AssertType("System.Func<int, int, bool>", environment, "==");
-            AssertType("System.Func<int, int, bool>", environment, "!=");
+            AssertType("System.Func<int, int, bool>", scope, "<");
+            AssertType("System.Func<int, int, bool>", scope, "<=");
+            AssertType("System.Func<int, int, bool>", scope, ">");
+            AssertType("System.Func<int, int, bool>", scope, ">=");
+            AssertType("System.Func<int, int, bool>", scope, "==");
+            AssertType("System.Func<int, int, bool>", scope, "!=");
 
-            AssertType("System.Func<int, int, int>", environment, "+");
-            AssertType("System.Func<int, int, int>", environment, "-");
-            AssertType("System.Func<int, int, int>", environment, "*");
-            AssertType("System.Func<int, int, int>", environment, "/");
+            AssertType("System.Func<int, int, int>", scope, "+");
+            AssertType("System.Func<int, int, int>", scope, "-");
+            AssertType("System.Func<int, int, int>", scope, "*");
+            AssertType("System.Func<int, int, int>", scope, "/");
 
-            AssertType("System.Func<bool, bool, bool>", environment, "||");
-            AssertType("System.Func<bool, bool, bool>", environment, "&&");
-            AssertType("System.Func<bool, bool>", environment, "!");
+            AssertType("System.Func<bool, bool, bool>", scope, "||");
+            AssertType("System.Func<bool, bool, bool>", scope, "&&");
+            AssertType("System.Func<bool, bool>", scope, "!");
 
-            AssertType("System.Func<Rook.Core.Nullable<0>, 0, 0>", environment, "??");
-            AssertType("System.Func<1, Rook.Core.Void>", environment, "Print");
-            AssertType("System.Func<2, Rook.Core.Nullable<2>>", environment, "Nullable");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<3>, 3>", environment, "First");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<4>, int, System.Collections.Generic.IEnumerable<4>>", environment, "Take");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<5>, int, System.Collections.Generic.IEnumerable<5>>", environment, "Skip");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<6>, bool>", environment, "Any");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<7>, int>", environment, "Count");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<8>, System.Func<8, 9>, System.Collections.Generic.IEnumerable<9>>", environment, "Select");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<10>, System.Func<10, bool>, System.Collections.Generic.IEnumerable<10>>", environment, "Where");
-            AssertType("System.Func<Rook.Core.Collections.Vector<11>, System.Collections.Generic.IEnumerable<11>>", environment, "Each");
-            AssertType("System.Func<Rook.Core.Collections.Vector<12>, int, 12>", environment, "Index");
-            AssertType("System.Func<Rook.Core.Collections.Vector<13>, int, int, Rook.Core.Collections.Vector<13>>", environment, "Slice");
-            AssertType("System.Func<Rook.Core.Collections.Vector<14>, 14, Rook.Core.Collections.Vector<14>>", environment, "Append");
-            AssertType("System.Func<Rook.Core.Collections.Vector<15>, int, 15, Rook.Core.Collections.Vector<15>>", environment, "With");
+            AssertType("System.Func<Rook.Core.Nullable<0>, 0, 0>", scope, "??");
+            AssertType("System.Func<1, Rook.Core.Void>", scope, "Print");
+            AssertType("System.Func<2, Rook.Core.Nullable<2>>", scope, "Nullable");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<3>, 3>", scope, "First");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<4>, int, System.Collections.Generic.IEnumerable<4>>", scope, "Take");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<5>, int, System.Collections.Generic.IEnumerable<5>>", scope, "Skip");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<6>, bool>", scope, "Any");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<7>, int>", scope, "Count");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<8>, System.Func<8, 9>, System.Collections.Generic.IEnumerable<9>>", scope, "Select");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<10>, System.Func<10, bool>, System.Collections.Generic.IEnumerable<10>>", scope, "Where");
+            AssertType("System.Func<Rook.Core.Collections.Vector<11>, System.Collections.Generic.IEnumerable<11>>", scope, "Each");
+            AssertType("System.Func<Rook.Core.Collections.Vector<12>, int, 12>", scope, "Index");
+            AssertType("System.Func<Rook.Core.Collections.Vector<13>, int, int, Rook.Core.Collections.Vector<13>>", scope, "Slice");
+            AssertType("System.Func<Rook.Core.Collections.Vector<14>, 14, Rook.Core.Collections.Vector<14>>", scope, "Append");
+            AssertType("System.Func<Rook.Core.Collections.Vector<15>, int, 15, Rook.Core.Collections.Vector<15>>", scope, "With");
         }
 
         [Fact]
-        public void IncludesOptionalSetOfTypeMemberBindingsInTheRootEnvironment()
+        public void IncludesOptionalSetOfTypeMemberBindingsInTheRootScope()
         {
             var foo = new NamedType("Foo");
             var math = new NamedType("Math");
@@ -120,21 +120,21 @@ namespace Rook.Compiling
                                                         new StubBinding("Square", NamedType.Function(new[] {Integer}, Integer)),
                                                         new StubBinding("Even", NamedType.Function(new[] {Integer}, Boolean)));
 
-            var rootWithTypes = new Environment(new[] {fooBinding, mathBinding});
-            var childEnvironment = new Environment(rootWithTypes);
+            var rootWithTypes = new Scope(new[] {fooBinding, mathBinding});
+            var childScope = new Scope(rootWithTypes);
 
             AssertMemberType(NamedType.Function(Integer), rootWithTypes, foo, "I");
             AssertMemberType(NamedType.Function(Boolean), rootWithTypes, foo, "B");
             AssertMemberType(NamedType.Function(new[] { Integer }, Integer), rootWithTypes, math, "Square");
             AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), rootWithTypes, math, "Even");
 
-            AssertMemberType(NamedType.Function(Integer), childEnvironment, foo, "I");
-            AssertMemberType(NamedType.Function(Boolean), childEnvironment, foo, "B");
-            AssertMemberType(NamedType.Function(new[] { Integer }, Integer), childEnvironment, math, "Square");
-            AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), childEnvironment, math, "Even");
+            AssertMemberType(NamedType.Function(Integer), childScope, foo, "I");
+            AssertMemberType(NamedType.Function(Boolean), childScope, foo, "B");
+            AssertMemberType(NamedType.Function(new[] { Integer }, Integer), childScope, math, "Square");
+            AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), childScope, math, "Even");
 
-            Environment expectedFailure;
-            rootWithTypes.TryGetMemberEnvironment(new NamedType("UnknownType"), out expectedFailure).ShouldBeFalse();
+            Scope expectedFailure;
+            rootWithTypes.TryGetMemberScope(new NamedType("UnknownType"), out expectedFailure).ShouldBeFalse();
             expectedFailure.ShouldBeNull();
         }
 
@@ -150,11 +150,11 @@ namespace Rook.Compiling
         }
 
         [Fact]
-        public void ProvidesTypeNormalizerSharedWithAllLocalEnvironments()
+        public void ProvidesTypeNormalizerSharedWithAllLocalScopes()
         {
             ab.TypeNormalizer.ShouldBeSameAs(root.TypeNormalizer);
             bc.TypeNormalizer.ShouldBeSameAs(ab.TypeNormalizer);
-            new Environment().TypeNormalizer.ShouldNotBeSameAs(root.TypeNormalizer);
+            new Scope().TypeNormalizer.ShouldNotBeSameAs(root.TypeNormalizer);
         }
 
         [Fact]
@@ -203,34 +203,34 @@ namespace Rook.Compiling
             bc.IsGeneric(var3).ShouldBeFalse();
         }
 
-        private static void AssertType(DataType expectedType, Environment environment, string key)
+        private static void AssertType(DataType expectedType, Scope scope, string key)
         {
             DataType value;
 
-            if (environment.TryGet(key, out value))
+            if (scope.TryGet(key, out value))
                 value.ShouldEqual(expectedType);
             else
-                throw new Exception("Failed to look up the type of '" + key + "' in the environment");
+                throw new Exception("Failed to look up the type of '" + key + "' in the Scope");
         }
 
-        private static void AssertMemberType(DataType expectedType, Environment environment, DataType typeKey, string memberKey)
+        private static void AssertMemberType(DataType expectedType, Scope scope, DataType typeKey, string memberKey)
         {
-            Environment typeMemberEnvironment;
+            Scope typeMemberScope;
 
-            if (environment.TryGetMemberEnvironment(typeKey, out typeMemberEnvironment))
-                AssertType(expectedType, typeMemberEnvironment, memberKey);
+            if (scope.TryGetMemberScope(typeKey, out typeMemberScope))
+                AssertType(expectedType, typeMemberScope, memberKey);
             else
-                throw new Exception("Failed to look up the type of '" + typeKey + "+" + memberKey + "' in the environment");
+                throw new Exception("Failed to look up the type of '" + typeKey + "+" + memberKey + "' in the Scope");
         }
 
-        private static void AssertType(string expectedType, Environment environment, string key)
+        private static void AssertType(string expectedType, Scope scope, string key)
         {
             DataType value;
 
-            if (environment.TryGet(key, out value))
+            if (scope.TryGet(key, out value))
                 expectedType.ShouldEqual(value.ToString());
             else
-                throw new Exception("Failed to look up the type of '" + key + "' in the environment");
+                throw new Exception("Failed to look up the type of '" + key + "' in the Scope");
         }
 
         private class StubTypeMemberBinding : TypeMemberBinding

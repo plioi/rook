@@ -32,19 +32,19 @@ namespace Rook.Compiling.Syntax
             return typeCheckedExpressions.Select(x => x.Syntax).ToVector();
         }
 
-        public static Vector<TypeChecked<Expression>> WithTypes(this Vector<Expression> expressions, Environment environment)
+        public static Vector<TypeChecked<Expression>> WithTypes(this Vector<Expression> expressions, Scope scope)
         {
-            return expressions.Select(x => x.WithTypes(environment)).ToVector();
+            return expressions.Select(x => x.WithTypes(scope)).ToVector();
         }
 
-        public static Vector<TypeChecked<Function>> WithTypes(this Vector<Function> functions, Environment environment)
+        public static Vector<TypeChecked<Function>> WithTypes(this Vector<Function> functions, Scope scope)
         {
-            return functions.Select(x => x.WithTypes(environment)).ToVector();
+            return functions.Select(x => x.WithTypes(scope)).ToVector();
         } 
 
-        public static Vector<TypeChecked<Class>> WithTypes(this Vector<Class> classes, Environment environment)
+        public static Vector<TypeChecked<Class>> WithTypes(this Vector<Class> classes, Scope scope)
         {
-            return classes.Select(x => x.WithTypes(environment)).ToVector();
+            return classes.Select(x => x.WithTypes(scope)).ToVector();
         }
 
         public static Vector<CompilerError> Unify(this TypeNormalizer normalizer, DataType type, TypedSyntaxTree typedSyntaxTree)

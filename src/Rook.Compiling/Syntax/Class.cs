@@ -29,15 +29,15 @@ namespace Rook.Compiling.Syntax
             return visitor.Visit(this);
         }
 
-        public TypeChecked<Class> WithTypes(Environment environment)
+        public TypeChecked<Class> WithTypes(Scope scope)
         {
-            var localEnvironment = new Environment(environment);
+            var localScope = new Scope(scope);
 
             foreach (var method in Methods)
-                if (!localEnvironment.TryIncludeUniqueBinding(method))
+                if (!localScope.TryIncludeUniqueBinding(method))
                     return TypeChecked<Class>.DuplicateIdentifierError(method);
 
-            var typeCheckedMethods = Methods.WithTypes(localEnvironment);
+            var typeCheckedMethods = Methods.WithTypes(localScope);
 
             var errors = typeCheckedMethods.Errors();
             if (errors.Any())

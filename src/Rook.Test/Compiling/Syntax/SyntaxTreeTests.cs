@@ -28,20 +28,20 @@ namespace Rook.Compiling.Syntax
 
         protected delegate DataType TypeMapping(string name);
 
-        protected static Environment Environment(params TypeMapping[] symbols)
+        protected static Scope Scope(params TypeMapping[] symbols)
         {
-            var rootEnvironment = new Environment();
-            var environmentWithBuiltins = Compiling.Environment.CreateEnvironmentWithBuiltins(rootEnvironment);
-            var environment = new Environment(environmentWithBuiltins);
+            var rootScope = new Scope();
+            var scopeWithBuiltins = Compiling.Scope.CreateScopeWithBuiltins(rootScope);
+            var scope = new Scope(scopeWithBuiltins);
 
             foreach (var symbol in symbols)
             {
                 var item = symbol(null);
                 var name = symbol.Method.GetParameters()[0].Name;
-                environment[name] = item;
+                scope[name] = item;
             }
 
-            return environment;
+            return scope;
         }
     }
 }

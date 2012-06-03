@@ -20,9 +20,9 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Environment environment)
+        public TypeChecked<Expression> WithTypes(Scope scope)
         {
-            var typeCheckedTypeName = TypeName.WithTypes(environment);
+            var typeCheckedTypeName = TypeName.WithTypes(scope);
 
             if (typeCheckedTypeName.HasErrors)
                 return typeCheckedTypeName;

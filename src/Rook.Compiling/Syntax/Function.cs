@@ -43,22 +43,22 @@ namespace Rook.Compiling.Syntax
             }
         }
 
-        public TypeChecked<Function> WithTypes(Environment environment)
+        public TypeChecked<Function> WithTypes(Scope scope)
         {
-            //TODO: Factor suspicious similarity between this and Lambda.WithTypes(Environment);
+            //TODO: Factor suspicious similarity between this and Lambda.WithTypes(Scope);
 
-            var localEnvironment = new Environment(environment);
+            var localScope = new Scope(scope);
 
             foreach (var parameter in Parameters)
-                if (!localEnvironment.TryIncludeUniqueBinding(parameter))
+                if (!localScope.TryIncludeUniqueBinding(parameter))
                     return TypeChecked<Function>.DuplicateIdentifierError(parameter);
 
-            var typeCheckedBody = Body.WithTypes(localEnvironment);
+            var typeCheckedBody = Body.WithTypes(localScope);
             if (typeCheckedBody.HasErrors)
                 return TypeChecked<Function>.Failure(typeCheckedBody.Errors);
 
             var typedBody = typeCheckedBody.Syntax;
-            var unifyErrors = environment.TypeNormalizer.Unify(ReturnType, typedBody);
+            var unifyErrors = scope.TypeNormalizer.Unify(ReturnType, typedBody);
             if (unifyErrors.Count > 0)
                 return TypeChecked<Function>.Failure(unifyErrors);
 
