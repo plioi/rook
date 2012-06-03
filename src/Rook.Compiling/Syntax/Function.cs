@@ -37,7 +37,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                DataType[] parameterTypes = Parameters.Select(p => p.Type).ToArray();
+                var parameterTypes = Parameters.Select(p => p.Type).ToArray();
 
                 return NamedType.Function(parameterTypes, ReturnType);
             }
@@ -45,8 +45,6 @@ namespace Rook.Compiling.Syntax
 
         public TypeChecked<Function> WithTypes(Scope scope)
         {
-            //TODO: Factor suspicious similarity between this and Lambda.WithTypes(Scope);
-
             var localScope = new Scope(scope);
 
             foreach (var parameter in Parameters)

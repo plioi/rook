@@ -31,8 +31,6 @@ namespace Rook.Compiling.Syntax
 
         public TypeChecked<Expression> WithTypes(Scope scope)
         {
-            //TODO: Factor suspicious similarity between this and Lambda.WithTypes(Scope);
-
             var localScope = new Scope(scope);
 
             var typedVariableDeclarations = new List<VariableDeclaration>();

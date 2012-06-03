@@ -26,9 +26,6 @@ namespace Rook.Compiling.Syntax
 
         public TypeChecked<Expression> WithTypes(Scope scope)
         {
-            //TODO: Factor suspicious similarity between this and Function.WithTypes(Scope);
-            //TODO: Factor suspicious similarity between this and Block.WithTypes(Scope);
-
             var localScope = new Scope(scope);
 
             var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters, localScope);
@@ -37,8 +34,7 @@ namespace Rook.Compiling.Syntax
                 if (!localScope.TryIncludeUniqueBinding(parameter))
                     return TypeChecked<Expression>.DuplicateIdentifierError(parameter);
 
-            TypeChecked<Expression> typeCheckedBody = Body.WithTypes(localScope);
-
+            var typeCheckedBody = Body.WithTypes(localScope);
             if (typeCheckedBody.HasErrors)
                 return typeCheckedBody;
 
@@ -47,7 +43,7 @@ namespace Rook.Compiling.Syntax
             var normalizedParameters = NormalizeTypes(typedParameters, localScope);
             //TODO: Determine whether I should also normalize typedBody.Type for the return below.
 
-            DataType[] parameterTypes = normalizedParameters.Select(p => p.Type).ToArray();
+            var parameterTypes = normalizedParameters.Select(p => p.Type).ToArray();
 
             return TypeChecked<Expression>.Success(new Lambda(Position, normalizedParameters, typedBody, NamedType.Function(parameterTypes, typedBody.Type)));
         }
@@ -61,7 +57,7 @@ namespace Rook.Compiling.Syntax
             {
                 if (parameter.IsImplicitlyTyped())
                 {
-                    TypeVariable typeVariable = localScope.CreateTypeVariable();
+                    var typeVariable = localScope.CreateTypeVariable();
                     typeVariables.Add(typeVariable);
                     decoratedParameters.Add(new Parameter(parameter.Position, typeVariable, parameter.Identifier));
                 }
