@@ -8,11 +8,6 @@ namespace Rook.Compiling.Types
     {
         #region Factory Methods
 
-        public static NamedType Dynamic
-        {
-            get { return new NamedType("dynamic"); }
-        }
-
         public static NamedType Void
         {
             get { return new NamedType("Rook.Core.Void"); }

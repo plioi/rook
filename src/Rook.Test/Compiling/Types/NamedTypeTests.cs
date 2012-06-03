@@ -47,7 +47,6 @@ namespace Rook.Compiling.Types
         [Fact]
         public void CanBeCreatedFromConvenienceFactories()
         {
-            NamedType.Dynamic.ShouldEqual(Create("dynamic"));
             NamedType.Void.ShouldEqual(Create("Rook.Core.Void"));
             NamedType.Integer.ShouldEqual(Create("int"));
             NamedType.Boolean.ShouldEqual(Create("bool"));

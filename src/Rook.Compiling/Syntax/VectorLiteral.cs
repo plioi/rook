@@ -34,10 +34,10 @@ namespace Rook.Compiling.Syntax
 
             var firstItemType = typedItems.First().Type;
 
-            var normalizer = scope.TypeNormalizer;
+            var unifier = scope.TypeUnifier;
             var unifyErrors = new List<CompilerError>();
             foreach (var typedItem in typedItems)
-                unifyErrors.AddRange(normalizer.Unify(firstItemType, typedItem));
+                unifyErrors.AddRange(unifier.Unify(firstItemType, typedItem));
 
             if (unifyErrors.Count > 0)
                 return TypeChecked<Expression>.Failure(unifyErrors.ToVector());

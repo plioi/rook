@@ -53,14 +53,14 @@ namespace Rook.Compiling.Syntax
             var returnType = calleeType.InnerTypes.Last();
             var argumentTypes = typedArguments.Select(x => x.Type).ToVector();
 
-            var normalizer = scope.TypeNormalizer;
+            var unifier = scope.TypeUnifier;
             var unifyErrors = new List<CompilerError>(
-                normalizer.Unify(calleeType, NamedType.Function(argumentTypes, returnType))
+                unifier.Unify(calleeType, NamedType.Function(argumentTypes, returnType))
                     .Select(error => new CompilerError(Position, error)));
             if (unifyErrors.Count > 0)
                 return TypeChecked<Expression>.Failure(unifyErrors.ToVector());
 
-            var callType = normalizer.Normalize(returnType);
+            var callType = unifier.Normalize(returnType);
 
             return TypeChecked<Expression>.Success(new Call(Position, typedCallable, typedArguments, IsOperator, callType));
         }

@@ -56,7 +56,7 @@ namespace Rook.Compiling.Syntax
                 return TypeChecked<Function>.Failure(typeCheckedBody.Errors);
 
             var typedBody = typeCheckedBody.Syntax;
-            var unifyErrors = scope.TypeNormalizer.Unify(ReturnType, typedBody);
+            var unifyErrors = scope.TypeUnifier.Unify(ReturnType, typedBody);
             if (unifyErrors.Count > 0)
                 return TypeChecked<Function>.Failure(unifyErrors);
 

@@ -111,7 +111,7 @@
     <Compile Include="Types\DataType.cs" />
     <Compile Include="Types\NamedType.cs" />
     <Compile Include="Scope.cs" />
-    <Compile Include="Types\TypeNormalizer.cs" />
+    <Compile Include="Types\TypeUnifier.cs" />
     <Compile Include="Types\TypeVariable.cs" />
   </ItemGroup>
   <ItemGroup>

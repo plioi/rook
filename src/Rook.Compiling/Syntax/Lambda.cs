@@ -74,7 +74,7 @@ namespace Rook.Compiling.Syntax
 
         private static Vector<Parameter> NormalizeTypes(IEnumerable<Parameter> typedParameters, Scope localScope)
         {
-            return typedParameters.Select(p => new Parameter(p.Position, localScope.TypeNormalizer.Normalize(p.Type), p.Identifier)).ToVector();
+            return typedParameters.Select(p => new Parameter(p.Position, localScope.TypeUnifier.Normalize(p.Type), p.Identifier)).ToVector();
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)

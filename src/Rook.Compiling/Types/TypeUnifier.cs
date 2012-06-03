@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace Rook.Compiling.Types
 {
-    public class TypeNormalizer
+    public class TypeUnifier
     {
         private readonly IDictionary<TypeVariable, DataType> substitutions;
         private static readonly IEnumerable<string> success = Enumerable.Empty<string>();
 
-        public TypeNormalizer()
+        public TypeUnifier()
         {
             substitutions = new Dictionary<TypeVariable, DataType>();
         }

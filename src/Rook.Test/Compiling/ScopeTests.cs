@@ -150,11 +150,11 @@ namespace Rook.Compiling
         }
 
         [Fact]
-        public void ProvidesTypeNormalizerSharedWithAllLocalScopes()
+        public void ProvidesTypeUnifierSharedWithAllLocalScopes()
         {
-            ab.TypeNormalizer.ShouldBeSameAs(root.TypeNormalizer);
-            bc.TypeNormalizer.ShouldBeSameAs(ab.TypeNormalizer);
-            new Scope().TypeNormalizer.ShouldNotBeSameAs(root.TypeNormalizer);
+            ab.TypeUnifier.ShouldBeSameAs(root.TypeUnifier);
+            bc.TypeUnifier.ShouldBeSameAs(ab.TypeUnifier);
+            new Scope().TypeUnifier.ShouldNotBeSameAs(root.TypeUnifier);
         }
 
         [Fact]

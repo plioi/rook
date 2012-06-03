@@ -37,9 +37,9 @@ namespace Rook.Compiling.Syntax
             Expression typedWhenTrue = typeCheckedWhenTrue.Syntax;
             Expression typedWhenFalse = typeCheckedWhenFalse.Syntax;
 
-            var normalizer = scope.TypeNormalizer;
-            var unifyErrorsA = normalizer.Unify(NamedType.Boolean, typedCondition);
-            var unifyErrorsB = normalizer.Unify(typedWhenTrue.Type, typedWhenFalse);
+            var unifier = scope.TypeUnifier;
+            var unifyErrorsA = unifier.Unify(NamedType.Boolean, typedCondition);
+            var unifyErrorsB = unifier.Unify(typedWhenTrue.Type, typedWhenFalse);
 
             if (unifyErrorsA.Any() || unifyErrorsB.Any())
                 return TypeChecked<Expression>.Failure(unifyErrorsA.Concat(unifyErrorsB).ToVector());

@@ -55,7 +55,7 @@ namespace Rook.Compiling.Syntax
                                                                       variable.Identifier,
                                                                       typedValue));
 
-                var unifyErrors = scope.TypeNormalizer.Unify(binding.Type, typedValue);
+                var unifyErrors = scope.TypeUnifier.Unify(binding.Type, typedValue);
 
                 if (unifyErrors.Count > 0)
                     return TypeChecked<Expression>.Failure(unifyErrors);

@@ -116,7 +116,7 @@
     <Compile Include="Compiling\Syntax\TypeNameParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Compiling\Types\NamedTypeTests.cs" />
-    <Compile Include="Compiling\Types\TypeNormalizerTests.cs" />
+    <Compile Include="Compiling\Types\TypeUnifierTests.cs" />
     <Compile Include="Compiling\Types\TypeVariableTests.cs" />
   </ItemGroup>
   <ItemGroup>

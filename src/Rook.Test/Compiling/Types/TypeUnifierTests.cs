@@ -4,32 +4,32 @@ using Xunit;
 
 namespace Rook.Compiling.Types
 {
-    public class TypeNormalizerTests
+    public class TypeUnifierTests
     {
         private static readonly NamedType Integer = NamedType.Integer;
         private static readonly NamedType Boolean = NamedType.Boolean;
 
-        private readonly TypeNormalizer normalizer;
+        private readonly TypeUnifier unifier;
         private readonly TypeVariable x;
         private readonly TypeVariable y;
         private readonly TypeVariable z;
 
-        public TypeNormalizerTests()
+        public TypeUnifierTests()
         {
             x = new TypeVariable(0);
             y = new TypeVariable(1);
             z = new TypeVariable(2);
-            normalizer = new TypeNormalizer();
+            unifier = new TypeUnifier();
         }
 
         private IEnumerable<string> Unify(DataType a, DataType b)
         {
-            return normalizer.Unify(a, b);
+            return unifier.Unify(a, b);
         }
 
         private DataType Normalize(DataType type)
         {
-            return normalizer.Normalize(type);
+            return unifier.Normalize(type);
         }
 
         [Fact]
