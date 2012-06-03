@@ -26,5 +26,10 @@ namespace Rook.Compiling.Syntax
         {
             return Parse(source).WithTypes(scope, new TypeUnifier());
         }
+
+        protected T WithTypes<T>(T syntaxTree, params TypeMapping[] symbols) where T : Expression
+        {
+            return (T)syntaxTree.WithTypes(Scope(symbols), new TypeUnifier()).Syntax;
+        }
     }
 }

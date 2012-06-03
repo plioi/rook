@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
 using Should;
@@ -154,16 +153,18 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void CanCreateFullyTypedInstance()
         {
-            var node = (Call)Parse("func(yes, zero)");
-            node.Callable.Type.ShouldBeNull();
-            node.Arguments.ShouldHaveTypes(null, null);
-            node.Type.ShouldBeNull();
+            var call = (Call)Parse("func(yes, zero)");
+            call.Callable.Type.ShouldBeNull();
+            call.Arguments.ShouldHaveTypes(null, null);
+            call.Type.ShouldBeNull();
 
-            var scope = Scope(func => Function(new[] {Boolean, Integer}, Integer), yes => Boolean, zero => Integer);
-            var typedNode = (Call)node.WithTypes(scope, new TypeUnifier()).Syntax;
-            typedNode.Callable.Type.ShouldEqual(NamedType.Function(new[] { Boolean, Integer }, Integer));
-            typedNode.Arguments.ShouldHaveTypes(Boolean, Integer);
-            typedNode.Type.ShouldEqual(Integer);
+            var typedCall = WithTypes(call,
+                                      func => Function(new[] {Boolean, Integer}, Integer),
+                                      yes => Boolean,
+                                      zero => Integer);
+            typedCall.Callable.Type.ShouldEqual(NamedType.Function(new[] { Boolean, Integer }, Integer));
+            typedCall.Arguments.ShouldHaveTypes(Boolean, Integer);
+            typedCall.Type.ShouldEqual(Integer);
         }
 
         [Fact]

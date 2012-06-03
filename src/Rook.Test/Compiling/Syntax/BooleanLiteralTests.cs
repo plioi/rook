@@ -1,4 +1,3 @@
-using Rook.Compiling.Types;
 using Should;
 using Xunit;
 
@@ -26,7 +25,7 @@ namespace Rook.Compiling.Syntax
             var boolean = (BooleanLiteral) Parse("false");
             boolean.Type.ShouldEqual(Boolean);
 
-            var typedBoolean = (BooleanLiteral) boolean.WithTypes(Scope(), new TypeUnifier()).Syntax;
+            var typedBoolean = WithTypes(boolean);
             typedBoolean.Type.ShouldEqual(Boolean);
             typedBoolean.ShouldBeSameAs(boolean);
         }

@@ -52,7 +52,7 @@ namespace Rook.Compiling.Syntax
             var str = (StringLiteral)Parse("\"abcdef\"");
             str.Type.ShouldEqual(NamedType.String);
 
-            var typedStr = (StringLiteral)str.WithTypes(Scope(), new TypeUnifier()).Syntax;
+            var typedStr = WithTypes(str);
             typedStr.Type.ShouldEqual(NamedType.String);
             typedStr.ShouldBeSameAs(str);
         }

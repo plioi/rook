@@ -1,4 +1,3 @@
-using Rook.Compiling.Types;
 using Should;
 using Xunit;
 
@@ -29,7 +28,7 @@ namespace Rook.Compiling.Syntax
             var integer = (IntegerLiteral)Parse("12345");
             integer.Type.ShouldBeNull();
 
-            var typedInteger = (IntegerLiteral)integer.WithTypes(Scope(), new TypeUnifier()).Syntax;
+            var typedInteger = WithTypes(integer);
             typedInteger.Type.ShouldEqual(Integer);
         }
 

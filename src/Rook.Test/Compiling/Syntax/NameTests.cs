@@ -49,11 +49,11 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void CanCreateFullyTypedInstance()
         {
-            var node = (Name)Parse("foo");
-            node.Type.ShouldBeNull();
+            var name = (Name)Parse("foo");
+            name.Type.ShouldBeNull();
 
-            var typedNode = (Name)node.WithTypes(Scope(foo => Boolean), new TypeUnifier()).Syntax;
-            typedNode.Type.ShouldEqual(Boolean);
+            var typedName = WithTypes(name, foo => Boolean);
+            typedName.Type.ShouldEqual(Boolean);
         }
 
         [Fact]

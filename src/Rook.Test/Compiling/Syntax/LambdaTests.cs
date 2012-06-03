@@ -56,15 +56,15 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void CanCreateFullyTypedInstance()
         {
-            var node = (Lambda)Parse("fn (x, int y, bool z) x+y>0 && z");
-            node.Parameters.ShouldHaveTypes(null, Integer, Boolean);
-            node.Body.Type.ShouldBeNull();
-            node.Type.ShouldBeNull();
+            var lambda = (Lambda)Parse("fn (x, int y, bool z) x+y>0 && z");
+            lambda.Parameters.ShouldHaveTypes(null, Integer, Boolean);
+            lambda.Body.Type.ShouldBeNull();
+            lambda.Type.ShouldBeNull();
 
-            var typedNode = (Lambda)node.WithTypes(Scope(), new TypeUnifier()).Syntax;
-            typedNode.Parameters.ShouldHaveTypes(Integer, Integer, Boolean);
-            typedNode.Body.Type.ShouldEqual(Boolean);
-            typedNode.Type.ShouldEqual(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean));
+            var typedLambda = WithTypes(lambda);
+            typedLambda.Parameters.ShouldHaveTypes(Integer, Integer, Boolean);
+            typedLambda.Body.Type.ShouldEqual(Boolean);
+            typedLambda.Type.ShouldEqual(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean));
         }
 
         [Fact]

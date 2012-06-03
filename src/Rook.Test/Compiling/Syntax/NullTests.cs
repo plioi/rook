@@ -21,11 +21,11 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void CanCreateFullyTypedInstance()
         {
-            var node = (Null)Parse("null");
-            node.Type.ShouldBeNull();
+            var @null = (Null)Parse("null");
+            @null.Type.ShouldBeNull();
 
-            var typedNode = (Null)node.WithTypes(Scope(), new TypeUnifier()).Syntax;
-            typedNode.Type.ShouldEqual(NamedType.Nullable(new TypeVariable(2)));
+            var typedNull = WithTypes(@null);
+            typedNull.Type.ShouldEqual(NamedType.Nullable(new TypeVariable(2)));
         }
     }
 }

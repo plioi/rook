@@ -1,5 +1,4 @@
 using Parsley;
-using Rook.Compiling.Types;
 using Should;
 using Xunit;
 
@@ -83,18 +82,17 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void CanCreateFullyTypedInstance()
         {
-            var node = (If)Parse("if (foo) bar else baz");
-            node.Condition.Type.ShouldBeNull();
-            node.BodyWhenTrue.Type.ShouldBeNull();
-            node.BodyWhenFalse.Type.ShouldBeNull();
-            node.Type.ShouldBeNull();
+            var @if = (If)Parse("if (foo) bar else baz");
+            @if.Condition.Type.ShouldBeNull();
+            @if.BodyWhenTrue.Type.ShouldBeNull();
+            @if.BodyWhenFalse.Type.ShouldBeNull();
+            @if.Type.ShouldBeNull();
 
-            var scope = Scope(foo => Boolean, bar => Boolean, baz => Boolean);
-            var typedNode = (If)node.WithTypes(scope, new TypeUnifier()).Syntax;
-            typedNode.Condition.Type.ShouldEqual(Boolean);
-            typedNode.BodyWhenTrue.Type.ShouldEqual(Boolean);
-            typedNode.BodyWhenFalse.Type.ShouldEqual(Boolean);
-            typedNode.Type.ShouldEqual(Boolean);
+            var typedIf = WithTypes(@if, foo => Boolean, bar => Boolean, baz => Boolean);
+            typedIf.Condition.Type.ShouldEqual(Boolean);
+            typedIf.BodyWhenTrue.Type.ShouldEqual(Boolean);
+            typedIf.BodyWhenFalse.Type.ShouldEqual(Boolean);
+            typedIf.Type.ShouldEqual(Boolean);
         }
     }
 }

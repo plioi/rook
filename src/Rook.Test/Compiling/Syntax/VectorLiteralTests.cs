@@ -41,13 +41,13 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void CanCreateFullyTypedInstance()
         {
-            var node = (VectorLiteral)Parse("[foo, bar]");
-            node.Items.ShouldHaveTypes(null, null);
-            node.Type.ShouldBeNull();
+            var vector = (VectorLiteral)Parse("[foo, bar]");
+            vector.Items.ShouldHaveTypes(null, null);
+            vector.Type.ShouldBeNull();
 
-            var typedNode = (VectorLiteral)node.WithTypes(Scope(foo => Boolean, bar => Boolean), new TypeUnifier()).Syntax;
-            typedNode.Items.ShouldHaveTypes(Boolean, Boolean);
-            typedNode.Type.ShouldEqual(NamedType.Vector(Boolean));
+            var typedVector = WithTypes(vector, foo => Boolean, bar => Boolean);
+            typedVector.Items.ShouldHaveTypes(Boolean, Boolean);
+            typedVector.Type.ShouldEqual(NamedType.Vector(Boolean));
         }
     }
 }

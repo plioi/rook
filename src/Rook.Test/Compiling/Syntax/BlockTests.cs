@@ -1,6 +1,5 @@
 using System.Linq;
 using Parsley;
-using Rook.Compiling.Types;
 using Should;
 using Xunit;
 
@@ -70,17 +69,17 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void CanCreateFullyTypedInstance()
         {
-            var node = (Block)Parse("{ int x = y; int z = 0; xz = x>z; x; z; xz; }");
-            node.VariableDeclarations.ShouldHaveTypes(Integer, Integer, null/*Implicitly typed.*/);
-            node.VariableDeclarations.Select(x => x.Value).ShouldHaveTypes(null, null, null);
-            node.InnerExpressions.ShouldHaveTypes(null, null, null);
-            node.Type.ShouldBeNull();
+            var block = (Block)Parse("{ int x = y; int z = 0; xz = x>z; x; z; xz; }");
+            block.VariableDeclarations.ShouldHaveTypes(Integer, Integer, null/*Implicitly typed.*/);
+            block.VariableDeclarations.Select(x => x.Value).ShouldHaveTypes(null, null, null);
+            block.InnerExpressions.ShouldHaveTypes(null, null, null);
+            block.Type.ShouldBeNull();
 
-            var typedNode = (Block)node.WithTypes(Scope(y => Integer), new TypeUnifier()).Syntax;
-            typedNode.VariableDeclarations.ShouldHaveTypes(Integer, Integer, Boolean);
-            typedNode.VariableDeclarations.Select(x => x.Value).ShouldHaveTypes(Integer, Integer, Boolean);
-            typedNode.InnerExpressions.ShouldHaveTypes(Integer, Integer, Boolean);
-            typedNode.Type.ShouldEqual(Boolean);
+            var typedBlock = WithTypes(block, y => Integer);
+            typedBlock.VariableDeclarations.ShouldHaveTypes(Integer, Integer, Boolean);
+            typedBlock.VariableDeclarations.Select(x => x.Value).ShouldHaveTypes(Integer, Integer, Boolean);
+            typedBlock.InnerExpressions.ShouldHaveTypes(Integer, Integer, Boolean);
+            typedBlock.Type.ShouldEqual(Boolean);
         }
 
         [Fact]
