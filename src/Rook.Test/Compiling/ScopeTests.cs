@@ -150,14 +150,6 @@ namespace Rook.Compiling
         }
 
         [Fact]
-        public void ProvidesTypeUnifierSharedWithAllLocalScopes()
-        {
-            ab.TypeUnifier.ShouldBeSameAs(root.TypeUnifier);
-            bc.TypeUnifier.ShouldBeSameAs(ab.TypeUnifier);
-            new Scope().TypeUnifier.ShouldNotBeSameAs(root.TypeUnifier);
-        }
-
-        [Fact]
         public void CanBePopulatedWithAUniqueBinding()
         {
             root.TryIncludeUniqueBinding(new Parameter(null, Integer, "a")).ShouldBeTrue();

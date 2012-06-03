@@ -17,7 +17,7 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Scope scope)
+        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
         {
             var result = new Null(Position, NamedType.Nullable(scope.CreateTypeVariable()));
             return TypeChecked<Expression>.Success(result);

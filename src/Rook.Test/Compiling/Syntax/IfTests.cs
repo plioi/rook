@@ -1,4 +1,5 @@
 using Parsley;
+using Rook.Compiling.Types;
 using Should;
 using Xunit;
 
@@ -87,8 +88,9 @@ namespace Rook.Compiling.Syntax
             node.BodyWhenTrue.Type.ShouldBeNull();
             node.BodyWhenFalse.Type.ShouldBeNull();
             node.Type.ShouldBeNull();
-            
-            var typedNode = (If)node.WithTypes(Scope(foo => Boolean, bar => Boolean, baz => Boolean)).Syntax;
+
+            var scope = Scope(foo => Boolean, bar => Boolean, baz => Boolean);
+            var typedNode = (If)node.WithTypes(scope, new TypeUnifier()).Syntax;
             typedNode.Condition.Type.ShouldEqual(Boolean);
             typedNode.BodyWhenTrue.Type.ShouldEqual(Boolean);
             typedNode.BodyWhenFalse.Type.ShouldEqual(Boolean);

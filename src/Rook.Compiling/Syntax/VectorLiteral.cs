@@ -22,9 +22,9 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Scope scope)
+        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
         {
-            var typeCheckedItems = Items.WithTypes(scope);
+            var typeCheckedItems = Items.WithTypes(scope, unifier);
 
             var errors = typeCheckedItems.Errors();
             if (errors.Any())
@@ -34,7 +34,6 @@ namespace Rook.Compiling.Syntax
 
             var firstItemType = typedItems.First().Type;
 
-            var unifier = scope.TypeUnifier;
             var unifyErrors = new List<CompilerError>();
             foreach (var typedItem in typedItems)
                 unifyErrors.AddRange(unifier.Unify(firstItemType, typedItem));

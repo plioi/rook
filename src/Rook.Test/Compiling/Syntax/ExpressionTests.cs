@@ -24,7 +24,7 @@ namespace Rook.Compiling.Syntax
 
         protected TypeChecked<Expression> TypeChecking(string source, Scope scope)
         {
-            return Parse(source).WithTypes(scope);
+            return Parse(source).WithTypes(scope, new TypeUnifier());
         }
     }
 }

@@ -47,7 +47,7 @@ namespace Rook.Compiling.Syntax
             @new.Type.ShouldBeNull();
             @new.TypeName.Type.ShouldBeNull();
 
-            var typedNew = (New)@new.WithTypes(Scope(Foo => constructorType)).Syntax;
+            var typedNew = (New)@new.WithTypes(Scope(Foo => constructorType), new TypeUnifier()).Syntax;
             typedNew.Type.ShouldEqual(constructedType);
             typedNew.TypeName.Type.ShouldEqual(constructorType);
         }

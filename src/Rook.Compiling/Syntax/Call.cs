@@ -32,10 +32,10 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Scope scope)
+        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
         {
-            TypeChecked<Expression> typeCheckedCallable = Callable.WithTypes(scope);
-            var typeCheckedArguments = Arguments.WithTypes(scope);
+            TypeChecked<Expression> typeCheckedCallable = Callable.WithTypes(scope, unifier);
+            var typeCheckedArguments = Arguments.WithTypes(scope, unifier);
 
             var errors = new[] {typeCheckedCallable}.Concat(typeCheckedArguments).ToVector().Errors();
             if (errors.Any())
@@ -53,7 +53,6 @@ namespace Rook.Compiling.Syntax
             var returnType = calleeType.InnerTypes.Last();
             var argumentTypes = typedArguments.Select(x => x.Type).ToVector();
 
-            var unifier = scope.TypeUnifier;
             var unifyErrors = new List<CompilerError>(
                 unifier.Unify(calleeType, NamedType.Function(argumentTypes, returnType))
                     .Select(error => new CompilerError(Position, error)));

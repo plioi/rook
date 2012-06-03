@@ -21,7 +21,7 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Scope scope)
+        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
         {
             DataType type;
 

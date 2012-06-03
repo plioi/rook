@@ -13,7 +13,6 @@ namespace Rook.Compiling
         private readonly IDictionary<DataType, Scope> typeMemberScopes;
         private readonly List<TypeVariable> localNonGenericTypeVariables;
         private readonly Scope parent;
-        private readonly TypeUnifier typeUnifier;
 
         public Scope(Scope parent)
         {
@@ -35,7 +34,6 @@ namespace Rook.Compiling
                 CreateTypeVariable = parent.CreateTypeVariable;
             }
 
-            typeUnifier = parent == null ? new TypeUnifier() : parent.typeUnifier;
             typeMemberScopes = parent == null ? new Dictionary<DataType, Scope>() : parent.typeMemberScopes;
         }
 
@@ -116,8 +114,6 @@ namespace Rook.Compiling
         {
             set { locals[key] = value; }
         }
-
-        public TypeUnifier TypeUnifier { get { return typeUnifier; } }
 
         public bool TryGetMemberScope(DataType typeKey, out Scope typeMemberScope)
         {

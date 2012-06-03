@@ -29,14 +29,14 @@ namespace Rook.Compiling.Syntax
             return visitor.Visit(this);
         }
 
-        public TypeChecked<Expression> WithTypes(Scope scope)
+        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
         {
             var localScope = new Scope(scope);
 
             var typedVariableDeclarations = new List<VariableDeclaration>();
             foreach (var variable in VariableDeclarations)
             {
-                var typeCheckedValue = variable.Value.WithTypes(localScope);
+                var typeCheckedValue = variable.Value.WithTypes(localScope, unifier);
 
                 if (typeCheckedValue.HasErrors)
                     return typeCheckedValue;
@@ -55,13 +55,13 @@ namespace Rook.Compiling.Syntax
                                                                       variable.Identifier,
                                                                       typedValue));
 
-                var unifyErrors = scope.TypeUnifier.Unify(binding.Type, typedValue);
+                var unifyErrors = unifier.Unify(binding.Type, typedValue);
 
                 if (unifyErrors.Count > 0)
                     return TypeChecked<Expression>.Failure(unifyErrors);
             }
 
-            var typeCheckedInnerExpressions = InnerExpressions.WithTypes(localScope);
+            var typeCheckedInnerExpressions = InnerExpressions.WithTypes(localScope, unifier);
 
             var errors = typeCheckedInnerExpressions.Errors();
             if (errors.Any())

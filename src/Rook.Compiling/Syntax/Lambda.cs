@@ -24,7 +24,7 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Scope scope)
+        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
         {
             var localScope = new Scope(scope);
 
@@ -34,13 +34,13 @@ namespace Rook.Compiling.Syntax
                 if (!localScope.TryIncludeUniqueBinding(parameter))
                     return TypeChecked<Expression>.DuplicateIdentifierError(parameter);
 
-            var typeCheckedBody = Body.WithTypes(localScope);
+            var typeCheckedBody = Body.WithTypes(localScope, unifier);
             if (typeCheckedBody.HasErrors)
                 return typeCheckedBody;
 
             Expression typedBody = typeCheckedBody.Syntax;
 
-            var normalizedParameters = NormalizeTypes(typedParameters, localScope);
+            var normalizedParameters = NormalizeTypes(typedParameters, unifier);
             //TODO: Determine whether I should also normalize typedBody.Type for the return below.
 
             var parameterTypes = normalizedParameters.Select(p => p.Type).ToArray();
@@ -72,9 +72,9 @@ namespace Rook.Compiling.Syntax
             return decoratedParameters.ToArray();
         }
 
-        private static Vector<Parameter> NormalizeTypes(IEnumerable<Parameter> typedParameters, Scope localScope)
+        private static Vector<Parameter> NormalizeTypes(IEnumerable<Parameter> typedParameters, TypeUnifier unifier)
         {
-            return typedParameters.Select(p => new Parameter(p.Position, localScope.TypeUnifier.Normalize(p.Type), p.Identifier)).ToVector();
+            return typedParameters.Select(p => new Parameter(p.Position, unifier.Normalize(p.Type), p.Identifier)).ToVector();
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)

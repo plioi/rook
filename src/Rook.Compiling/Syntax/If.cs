@@ -24,11 +24,11 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Scope scope)
+        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
         {
-            TypeChecked<Expression> typeCheckedCondition = Condition.WithTypes(scope);
-            TypeChecked<Expression> typeCheckedWhenTrue = BodyWhenTrue.WithTypes(scope);
-            TypeChecked<Expression> typeCheckedWhenFalse = BodyWhenFalse.WithTypes(scope);
+            TypeChecked<Expression> typeCheckedCondition = Condition.WithTypes(scope, unifier);
+            TypeChecked<Expression> typeCheckedWhenTrue = BodyWhenTrue.WithTypes(scope, unifier);
+            TypeChecked<Expression> typeCheckedWhenFalse = BodyWhenFalse.WithTypes(scope, unifier);
 
             if (typeCheckedCondition.HasErrors || typeCheckedWhenTrue.HasErrors || typeCheckedWhenFalse.HasErrors)
                 return TypeChecked<Expression>.Failure(new[] {typeCheckedCondition, typeCheckedWhenTrue, typeCheckedWhenFalse}.ToVector().Errors());
@@ -37,7 +37,6 @@ namespace Rook.Compiling.Syntax
             Expression typedWhenTrue = typeCheckedWhenTrue.Syntax;
             Expression typedWhenFalse = typeCheckedWhenFalse.Syntax;
 
-            var unifier = scope.TypeUnifier;
             var unifyErrorsA = unifier.Unify(NamedType.Boolean, typedCondition);
             var unifyErrorsB = unifier.Unify(typedWhenTrue.Type, typedWhenFalse);
 

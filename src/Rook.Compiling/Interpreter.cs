@@ -66,7 +66,7 @@ namespace Rook.Compiling
 
         private InterpreterResult InterpretExpression(Expression expression, Position pos)
         {
-            var typedCheckedExpression = expression.WithTypes(ScopeForExpression());
+            var typedCheckedExpression = expression.WithTypes(ScopeForExpression(), new TypeUnifier());
             if (typedCheckedExpression.HasErrors)
                 return new InterpreterResult(Language.Rook, typedCheckedExpression.Errors);
                 

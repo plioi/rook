@@ -26,6 +26,7 @@ namespace Rook.Compiling.Syntax
 
         public TypeChecked<CompilationUnit> WithTypes()
         {
+            var unifier = new TypeUnifier();
             var rootScope = new Scope(Classes);
 
             var scope = Scope.CreateScopeWithBuiltins(rootScope);
@@ -38,8 +39,8 @@ namespace Rook.Compiling.Syntax
                 if (!scope.TryIncludeUniqueBinding(function))
                     return TypeChecked<CompilationUnit>.DuplicateIdentifierError(function);
 
-            var typeCheckedClasses = Classes.WithTypes(scope);
-            var typeCheckedFunctions = Functions.WithTypes(scope);
+            var typeCheckedClasses = Classes.WithTypes(scope, unifier);
+            var typeCheckedFunctions = Functions.WithTypes(scope, unifier);
 
             var classErrors = typeCheckedClasses.Errors();
             var functionErrors = typeCheckedFunctions.Errors();

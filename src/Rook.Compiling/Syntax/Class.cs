@@ -29,7 +29,7 @@ namespace Rook.Compiling.Syntax
             return visitor.Visit(this);
         }
 
-        public TypeChecked<Class> WithTypes(Scope scope)
+        public TypeChecked<Class> WithTypes(Scope scope, TypeUnifier unifier)
         {
             var localScope = new Scope(scope);
 
@@ -37,7 +37,7 @@ namespace Rook.Compiling.Syntax
                 if (!localScope.TryIncludeUniqueBinding(method))
                     return TypeChecked<Class>.DuplicateIdentifierError(method);
 
-            var typeCheckedMethods = Methods.WithTypes(localScope);
+            var typeCheckedMethods = Methods.WithTypes(localScope, unifier);
 
             var errors = typeCheckedMethods.Errors();
             if (errors.Any())

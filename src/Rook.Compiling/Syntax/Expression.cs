@@ -1,7 +1,9 @@
-﻿namespace Rook.Compiling.Syntax
+﻿using Rook.Compiling.Types;
+
+namespace Rook.Compiling.Syntax
 {
     public interface Expression : TypedSyntaxTree
     {
-        TypeChecked<Expression> WithTypes(Scope scope);
+        TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier);
     }
 }

@@ -15,7 +15,7 @@ namespace Rook.Compiling.Syntax
             Value = value;
         }
 
-        public TypeChecked<Expression> WithTypes(Scope scope)
+        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
         {
             return TypeChecked<Expression>.Success(this);
         }

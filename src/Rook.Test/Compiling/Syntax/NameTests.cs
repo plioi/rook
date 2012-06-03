@@ -52,7 +52,7 @@ namespace Rook.Compiling.Syntax
             var node = (Name)Parse("foo");
             node.Type.ShouldBeNull();
 
-            var typedNode = (Name)node.WithTypes(Scope(foo => Boolean)).Syntax;
+            var typedNode = (Name)node.WithTypes(Scope(foo => Boolean), new TypeUnifier()).Syntax;
             typedNode.Type.ShouldEqual(Boolean);
         }
 

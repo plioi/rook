@@ -43,7 +43,7 @@ namespace Rook.Compiling.Syntax
             }
         }
 
-        public TypeChecked<Function> WithTypes(Scope scope)
+        public TypeChecked<Function> WithTypes(Scope scope, TypeUnifier unifier)
         {
             var localScope = new Scope(scope);
 
@@ -51,12 +51,12 @@ namespace Rook.Compiling.Syntax
                 if (!localScope.TryIncludeUniqueBinding(parameter))
                     return TypeChecked<Function>.DuplicateIdentifierError(parameter);
 
-            var typeCheckedBody = Body.WithTypes(localScope);
+            var typeCheckedBody = Body.WithTypes(localScope, unifier);
             if (typeCheckedBody.HasErrors)
                 return TypeChecked<Function>.Failure(typeCheckedBody.Errors);
 
             var typedBody = typeCheckedBody.Syntax;
-            var unifyErrors = scope.TypeUnifier.Unify(ReturnType, typedBody);
+            var unifyErrors = unifier.Unify(ReturnType, typedBody);
             if (unifyErrors.Count > 0)
                 return TypeChecked<Function>.Failure(unifyErrors);
 
