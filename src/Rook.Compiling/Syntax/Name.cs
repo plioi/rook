@@ -28,17 +28,17 @@ namespace Rook.Compiling.Syntax
             //TODO: We should probably normalize 'type' before freshening its variables.
 
             if (scope.TryGet(Identifier, out type))
-                return TypeChecked<Expression>.Success(new Name(Position, Identifier, FreshenGenericTypeVariables(scope, type)));
+                return TypeChecked<Expression>.Success(new Name(Position, Identifier, FreshenGenericTypeVariables(scope, type, unifier)));
 
             return TypeChecked<Expression>.UndefinedIdentifierError(Position, Identifier);
         }
 
-        private static DataType FreshenGenericTypeVariables(Scope scope, DataType type)
+        private static DataType FreshenGenericTypeVariables(Scope scope, DataType type, TypeUnifier unifier)
         {
             var substitutions = new Dictionary<TypeVariable, DataType>();
             var genericTypeVariables = type.FindTypeVariables().Where(scope.IsGeneric);
             foreach (var genericTypeVariable in genericTypeVariables)
-                substitutions[genericTypeVariable] = scope.CreateTypeVariable();
+                substitutions[genericTypeVariable] = unifier.CreateTypeVariable();
 
             return type.ReplaceTypeVariables(substitutions);
         }

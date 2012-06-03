@@ -19,7 +19,7 @@ namespace Rook.Compiling.Syntax
 
         public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
         {
-            var result = new Null(Position, NamedType.Nullable(scope.CreateTypeVariable()));
+            var result = new Null(Position, NamedType.Nullable(unifier.CreateTypeVariable()));
             return TypeChecked<Expression>.Success(result);
         }
 

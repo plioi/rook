@@ -26,9 +26,9 @@ namespace Rook.Compiling.Syntax
 
         public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
         {
-            var localScope = new Scope(scope);
+            var localScope = scope.CreateLocalScope();
 
-            var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters, localScope);
+            var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters, localScope, unifier);
 
             foreach (var parameter in typedParameters)
                 if (!localScope.TryIncludeUniqueBinding(parameter))
@@ -48,7 +48,7 @@ namespace Rook.Compiling.Syntax
             return TypeChecked<Expression>.Success(new Lambda(Position, normalizedParameters, typedBody, NamedType.Function(parameterTypes, typedBody.Type)));
         }
 
-        private static Parameter[] ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters, Scope localScope)
+        private static Parameter[] ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters, Scope localScope, TypeUnifier unifier)
         {
             var decoratedParameters = new List<Parameter>();
             var typeVariables = new List<TypeVariable>();
@@ -57,7 +57,7 @@ namespace Rook.Compiling.Syntax
             {
                 if (parameter.IsImplicitlyTyped())
                 {
-                    var typeVariable = localScope.CreateTypeVariable();
+                    var typeVariable = unifier.CreateTypeVariable();
                     typeVariables.Add(typeVariable);
                     decoratedParameters.Add(new Parameter(parameter.Position, typeVariable, parameter.Identifier));
                 }

@@ -27,9 +27,8 @@ namespace Rook.Compiling.Syntax
         public TypeChecked<CompilationUnit> WithTypes()
         {
             var unifier = new TypeUnifier();
-            var rootScope = new Scope(Classes);
 
-            var scope = Scope.CreateScopeWithBuiltins(rootScope);
+            var scope = Scope.CreateRoot(unifier, Classes);
 
             foreach (var @class in Classes)
                 if (!scope.TryIncludeUniqueBinding(@class))

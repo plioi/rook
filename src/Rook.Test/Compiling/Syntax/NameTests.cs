@@ -1,3 +1,4 @@
+using System.Linq;
 using Rook.Compiling.Types;
 using Should;
 using Xunit;
@@ -33,17 +34,17 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasATypeInWhichOnlyGenericTypeVariablesAreFreshenedOnEachScopeLookup()
         {
-            //Prevents type '20' from being freshened on type lookup by marking it as non-generic in the scope:
+            //Prevents type '1' from being freshened on type lookup by marking it as non-generic in the scope:
 
-            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(2), new TypeVariable(20), new NamedType("B", new TypeVariable(2), new TypeVariable(20)));
-            var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(20), new NamedType("B", new TypeVariable(0), new TypeVariable(20)));
+            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(2), new TypeVariable(1), new NamedType("B", new TypeVariable(2), new TypeVariable(1)));
+            var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(1), new NamedType("B", new TypeVariable(0), new TypeVariable(1)));
 
-            var rootScope = new Scope();
-            var scope = Compiling.Scope.CreateScopeWithBuiltins(rootScope);
-            scope.TreatAsNonGeneric(new[] { new TypeVariable(20) });
+            var unifier = new TypeUnifier();
+            var scope = Compiling.Scope.CreateRoot(unifier, Enumerable.Empty<TypeMemberBinding>());
+            scope.TreatAsNonGeneric(new[] { new TypeVariable(1) });
             scope["foo"] = definedType;
 
-            Type("foo", scope).ShouldEqual(expectedTypeAfterLookup);
+            Type("foo", scope, unifier).ShouldEqual(expectedTypeAfterLookup);
         }
 
         [Fact]

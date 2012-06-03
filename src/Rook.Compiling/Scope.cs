@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
 
@@ -7,63 +6,35 @@ namespace Rook.Compiling
 {
     public class Scope
     {
-        public readonly Func<TypeVariable> CreateTypeVariable;
-
         private readonly IDictionary<string, DataType> locals;
         private readonly IDictionary<DataType, Scope> typeMemberScopes;
         private readonly List<TypeVariable> localNonGenericTypeVariables;
         private readonly Scope parent;
 
-        public Scope(Scope parent)
+        private Scope(Scope parent)
         {
             locals = new Dictionary<string, DataType>();
             localNonGenericTypeVariables = new List<TypeVariable>();
-            this.parent = parent;
-
-            if (parent == null)
-            {
-                //Conceal the type variable counter inside a closure stored
-                //in the root, so that nonroot instances don't need to keep
-                //around a meaningless int field.
-
-                int next = 0;
-                CreateTypeVariable = () => new TypeVariable(next++);
-            }
-            else
-            {
-                CreateTypeVariable = parent.CreateTypeVariable;
-            }
-
             typeMemberScopes = parent == null ? new Dictionary<DataType, Scope>() : parent.typeMemberScopes;
+            this.parent = parent;
         }
 
-        public Scope()
-            : this((Scope)null)
+        public static Scope CreateRoot(TypeUnifier unifier, IEnumerable<TypeMemberBinding> typeMemberBindings)
         {
-        }
+            var scope = new Scope(null);
 
-        public Scope(IEnumerable<TypeMemberBinding> typeMemberBindings)
-            : this((Scope)null)
-        {
             foreach (var typeMemberBinding in typeMemberBindings)
             {
                 var typeKey = typeMemberBinding.Type;
 
-                if (!typeMemberScopes.ContainsKey(typeKey))
-                    typeMemberScopes[typeKey] = new Scope();
+                if (!scope.typeMemberScopes.ContainsKey(typeKey))
+                    scope.typeMemberScopes[typeKey] = new Scope(null);
 
-                var typeMemberScope = typeMemberScopes[typeKey];
+                var typeMemberScope = scope.typeMemberScopes[typeKey];
 
                 foreach (var member in typeMemberBinding.Members)
                     typeMemberScope.TryIncludeUniqueBinding(member);
             }
-        }
-
-        public static Scope CreateScopeWithBuiltins(Scope parent)
-        {
-            //TODO: If given Scope is not a root, throw!
-
-            var scope = new Scope(parent);
 
             DataType @int = NamedType.Integer;
             DataType @bool = NamedType.Boolean;
@@ -88,8 +59,8 @@ namespace Rook.Compiling
             scope["||"] = booleanOperation;
             scope["!"] = NamedType.Function(new[] { @bool }, @bool);
 
-            var T = scope.CreateTypeVariable(); //TypeVariable 0
-            var S = scope.CreateTypeVariable(); //TypeVariable 1
+            var T = unifier.CreateTypeVariable(); //TypeVariable 0
+            var S = unifier.CreateTypeVariable(); //TypeVariable 1
 
             scope["??"] = NamedType.Function(new DataType[] { NamedType.Nullable(T), T }, T);
             scope["Print"] = NamedType.Function(new[] { T }, NamedType.Void);
@@ -108,6 +79,11 @@ namespace Rook.Compiling
             scope["With"] = NamedType.Function(new[] { NamedType.Vector(T), @int, T }, NamedType.Vector(T));
 
             return scope;
+        }
+
+        public Scope CreateLocalScope()
+        {
+            return new Scope(this);
         }
 
         public DataType this[string key]

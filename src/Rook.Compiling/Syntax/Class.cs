@@ -31,7 +31,7 @@ namespace Rook.Compiling.Syntax
 
         public TypeChecked<Class> WithTypes(Scope scope, TypeUnifier unifier)
         {
-            var localScope = new Scope(scope);
+            var localScope = scope.CreateLocalScope();
 
             foreach (var method in Methods)
                 if (!localScope.TryIncludeUniqueBinding(method))

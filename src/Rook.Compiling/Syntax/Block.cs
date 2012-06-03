@@ -31,7 +31,7 @@ namespace Rook.Compiling.Syntax
 
         public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
         {
-            var localScope = new Scope(scope);
+            var localScope = scope.CreateLocalScope();
 
             var typedVariableDeclarations = new List<VariableDeclaration>();
             foreach (var variable in VariableDeclarations)

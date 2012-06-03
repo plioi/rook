@@ -1,4 +1,5 @@
-﻿using Parsley;
+﻿using System.Linq;
+using Parsley;
 using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
@@ -28,20 +29,19 @@ namespace Rook.Compiling.Syntax
 
         protected delegate DataType TypeMapping(string name);
 
-        protected static Scope Scope(params TypeMapping[] symbols)
+        protected static Scope Scope(TypeUnifier unifier, params TypeMapping[] symbols)
         {
-            var rootScope = new Scope();
-            var scopeWithBuiltins = Compiling.Scope.CreateScopeWithBuiltins(rootScope);
-            var scope = new Scope(scopeWithBuiltins);
+            var root = Compiling.Scope.CreateRoot(unifier, Enumerable.Empty<TypeMemberBinding>());
+            var localScope = root.CreateLocalScope();
 
             foreach (var symbol in symbols)
             {
                 var item = symbol(null);
                 var name = symbol.Method.GetParameters()[0].Name;
-                scope[name] = item;
+                localScope[name] = item;
             }
 
-            return scope;
+            return localScope;
         }
     }
 }

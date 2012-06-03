@@ -66,7 +66,8 @@ namespace Rook.Compiling
 
         private InterpreterResult InterpretExpression(Expression expression, Position pos)
         {
-            var typedCheckedExpression = expression.WithTypes(ScopeForExpression(), new TypeUnifier());
+            var unifier = new TypeUnifier();
+            var typedCheckedExpression = expression.WithTypes(ScopeForExpression(unifier), unifier);
             if (typedCheckedExpression.HasErrors)
                 return new InterpreterResult(Language.Rook, typedCheckedExpression.Errors);
                 
@@ -164,10 +165,9 @@ namespace Rook.Compiling
             return false;
         }
 
-        private Scope ScopeForExpression()
+        private Scope ScopeForExpression(TypeUnifier unifier)
         {
-            var rootScope = new Scope();
-            var scope = Scope.CreateScopeWithBuiltins(rootScope);
+            var scope = Scope.CreateRoot(unifier, Enumerable.Empty<TypeMemberBinding>());
 
             foreach (var c in classes.Values)
                 if (c.Name.Identifier != "Main")

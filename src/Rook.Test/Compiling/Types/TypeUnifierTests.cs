@@ -16,10 +16,10 @@ namespace Rook.Compiling.Types
 
         public TypeUnifierTests()
         {
-            x = new TypeVariable(0);
-            y = new TypeVariable(1);
-            z = new TypeVariable(2);
             unifier = new TypeUnifier();
+            x = unifier.CreateTypeVariable();
+            y = unifier.CreateTypeVariable();
+            z = unifier.CreateTypeVariable();
         }
 
         private IEnumerable<string> Unify(DataType a, DataType b)
@@ -30,6 +30,17 @@ namespace Rook.Compiling.Types
         private DataType Normalize(DataType type)
         {
             return unifier.Normalize(type);
+        }
+
+        [Fact]
+        public void ProvidesStreamOfUniqueTypeVariables()
+        {
+            x.ShouldEqual(new TypeVariable(0));
+            y.ShouldEqual(new TypeVariable(1));
+            z.ShouldEqual(new TypeVariable(2));
+            unifier.CreateTypeVariable().ShouldEqual(new TypeVariable(3));
+            unifier.CreateTypeVariable().ShouldEqual(new TypeVariable(4));
+            unifier.CreateTypeVariable().ShouldEqual(new TypeVariable(5));
         }
 
         [Fact]

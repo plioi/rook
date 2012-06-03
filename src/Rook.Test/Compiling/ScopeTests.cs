@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Parsley;
 using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
@@ -17,13 +18,14 @@ namespace Rook.Compiling
 
         public ScopeTests()
         {
-            root = new Scope();
+            var unifier = new TypeUnifier();
+            root = Scope.CreateRoot(unifier, Enumerable.Empty<TypeMemberBinding>());
 
-            ab = new Scope(root);
+            ab = root.CreateLocalScope();
             ab["a"] = Integer;
             ab["b"] = Integer;
 
-            bc = new Scope(ab);
+            bc = ab.CreateLocalScope();
             bc["b"] = Boolean;
             bc["c"] = Boolean;
         }
@@ -68,41 +70,39 @@ namespace Rook.Compiling
         }
 
         [Fact]
-        public void ProvidesFactoryMethodToCreateChildScopeWithBuiltinSignatures()
+        public void ProvidesBuiltinSignaturesInTheRootScope()
         {
-            var scope = Scope.CreateScopeWithBuiltins(root);
+            AssertType("System.Func<int, int, bool>", root, "<");
+            AssertType("System.Func<int, int, bool>", root, "<=");
+            AssertType("System.Func<int, int, bool>", root, ">");
+            AssertType("System.Func<int, int, bool>", root, ">=");
+            AssertType("System.Func<int, int, bool>", root, "==");
+            AssertType("System.Func<int, int, bool>", root, "!=");
 
-            AssertType("System.Func<int, int, bool>", scope, "<");
-            AssertType("System.Func<int, int, bool>", scope, "<=");
-            AssertType("System.Func<int, int, bool>", scope, ">");
-            AssertType("System.Func<int, int, bool>", scope, ">=");
-            AssertType("System.Func<int, int, bool>", scope, "==");
-            AssertType("System.Func<int, int, bool>", scope, "!=");
+            AssertType("System.Func<int, int, int>", root, "+");
+            AssertType("System.Func<int, int, int>", root, "-");
+            AssertType("System.Func<int, int, int>", root, "*");
+            AssertType("System.Func<int, int, int>", root, "/");
 
-            AssertType("System.Func<int, int, int>", scope, "+");
-            AssertType("System.Func<int, int, int>", scope, "-");
-            AssertType("System.Func<int, int, int>", scope, "*");
-            AssertType("System.Func<int, int, int>", scope, "/");
+            AssertType("System.Func<bool, bool, bool>", root, "||");
+            AssertType("System.Func<bool, bool, bool>", root, "&&");
+            AssertType("System.Func<bool, bool>", root, "!");
 
-            AssertType("System.Func<bool, bool, bool>", scope, "||");
-            AssertType("System.Func<bool, bool, bool>", scope, "&&");
-            AssertType("System.Func<bool, bool>", scope, "!");
-
-            AssertType("System.Func<Rook.Core.Nullable<0>, 0, 0>", scope, "??");
-            AssertType("System.Func<0, Rook.Core.Void>", scope, "Print");
-            AssertType("System.Func<0, Rook.Core.Nullable<0>>", scope, "Nullable");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, 0>", scope, "First");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, int, System.Collections.Generic.IEnumerable<0>>", scope, "Take");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, int, System.Collections.Generic.IEnumerable<0>>", scope, "Skip");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, bool>", scope, "Any");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, int>", scope, "Count");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, System.Func<0, 1>, System.Collections.Generic.IEnumerable<1>>", scope, "Select");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, System.Func<0, bool>, System.Collections.Generic.IEnumerable<0>>", scope, "Where");
-            AssertType("System.Func<Rook.Core.Collections.Vector<0>, System.Collections.Generic.IEnumerable<0>>", scope, "Each");
-            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, 0>", scope, "Index");
-            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, int, Rook.Core.Collections.Vector<0>>", scope, "Slice");
-            AssertType("System.Func<Rook.Core.Collections.Vector<0>, 0, Rook.Core.Collections.Vector<0>>", scope, "Append");
-            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, 0, Rook.Core.Collections.Vector<0>>", scope, "With");
+            AssertType("System.Func<Rook.Core.Nullable<0>, 0, 0>", root, "??");
+            AssertType("System.Func<0, Rook.Core.Void>", root, "Print");
+            AssertType("System.Func<0, Rook.Core.Nullable<0>>", root, "Nullable");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, 0>", root, "First");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, int, System.Collections.Generic.IEnumerable<0>>", root, "Take");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, int, System.Collections.Generic.IEnumerable<0>>", root, "Skip");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, bool>", root, "Any");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, int>", root, "Count");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, System.Func<0, 1>, System.Collections.Generic.IEnumerable<1>>", root, "Select");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, System.Func<0, bool>, System.Collections.Generic.IEnumerable<0>>", root, "Where");
+            AssertType("System.Func<Rook.Core.Collections.Vector<0>, System.Collections.Generic.IEnumerable<0>>", root, "Each");
+            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, 0>", root, "Index");
+            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, int, Rook.Core.Collections.Vector<0>>", root, "Slice");
+            AssertType("System.Func<Rook.Core.Collections.Vector<0>, 0, Rook.Core.Collections.Vector<0>>", root, "Append");
+            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, 0, Rook.Core.Collections.Vector<0>>", root, "With");
         }
 
         [Fact]
@@ -120,13 +120,14 @@ namespace Rook.Compiling
                                                         new StubBinding("Square", NamedType.Function(new[] {Integer}, Integer)),
                                                         new StubBinding("Even", NamedType.Function(new[] {Integer}, Boolean)));
 
-            var rootWithTypes = new Scope(new[] {fooBinding, mathBinding});
-            var childScope = new Scope(rootWithTypes);
+            var unifier = new TypeUnifier();
+            var rootScope = Scope.CreateRoot(unifier, new[] {fooBinding, mathBinding});
+            var childScope = rootScope.CreateLocalScope();
 
-            AssertMemberType(NamedType.Function(Integer), rootWithTypes, foo, "I");
-            AssertMemberType(NamedType.Function(Boolean), rootWithTypes, foo, "B");
-            AssertMemberType(NamedType.Function(new[] { Integer }, Integer), rootWithTypes, math, "Square");
-            AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), rootWithTypes, math, "Even");
+            AssertMemberType(NamedType.Function(Integer), rootScope, foo, "I");
+            AssertMemberType(NamedType.Function(Boolean), rootScope, foo, "B");
+            AssertMemberType(NamedType.Function(new[] { Integer }, Integer), rootScope, math, "Square");
+            AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), rootScope, math, "Even");
 
             AssertMemberType(NamedType.Function(Integer), childScope, foo, "I");
             AssertMemberType(NamedType.Function(Boolean), childScope, foo, "B");
@@ -134,19 +135,8 @@ namespace Rook.Compiling
             AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), childScope, math, "Even");
 
             Scope expectedFailure;
-            rootWithTypes.TryGetMemberScope(new NamedType("UnknownType"), out expectedFailure).ShouldBeFalse();
+            rootScope.TryGetMemberScope(new NamedType("UnknownType"), out expectedFailure).ShouldBeFalse();
             expectedFailure.ShouldBeNull();
-        }
-
-        [Fact]
-        public void ProvidesStreamOfUniqueTypeVariables()
-        {
-            root.CreateTypeVariable().ShouldEqual(new TypeVariable(0));
-            root.CreateTypeVariable().ShouldEqual(new TypeVariable(1));
-            ab.CreateTypeVariable().ShouldEqual(new TypeVariable(2));
-            bc.CreateTypeVariable().ShouldEqual(new TypeVariable(3));
-            ab.CreateTypeVariable().ShouldEqual(new TypeVariable(4));
-            bc.CreateTypeVariable().ShouldEqual(new TypeVariable(5));
         }
 
         [Fact]
@@ -170,10 +160,11 @@ namespace Rook.Compiling
         [Fact]
         public void CanDetermineWhetherAGivenTypeVariableIsGenericWhenPreparedWithAKnownListOfNonGenericTypeVariables()
         {
-            TypeVariable var0 = root.CreateTypeVariable();
-            TypeVariable var1 = root.CreateTypeVariable();
-            TypeVariable var2 = root.CreateTypeVariable();
-            TypeVariable var3 = root.CreateTypeVariable();
+            var unifier = new TypeUnifier();
+            TypeVariable var0 = unifier.CreateTypeVariable();
+            TypeVariable var1 = unifier.CreateTypeVariable();
+            TypeVariable var2 = unifier.CreateTypeVariable();
+            TypeVariable var3 = unifier.CreateTypeVariable();
 
             root.TreatAsNonGeneric(new[] {var0});
             ab.TreatAsNonGeneric(new[] {var1, var2});
