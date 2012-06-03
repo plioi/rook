@@ -23,24 +23,24 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasATypeInWhichTypeVariablesAreFreshenedOnEachScopeLookup()
         {
-            Type("foo", foo => new TypeVariable(1)).ShouldEqual(new TypeVariable(16));
+            Type("foo", foo => new TypeVariable(0)).ShouldEqual(new TypeVariable(2));
 
-            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(16), new TypeVariable(17), new NamedType("B", new TypeVariable(16), new TypeVariable(17)));
-            var definedType = new NamedType("A", new TypeVariable(1), new TypeVariable(2), new NamedType("B", new TypeVariable(1), new TypeVariable(2)));
+            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(2), new TypeVariable(3), new NamedType("B", new TypeVariable(2), new TypeVariable(3)));
+            var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(1), new NamedType("B", new TypeVariable(0), new TypeVariable(1)));
             Type("foo", foo => definedType).ShouldEqual(expectedTypeAfterLookup);
         }
 
         [Fact]
         public void HasATypeInWhichOnlyGenericTypeVariablesAreFreshenedOnEachScopeLookup()
         {
-            //Prevents type '2' from being freshened on type lookup by marking it as non-generic in the scope:
+            //Prevents type '20' from being freshened on type lookup by marking it as non-generic in the scope:
 
-            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(16), new TypeVariable(2), new NamedType("B", new TypeVariable(16), new TypeVariable(2)));
-            var definedType = new NamedType("A", new TypeVariable(1), new TypeVariable(2), new NamedType("B", new TypeVariable(1), new TypeVariable(2)));
+            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(2), new TypeVariable(20), new NamedType("B", new TypeVariable(2), new TypeVariable(20)));
+            var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(20), new NamedType("B", new TypeVariable(0), new TypeVariable(20)));
 
             var rootScope = new Scope();
             var scope = Compiling.Scope.CreateScopeWithBuiltins(rootScope);
-            scope.TreatAsNonGeneric(new[] { new TypeVariable(2) });
+            scope.TreatAsNonGeneric(new[] { new TypeVariable(20) });
             scope["foo"] = definedType;
 
             Type("foo", scope).ShouldEqual(expectedTypeAfterLookup);

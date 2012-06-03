@@ -15,7 +15,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasUniqueTypeVariableAsItsType()
         {
-            Type("null").ShouldEqual(NamedType.Nullable(new TypeVariable(16)));
+            Type("null").ShouldEqual(NamedType.Nullable(new TypeVariable(2)));
         }
 
         [Fact]
@@ -25,7 +25,7 @@ namespace Rook.Compiling.Syntax
             node.Type.ShouldBeNull();
 
             var typedNode = (Null)node.WithTypes(Scope()).Syntax;
-            typedNode.Type.ShouldEqual(NamedType.Nullable(new TypeVariable(16)));
+            typedNode.Type.ShouldEqual(NamedType.Nullable(new TypeVariable(2)));
         }
     }
 }

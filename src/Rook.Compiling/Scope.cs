@@ -90,54 +90,24 @@ namespace Rook.Compiling
             scope["||"] = booleanOperation;
             scope["!"] = NamedType.Function(new[] { @bool }, @bool);
 
-            TypeVariable x;
-            TypeVariable y;
+            var T = scope.CreateTypeVariable(); //TypeVariable 0
+            var S = scope.CreateTypeVariable(); //TypeVariable 1
 
-            x = scope.CreateTypeVariable();
-            scope["??"] = NamedType.Function(new DataType[] { NamedType.Nullable(x), x }, x);
-
-            x = scope.CreateTypeVariable();
-            scope["Print"] = NamedType.Function(new[] { x }, NamedType.Void);
-
-            x = scope.CreateTypeVariable();
-            scope["Nullable"] = NamedType.Function(new[] { x }, NamedType.Nullable(x));
-
-            x = scope.CreateTypeVariable();
-            scope["First"] = NamedType.Function(new[] { NamedType.Enumerable(x) }, x);
-
-            x = scope.CreateTypeVariable();
-            scope["Take"] = NamedType.Function(new[] { NamedType.Enumerable(x), @int }, NamedType.Enumerable(x));
-
-            x = scope.CreateTypeVariable();
-            scope["Skip"] = NamedType.Function(new[] { NamedType.Enumerable(x), @int }, NamedType.Enumerable(x));
-
-            x = scope.CreateTypeVariable();
-            scope["Any"] = NamedType.Function(new[] { NamedType.Enumerable(x) }, @bool);
-
-            x = scope.CreateTypeVariable();
-            scope["Count"] = NamedType.Function(new[] { NamedType.Enumerable(x) }, @int);
-
-            x = scope.CreateTypeVariable();
-            y = scope.CreateTypeVariable();
-            scope["Select"] = NamedType.Function(new[] { NamedType.Enumerable(x), NamedType.Function(new[] { x }, y) }, NamedType.Enumerable(y));
-
-            x = scope.CreateTypeVariable();
-            scope["Where"] = NamedType.Function(new[] { NamedType.Enumerable(x), NamedType.Function(new[] { x }, @bool) }, NamedType.Enumerable(x));
-
-            x = scope.CreateTypeVariable();
-            scope["Each"] = NamedType.Function(new[] { NamedType.Vector(x) }, NamedType.Enumerable(x));
-
-            x = scope.CreateTypeVariable();
-            scope["Index"] = NamedType.Function(new[] { NamedType.Vector(x), @int }, x);
-
-            x = scope.CreateTypeVariable();
-            scope["Slice"] = NamedType.Function(new[] { NamedType.Vector(x), @int, @int }, NamedType.Vector(x));
-
-            x = scope.CreateTypeVariable();
-            scope["Append"] = NamedType.Function(new DataType[] { NamedType.Vector(x), x }, NamedType.Vector(x));
-
-            x = scope.CreateTypeVariable();
-            scope["With"] = NamedType.Function(new[] { NamedType.Vector(x), @int, x }, NamedType.Vector(x));
+            scope["??"] = NamedType.Function(new DataType[] { NamedType.Nullable(T), T }, T);
+            scope["Print"] = NamedType.Function(new[] { T }, NamedType.Void);
+            scope["Nullable"] = NamedType.Function(new[] { T }, NamedType.Nullable(T));
+            scope["First"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, T);
+            scope["Take"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
+            scope["Skip"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
+            scope["Any"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @bool);
+            scope["Count"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @int);
+            scope["Select"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, S) }, NamedType.Enumerable(S));
+            scope["Where"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, @bool) }, NamedType.Enumerable(T));
+            scope["Each"] = NamedType.Function(new[] { NamedType.Vector(T) }, NamedType.Enumerable(T));
+            scope["Index"] = NamedType.Function(new[] { NamedType.Vector(T), @int }, T);
+            scope["Slice"] = NamedType.Function(new[] { NamedType.Vector(T), @int, @int }, NamedType.Vector(T));
+            scope["Append"] = NamedType.Function(new DataType[] { NamedType.Vector(T), T }, NamedType.Vector(T));
+            scope["With"] = NamedType.Function(new[] { NamedType.Vector(T), @int, T }, NamedType.Vector(T));
 
             return scope;
         }

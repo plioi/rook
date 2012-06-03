@@ -89,20 +89,20 @@ namespace Rook.Compiling
             AssertType("System.Func<bool, bool>", scope, "!");
 
             AssertType("System.Func<Rook.Core.Nullable<0>, 0, 0>", scope, "??");
-            AssertType("System.Func<1, Rook.Core.Void>", scope, "Print");
-            AssertType("System.Func<2, Rook.Core.Nullable<2>>", scope, "Nullable");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<3>, 3>", scope, "First");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<4>, int, System.Collections.Generic.IEnumerable<4>>", scope, "Take");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<5>, int, System.Collections.Generic.IEnumerable<5>>", scope, "Skip");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<6>, bool>", scope, "Any");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<7>, int>", scope, "Count");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<8>, System.Func<8, 9>, System.Collections.Generic.IEnumerable<9>>", scope, "Select");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<10>, System.Func<10, bool>, System.Collections.Generic.IEnumerable<10>>", scope, "Where");
-            AssertType("System.Func<Rook.Core.Collections.Vector<11>, System.Collections.Generic.IEnumerable<11>>", scope, "Each");
-            AssertType("System.Func<Rook.Core.Collections.Vector<12>, int, 12>", scope, "Index");
-            AssertType("System.Func<Rook.Core.Collections.Vector<13>, int, int, Rook.Core.Collections.Vector<13>>", scope, "Slice");
-            AssertType("System.Func<Rook.Core.Collections.Vector<14>, 14, Rook.Core.Collections.Vector<14>>", scope, "Append");
-            AssertType("System.Func<Rook.Core.Collections.Vector<15>, int, 15, Rook.Core.Collections.Vector<15>>", scope, "With");
+            AssertType("System.Func<0, Rook.Core.Void>", scope, "Print");
+            AssertType("System.Func<0, Rook.Core.Nullable<0>>", scope, "Nullable");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, 0>", scope, "First");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, int, System.Collections.Generic.IEnumerable<0>>", scope, "Take");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, int, System.Collections.Generic.IEnumerable<0>>", scope, "Skip");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, bool>", scope, "Any");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, int>", scope, "Count");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, System.Func<0, 1>, System.Collections.Generic.IEnumerable<1>>", scope, "Select");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, System.Func<0, bool>, System.Collections.Generic.IEnumerable<0>>", scope, "Where");
+            AssertType("System.Func<Rook.Core.Collections.Vector<0>, System.Collections.Generic.IEnumerable<0>>", scope, "Each");
+            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, 0>", scope, "Index");
+            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, int, Rook.Core.Collections.Vector<0>>", scope, "Slice");
+            AssertType("System.Func<Rook.Core.Collections.Vector<0>, 0, Rook.Core.Collections.Vector<0>>", scope, "Append");
+            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, 0, Rook.Core.Collections.Vector<0>>", scope, "With");
         }
 
         [Fact]
