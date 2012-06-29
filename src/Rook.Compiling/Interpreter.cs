@@ -56,8 +56,11 @@ namespace Rook.Compiling
 
         public string Translate()
         {
+            var typeChecker = new TypeChecker();
             var compilationUnit = new CompilationUnit(new Text("").Position, classes.Values, functions.Values);
-            var typedCompilationUnit = compilationUnit.WithTypes().Syntax;
+            var typeCheckedCompilationUnit = typeChecker.TypeCheck(compilationUnit);
+            var typedCompilationUnit = typeCheckedCompilationUnit.Syntax;
+
             var code = new CodeWriter();
             WriteAction write = typedCompilationUnit.Visit(new CSharpTranslator());
             write(code);
@@ -66,12 +69,14 @@ namespace Rook.Compiling
 
         private InterpreterResult InterpretExpression(Expression expression, Position pos)
         {
+            var typeChecker = new TypeChecker();
             var unifier = new TypeUnifier();
-            var typedCheckedExpression = expression.WithTypes(ScopeForExpression(unifier), unifier);
-            if (typedCheckedExpression.HasErrors)
-                return new InterpreterResult(Language.Rook, typedCheckedExpression.Errors);
+
+            var typeCheckedExpression = typeChecker.TypeCheck(expression, ScopeForExpression(unifier), unifier);
+            if (typeCheckedExpression.HasErrors)
+                return new InterpreterResult(Language.Rook, typeCheckedExpression.Errors);
                 
-            var main = WrapAsMain(typedCheckedExpression.Syntax, pos);
+            var main = WrapAsMain(typeCheckedExpression.Syntax, pos);
             var compilerResult = compiler.Build(CompilationUnitWithNewFunction(main, pos));
 
             functions[main.Name.Identifier] = main;

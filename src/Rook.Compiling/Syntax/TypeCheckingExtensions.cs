@@ -32,21 +32,6 @@ namespace Rook.Compiling.Syntax
             return typeCheckedExpressions.Select(x => x.Syntax).ToVector();
         }
 
-        public static Vector<TypeChecked<Expression>> WithTypes(this Vector<Expression> expressions, Scope scope, TypeUnifier unifier)
-        {
-            return expressions.Select(x => x.WithTypes(scope, unifier)).ToVector();
-        }
-
-        public static Vector<TypeChecked<Function>> WithTypes(this Vector<Function> functions, Scope scope, TypeUnifier unifier)
-        {
-            return functions.Select(x => x.WithTypes(scope, unifier)).ToVector();
-        } 
-
-        public static Vector<TypeChecked<Class>> WithTypes(this Vector<Class> classes, Scope scope, TypeUnifier unifier)
-        {
-            return classes.Select(x => x.WithTypes(scope, unifier)).ToVector();
-        }
-
         public static Vector<CompilerError> Unify(this TypeUnifier unifier, DataType type, TypedSyntaxTree typedSyntaxTree)
         {
             return unifier.Unify(type, typedSyntaxTree.Type)

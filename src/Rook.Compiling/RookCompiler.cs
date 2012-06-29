@@ -44,7 +44,7 @@ namespace Rook.Compiling
 
         private static TypeChecked<CompilationUnit> TypeCheck(CompilationUnit compilationUnit)
         {
-            return compilationUnit.WithTypes();
+            return new TypeChecker().TypeCheck(compilationUnit);
         }
 
         private string Translate(CompilationUnit typedCompilationUnit)

@@ -53,7 +53,8 @@ namespace Rook.Compiling.Syntax
                   bool Odd(int n) if (n==0) false else Even(n-1);
                   int Main() if (Even(4)) 0 else 1;");
 
-            var typeCheckedCompilationUnit = compilationUnit.WithTypes();
+            var typeChecker = new TypeChecker();
+            var typeCheckedCompilationUnit = typeChecker.TypeCheck(compilationUnit);
             var typedCompilationUnit = typeCheckedCompilationUnit.Syntax;
 
             compilationUnit.Classes.ShouldList(
@@ -143,7 +144,9 @@ namespace Rook.Compiling.Syntax
 
         private TypeChecked<CompilationUnit> TypeChecking(string source)
         {
-            return Parse(source).WithTypes();
+            var typeChecker = new TypeChecker();
+            var compilationUnit = Parse(source);
+            return typeChecker.TypeCheck(compilationUnit);
         }
     }
 }

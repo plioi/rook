@@ -25,13 +25,17 @@ namespace Rook.Compiling.Syntax
 
         protected TypeChecked<Expression> TypeChecking(string source, Scope scope, TypeUnifier unifier)
         {
-            return Parse(source).WithTypes(scope, unifier);
+            var typeChecker = new TypeChecker();
+            var expression = Parse(source);
+            return typeChecker.TypeCheck(expression, scope, unifier);
         }
 
         protected T WithTypes<T>(T syntaxTree, params TypeMapping[] symbols) where T : Expression
         {
+            var typeChecker = new TypeChecker();
             var unifier = new TypeUnifier();
-            return (T)syntaxTree.WithTypes(Scope(unifier, symbols), unifier).Syntax;
+            var typeCheckedExpression = typeChecker.TypeCheck(syntaxTree, Scope(unifier, symbols), unifier);
+            return (T)typeCheckedExpression.Syntax;
         }
     }
 }

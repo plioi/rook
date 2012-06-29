@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Parsley;
-using Rook.Compiling.Types;
 using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
@@ -24,30 +22,9 @@ namespace Rook.Compiling.Syntax
             return visitor.Visit(this);
         }
 
-        public TypeChecked<CompilationUnit> WithTypes()
+        public TypeChecked<CompilationUnit> WithTypes(TypeChecker visitor)
         {
-            var unifier = new TypeUnifier();
-
-            var scope = Scope.CreateRoot(unifier, Classes);
-
-            foreach (var @class in Classes)
-                if (!scope.TryIncludeUniqueBinding(@class))
-                    return TypeChecked<CompilationUnit>.DuplicateIdentifierError(@class);
-
-            foreach (var function in Functions)
-                if (!scope.TryIncludeUniqueBinding(function))
-                    return TypeChecked<CompilationUnit>.DuplicateIdentifierError(function);
-
-            var typeCheckedClasses = Classes.WithTypes(scope, unifier);
-            var typeCheckedFunctions = Functions.WithTypes(scope, unifier);
-
-            var classErrors = typeCheckedClasses.Errors();
-            var functionErrors = typeCheckedFunctions.Errors();
-
-            if (classErrors.Any() || functionErrors.Any())
-                return TypeChecked<CompilationUnit>.Failure(classErrors.Concat(functionErrors).ToVector());
-
-            return TypeChecked<CompilationUnit>.Success(new CompilationUnit(Position, typeCheckedClasses.Classes(), typeCheckedFunctions.Functions()));
+            return visitor.TypeCheck(this);
         }
     }
 }

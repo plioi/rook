@@ -11,16 +11,15 @@ namespace Rook.Compiling.Syntax
         public Null(Position position) 
             : this(position, null) { }
 
-        private Null(Position position, DataType type)
+        public Null(Position position, DataType type)
         {
             Position = position;
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
+        public TypeChecked<Expression> WithTypes(TypeChecker visitor, Scope scope, TypeUnifier unifier)
         {
-            var result = new Null(Position, NamedType.Nullable(unifier.CreateTypeVariable()));
-            return TypeChecked<Expression>.Success(result);
+            return visitor.TypeCheck(this, scope, unifier);
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)

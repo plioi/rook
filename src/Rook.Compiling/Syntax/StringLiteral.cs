@@ -40,9 +40,9 @@ namespace Rook.Compiling.Syntax
 
         public DataType Type { get { return NamedType.String; } }
 
-        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
+        public TypeChecked<Expression> WithTypes(TypeChecker visitor, Scope scope, TypeUnifier unifier)
         {
-            return TypeChecked<Expression>.Success(this);
+            return visitor.TypeCheck(this, scope, unifier);
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)

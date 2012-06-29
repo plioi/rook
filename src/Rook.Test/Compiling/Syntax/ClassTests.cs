@@ -74,8 +74,9 @@ namespace Rook.Compiling.Syntax
                 });
             @class.Type.ShouldEqual(constructorReturningFoo);
 
+            var typeChecker = new TypeChecker();
             var unifier = new TypeUnifier();
-            var typeCheckedClass = @class.WithTypes(Scope(unifier), unifier);
+            var typeCheckedClass = typeChecker.TypeCheck(@class, Scope(unifier), unifier);
             var typedClass = typeCheckedClass.Syntax;
 
             typedClass.Methods.ShouldList(
@@ -136,8 +137,10 @@ namespace Rook.Compiling.Syntax
 
         private TypeChecked<Class> TypeChecking(string source, params TypeMapping[] symbols)
         {
+            var typeChecker = new TypeChecker();
             var unifier = new TypeUnifier();
-            return Parse(source).WithTypes(Scope(unifier, symbols), unifier);
+            var @class = Parse(source);
+            return typeChecker.TypeCheck(@class, Scope(unifier, symbols), unifier);
         }
     }
 }

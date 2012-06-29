@@ -20,23 +20,9 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
+        public TypeChecked<Expression> WithTypes(TypeChecker visitor, Scope scope, TypeUnifier unifier)
         {
-            var typeCheckedTypeName = TypeName.WithTypes(scope, unifier);
-
-            if (typeCheckedTypeName.HasErrors)
-                return typeCheckedTypeName;
-
-            var typedTypeName = (Name)typeCheckedTypeName.Syntax;
-
-            var constructorType = typedTypeName.Type as NamedType;
-
-            if (constructorType == null || constructorType.Name != "Rook.Core.Constructor")
-                return TypeChecked<Expression>.TypeNameExpectedForConstructionError(TypeName.Position, TypeName);
-
-            var constructedType = constructorType.InnerTypes.Last();
-
-            return TypeChecked<Expression>.Success(new New(Position, typedTypeName, constructedType));
+            return visitor.TypeCheck(this, scope, unifier);
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)

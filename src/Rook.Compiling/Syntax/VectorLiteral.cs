@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
@@ -15,33 +14,16 @@ namespace Rook.Compiling.Syntax
         public VectorLiteral(Position position, IEnumerable<Expression> items)
             : this(position, items.ToVector(), null) { }
 
-        private VectorLiteral(Position position, Vector<Expression> items, DataType type)
+        public VectorLiteral(Position position, Vector<Expression> items, DataType type)
         {
             Position = position;
             Items = items;
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
+        public TypeChecked<Expression> WithTypes(TypeChecker visitor, Scope scope, TypeUnifier unifier)
         {
-            var typeCheckedItems = Items.WithTypes(scope, unifier);
-
-            var errors = typeCheckedItems.Errors();
-            if (errors.Any())
-                return TypeChecked<Expression>.Failure(errors);
-
-            var typedItems = typeCheckedItems.Expressions();
-
-            var firstItemType = typedItems.First().Type;
-
-            var unifyErrors = new List<CompilerError>();
-            foreach (var typedItem in typedItems)
-                unifyErrors.AddRange(unifier.Unify(firstItemType, typedItem));
-
-            if (unifyErrors.Count > 0)
-                return TypeChecked<Expression>.Failure(unifyErrors.ToVector());
-
-            return TypeChecked<Expression>.Success(new VectorLiteral(Position, typedItems, NamedType.Vector(firstItemType)));
+            return visitor.TypeCheck(this, scope, unifier);
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)

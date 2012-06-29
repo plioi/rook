@@ -82,8 +82,9 @@ namespace Rook.Compiling.Syntax
             node.Body.Type.ShouldBeNull();
             node.Type.ShouldBeNull();
 
+            var typeChecker = new TypeChecker();
             var unifier = new TypeUnifier();
-            var typedNode = node.WithTypes(Scope(unifier), unifier).Syntax;
+            var typedNode = typeChecker.TypeCheck(node, Scope(unifier), unifier).Syntax;
             typedNode.Parameters.ShouldHaveTypes(Integer, Integer, Boolean);
             typedNode.Body.Type.ShouldEqual(Boolean);
             typedNode.Type.ShouldEqual(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean));
@@ -120,8 +121,10 @@ namespace Rook.Compiling.Syntax
 
         private TypeChecked<Function> TypeChecking(string source, params TypeMapping[] symbols)
         {
+            var typeChecker = new TypeChecker();
             var unifier = new TypeUnifier();
-            return Parse(source).WithTypes(Scope(unifier, symbols), unifier);
+            var function = Parse(source);
+            return typeChecker.TypeCheck(function, Scope(unifier, symbols), unifier);
         }
     }
 }

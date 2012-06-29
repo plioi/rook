@@ -23,7 +23,7 @@ namespace Rook.Compiling.Syntax
         public Call(Position position, Expression callable, IEnumerable<Expression> arguments)
             : this(position, callable, arguments.ToVector(), false, null) { }
 
-        private Call(Position position, Expression callable, Vector<Expression> arguments, bool isOperator, DataType type)
+        public Call(Position position, Expression callable, Vector<Expression> arguments, bool isOperator, DataType type)
         {
             Position = position;
             Callable = callable;
@@ -32,41 +32,16 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
-        {
-            TypeChecked<Expression> typeCheckedCallable = Callable.WithTypes(scope, unifier);
-            var typeCheckedArguments = Arguments.WithTypes(scope, unifier);
 
-            var errors = new[] {typeCheckedCallable}.Concat(typeCheckedArguments).ToVector().Errors();
-            if (errors.Any())
-                return TypeChecked<Expression>.Failure(errors);
-
-            Expression typedCallable = typeCheckedCallable.Syntax;
-            var typedArguments = typeCheckedArguments.Expressions();
-
-            DataType calleeType = typedCallable.Type;
-            NamedType calleeFunctionType = calleeType as NamedType;
-
-            if (calleeFunctionType == null || calleeFunctionType.Name != "System.Func")
-                return TypeChecked<Expression>.ObjectNotCallableError(Position);
-
-            var returnType = calleeType.InnerTypes.Last();
-            var argumentTypes = typedArguments.Select(x => x.Type).ToVector();
-
-            var unifyErrors = new List<CompilerError>(
-                unifier.Unify(calleeType, NamedType.Function(argumentTypes, returnType))
-                    .Select(error => new CompilerError(Position, error)));
-            if (unifyErrors.Count > 0)
-                return TypeChecked<Expression>.Failure(unifyErrors.ToVector());
-
-            var callType = unifier.Normalize(returnType);
-
-            return TypeChecked<Expression>.Success(new Call(Position, typedCallable, typedArguments, IsOperator, callType));
-        }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)
         {
             return visitor.Visit(this);
+        }
+
+        public TypeChecked<Expression> WithTypes(TypeChecker visitor, Scope scope, TypeUnifier unifier)
+        {
+            return visitor.TypeCheck(this, scope, unifier);
         }
     }
 }

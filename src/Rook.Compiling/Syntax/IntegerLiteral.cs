@@ -12,21 +12,16 @@ namespace Rook.Compiling.Syntax
         public IntegerLiteral(Position position, string digits)
             : this (position, digits, null) { }
 
-        private IntegerLiteral(Position position, string digits, DataType type)
+        public IntegerLiteral(Position position, string digits, DataType type)
         {
             Position = position;
             Digits = digits;
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
+        public TypeChecked<Expression> WithTypes(TypeChecker visitor, Scope scope, TypeUnifier unifier)
         {
-            int value;
-
-            if (int.TryParse(Digits, out value))
-                return TypeChecked<Expression>.Success(new IntegerLiteral(Position, Digits, NamedType.Integer));
-
-            return TypeChecked<Expression>.InvalidConstantError(Position, Digits);
+            return visitor.TypeCheck(this, scope, unifier);
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)

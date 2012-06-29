@@ -16,7 +16,7 @@ namespace Rook.Compiling.Syntax
         public Block(Position position, IEnumerable<VariableDeclaration> variableDeclarations, IEnumerable<Expression> innerExpressions)
             : this(position, variableDeclarations.ToVector(), innerExpressions.ToVector(), null) { }
 
-        private Block(Position position, Vector<VariableDeclaration> variableDeclarations, Vector<Expression> innerExpressions, DataType type)
+        public Block(Position position, Vector<VariableDeclaration> variableDeclarations, Vector<Expression> innerExpressions, DataType type)
         {
             Position = position;
             VariableDeclarations = variableDeclarations;
@@ -29,49 +29,9 @@ namespace Rook.Compiling.Syntax
             return visitor.Visit(this);
         }
 
-        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
+        public TypeChecked<Expression> WithTypes(TypeChecker visitor, Scope scope, TypeUnifier unifier)
         {
-            var localScope = scope.CreateLocalScope();
-
-            var typedVariableDeclarations = new List<VariableDeclaration>();
-            foreach (var variable in VariableDeclarations)
-            {
-                var typeCheckedValue = variable.Value.WithTypes(localScope, unifier);
-
-                if (typeCheckedValue.HasErrors)
-                    return typeCheckedValue;
-
-                var typedValue = typeCheckedValue.Syntax;
-                
-                Binding binding = variable;
-                if (variable.IsImplicitlyTyped())
-                    binding = new VariableDeclaration(variable.Position, /*Replaces implicit type.*/ typedValue.Type, variable.Identifier, variable.Value);
-
-                if (!localScope.TryIncludeUniqueBinding(binding))
-                    return TypeChecked<Expression>.DuplicateIdentifierError(binding);
-                
-                typedVariableDeclarations.Add(new VariableDeclaration(variable.Position,
-                                                                      binding.Type,
-                                                                      variable.Identifier,
-                                                                      typedValue));
-
-                var unifyErrors = unifier.Unify(binding.Type, typedValue);
-
-                if (unifyErrors.Count > 0)
-                    return TypeChecked<Expression>.Failure(unifyErrors);
-            }
-
-            var typeCheckedInnerExpressions = InnerExpressions.WithTypes(localScope, unifier);
-
-            var errors = typeCheckedInnerExpressions.Errors();
-            if (errors.Any())
-                return TypeChecked<Expression>.Failure(errors);
-
-            var typedInnerExpressions = typeCheckedInnerExpressions.Expressions();
-
-            var blockType = typedInnerExpressions.Last().Type;
-
-            return TypeChecked<Expression>.Success(new Block(Position, typedVariableDeclarations.ToVector(), typedInnerExpressions, blockType));
+            return visitor.TypeCheck(this, scope, unifier);
         }
     }
 }

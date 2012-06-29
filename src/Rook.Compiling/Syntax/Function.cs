@@ -18,7 +18,7 @@ namespace Rook.Compiling.Syntax
         public Function(Position position, NamedType returnType, Name name, IEnumerable<Parameter> parameters, Expression body)
             : this(position, returnType, name, parameters.ToVector(), body, null) { }
 
-        private Function(Position position, NamedType returnType, Name name, Vector<Parameter> parameters, Expression body, DataType type)
+        public Function(Position position, NamedType returnType, Name name, Vector<Parameter> parameters, Expression body, DataType type)
         {
             Position = position;
             ReturnType = returnType;
@@ -33,7 +33,7 @@ namespace Rook.Compiling.Syntax
             return visitor.Visit(this);
         }
 
-        private DataType DeclaredType
+        public DataType DeclaredType
         {
             get
             {
@@ -43,24 +43,9 @@ namespace Rook.Compiling.Syntax
             }
         }
 
-        public TypeChecked<Function> WithTypes(Scope scope, TypeUnifier unifier)
+        public TypeChecked<Function> WithTypes(TypeChecker visitor, Scope scope, TypeUnifier unifier)
         {
-            var localScope = scope.CreateLocalScope();
-
-            foreach (var parameter in Parameters)
-                if (!localScope.TryIncludeUniqueBinding(parameter))
-                    return TypeChecked<Function>.DuplicateIdentifierError(parameter);
-
-            var typeCheckedBody = Body.WithTypes(localScope, unifier);
-            if (typeCheckedBody.HasErrors)
-                return TypeChecked<Function>.Failure(typeCheckedBody.Errors);
-
-            var typedBody = typeCheckedBody.Syntax;
-            var unifyErrors = unifier.Unify(ReturnType, typedBody);
-            if (unifyErrors.Count > 0)
-                return TypeChecked<Function>.Failure(unifyErrors);
-
-            return TypeChecked<Function>.Success(new Function(Position, ReturnType, Name, Parameters, typedBody, DeclaredType));
+            return visitor.TypeCheck(this, scope, unifier);
         }
 
         string Binding.Identifier

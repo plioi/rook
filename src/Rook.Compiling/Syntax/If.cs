@@ -15,7 +15,7 @@ namespace Rook.Compiling.Syntax
         public If(Position position, Expression condition, Expression bodyWhenTrue, Expression bodyWhenFalse)
             : this(position, condition, bodyWhenTrue, bodyWhenFalse, null) { }
 
-        private If(Position position, Expression condition, Expression bodyWhenTrue, Expression bodyWhenFalse, DataType type)
+        public If(Position position, Expression condition, Expression bodyWhenTrue, Expression bodyWhenFalse, DataType type)
         {
             Position = position;
             Condition = condition;
@@ -24,26 +24,9 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(Scope scope, TypeUnifier unifier)
+        public TypeChecked<Expression> WithTypes(TypeChecker visitor, Scope scope, TypeUnifier unifier)
         {
-            TypeChecked<Expression> typeCheckedCondition = Condition.WithTypes(scope, unifier);
-            TypeChecked<Expression> typeCheckedWhenTrue = BodyWhenTrue.WithTypes(scope, unifier);
-            TypeChecked<Expression> typeCheckedWhenFalse = BodyWhenFalse.WithTypes(scope, unifier);
-
-            if (typeCheckedCondition.HasErrors || typeCheckedWhenTrue.HasErrors || typeCheckedWhenFalse.HasErrors)
-                return TypeChecked<Expression>.Failure(new[] {typeCheckedCondition, typeCheckedWhenTrue, typeCheckedWhenFalse}.ToVector().Errors());
-
-            Expression typedCondition = typeCheckedCondition.Syntax;
-            Expression typedWhenTrue = typeCheckedWhenTrue.Syntax;
-            Expression typedWhenFalse = typeCheckedWhenFalse.Syntax;
-
-            var unifyErrorsA = unifier.Unify(NamedType.Boolean, typedCondition);
-            var unifyErrorsB = unifier.Unify(typedWhenTrue.Type, typedWhenFalse);
-
-            if (unifyErrorsA.Any() || unifyErrorsB.Any())
-                return TypeChecked<Expression>.Failure(unifyErrorsA.Concat(unifyErrorsB).ToVector());
-
-            return TypeChecked<Expression>.Success(new If(Position, typedCondition, typedWhenTrue, typedWhenFalse, typedWhenTrue.Type));
+            return visitor.TypeCheck(this, scope, unifier);
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)
