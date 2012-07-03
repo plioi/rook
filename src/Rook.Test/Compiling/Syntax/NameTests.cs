@@ -40,7 +40,7 @@ namespace Rook.Compiling.Syntax
             var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(1), new NamedType("B", new TypeVariable(0), new TypeVariable(1)));
 
             var unifier = new TypeUnifier();
-            var scope = Compiling.Scope.CreateRoot(unifier, Enumerable.Empty<TypeMemberBinding>());
+            var scope = Compiling.Scope.CreateRoot(unifier.CreateTypeVariable, Enumerable.Empty<TypeMemberBinding>());
             scope.TreatAsNonGeneric(new[] { new TypeVariable(1) });
             scope["foo"] = definedType;
 

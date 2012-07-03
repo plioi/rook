@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
 
@@ -19,7 +20,7 @@ namespace Rook.Compiling
             this.parent = parent;
         }
 
-        public static Scope CreateRoot(TypeUnifier unifier, IEnumerable<TypeMemberBinding> typeMemberBindings)
+        public static Scope CreateRoot(Func<TypeVariable> createTypeVariable, IEnumerable<TypeMemberBinding> typeMemberBindings)
         {
             var scope = new Scope(null);
 
@@ -59,8 +60,8 @@ namespace Rook.Compiling
             scope["||"] = booleanOperation;
             scope["!"] = NamedType.Function(new[] { @bool }, @bool);
 
-            var T = unifier.CreateTypeVariable(); //TypeVariable 0
-            var S = unifier.CreateTypeVariable(); //TypeVariable 1
+            var T = createTypeVariable(); //TypeVariable 0
+            var S = createTypeVariable(); //TypeVariable 1
 
             scope["??"] = NamedType.Function(new DataType[] { NamedType.Nullable(T), T }, T);
             scope["Print"] = NamedType.Function(new[] { T }, NamedType.Void);

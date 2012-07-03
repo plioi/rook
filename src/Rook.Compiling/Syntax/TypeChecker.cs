@@ -15,7 +15,7 @@ namespace Rook.Compiling.Syntax
 
             var unifier = new TypeUnifier();
 
-            var scope = Scope.CreateRoot(unifier, Classes);
+            var scope = Scope.CreateRoot(unifier.CreateTypeVariable, Classes);
 
             foreach (var @class in Classes)
                 if (!scope.TryIncludeUniqueBinding(@class))

@@ -172,7 +172,7 @@ namespace Rook.Compiling
 
         private Scope ScopeForExpression(TypeUnifier unifier)
         {
-            var scope = Scope.CreateRoot(unifier, Enumerable.Empty<TypeMemberBinding>());
+            var scope = Scope.CreateRoot(unifier.CreateTypeVariable, Enumerable.Empty<TypeMemberBinding>());
 
             foreach (var c in classes.Values)
                 if (c.Name.Identifier != "Main")
