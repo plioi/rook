@@ -170,7 +170,7 @@ namespace Rook.Compiling
 
         private Scope ScopeForExpression(TypeChecker typeChecker)
         {
-            var scope = Scope.CreateRoot(typeChecker.CreateTypeVariable, Enumerable.Empty<TypeMemberBinding>());
+            var scope = Scope.CreateRoot(typeChecker, Enumerable.Empty<TypeMemberBinding>());
 
             foreach (var c in classes.Values)
                 if (c.Name.Identifier != "Main")

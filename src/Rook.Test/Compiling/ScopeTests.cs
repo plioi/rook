@@ -18,8 +18,8 @@ namespace Rook.Compiling
 
         public ScopeTests()
         {
-            var unifier = new TypeUnifier();
-            root = Scope.CreateRoot(unifier.CreateTypeVariable, Enumerable.Empty<TypeMemberBinding>());
+            var typeChecker = new TypeChecker();
+            root = Scope.CreateRoot(typeChecker, Enumerable.Empty<TypeMemberBinding>());
 
             ab = root.CreateLocalScope();
             ab["a"] = Integer;
@@ -120,8 +120,8 @@ namespace Rook.Compiling
                                                         new StubBinding("Square", NamedType.Function(new[] {Integer}, Integer)),
                                                         new StubBinding("Even", NamedType.Function(new[] {Integer}, Boolean)));
 
-            var unifier = new TypeUnifier();
-            var rootScope = Scope.CreateRoot(unifier.CreateTypeVariable, new[] {fooBinding, mathBinding});
+            var typeChecker = new TypeChecker();
+            var rootScope = Scope.CreateRoot(typeChecker, new[] {fooBinding, mathBinding});
             var childScope = rootScope.CreateLocalScope();
 
             AssertMemberType(NamedType.Function(Integer), rootScope, foo, "I");

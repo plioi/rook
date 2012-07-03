@@ -6,18 +6,12 @@ namespace Rook.Compiling.Types
 {
     public class TypeUnifier
     {
-        public readonly Func<TypeVariable> CreateTypeVariable;
-
-
         private readonly IDictionary<TypeVariable, DataType> substitutions;
         private static readonly IEnumerable<string> success = Enumerable.Empty<string>();
 
         public TypeUnifier()
         {
             substitutions = new Dictionary<TypeVariable, DataType>();
-
-            int next = 0;
-            CreateTypeVariable = () => new TypeVariable(next++);
         }
 
         public DataType Normalize(DataType type)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rook.Compiling.Types;
@@ -7,11 +8,15 @@ namespace Rook.Compiling.Syntax
 {
     public class TypeChecker
     {
-        private readonly TypeUnifier unifier = new TypeUnifier();
+        public readonly Func<TypeVariable> CreateTypeVariable;
+        private readonly TypeUnifier unifier;
 
-        public TypeVariable CreateTypeVariable()
+        public TypeChecker()
         {
-            return unifier.CreateTypeVariable();
+            unifier = new TypeUnifier();
+
+            int next = 0;
+            CreateTypeVariable = () => new TypeVariable(next++);
         }
 
         public TypeChecked<CompilationUnit> TypeCheck(CompilationUnit compilationUnit)
@@ -20,7 +25,7 @@ namespace Rook.Compiling.Syntax
             var Classes = compilationUnit.Classes;
             var Functions = compilationUnit.Functions;
 
-            var scope = Scope.CreateRoot(CreateTypeVariable, Classes);
+            var scope = Scope.CreateRoot(this, Classes);
 
             foreach (var @class in Classes)
                 if (!scope.TryIncludeUniqueBinding(@class))
@@ -115,7 +120,7 @@ namespace Rook.Compiling.Syntax
             var substitutions = new Dictionary<TypeVariable, DataType>();
             var genericTypeVariables = type.FindTypeVariables().Where(scope.IsGeneric);
             foreach (var genericTypeVariable in genericTypeVariables)
-                substitutions[genericTypeVariable] = unifier.CreateTypeVariable();
+                substitutions[genericTypeVariable] = CreateTypeVariable();
 
             return type.ReplaceTypeVariables(substitutions);
         }
@@ -206,7 +211,7 @@ namespace Rook.Compiling.Syntax
             {
                 if (parameter.IsImplicitlyTyped())
                 {
-                    var typeVariable = unifier.CreateTypeVariable();
+                    var typeVariable = CreateTypeVariable();
                     typeVariables.Add(typeVariable);
                     decoratedParameters.Add(new Parameter(parameter.Position, typeVariable, parameter.Identifier));
                 }
@@ -339,7 +344,7 @@ namespace Rook.Compiling.Syntax
         public TypeChecked<Expression> TypeCheck(Null nullLiteral, Scope scope)
         {
             var Position = nullLiteral.Position;
-            var result = new Null(Position, NamedType.Nullable(unifier.CreateTypeVariable()));
+            var result = new Null(Position, NamedType.Nullable(CreateTypeVariable()));
             return TypeChecked<Expression>.Success(result);
         }
 

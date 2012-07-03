@@ -93,6 +93,7 @@
     <Compile Include="Compiling\Syntax\ParsingAssertions.cs" />
     <Compile Include="Compiling\Syntax\StringLiteralTests.cs" />
     <Compile Include="Compiling\Syntax\TypeCheckingAssertions.cs" />
+    <Compile Include="Compiling\Types\TypeCheckerTests.cs" />
     <Compile Include="Core\Collections\ArrayVectorTests.cs" />
     <Compile Include="Core\Collections\SliceVectorTests.cs" />
     <Compile Include="Core\NullableTests.cs" />

@@ -31,7 +31,7 @@ namespace Rook.Compiling.Syntax
 
         protected static Scope Scope(TypeChecker typeChecker, params TypeMapping[] symbols)
         {
-            var root = Compiling.Scope.CreateRoot(typeChecker.CreateTypeVariable, Enumerable.Empty<TypeMemberBinding>());
+            var root = Compiling.Scope.CreateRoot(typeChecker, Enumerable.Empty<TypeMemberBinding>());
             var localScope = root.CreateLocalScope();
 
             foreach (var symbol in symbols)
