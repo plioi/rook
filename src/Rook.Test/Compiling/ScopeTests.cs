@@ -160,11 +160,10 @@ namespace Rook.Compiling
         [Fact]
         public void CanDetermineWhetherAGivenTypeVariableIsGenericWhenPreparedWithAKnownListOfNonGenericTypeVariables()
         {
-            var unifier = new TypeUnifier();
-            TypeVariable var0 = unifier.CreateTypeVariable();
-            TypeVariable var1 = unifier.CreateTypeVariable();
-            TypeVariable var2 = unifier.CreateTypeVariable();
-            TypeVariable var3 = unifier.CreateTypeVariable();
+            var var0 = new TypeVariable(0);
+            var var1 = new TypeVariable(1);
+            var var2 = new TypeVariable(2);
+            var var3 = new TypeVariable(3);
 
             root.TreatAsNonGeneric(new[] {var0});
             ab.TreatAsNonGeneric(new[] {var1, var2});

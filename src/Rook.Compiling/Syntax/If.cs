@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Parsley;
+﻿using Parsley;
 using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
@@ -24,9 +23,9 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-        public TypeChecked<Expression> WithTypes(TypeChecker visitor, Scope scope, TypeUnifier unifier)
+        public TypeChecked<Expression> WithTypes(TypeChecker visitor, Scope scope)
         {
-            return visitor.TypeCheck(this, scope, unifier);
+            return visitor.TypeCheck(this, scope);
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)

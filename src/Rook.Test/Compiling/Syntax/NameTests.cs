@@ -39,12 +39,12 @@ namespace Rook.Compiling.Syntax
             var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(2), new TypeVariable(1), new NamedType("B", new TypeVariable(2), new TypeVariable(1)));
             var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(1), new NamedType("B", new TypeVariable(0), new TypeVariable(1)));
 
-            var unifier = new TypeUnifier();
-            var scope = Compiling.Scope.CreateRoot(unifier.CreateTypeVariable, Enumerable.Empty<TypeMemberBinding>());
+            var typeChecker = new TypeChecker();
+            var scope = Compiling.Scope.CreateRoot(typeChecker.CreateTypeVariable, Enumerable.Empty<TypeMemberBinding>());
             scope.TreatAsNonGeneric(new[] { new TypeVariable(1) });
             scope["foo"] = definedType;
 
-            Type("foo", scope, unifier).ShouldEqual(expectedTypeAfterLookup);
+            Type("foo", scope, typeChecker).ShouldEqual(expectedTypeAfterLookup);
         }
 
         [Fact]

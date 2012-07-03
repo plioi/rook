@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
@@ -39,9 +38,9 @@ namespace Rook.Compiling.Syntax
             return visitor.Visit(this);
         }
 
-        public TypeChecked<Expression> WithTypes(TypeChecker visitor, Scope scope, TypeUnifier unifier)
+        public TypeChecked<Expression> WithTypes(TypeChecker visitor, Scope scope)
         {
-            return visitor.TypeCheck(this, scope, unifier);
+            return visitor.TypeCheck(this, scope);
         }
     }
 }

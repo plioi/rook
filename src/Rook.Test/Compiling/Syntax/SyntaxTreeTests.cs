@@ -29,9 +29,9 @@ namespace Rook.Compiling.Syntax
 
         protected delegate DataType TypeMapping(string name);
 
-        protected static Scope Scope(TypeUnifier unifier, params TypeMapping[] symbols)
+        protected static Scope Scope(TypeChecker typeChecker, params TypeMapping[] symbols)
         {
-            var root = Compiling.Scope.CreateRoot(unifier.CreateTypeVariable, Enumerable.Empty<TypeMemberBinding>());
+            var root = Compiling.Scope.CreateRoot(typeChecker.CreateTypeVariable, Enumerable.Empty<TypeMemberBinding>());
             var localScope = root.CreateLocalScope();
 
             foreach (var symbol in symbols)

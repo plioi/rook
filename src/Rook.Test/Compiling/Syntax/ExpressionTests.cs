@@ -12,29 +12,23 @@ namespace Rook.Compiling.Syntax
             return TypeChecking(source, symbols).Syntax.Type;
         }
 
-        protected DataType Type(string source, Scope scope, TypeUnifier unifier)
+        protected DataType Type(string source, Scope scope, TypeChecker typeChecker)
         {
-            return TypeChecking(source, scope, unifier).Syntax.Type;
+            var expression = Parse(source);
+            return typeChecker.TypeCheck(expression, scope).Syntax.Type;
         }
 
         protected TypeChecked<Expression> TypeChecking(string source, params TypeMapping[] symbols)
         {
-            var unifier = new TypeUnifier();
-            return TypeChecking(source, Scope(unifier, symbols), unifier);
-        }
-
-        protected TypeChecked<Expression> TypeChecking(string source, Scope scope, TypeUnifier unifier)
-        {
-            var typeChecker = new TypeChecker();
             var expression = Parse(source);
-            return typeChecker.TypeCheck(expression, scope, unifier);
+            var typeChecker = new TypeChecker();
+            return typeChecker.TypeCheck(expression, Scope(typeChecker, symbols));
         }
 
         protected T WithTypes<T>(T syntaxTree, params TypeMapping[] symbols) where T : Expression
         {
             var typeChecker = new TypeChecker();
-            var unifier = new TypeUnifier();
-            var typeCheckedExpression = typeChecker.TypeCheck(syntaxTree, Scope(unifier, symbols), unifier);
+            var typeCheckedExpression = typeChecker.TypeCheck(syntaxTree, Scope(typeChecker, symbols));
             return (T)typeCheckedExpression.Syntax;
         }
     }

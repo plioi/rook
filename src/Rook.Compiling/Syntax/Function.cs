@@ -43,9 +43,9 @@ namespace Rook.Compiling.Syntax
             }
         }
 
-        public TypeChecked<Function> WithTypes(TypeChecker visitor, Scope scope, TypeUnifier unifier)
+        public TypeChecked<Function> WithTypes(TypeChecker visitor, Scope scope)
         {
-            return visitor.TypeCheck(this, scope, unifier);
+            return visitor.TypeCheck(this, scope);
         }
 
         string Binding.Identifier

@@ -29,9 +29,9 @@ namespace Rook.Compiling.Syntax
             return visitor.Visit(this);
         }
 
-        public TypeChecked<Class> WithTypes(TypeChecker visitor, Scope scope, TypeUnifier unifier)
+        public TypeChecked<Class> WithTypes(TypeChecker visitor, Scope scope)
         {
-            return visitor.TypeCheck(this, scope, unifier);
+            return visitor.TypeCheck(this, scope);
         }
 
         private static NamedType ConstructorFunctionType(Name name)

@@ -70,9 +70,7 @@ namespace Rook.Compiling
         private InterpreterResult InterpretExpression(Expression expression, Position pos)
         {
             var typeChecker = new TypeChecker();
-            var unifier = new TypeUnifier();
-
-            var typeCheckedExpression = typeChecker.TypeCheck(expression, ScopeForExpression(unifier), unifier);
+            var typeCheckedExpression = typeChecker.TypeCheck(expression, ScopeForExpression(typeChecker));
             if (typeCheckedExpression.HasErrors)
                 return new InterpreterResult(Language.Rook, typeCheckedExpression.Errors);
                 
@@ -170,9 +168,9 @@ namespace Rook.Compiling
             return false;
         }
 
-        private Scope ScopeForExpression(TypeUnifier unifier)
+        private Scope ScopeForExpression(TypeChecker typeChecker)
         {
-            var scope = Scope.CreateRoot(unifier.CreateTypeVariable, Enumerable.Empty<TypeMemberBinding>());
+            var scope = Scope.CreateRoot(typeChecker.CreateTypeVariable, Enumerable.Empty<TypeMemberBinding>());
 
             foreach (var c in classes.Values)
                 if (c.Name.Identifier != "Main")
