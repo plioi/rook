@@ -3,7 +3,6 @@ using System.Linq;
 using Parsley;
 using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
-using Rook.Core.Collections;
 using Should;
 using Xunit;
 
@@ -19,7 +18,7 @@ namespace Rook.Compiling
         public ScopeTests()
         {
             var typeChecker = new TypeChecker();
-            root = Scope.CreateRoot(typeChecker, Enumerable.Empty<TypeMemberBinding>());
+            root = Scope.CreateRoot(typeChecker, Enumerable.Empty<Class>());
 
             ab = root.CreateLocalScope();
             ab["a"] = Integer;
@@ -111,14 +110,8 @@ namespace Rook.Compiling
             var foo = new NamedType("Foo");
             var math = new NamedType("Math");
 
-            var fooBinding = new StubTypeMemberBinding(foo,
-                                                       new StubBinding("I", NamedType.Function(Integer)),
-                                                       new StubBinding("B", NamedType.Function(Boolean)));
-
-
-            var mathBinding = new StubTypeMemberBinding(math,
-                                                        new StubBinding("Square", NamedType.Function(new[] {Integer}, Integer)),
-                                                        new StubBinding("Even", NamedType.Function(new[] {Integer}, Boolean)));
+            var fooBinding = ParseClass("class Foo { int I() 0; bool B() true; }");
+            var mathBinding = ParseClass("class Math { int Square(int x) x*x; bool Zero(int x) x==0; }");
 
             var typeChecker = new TypeChecker();
             var rootScope = Scope.CreateRoot(typeChecker, new[] {fooBinding, mathBinding});
@@ -127,16 +120,23 @@ namespace Rook.Compiling
             AssertMemberType(NamedType.Function(Integer), rootScope, foo, "I");
             AssertMemberType(NamedType.Function(Boolean), rootScope, foo, "B");
             AssertMemberType(NamedType.Function(new[] { Integer }, Integer), rootScope, math, "Square");
-            AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), rootScope, math, "Even");
+            AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), rootScope, math, "Zero");
 
             AssertMemberType(NamedType.Function(Integer), childScope, foo, "I");
             AssertMemberType(NamedType.Function(Boolean), childScope, foo, "B");
             AssertMemberType(NamedType.Function(new[] { Integer }, Integer), childScope, math, "Square");
-            AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), childScope, math, "Even");
+            AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), childScope, math, "Zero");
 
             Scope expectedFailure;
             rootScope.TryGetMemberScope(new NamedType("UnknownType"), out expectedFailure).ShouldBeFalse();
             expectedFailure.ShouldBeNull();
+        }
+
+        private static Class ParseClass(string classDeclaration)
+        {
+            var tokens = new RookLexer().Tokenize(classDeclaration);
+            var parser = new RookGrammar().Class;
+            return parser.Parse(new TokenStream(tokens)).Value;
         }
 
         [Fact]
@@ -195,7 +195,7 @@ namespace Rook.Compiling
                 throw new Exception("Failed to look up the type of '" + key + "' in the Scope");
         }
 
-        private static void AssertMemberType(DataType expectedType, Scope scope, DataType typeKey, string memberKey)
+        private static void AssertMemberType(DataType expectedType, Scope scope, NamedType typeKey, string memberKey)
         {
             Scope typeMemberScope;
 
@@ -213,32 +213,6 @@ namespace Rook.Compiling
                 expectedType.ShouldEqual(value.ToString());
             else
                 throw new Exception("Failed to look up the type of '" + key + "' in the Scope");
-        }
-
-        private class StubTypeMemberBinding : TypeMemberBinding
-        {
-            public StubTypeMemberBinding(DataType type, params Binding[] members)
-            {
-                Type = type;
-                Members = members.ToVector();
-            }
-
-            public DataType Type { get; private set; }
-            public Vector<Binding> Members { get; private set; }
-        }
-
-        private class StubBinding : Binding
-        {
-            public StubBinding(string identifier, DataType type)
-            {
-                Position = null;
-                Identifier = identifier;
-                Type = type;
-            }
-
-            public Position Position{ get; private set; }
-            public string Identifier{ get; private set; }
-            public DataType Type { get; private set; }
         }
     }
 }

@@ -4,10 +4,43 @@ using Rook.Compiling.Types;
 
 namespace Rook.Compiling
 {
+    public class TypeRegistry
+    {
+        private readonly IDictionary<NamedType, List<Binding>> typeMembers;
+
+        public TypeRegistry()
+        {
+            typeMembers = new Dictionary<NamedType, List<Binding>>();
+        }
+
+        public void Register(Class @class)
+        {
+            var typeKey = new NamedType(@class.Name.Identifier);
+
+            if (!typeMembers.ContainsKey(typeKey))
+                typeMembers[typeKey] = new List<Binding>();
+
+            var typeMemberScope = typeMembers[typeKey];
+            typeMemberScope.AddRange(@class.Methods);
+        }
+
+        public bool TryGetMembers(NamedType typeKey, out IEnumerable<Binding> memberBindings)
+        {
+            if (typeMembers.ContainsKey(typeKey))
+            {
+                memberBindings = typeMembers[typeKey];
+                return true;
+            }
+
+            memberBindings = null;
+            return false;
+        }
+    }
+
     public class Scope
     {
         private readonly IDictionary<string, DataType> locals;
-        private readonly IDictionary<DataType, Scope> typeMemberScopes;
+        private readonly TypeRegistry typeRegistry;
         private readonly List<TypeVariable> localNonGenericTypeVariables;
         private readonly Scope parent;
 
@@ -15,26 +48,16 @@ namespace Rook.Compiling
         {
             locals = new Dictionary<string, DataType>();
             localNonGenericTypeVariables = new List<TypeVariable>();
-            typeMemberScopes = parent == null ? new Dictionary<DataType, Scope>() : parent.typeMemberScopes;
+            typeRegistry = parent == null ? new TypeRegistry() : parent.typeRegistry;
             this.parent = parent;
         }
 
-        public static Scope CreateRoot(TypeChecker typeChecker, IEnumerable<TypeMemberBinding> typeMemberBindings)
+        public static Scope CreateRoot(TypeChecker typeChecker, IEnumerable<Class> classes)
         {
             var scope = new Scope(null);
 
-            foreach (var typeMemberBinding in typeMemberBindings)
-            {
-                var typeKey = typeMemberBinding.Type;
-
-                if (!scope.typeMemberScopes.ContainsKey(typeKey))
-                    scope.typeMemberScopes[typeKey] = new Scope(null);
-
-                var typeMemberScope = scope.typeMemberScopes[typeKey];
-
-                foreach (var member in typeMemberBinding.Members)
-                    typeMemberScope.TryIncludeUniqueBinding(member);
-            }
+            foreach (var @class in classes)
+                scope.typeRegistry.Register(@class);
 
             DataType @int = NamedType.Integer;
             DataType @bool = NamedType.Boolean;
@@ -91,11 +114,17 @@ namespace Rook.Compiling
             set { locals[key] = value; }
         }
 
-        public bool TryGetMemberScope(DataType typeKey, out Scope typeMemberScope)
+        public bool TryGetMemberScope(NamedType typeKey, out Scope typeMemberScope)
         {
-            if (typeMemberScopes.ContainsKey(typeKey))
+            IEnumerable<Binding> typeMembers;
+            if (typeRegistry.TryGetMembers(typeKey, out typeMembers))
             {
-                typeMemberScope = typeMemberScopes[typeKey];
+                var scope = new Scope(null);
+
+                foreach (var member in typeMembers)
+                    scope.TryIncludeUniqueBinding(member);
+
+                typeMemberScope = scope;
                 return true;
             }
 

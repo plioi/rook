@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
 {
-    public class Class : TypedSyntaxTree, Binding, TypeMemberBinding
+    public class Class : TypedSyntaxTree, Binding
     {
         public Position Position { get; private set; }
         public Name Name { get; private set; }
@@ -42,16 +41,6 @@ namespace Rook.Compiling.Syntax
         string Binding.Identifier
         {
             get { return Name.Identifier; }
-        }
-
-        DataType TypeMemberBinding.Type
-        {
-            get { return new NamedType(Name.Identifier); }
-        }
-
-        Vector<Binding> TypeMemberBinding.Members
-        {
-            get { return Methods.ToVector<Binding>(); }
         }
     }
 }
