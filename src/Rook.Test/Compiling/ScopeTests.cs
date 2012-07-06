@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using Parsley;
 using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
 using Should;
@@ -18,7 +16,7 @@ namespace Rook.Compiling
         public ScopeTests()
         {
             var typeChecker = new TypeChecker();
-            root = Scope.CreateRoot(typeChecker, Enumerable.Empty<Class>());
+            root = Scope.CreateRoot(typeChecker);
 
             ab = root.CreateLocalScope();
             ab["a"] = Integer;
@@ -105,41 +103,6 @@ namespace Rook.Compiling
         }
 
         [Fact]
-        public void IncludesOptionalSetOfTypeMemberBindingsInTheRootScope()
-        {
-            var foo = new NamedType("Foo");
-            var math = new NamedType("Math");
-
-            var fooBinding = ParseClass("class Foo { int I() 0; bool B() true; }");
-            var mathBinding = ParseClass("class Math { int Square(int x) x*x; bool Zero(int x) x==0; }");
-
-            var typeChecker = new TypeChecker();
-            var rootScope = Scope.CreateRoot(typeChecker, new[] {fooBinding, mathBinding});
-            var childScope = rootScope.CreateLocalScope();
-
-            AssertMemberType(NamedType.Function(Integer), rootScope, foo, "I");
-            AssertMemberType(NamedType.Function(Boolean), rootScope, foo, "B");
-            AssertMemberType(NamedType.Function(new[] { Integer }, Integer), rootScope, math, "Square");
-            AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), rootScope, math, "Zero");
-
-            AssertMemberType(NamedType.Function(Integer), childScope, foo, "I");
-            AssertMemberType(NamedType.Function(Boolean), childScope, foo, "B");
-            AssertMemberType(NamedType.Function(new[] { Integer }, Integer), childScope, math, "Square");
-            AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), childScope, math, "Zero");
-
-            Scope expectedFailure;
-            rootScope.TryGetMemberScope(new NamedType("UnknownType"), out expectedFailure).ShouldBeFalse();
-            expectedFailure.ShouldBeNull();
-        }
-
-        private static Class ParseClass(string classDeclaration)
-        {
-            var tokens = new RookLexer().Tokenize(classDeclaration);
-            var parser = new RookGrammar().Class;
-            return parser.Parse(new TokenStream(tokens)).Value;
-        }
-
-        [Fact]
         public void CanBePopulatedWithAUniqueBinding()
         {
             root.TryIncludeUniqueBinding(new Parameter(null, Integer, "a")).ShouldBeTrue();
@@ -193,16 +156,6 @@ namespace Rook.Compiling
                 value.ShouldEqual(expectedType);
             else
                 throw new Exception("Failed to look up the type of '" + key + "' in the Scope");
-        }
-
-        private static void AssertMemberType(DataType expectedType, Scope scope, NamedType typeKey, string memberKey)
-        {
-            Scope typeMemberScope;
-
-            if (scope.TryGetMemberScope(typeKey, out typeMemberScope))
-                AssertType(expectedType, typeMemberScope, memberKey);
-            else
-                throw new Exception("Failed to look up the type of '" + typeKey + "+" + memberKey + "' in the Scope");
         }
 
         private static void AssertType(string expectedType, Scope scope, string key)

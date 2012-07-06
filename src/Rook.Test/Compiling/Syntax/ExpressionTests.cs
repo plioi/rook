@@ -9,7 +9,12 @@ namespace Rook.Compiling.Syntax
 
         protected DataType Type(string source, params TypeMapping[] symbols)
         {
-            return TypeChecking(source, symbols).Syntax.Type;
+            return Type(source, new TypeChecker(), symbols);
+        }
+
+        protected DataType Type(string source, TypeChecker typeChecker, params TypeMapping[] symbols)
+        {
+            return TypeChecking(source, typeChecker, symbols).Syntax.Type;
         }
 
         protected DataType Type(string source, Scope scope, TypeChecker typeChecker)
@@ -20,14 +25,22 @@ namespace Rook.Compiling.Syntax
 
         protected TypeChecked<Expression> TypeChecking(string source, params TypeMapping[] symbols)
         {
+            return TypeChecking(source, new TypeChecker(), symbols);
+        }
+
+        protected TypeChecked<Expression> TypeChecking(string source, TypeChecker typeChecker, params TypeMapping[] symbols)
+        {
             var expression = Parse(source);
-            var typeChecker = new TypeChecker();
             return typeChecker.TypeCheck(expression, Scope(typeChecker, symbols));
         }
 
         protected T WithTypes<T>(T syntaxTree, params TypeMapping[] symbols) where T : Expression
         {
-            var typeChecker = new TypeChecker();
+            return WithTypes(syntaxTree, new TypeChecker(), symbols);
+        }
+
+        protected T WithTypes<T>(T syntaxTree, TypeChecker typeChecker, params TypeMapping[] symbols) where T : Expression
+        {
             var typeCheckedExpression = typeChecker.TypeCheck(syntaxTree, Scope(typeChecker, symbols));
             return (T)typeCheckedExpression.Syntax;
         }

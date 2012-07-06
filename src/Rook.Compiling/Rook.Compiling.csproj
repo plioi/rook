@@ -85,6 +85,7 @@
     <Compile Include="RookCompiler.cs" />
     <Compile Include="Syntax\Class.cs" />
     <Compile Include="Syntax\Lambda.cs" />
+    <Compile Include="Syntax\MethodInvocation.cs" />
     <Compile Include="Syntax\New.cs" />
     <Compile Include="Syntax\RookLexer.cs" />
     <Compile Include="Syntax\StringLiteral.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="Syntax\TypeCheckingExtensions.cs" />
     <Compile Include="Syntax\VariableDeclaration.cs" />
     <Compile Include="Syntax\Visitor.cs" />
+    <Compile Include="TypeRegistry.cs" />
     <Compile Include="Types\DataType.cs" />
     <Compile Include="Types\NamedType.cs" />
     <Compile Include="Scope.cs" />

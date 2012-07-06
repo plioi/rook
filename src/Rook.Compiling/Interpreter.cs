@@ -170,11 +170,16 @@ namespace Rook.Compiling
 
         private Scope ScopeForExpression(TypeChecker typeChecker)
         {
-            var scope = Scope.CreateRoot(typeChecker, Enumerable.Empty<Class>());
+            var scope = Scope.CreateRoot(typeChecker);
 
             foreach (var c in classes.Values)
+            {
                 if (c.Name.Identifier != "Main")
+                {
                     scope.TryIncludeUniqueBinding(c);
+                    typeChecker.TypeRegistry.Register(c);
+                }
+            }
             foreach (var f in functions.Values)
                 if (f.Name.Identifier != "Main")
                     scope.TryIncludeUniqueBinding(f);

@@ -251,9 +251,9 @@ namespace Rook.Compiling.Syntax
         private Parser<Expression> MethodInvocation(Expression instance)
         {
             return from dot in Token(RookLexer.MemberAccess)
-                   from member in Name
+                   from methodName in Name
                    from arguments in Tuple(Expression)
-                   select new Call(member.Position, member, new[] {instance}.Concat(arguments));
+                   select new MethodInvocation(dot.Position, instance, methodName, arguments);
         }
 
         private static Parser<T> Between<T>(string openOperator, Parser<T> parser, string closeOperator)

@@ -5,7 +5,7 @@ int Sum(int? first, int? second, int? third)
     (first??0) + (second??0) + (third??0)
 
 int SumFirstItems(int[]? first, int[]? second, int[]? third)
-    First(Each(first??[0])) + First(Each(second??[0])) + First(Each(third??[0]))
+    Each(first??[0]).First() + Each(second??[0]).First() + Each(third??[0]).First()
 
 void Main()
 {

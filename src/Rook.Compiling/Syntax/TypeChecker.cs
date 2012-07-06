@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Parsley;
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
 
@@ -10,14 +11,20 @@ namespace Rook.Compiling.Syntax
     {
         public readonly Func<TypeVariable> CreateTypeVariable;
         private readonly TypeUnifier unifier;
+        private readonly TypeRegistry typeRegistry;
 
         public TypeChecker()
         {
             unifier = new TypeUnifier();
+            typeRegistry = new TypeRegistry();
 
             int next = 0;
             CreateTypeVariable = () => new TypeVariable(next++);
         }
+
+        //TODO: This property is deprecated.  Once TypeRegistry can discover .NET types via reflection,
+        //rephrase unit test usages of this so they don't have to manually prepare the TypeRegistry.
+        public TypeRegistry TypeRegistry { get { return typeRegistry; } }
 
         public TypeChecked<CompilationUnit> TypeCheck(CompilationUnit compilationUnit)
         {
@@ -25,7 +32,10 @@ namespace Rook.Compiling.Syntax
             var Classes = compilationUnit.Classes;
             var Functions = compilationUnit.Functions;
 
-            var scope = Scope.CreateRoot(this, Classes);
+            foreach (var @class in Classes)//TODO: Test coverage.
+                typeRegistry.Register(@class);
+
+            var scope = Scope.CreateRoot(this);
 
             foreach (var @class in Classes)
                 if (!scope.TryIncludeUniqueBinding(@class))
@@ -112,7 +122,7 @@ namespace Rook.Compiling.Syntax
             if (scope.TryGet(Identifier, out type))
                 return TypeChecked<Expression>.Success(new Name(Position, Identifier, FreshenGenericTypeVariables(scope, type)));
 
-            return TypeChecked<Expression>.UndefinedIdentifierError(Position, Identifier);
+            return TypeChecked<Expression>.UndefinedIdentifierError(name);
         }
 
         private DataType FreshenGenericTypeVariables(Scope scope, DataType type)
@@ -293,6 +303,93 @@ namespace Rook.Compiling.Syntax
             var callType = unifier.Normalize(returnType);
 
             return TypeChecked<Expression>.Success(new Call(Position, typedCallable, typedArguments, IsOperator, callType));
+        }
+
+        public TypeChecked<Expression> TypeCheck(MethodInvocation methodInvocation, Scope scope)
+        {
+            var Position = methodInvocation.Position;
+            var Instance = methodInvocation.Instance;
+            var MethodName = methodInvocation.MethodName;
+            var Arguments = methodInvocation.Arguments;
+
+            var typeCheckedInstance = TypeCheck(Instance, scope);
+
+            if (typeCheckedInstance.HasErrors)
+                return typeCheckedInstance;
+
+            var typedInstance = typeCheckedInstance.Syntax;
+            var instanceType = typedInstance.Type;
+            NamedType instanceNamedType = instanceType as NamedType;
+
+            if (instanceNamedType == null)
+                return TypeChecked<Expression>.AmbiguousMethodInvocationError(Position);
+
+            Scope typeMemberScope;
+            if (scope.TryGetMemberScope(typeRegistry, instanceNamedType, out typeMemberScope))
+            {
+                //This block is SUSPICIOUSLY like all of TypeCheck(Call, Scope), but Callable/MethodName is evaluated in a special scope and the successful return is different.
+
+                var Callable = MethodName;
+
+                TypeChecked<Expression> typeCheckedCallable = Callable.WithTypes(this, typeMemberScope);//If typeCheckedCallable.HasErrors, can we avoid giving up and instead see if it is an extension method call, resulting in a TypeChecked Call?
+
+                //EXPERIMENTAL - TRY EXTENSION METHOD WHEN WE FAILED TO FIND THE METHOD IN THE TYPE MEMBER SCOPE
+                if (typeCheckedCallable.HasErrors)
+                {
+                    var extensionMethodCall = TypeCheck(new Call(Position, MethodName, new[] {Instance}.Concat(Arguments)), scope);
+                
+                    if (!extensionMethodCall.HasErrors)
+                        return extensionMethodCall;
+                }
+                //END EXPERIMENT
+
+                var typeCheckedArguments = TypeCheck(Arguments, scope);
+
+                var errors = new[] { typeCheckedCallable }.Concat(typeCheckedArguments).ToVector().Errors();
+                if (errors.Any())
+                    return TypeChecked<Expression>.Failure(errors);
+
+                Expression typedCallable = typeCheckedCallable.Syntax;
+                var typedArguments = typeCheckedArguments.Expressions();
+
+                DataType calleeType = typedCallable.Type;
+                NamedType calleeFunctionType = calleeType as NamedType;
+
+                if (calleeFunctionType == null || calleeFunctionType.Name != "System.Func")
+                    return TypeChecked<Expression>.ObjectNotCallableError(Position);
+
+                var returnType = calleeType.InnerTypes.Last();
+                var argumentTypes = typedArguments.Select(x => x.Type).ToVector();
+
+                var unifyErrors = new List<CompilerError>(
+                    unifier.Unify(calleeType, NamedType.Function(argumentTypes, returnType))
+                        .Select(error => new CompilerError(Position, error)));
+                if (unifyErrors.Count > 0)
+                    return TypeChecked<Expression>.Failure(unifyErrors.ToVector());
+
+                var callType = unifier.Normalize(returnType);
+                //End of suspiciously duplicated code.
+
+                var typedMethodName = (Name)typedCallable;
+                return TypeChecked<Expression>.Success(new MethodInvocation(Position, typedInstance, typedMethodName, typedArguments, callType));
+            }
+            else
+            {
+                //HACK: Because TypeRegistry cannot yet look up members for concretions of generic types like int*,
+                //  we have to double-check whether this is an extension method call for a regular built-in generic function.
+                //  Once TypeRegistry lets you look up the members for a type like int*, this block should be removed.
+                TypeChecked<Expression> typeCheckedCallable = MethodName.WithTypes(this, scope);
+                if (!typeCheckedCallable.HasErrors)
+                {
+                    var extensionMethodCall = TypeCheck(new Call(Position, MethodName, new[] {Instance}.Concat(Arguments)), scope);
+                
+                    if (!extensionMethodCall.HasErrors)
+                        return extensionMethodCall;
+                }
+                //END HACK
+
+                return TypeChecked<Expression>.UndefinedTypeError(Instance.Position, instanceNamedType);
+            }
         }
 
         public TypeChecked<Expression> TypeCheck(New @new, Scope scope)

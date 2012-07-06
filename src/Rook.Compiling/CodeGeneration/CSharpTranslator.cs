@@ -133,6 +133,14 @@ namespace Rook.Compiling.CodeGeneration
             return Format("(@(@))", Translate(callable), Translate(arguments, ", "));
         }
 
+        public WriteAction Visit(MethodInvocation methodInvocation)
+        {
+            return Format("@.@(@)",
+                Translate(methodInvocation.Instance),
+                Translate(methodInvocation.MethodName),
+                Translate(methodInvocation.Arguments, ", "));
+        }
+
         public WriteAction Visit(New @new)
         {
             return Format("(new @())", Translate(@new.TypeName));

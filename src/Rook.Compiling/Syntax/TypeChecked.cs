@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Parsley;
+using Rook.Compiling.Types;
 using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
@@ -42,14 +43,24 @@ namespace Rook.Compiling.Syntax
             return Failure(new CompilerError(duplicate.Position, "Duplicate identifier: " + duplicate.Identifier));
         }
 
-        public static TypeChecked<T> UndefinedIdentifierError(Position position, string identifier)
+        public static TypeChecked<T> UndefinedIdentifierError(Name undefined)
         {
-            return Failure(new CompilerError(position, "Reference to undefined identifier: " + identifier));
+            return Failure(new CompilerError(undefined.Position, "Reference to undefined identifier: " + undefined.Identifier));
+        }
+
+        public static TypeChecked<T> UndefinedTypeError(Position position, NamedType namedType)
+        {
+            return Failure(new CompilerError(position, "Type is undefined: " + namedType));
         }
 
         public static TypeChecked<T> ObjectNotCallableError(Position position)
         {
             return Failure(new CompilerError(position, "Attempted to call a noncallable object."));
+        }
+
+        public static TypeChecked<T> AmbiguousMethodInvocationError(Position position)
+        {
+            return Failure(new CompilerError(position, "Cannot invoke method against instance of unknown type."));
         }
 
         public static TypeChecked<T> TypeNameExpectedForConstructionError(Position position, Name invalidTypeName)

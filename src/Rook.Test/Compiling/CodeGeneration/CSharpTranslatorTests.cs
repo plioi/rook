@@ -207,6 +207,14 @@ namespace Rook.Compiling.CodeGeneration
         }
 
         [Fact]
+        public void ShouldTranslateMethodInvocation()
+        {
+            AssertTranslation("x.Method()", rookGrammar.Expression, "x.Method()");
+            AssertTranslation("x.Method(true)", rookGrammar.Expression, "x.Method(true)");
+            AssertTranslation("x.Method(1, z, false)", rookGrammar.Expression, "x.Method(1, z, false)");
+        }
+
+        [Fact]
         public void ShouldTranslateConstructorCalls()
         {
             AssertTranslation("(new Foo())", rookGrammar.Expression, "new Foo()");

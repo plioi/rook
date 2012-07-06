@@ -101,6 +101,14 @@ namespace Rook
                                  Translate(arguments, ", "));
         }
 
+        public string Visit(MethodInvocation methodInvocation)
+        {
+            return String.Format("{0}.{1}({2})",
+                                 Translate(methodInvocation.Instance),
+                                 Translate(methodInvocation.MethodName),
+                                 Translate(methodInvocation.Arguments, ", "));
+        }
+
         public string Visit(New @new)
         {
             return String.Format("(new {0}())", Translate(@new.TypeName));

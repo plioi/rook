@@ -167,10 +167,9 @@ namespace Rook.Compiling
             result = interpreter.Interpret("new Square()");
             result.Value.ToString().ShouldEqual("__program__+Square");
             result.Errors.ShouldBeEmpty();
-            //TODO: Prove the new class definition won, once we can invoke methods:
-            //  result = interpreter.Interpret("new Square().Sqr(2)");
-            //  result.Value.ShouldEqual(4);
-            //  result.Errors.ShouldBeEmpty();
+            result = interpreter.Interpret("new Square().Sqr(2)");
+            result.Value.ShouldEqual(4);
+            result.Errors.ShouldBeEmpty();
 
             //Function definition replaces class with the same name.
             square = interpreter.Interpret("int Square(int x) x*x");

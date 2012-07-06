@@ -17,8 +17,8 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void RanksMethodInvocationBeforeUnaryOperators()
         {
-            Parses("-x.Square()").IntoTree("(-((Square(x))))");
-            Parses("!x.Even()").IntoTree("(!((Even(x))))");
+            Parses("-x.Square()").IntoTree("(-(x.Square()))");
+            Parses("!x.Even()").IntoTree("(!(x.Even()))");
         }
 
         [Fact]

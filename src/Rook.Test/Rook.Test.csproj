@@ -87,12 +87,14 @@
     <Compile Include="Compiling\Syntax\ClassTests.cs" />
     <Compile Include="Compiling\Syntax\IntegerLiteralTests.cs" />
     <Compile Include="Compiling\Syntax\LambdaTests.cs" />
+    <Compile Include="Compiling\Syntax\MethodInvocationTests.cs" />
     <Compile Include="Compiling\Syntax\NewTests.cs" />
     <Compile Include="Compiling\Syntax\NullTests.cs" />
     <Compile Include="Compiling\Syntax\RookLexerTests.cs" />
     <Compile Include="Compiling\Syntax\ParsingAssertions.cs" />
     <Compile Include="Compiling\Syntax\StringLiteralTests.cs" />
     <Compile Include="Compiling\Syntax\TypeCheckingAssertions.cs" />
+    <Compile Include="Compiling\TypeRegistryTests.cs" />
     <Compile Include="Compiling\Types\TypeCheckerTests.cs" />
     <Compile Include="Core\Collections\ArrayVectorTests.cs" />
     <Compile Include="Core\Collections\SliceVectorTests.cs" />

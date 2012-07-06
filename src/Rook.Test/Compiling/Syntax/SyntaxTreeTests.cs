@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
 
@@ -29,15 +30,15 @@ namespace Rook.Compiling.Syntax
 
         protected delegate DataType TypeMapping(string name);
 
-        protected static Scope Scope(TypeChecker typeChecker, params TypeMapping[] symbols)
+        protected static Scope Scope(TypeChecker typeChecker, params TypeMapping[] locals)
         {
-            var root = Compiling.Scope.CreateRoot(typeChecker, Enumerable.Empty<Class>());
+            var root = Compiling.Scope.CreateRoot(typeChecker);
             var localScope = root.CreateLocalScope();
 
-            foreach (var symbol in symbols)
+            foreach (var local in locals)
             {
-                var item = symbol(null);
-                var name = symbol.Method.GetParameters()[0].Name;
+                var item = local(null);
+                var name = local.Method.GetParameters()[0].Name;
                 localScope[name] = item;
             }
 

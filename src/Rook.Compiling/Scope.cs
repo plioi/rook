@@ -4,43 +4,9 @@ using Rook.Compiling.Types;
 
 namespace Rook.Compiling
 {
-    public class TypeRegistry
-    {
-        private readonly IDictionary<NamedType, List<Binding>> typeMembers;
-
-        public TypeRegistry()
-        {
-            typeMembers = new Dictionary<NamedType, List<Binding>>();
-        }
-
-        public void Register(Class @class)
-        {
-            var typeKey = new NamedType(@class.Name.Identifier);
-
-            if (!typeMembers.ContainsKey(typeKey))
-                typeMembers[typeKey] = new List<Binding>();
-
-            var typeMemberScope = typeMembers[typeKey];
-            typeMemberScope.AddRange(@class.Methods);
-        }
-
-        public bool TryGetMembers(NamedType typeKey, out IEnumerable<Binding> memberBindings)
-        {
-            if (typeMembers.ContainsKey(typeKey))
-            {
-                memberBindings = typeMembers[typeKey];
-                return true;
-            }
-
-            memberBindings = null;
-            return false;
-        }
-    }
-
     public class Scope
     {
         private readonly IDictionary<string, DataType> locals;
-        private readonly TypeRegistry typeRegistry;
         private readonly List<TypeVariable> localNonGenericTypeVariables;
         private readonly Scope parent;
 
@@ -48,16 +14,12 @@ namespace Rook.Compiling
         {
             locals = new Dictionary<string, DataType>();
             localNonGenericTypeVariables = new List<TypeVariable>();
-            typeRegistry = parent == null ? new TypeRegistry() : parent.typeRegistry;
             this.parent = parent;
         }
 
-        public static Scope CreateRoot(TypeChecker typeChecker, IEnumerable<Class> classes)
+        public static Scope CreateRoot(TypeChecker typeChecker)
         {
             var scope = new Scope(null);
-
-            foreach (var @class in classes)
-                scope.typeRegistry.Register(@class);
 
             DataType @int = NamedType.Integer;
             DataType @bool = NamedType.Boolean;
@@ -114,7 +76,8 @@ namespace Rook.Compiling
             set { locals[key] = value; }
         }
 
-        public bool TryGetMemberScope(NamedType typeKey, out Scope typeMemberScope)
+        //TODO: Test, and should probably just CreateTypeMemberScope a new scope for the given type, and let that be empty for unknown types.
+        public bool TryGetMemberScope(TypeRegistry typeRegistry, NamedType typeKey, out Scope typeMemberScope)
         {
             IEnumerable<Binding> typeMembers;
             if (typeRegistry.TryGetMembers(typeKey, out typeMembers))
