@@ -97,7 +97,7 @@ namespace Rook.Compiling.Syntax
                 return TypeChecked<Function>.Failure(typeCheckedBody.Errors);
 
             var typedBody = typeCheckedBody.Syntax;
-            var unifyErrors = unifier.Unify(ReturnType, typedBody);
+            var unifyErrors = Unify(ReturnType, typedBody);
             if (unifyErrors.Count > 0)
                 return TypeChecked<Function>.Failure(unifyErrors);
 
@@ -164,7 +164,7 @@ namespace Rook.Compiling.Syntax
                                                                       variable.Identifier,
                                                                       typedValue));
 
-                var unifyErrors = unifier.Unify(binding.Type, typedValue);
+                var unifyErrors = Unify(binding.Type, typedValue);
 
                 if (unifyErrors.Count > 0)
                     return TypeChecked<Expression>.Failure(unifyErrors);
@@ -258,8 +258,8 @@ namespace Rook.Compiling.Syntax
             var typedWhenTrue = typeCheckedWhenTrue.Syntax;
             var typedWhenFalse = typeCheckedWhenFalse.Syntax;
 
-            var unifyErrorsA = unifier.Unify(NamedType.Boolean, typedCondition);
-            var unifyErrorsB = unifier.Unify(typedWhenTrue.Type, typedWhenFalse);
+            var unifyErrorsA = Unify(NamedType.Boolean, typedCondition);
+            var unifyErrorsB = Unify(typedWhenTrue.Type, typedWhenFalse);
 
             if (unifyErrorsA.Any() || unifyErrorsB.Any())
                 return TypeChecked<Expression>.Failure(unifyErrorsA.Concat(unifyErrorsB).ToVector());
@@ -461,7 +461,7 @@ namespace Rook.Compiling.Syntax
 
             var unifyErrors = new List<CompilerError>();
             foreach (var typedItem in typedItems)
-                unifyErrors.AddRange(unifier.Unify(firstItemType, typedItem));
+                unifyErrors.AddRange(Unify(firstItemType, typedItem));
 
             if (unifyErrors.Count > 0)
                 return TypeChecked<Expression>.Failure(unifyErrors.ToVector());
@@ -482,6 +482,11 @@ namespace Rook.Compiling.Syntax
         private Vector<TypeChecked<Class>> TypeCheck(Vector<Class> classes, Scope scope)
         {
             return classes.Select(x => TypeCheck(x, scope)).ToVector();
+        }
+
+        private Vector<CompilerError> Unify(DataType type, TypedSyntaxTree typedSyntaxTree)
+        {
+            return unifier.Unify(type, typedSyntaxTree);
         }
     }
 }
