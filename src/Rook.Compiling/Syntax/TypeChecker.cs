@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Parsley;
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
 
@@ -93,7 +92,7 @@ namespace Rook.Compiling.Syntax
                 if (!localScope.TryIncludeUniqueBinding(parameter))
                     return TypeChecked<Function>.DuplicateIdentifierError(parameter);
 
-            var typeCheckedBody = Body.WithTypes(this, localScope);
+            var typeCheckedBody = TypeCheck(Body, localScope);
             if (typeCheckedBody.HasErrors)
                 return TypeChecked<Function>.Failure(typeCheckedBody.Errors);
 
@@ -146,7 +145,7 @@ namespace Rook.Compiling.Syntax
             var typedVariableDeclarations = new List<VariableDeclaration>();
             foreach (var variable in VariableDeclarations)
             {
-                var typeCheckedValue = variable.Value.WithTypes(this, localScope);
+                var typeCheckedValue = TypeCheck(variable.Value, localScope);
 
                 if (typeCheckedValue.HasErrors)
                     return typeCheckedValue;
@@ -198,11 +197,11 @@ namespace Rook.Compiling.Syntax
                 if (!localScope.TryIncludeUniqueBinding(parameter))
                     return TypeChecked<Expression>.DuplicateIdentifierError(parameter);
 
-            var typeCheckedBody = Body.WithTypes(this, localScope);
+            var typeCheckedBody = TypeCheck(Body, localScope);
             if (typeCheckedBody.HasErrors)
                 return typeCheckedBody;
 
-            Expression typedBody = typeCheckedBody.Syntax;
+            var typedBody = typeCheckedBody.Syntax;
 
             var normalizedParameters = NormalizeTypes(typedParameters);
             //TODO: Determine whether I should also normalize typedBody.Type for the return below.
@@ -248,16 +247,16 @@ namespace Rook.Compiling.Syntax
             var BodyWhenTrue = conditional.BodyWhenTrue;
             var BodyWhenFalse = conditional.BodyWhenFalse;
 
-            TypeChecked<Expression> typeCheckedCondition = Condition.WithTypes(this, scope);
-            TypeChecked<Expression> typeCheckedWhenTrue = BodyWhenTrue.WithTypes(this, scope);
-            TypeChecked<Expression> typeCheckedWhenFalse = BodyWhenFalse.WithTypes(this, scope);
+            var typeCheckedCondition = TypeCheck(Condition, scope);
+            var typeCheckedWhenTrue = TypeCheck(BodyWhenTrue, scope);
+            var typeCheckedWhenFalse = TypeCheck(BodyWhenFalse, scope);
 
             if (typeCheckedCondition.HasErrors || typeCheckedWhenTrue.HasErrors || typeCheckedWhenFalse.HasErrors)
                 return TypeChecked<Expression>.Failure(new[] { typeCheckedCondition, typeCheckedWhenTrue, typeCheckedWhenFalse }.ToVector().Errors());
 
-            Expression typedCondition = typeCheckedCondition.Syntax;
-            Expression typedWhenTrue = typeCheckedWhenTrue.Syntax;
-            Expression typedWhenFalse = typeCheckedWhenFalse.Syntax;
+            var typedCondition = typeCheckedCondition.Syntax;
+            var typedWhenTrue = typeCheckedWhenTrue.Syntax;
+            var typedWhenFalse = typeCheckedWhenFalse.Syntax;
 
             var unifyErrorsA = unifier.Unify(NamedType.Boolean, typedCondition);
             var unifyErrorsB = unifier.Unify(typedWhenTrue.Type, typedWhenFalse);
@@ -275,18 +274,18 @@ namespace Rook.Compiling.Syntax
             var Arguments = call.Arguments;
             var IsOperator = call.IsOperator;
 
-            TypeChecked<Expression> typeCheckedCallable = Callable.WithTypes(this, scope);
+            var typeCheckedCallable = TypeCheck(Callable, scope);
             var typeCheckedArguments = TypeCheck(Arguments, scope);
 
             var errors = new[] { typeCheckedCallable }.Concat(typeCheckedArguments).ToVector().Errors();
             if (errors.Any())
                 return TypeChecked<Expression>.Failure(errors);
 
-            Expression typedCallable = typeCheckedCallable.Syntax;
+            var typedCallable = typeCheckedCallable.Syntax;
             var typedArguments = typeCheckedArguments.Expressions();
 
-            DataType calleeType = typedCallable.Type;
-            NamedType calleeFunctionType = calleeType as NamedType;
+            var calleeType = typedCallable.Type;
+            var calleeFunctionType = calleeType as NamedType;
 
             if (calleeFunctionType == null || calleeFunctionType.Name != "System.Func")
                 return TypeChecked<Expression>.ObjectNotCallableError(Position);
@@ -331,7 +330,7 @@ namespace Rook.Compiling.Syntax
 
                 var Callable = MethodName;
 
-                TypeChecked<Expression> typeCheckedCallable = Callable.WithTypes(this, typeMemberScope);//If typeCheckedCallable.HasErrors, can we avoid giving up and instead see if it is an extension method call, resulting in a TypeChecked Call?
+                var typeCheckedCallable = TypeCheck(Callable, typeMemberScope);//If typeCheckedCallable.HasErrors, can we avoid giving up and instead see if it is an extension method call, resulting in a TypeChecked Call?
 
                 //EXPERIMENTAL - TRY EXTENSION METHOD WHEN WE FAILED TO FIND THE METHOD IN THE TYPE MEMBER SCOPE
                 if (typeCheckedCallable.HasErrors)
@@ -349,11 +348,11 @@ namespace Rook.Compiling.Syntax
                 if (errors.Any())
                     return TypeChecked<Expression>.Failure(errors);
 
-                Expression typedCallable = typeCheckedCallable.Syntax;
+                var typedCallable = typeCheckedCallable.Syntax;
                 var typedArguments = typeCheckedArguments.Expressions();
 
-                DataType calleeType = typedCallable.Type;
-                NamedType calleeFunctionType = calleeType as NamedType;
+                var calleeType = typedCallable.Type;
+                var calleeFunctionType = calleeType as NamedType;
 
                 if (calleeFunctionType == null || calleeFunctionType.Name != "System.Func")
                     return TypeChecked<Expression>.ObjectNotCallableError(Position);
@@ -378,7 +377,7 @@ namespace Rook.Compiling.Syntax
                 //HACK: Because TypeRegistry cannot yet look up members for concretions of generic types like int*,
                 //  we have to double-check whether this is an extension method call for a regular built-in generic function.
                 //  Once TypeRegistry lets you look up the members for a type like int*, this block should be removed.
-                TypeChecked<Expression> typeCheckedCallable = MethodName.WithTypes(this, scope);
+                var typeCheckedCallable = TypeCheck(MethodName, scope);
                 if (!typeCheckedCallable.HasErrors)
                 {
                     var extensionMethodCall = TypeCheck(new Call(Position, MethodName, new[] {Instance}.Concat(Arguments)), scope);
@@ -397,7 +396,7 @@ namespace Rook.Compiling.Syntax
             var Position = @new.Position;
             var TypeName = @new.TypeName;
 
-            var typeCheckedTypeName = TypeName.WithTypes(this, scope);
+            var typeCheckedTypeName = TypeCheck(TypeName, scope);
 
             if (typeCheckedTypeName.HasErrors)
                 return typeCheckedTypeName;
@@ -472,17 +471,17 @@ namespace Rook.Compiling.Syntax
 
         private Vector<TypeChecked<Expression>> TypeCheck(Vector<Expression> expressions, Scope scope)
         {
-            return expressions.Select(x => x.WithTypes(this, scope)).ToVector();
+            return expressions.Select(x => TypeCheck(x, scope)).ToVector();
         }
 
         private Vector<TypeChecked<Function>> TypeCheck(Vector<Function> functions, Scope scope)
         {
-            return functions.Select(x => x.WithTypes(this, scope)).ToVector();
+            return functions.Select(x => TypeCheck(x, scope)).ToVector();
         }
 
         private Vector<TypeChecked<Class>> TypeCheck(Vector<Class> classes, Scope scope)
         {
-            return classes.Select(x => x.WithTypes(this, scope)).ToVector();
+            return classes.Select(x => TypeCheck(x, scope)).ToVector();
         }
     }
 }
