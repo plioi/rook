@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Rook.Compiling.Types;
 using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
@@ -30,12 +29,6 @@ namespace Rook.Compiling.Syntax
         public static Vector<Expression> Expressions(this Vector<TypeChecked<Expression>> typeCheckedExpressions)
         {
             return typeCheckedExpressions.Select(x => x.Syntax).ToVector();
-        }
-
-        public static Vector<CompilerError> Unify(this TypeUnifier unifier, DataType type, TypedSyntaxTree typedSyntaxTree)
-        {
-            return unifier.Unify(type, typedSyntaxTree.Type)
-                .Select(error => new CompilerError(typedSyntaxTree.Position, error)).ToVector();
         }
     }
 }

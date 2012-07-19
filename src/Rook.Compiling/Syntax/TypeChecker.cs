@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Parsley;
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
 
@@ -97,8 +98,8 @@ namespace Rook.Compiling.Syntax
                 return TypeChecked<Function>.Failure(typeCheckedBody.Errors);
 
             var typedBody = typeCheckedBody.Syntax;
-            var unifyErrors = Unify(ReturnType, typedBody);
-            if (unifyErrors.Count > 0)
+            var unifyErrors = Unify(typedBody.Position, ReturnType, typedBody.Type);
+            if (unifyErrors.Any())
                 return TypeChecked<Function>.Failure(unifyErrors);
 
             return TypeChecked<Function>.Success(new Function(Position, ReturnType, Name, Parameters, typedBody, DeclaredType));
@@ -164,9 +165,9 @@ namespace Rook.Compiling.Syntax
                                                                       variable.Identifier,
                                                                       typedValue));
 
-                var unifyErrors = Unify(binding.Type, typedValue);
+                var unifyErrors = Unify(typedValue.Position, binding.Type, typedValue.Type);
 
-                if (unifyErrors.Count > 0)
+                if (unifyErrors.Any())
                     return TypeChecked<Expression>.Failure(unifyErrors);
             }
 
@@ -258,8 +259,8 @@ namespace Rook.Compiling.Syntax
             var typedWhenTrue = typeCheckedWhenTrue.Syntax;
             var typedWhenFalse = typeCheckedWhenFalse.Syntax;
 
-            var unifyErrorsA = Unify(NamedType.Boolean, typedCondition);
-            var unifyErrorsB = Unify(typedWhenTrue.Type, typedWhenFalse);
+            var unifyErrorsA = Unify(typedCondition.Position, NamedType.Boolean, typedCondition.Type);
+            var unifyErrorsB = Unify(typedWhenFalse.Position, typedWhenTrue.Type, typedWhenFalse.Type);
 
             if (unifyErrorsA.Any() || unifyErrorsB.Any())
                 return TypeChecked<Expression>.Failure(unifyErrorsA.Concat(unifyErrorsB).ToVector());
@@ -293,11 +294,10 @@ namespace Rook.Compiling.Syntax
             var returnType = calleeType.InnerTypes.Last();
             var argumentTypes = typedArguments.Select(x => x.Type).ToVector();
 
-            var unifyErrors = new List<CompilerError>(
-                unifier.Unify(calleeType, NamedType.Function(argumentTypes, returnType))
-                    .Select(error => new CompilerError(Position, error)));
-            if (unifyErrors.Count > 0)
-                return TypeChecked<Expression>.Failure(unifyErrors.ToVector());
+            var unifyErrors = Unify(Position, calleeType, NamedType.Function(argumentTypes, returnType));
+                    
+            if (unifyErrors.Any())
+                return TypeChecked<Expression>.Failure(unifyErrors);
 
             var callType = unifier.Normalize(returnType);
 
@@ -318,7 +318,7 @@ namespace Rook.Compiling.Syntax
 
             var typedInstance = typeCheckedInstance.Syntax;
             var instanceType = typedInstance.Type;
-            NamedType instanceNamedType = instanceType as NamedType;
+            var instanceNamedType = instanceType as NamedType;
 
             if (instanceNamedType == null)
                 return TypeChecked<Expression>.AmbiguousMethodInvocationError(Position);
@@ -360,11 +360,10 @@ namespace Rook.Compiling.Syntax
                 var returnType = calleeType.InnerTypes.Last();
                 var argumentTypes = typedArguments.Select(x => x.Type).ToVector();
 
-                var unifyErrors = new List<CompilerError>(
-                    unifier.Unify(calleeType, NamedType.Function(argumentTypes, returnType))
-                        .Select(error => new CompilerError(Position, error)));
-                if (unifyErrors.Count > 0)
-                    return TypeChecked<Expression>.Failure(unifyErrors.ToVector());
+                var unifyErrors = Unify(Position, calleeType, NamedType.Function(argumentTypes, returnType));
+
+                if (unifyErrors.Any())
+                    return TypeChecked<Expression>.Failure(unifyErrors);
 
                 var callType = unifier.Normalize(returnType);
                 //End of suspiciously duplicated code.
@@ -461,9 +460,9 @@ namespace Rook.Compiling.Syntax
 
             var unifyErrors = new List<CompilerError>();
             foreach (var typedItem in typedItems)
-                unifyErrors.AddRange(Unify(firstItemType, typedItem));
+                unifyErrors.AddRange(Unify(typedItem.Position, firstItemType, typedItem.Type));
 
-            if (unifyErrors.Count > 0)
+            if (unifyErrors.Any())
                 return TypeChecked<Expression>.Failure(unifyErrors.ToVector());
 
             return TypeChecked<Expression>.Success(new VectorLiteral(Position, typedItems, NamedType.Vector(firstItemType)));
@@ -484,9 +483,9 @@ namespace Rook.Compiling.Syntax
             return classes.Select(x => TypeCheck(x, scope)).ToVector();
         }
 
-        private Vector<CompilerError> Unify(DataType type, TypedSyntaxTree typedSyntaxTree)
+        private Vector<CompilerError> Unify(Position position, DataType typeA, DataType typeB)
         {
-            return unifier.Unify(type, typedSyntaxTree);
+            return unifier.Unify(typeA, typeB).Select(error => new CompilerError(position, error)).ToVector();
         }
     }
 }
