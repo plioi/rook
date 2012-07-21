@@ -1,5 +1,6 @@
 using Parsley;
 using Rook.Compiling.Types;
+using Rook.Core.Collections;
 using Should;
 using Xunit;
 
@@ -76,9 +77,8 @@ namespace Rook.Compiling.Syntax
 
             var typeChecker = new TypeChecker();
             var typeCheckedClass = typeChecker.TypeCheck(@class, Scope(typeChecker));
-            var typedClass = typeCheckedClass.Syntax;
 
-            typedClass.Methods.ShouldList(
+            typeCheckedClass.Methods.ShouldList(
                 even =>
                 {
                     even.Name.Identifier.ShouldEqual("Even");
@@ -97,27 +97,27 @@ namespace Rook.Compiling.Syntax
                     test.Type.ToString().ShouldEqual("System.Func<int>");
                     test.Body.Type.ShouldEqual(Integer);
                 });
-            typedClass.Type.ShouldEqual(constructorReturningFoo);
+            typeCheckedClass.Type.ShouldEqual(constructorReturningFoo);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenMethodsFailTypeChecking()
         {
-            TypeChecking("class Foo { int A() 0; int B() true+0; }").ShouldFail("Type mismatch: expected int, found bool.", 1, 36);
+            ShouldFailTypeChecking("class Foo { int A() 0; int B() true+0; }").WithError("Type mismatch: expected int, found bool.", 1, 36);
 
-            TypeChecking("class Foo { int A() { int x = 0; int x = 1; x; }; }").ShouldFail("Duplicate identifier: x", 1, 38);
+            ShouldFailTypeChecking("class Foo { int A() { int x = 0; int x = 1; x; }; }").WithError("Duplicate identifier: x", 1, 38);
 
-            TypeChecking("class Foo { int A() (1)(); }").ShouldFail("Attempted to call a noncallable object.", 1, 22);
+            ShouldFailTypeChecking("class Foo { int A() (1)(); }").WithError("Attempted to call a noncallable object.", 1, 22);
 
-            TypeChecking("class Foo { int Square(int x) x*x; int Mismatch() Square(1, 2); }").ShouldFail("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 51);
+            ShouldFailTypeChecking("class Foo { int Square(int x) x*x; int Mismatch() Square(1, 2); }").WithError("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 51);
 
-            TypeChecking("class Foo { int A() Square(2); }").ShouldFail("Reference to undefined identifier: Square", 1, 21);
+            ShouldFailTypeChecking("class Foo { int A() Square(2); }").WithError("Reference to undefined identifier: Square", 1, 21);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenMethodNamesAreNotUnique()
         {
-            TypeChecking("class Foo { int A() 0; bool B() true; int A() 1; }").ShouldFail("Duplicate identifier: A", 1, 43);
+            ShouldFailTypeChecking("class Foo { int A() 0; bool B() true; int A() 1; }").WithError("Duplicate identifier: A", 1, 43);
         }
 
         [Fact]
@@ -125,20 +125,34 @@ namespace Rook.Compiling.Syntax
         {
             var pointConstructor = NamedType.Constructor(new NamedType("Point"));
 
-            TypeChecking("class Foo { int A() 0; int Point() 2; }", Point => pointConstructor)
-                .ShouldFail("Duplicate identifier: Point", 1, 28);
+            ShouldFailTypeChecking("class Foo { int A() 0; int Point() 2; }", Point => pointConstructor)
+                .WithError("Duplicate identifier: Point", 1, 28);
         }
 
         private DataType Type(string source, params TypeMapping[] symbols)
         {
-            return TypeChecking(source, symbols).Syntax.Type;
+            var @class = Parse(source);
+
+            var typeChecker = new TypeChecker();
+            var typeCheckedClass = typeChecker.TypeCheck(@class, Scope(typeChecker, symbols));
+
+            typeCheckedClass.ShouldNotBeNull();
+            typeChecker.HasErrors.ShouldBeFalse();
+
+            return typeCheckedClass.Type;
         }
 
-        private TypeChecked<Class> TypeChecking(string source, params TypeMapping[] symbols)
+        private Vector<CompilerError> ShouldFailTypeChecking(string source, params TypeMapping[] symbols)
         {
-            var typeChecker = new TypeChecker();
             var @class = Parse(source);
-            return typeChecker.TypeCheck(@class, Scope(typeChecker, symbols));
+
+            var typeChecker = new TypeChecker();
+            var typeCheckedClass = typeChecker.TypeCheck(@class, Scope(typeChecker, symbols));
+
+            typeCheckedClass.ShouldBeNull();
+            typeChecker.HasErrors.ShouldBeTrue();
+
+            return typeChecker.Errors;
         }
     }
 }

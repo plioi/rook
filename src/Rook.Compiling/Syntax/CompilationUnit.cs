@@ -22,7 +22,7 @@ namespace Rook.Compiling.Syntax
             return visitor.Visit(this);
         }
 
-        public TypeChecked<CompilationUnit> WithTypes(TypeChecker visitor)
+        public CompilationUnit WithTypes(TypeChecker visitor)
         {
             return visitor.TypeCheck(this);
         }

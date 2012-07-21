@@ -1,5 +1,7 @@
 using System;
 using Parsley;
+using Rook.Compiling.Syntax;
+using Rook.Compiling.Types;
 
 namespace Rook.Compiling
 {
@@ -17,6 +19,41 @@ namespace Rook.Compiling
         public override string ToString()
         {
             return String.Format("{0}: {1}", Position, Message);
+        }
+
+        public static CompilerError InvalidConstant(Position position, string literal)
+        {
+            return new CompilerError(position, "Invalid constant: " + literal);
+        }
+
+        public static CompilerError DuplicateIdentifier(Binding duplicate)
+        {
+            return new CompilerError(duplicate.Position, "Duplicate identifier: " + duplicate.Identifier);
+        }
+
+        public static CompilerError UndefinedIdentifier(Name undefined)
+        {
+            return new CompilerError(undefined.Position, "Reference to undefined identifier: " + undefined.Identifier);
+        }
+
+        public static CompilerError UndefinedType(Position position, NamedType namedType)
+        {
+            return new CompilerError(position, "Type is undefined: " + namedType);
+        }
+
+        public static CompilerError ObjectNotCallable(Position position)
+        {
+            return new CompilerError(position, "Attempted to call a noncallable object.");
+        }
+
+        public static CompilerError AmbiguousMethodInvocation(Position position)
+        {
+            return new CompilerError(position, "Cannot invoke method against instance of unknown type.");
+        }
+
+        public static CompilerError TypeNameExpectedForConstruction(Position position, Name invalidTypeName)
+        {
+            return new CompilerError(position, String.Format("Cannot construct '{0}' because it is not a type.", invalidTypeName.Identifier));
         }
     }
 }

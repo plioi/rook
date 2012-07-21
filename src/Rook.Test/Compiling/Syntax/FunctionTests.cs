@@ -1,5 +1,6 @@
 ﻿using Parsley;
 using Rook.Compiling.Types;
+using Rook.Core.Collections;
 using Should;
 using Xunit;
 
@@ -83,7 +84,7 @@ namespace Rook.Compiling.Syntax
             node.Type.ShouldBeNull();
 
             var typeChecker = new TypeChecker();
-            var typedNode = typeChecker.TypeCheck(node, Scope(typeChecker)).Syntax;
+            var typedNode = typeChecker.TypeCheck(node, Scope(typeChecker));
             typedNode.Parameters.ShouldHaveTypes(Integer, Integer, Boolean);
             typedNode.Body.Type.ShouldEqual(Boolean);
             typedNode.Type.ShouldEqual(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean));
@@ -92,37 +93,51 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingWhenBodyExpressionFailsTypeChecking()
         {
-            TypeChecking("int foo() true+0").ShouldFail("Type mismatch: expected int, found bool.", 1, 15);
+            ShouldFailTypeChecking("int foo() true+0").WithError("Type mismatch: expected int, found bool.", 1, 15);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenParameterNamesAreNotUnique()
         {
-            TypeChecking("int foo(int x, int y, int z, int x) true").ShouldFail("Duplicate identifier: x", 1, 34);
+            ShouldFailTypeChecking("int foo(int x, int y, int z, int x) true").WithError("Duplicate identifier: x", 1, 34);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenParameterNamesShadowSurroundingScope()
         {
-            TypeChecking("int foo(int x, int y, int z) true", z => Integer).ShouldFail("Duplicate identifier: z", 1, 27);
+            ShouldFailTypeChecking("int foo(int x, int y, int z) true", z => Integer).WithError("Duplicate identifier: z", 1, 27);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenDeclaredReturnTypeDoesNotMatchBodyExpressionType()
         {
-            TypeChecking("int foo (int x) false").ShouldFail("Type mismatch: expected int, found bool.", 1, 17);
+            ShouldFailTypeChecking("int foo (int x) false").WithError("Type mismatch: expected int, found bool.", 1, 17);
         }
 
         private DataType Type(string source, params TypeMapping[] symbols)
         {
-            return TypeChecking(source, symbols).Syntax.Type;
+            var function = Parse(source);
+
+            var typeChecker = new TypeChecker();
+            var typeCheckedFunction = typeChecker.TypeCheck(function, Scope(typeChecker, symbols));
+
+            typeCheckedFunction.ShouldNotBeNull();
+            typeChecker.HasErrors.ShouldBeFalse();
+
+            return typeCheckedFunction.Type;
         }
 
-        private TypeChecked<Function> TypeChecking(string source, params TypeMapping[] symbols)
+        private Vector<CompilerError> ShouldFailTypeChecking(string source, params TypeMapping[] symbols)
         {
-            var typeChecker = new TypeChecker();
             var function = Parse(source);
-            return typeChecker.TypeCheck(function, Scope(typeChecker, symbols));
+
+            var typeChecker = new TypeChecker();
+            var typeCheckedFunction = typeChecker.TypeCheck(function, Scope(typeChecker, symbols));
+
+            typeCheckedFunction.ShouldBeNull();
+            typeChecker.HasErrors.ShouldBeTrue();
+
+            return typeChecker.Errors;
         }
     }
 }

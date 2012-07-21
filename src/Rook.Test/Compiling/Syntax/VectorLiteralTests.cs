@@ -22,13 +22,13 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingWhenItemExpressionsFailTypeChecking()
         {
-            TypeChecking("[a]").ShouldFail("Reference to undefined identifier: a", 1, 2);
+            ShouldFailTypeChecking("[a]").WithError("Reference to undefined identifier: a", 1, 2);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenItemExpressionTypesDoNotMatch()
         {
-            TypeChecking("[0, 1, true]").ShouldFail("Type mismatch: expected int, found bool.", 1, 8);
+            ShouldFailTypeChecking("[0, 1, true]").WithError("Type mismatch: expected int, found bool.", 1, 8);
         }
 
         [Fact]

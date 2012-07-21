@@ -27,12 +27,13 @@ namespace Rook.Compiling
 
         public CompilerResult Build(CompilationUnit compilationUnit)
         {
-            var typeCheckedCompilationUnit = TypeCheck(compilationUnit);
-            
-            if (typeCheckedCompilationUnit.HasErrors)
-                return new CompilerResult(Language.Rook, typeCheckedCompilationUnit.Errors);
+            var typeChecker = new TypeChecker();
+            var typeCheckedCompilationUnit = typeChecker.TypeCheck(compilationUnit);
 
-            string translatedCode = Translate(typeCheckedCompilationUnit.Syntax);
+            if (typeChecker.HasErrors)
+                return new CompilerResult(Language.Rook, typeChecker.Errors);
+
+            string translatedCode = Translate(typeCheckedCompilationUnit);
             return csCompiler.Build(translatedCode);
         }
 
@@ -40,11 +41,6 @@ namespace Rook.Compiling
         {
             var tokens = new RookLexer().Tokenize(rookCode);
             return new RookGrammar().CompilationUnit.Parse(new TokenStream(tokens));
-        }
-
-        private static TypeChecked<CompilationUnit> TypeCheck(CompilationUnit compilationUnit)
-        {
-            return new TypeChecker().TypeCheck(compilationUnit);
         }
 
         private string Translate(CompilationUnit typedCompilationUnit)

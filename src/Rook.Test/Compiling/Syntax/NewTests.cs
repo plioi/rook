@@ -27,14 +27,14 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingForTypeNameNotInScope()
         {
-            TypeChecking("new Foo()").ShouldFail("Reference to undefined identifier: Foo", 1, 5);
+            ShouldFailTypeChecking("new Foo()").WithError("Reference to undefined identifier: Foo", 1, 5);
         }
 
         [Fact]
         public void FailsTypeCheckingForNamesThatAreNotConstructorNames()
         {
-            TypeChecking("new Foo()", Foo => Integer).ShouldFail("Cannot construct 'Foo' because it is not a type.", 1, 5);
-            TypeChecking("new Foo()", Foo => NamedType.Function(Integer)).ShouldFail("Cannot construct 'Foo' because it is not a type.", 1, 5);
+            ShouldFailTypeChecking("new Foo()", Foo => Integer).WithError("Cannot construct 'Foo' because it is not a type.", 1, 5);
+            ShouldFailTypeChecking("new Foo()", Foo => NamedType.Function(Integer)).WithError("Cannot construct 'Foo' because it is not a type.", 1, 5);
         }
 
         [Fact]

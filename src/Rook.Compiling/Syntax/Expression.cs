@@ -2,6 +2,6 @@
 {
     public interface Expression : TypedSyntaxTree
     {
-        TypeChecked<Expression> WithTypes(TypeChecker visitor, Scope scope);
+        Expression WithTypes(TypeChecker visitor, Scope scope);
     }
 }

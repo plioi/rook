@@ -2,7 +2,7 @@
 using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
-using Should;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
 {
@@ -13,23 +13,20 @@ namespace Rook.Compiling.Syntax
             actual.Select(x => x.Type).ShouldList(expectedTypes);
         }
 
-        public static void ShouldFail<TSyntax>(this TypeChecked<TSyntax> typeChecked, string expectedMessage, int expectedLine, int expectedColumn) where TSyntax : SyntaxTree
+        public static void WithError(this Vector<CompilerError> actualErrors, string expectedMessage, int expectedLine, int expectedColumn)
         {
             var expectedPosition = new Position(expectedLine, expectedColumn);
 
-            if (typeChecked.Errors.Count() != 1)
+            if (actualErrors.Count() != 1)
             {
-                if (typeChecked.HasErrors)
-                    typeChecked.Syntax.ShouldBeNull();
-
-                Fail.WithErrors(typeChecked.Errors, expectedPosition, expectedMessage);
+                Fail.WithErrors(actualErrors, expectedPosition, expectedMessage);
             }
             else
             {
-                var error = typeChecked.Errors.First();
+                var error = actualErrors.First();
 
                 if (expectedPosition != error.Position || expectedMessage != error.Message)
-                    Fail.WithErrors(typeChecked.Errors, expectedPosition, expectedMessage);
+                    Fail.WithErrors(actualErrors, expectedPosition, expectedMessage);
             }
         }
     }

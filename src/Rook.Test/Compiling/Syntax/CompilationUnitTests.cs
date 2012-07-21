@@ -1,5 +1,6 @@
 ﻿using Parsley;
 using Rook.Compiling.Types;
+using Rook.Core.Collections;
 using Should;
 using Xunit;
 
@@ -55,7 +56,6 @@ namespace Rook.Compiling.Syntax
 
             var typeChecker = new TypeChecker();
             var typeCheckedCompilationUnit = typeChecker.TypeCheck(compilationUnit);
-            var typedCompilationUnit = typeCheckedCompilationUnit.Syntax;
 
             compilationUnit.Classes.ShouldList(
                 foo => foo.Type.ShouldEqual(fooConstructorType),
@@ -81,11 +81,11 @@ namespace Rook.Compiling.Syntax
                     main.Body.Type.ShouldBeNull();
                 });
 
-            typedCompilationUnit.Classes.ShouldList(
+            typeCheckedCompilationUnit.Classes.ShouldList(
                 foo => foo.Type.ShouldEqual(fooConstructorType),
                 bar => bar.Type.ShouldEqual(barConstructorType));
 
-            typedCompilationUnit.Functions.ShouldList(
+            typeCheckedCompilationUnit.Functions.ShouldList(
                 even =>
                 {
                     even.Name.Identifier.ShouldEqual("Even");
@@ -109,44 +109,50 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsValidationWhenFunctionsFailValidation()
         {
-            TypeChecking("int a() 0; int b() true+0; int Main() 1;").ShouldFail("Type mismatch: expected int, found bool.", 1, 24);
+            ShouldFailTypeChecking("int a() 0; int b() true+0; int Main() 1;").WithError("Type mismatch: expected int, found bool.", 1, 24);
 
-            TypeChecking("int Main() { int x = 0; int x = 1; x; };").ShouldFail("Duplicate identifier: x", 1, 29);
+            ShouldFailTypeChecking("int Main() { int x = 0; int x = 1; x; };").WithError("Duplicate identifier: x", 1, 29);
 
-            TypeChecking("int Main() (1)();").ShouldFail("Attempted to call a noncallable object.", 1, 13);
+            ShouldFailTypeChecking("int Main() (1)();").WithError("Attempted to call a noncallable object.", 1, 13);
 
-            TypeChecking("int Square(int x) x*x; int Main() Square(1, 2);").ShouldFail("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 35);
+            ShouldFailTypeChecking("int Square(int x) x*x; int Main() Square(1, 2);").WithError("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 35);
 
-            TypeChecking("int Main() Square(2);").ShouldFail("Reference to undefined identifier: Square", 1, 12);
+            ShouldFailTypeChecking("int Main() Square(2);").WithError("Reference to undefined identifier: Square", 1, 12);
         }
 
         [Fact]
         public void FailsValidationWhenClassesFailValidation()
         {
-            TypeChecking("class Foo { int A() 0; int B() true+0; }").ShouldFail("Type mismatch: expected int, found bool.", 1, 36);
+            ShouldFailTypeChecking("class Foo { int A() 0; int B() true+0; }").WithError("Type mismatch: expected int, found bool.", 1, 36);
 
-            TypeChecking("class Foo { int A() { int x = 0; int x = 1; x; }; }").ShouldFail("Duplicate identifier: x", 1, 38);
+            ShouldFailTypeChecking("class Foo { int A() { int x = 0; int x = 1; x; }; }").WithError("Duplicate identifier: x", 1, 38);
 
-            TypeChecking("class Foo { int A() (1)(); }").ShouldFail("Attempted to call a noncallable object.", 1, 22);
+            ShouldFailTypeChecking("class Foo { int A() (1)(); }").WithError("Attempted to call a noncallable object.", 1, 22);
 
-            TypeChecking("class Foo { int Square(int x) x*x; int Mismatch() Square(1, 2); }").ShouldFail("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 51);
+            ShouldFailTypeChecking("class Foo { int Square(int x) x*x; int Mismatch() Square(1, 2); }").WithError("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 51);
 
-            TypeChecking("class Foo { int A() Square(2); }").ShouldFail("Reference to undefined identifier: Square", 1, 21);
+            ShouldFailTypeChecking("class Foo { int A() Square(2); }").WithError("Reference to undefined identifier: Square", 1, 21);
         }
 
         [Fact]
         public void FailsValidationWhenFunctionAndClassNamesAreNotUnique()
         {
-            TypeChecking("int a() 0; int b() 1; int a() 2; int Main() 1;").ShouldFail("Duplicate identifier: a", 1, 27);
-            TypeChecking("class Foo { }; class Bar { }; class Foo { }").ShouldFail("Duplicate identifier: Foo", 1, 31);
-            TypeChecking("class Zero { }; int Zero() 0;").ShouldFail("Duplicate identifier: Zero", 1, 21);
+            ShouldFailTypeChecking("int a() 0; int b() 1; int a() 2; int Main() 1;").WithError("Duplicate identifier: a", 1, 27);
+            ShouldFailTypeChecking("class Foo { }; class Bar { }; class Foo { }").WithError("Duplicate identifier: Foo", 1, 31);
+            ShouldFailTypeChecking("class Zero { }; int Zero() 0;").WithError("Duplicate identifier: Zero", 1, 21);
         }
 
-        private TypeChecked<CompilationUnit> TypeChecking(string source)
+        private Vector<CompilerError> ShouldFailTypeChecking(string source)
         {
-            var typeChecker = new TypeChecker();
             var compilationUnit = Parse(source);
-            return typeChecker.TypeCheck(compilationUnit);
+
+            var typeChecker = new TypeChecker();
+            var typeCheckedCompilationUnit = typeChecker.TypeCheck(compilationUnit);
+
+            typeCheckedCompilationUnit.ShouldBeNull();
+            typeChecker.HasErrors.ShouldBeTrue();
+
+            return typeChecker.Errors;
         }
     }
 }

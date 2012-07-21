@@ -162,7 +162,7 @@ namespace Rook.Compiling.Syntax
         {
             var twoArgsToInteger = NamedType.Function(new[] {NamedType.Boolean, NamedType.Integer}, NamedType.Integer);
 
-            TypeChecking("foo(true, 1, false)", foo => twoArgsToInteger).ShouldFail(
+            ShouldFailTypeChecking("foo(true, 1, false)", foo => twoArgsToInteger).WithError(
                 "Type mismatch: expected System.Func<bool, int, int>, found System.Func<bool, int, bool, int>.", 1, 1);
         }
 
@@ -171,14 +171,14 @@ namespace Rook.Compiling.Syntax
         {
             var integerToBoolean = NamedType.Function(new[] {NamedType.Integer}, NamedType.Boolean);
 
-            TypeChecking("even(true)", even => integerToBoolean).ShouldFail(
+            ShouldFailTypeChecking("even(true)", even => integerToBoolean).WithError(
                 "Type mismatch: expected int, found bool.", 1, 1);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenAttemptingToCallANoncallableObject()
         {
-            TypeChecking("zero()", zero => Integer).ShouldFail("Attempted to call a noncallable object.", 1, 1);
+            ShouldFailTypeChecking("zero()", zero => Integer).WithError("Attempted to call a noncallable object.", 1, 1);
         }
 
         private static DataType Function(IEnumerable<DataType> parameterTypes, DataType returnType)

@@ -31,14 +31,12 @@ namespace Rook.Compiling.Syntax
             Type = type;
         }
 
-
-
         public TResult Visit<TResult>(Visitor<TResult> visitor)
         {
             return visitor.Visit(this);
         }
 
-        public TypeChecked<Expression> WithTypes(TypeChecker visitor, Scope scope)
+        public Expression WithTypes(TypeChecker visitor, Scope scope)
         {
             return visitor.TypeCheck(this, scope);
         }

@@ -85,31 +85,31 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingWhenLocalVariableInitializationExpressionFailsTypeChecking()
         {
-            TypeChecking("{ int x = a; x; }").ShouldFail("Reference to undefined identifier: a", 1, 11);
+            ShouldFailTypeChecking("{ int x = a; x; }").WithError("Reference to undefined identifier: a", 1, 11);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenAnyBodyExpressionFailsTypeChecking()
         {
-            TypeChecking("{ true+0; 0; }").ShouldFail("Type mismatch: expected int, found bool.", 1, 7);
+            ShouldFailTypeChecking("{ true+0; 0; }").WithError("Type mismatch: expected int, found bool.", 1, 7);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenLocalVariableNamesAreNotUnique()
         {
-            TypeChecking("{ int x = 0; int y = 1; int z = 2; int x = 3; true; }").ShouldFail("Duplicate identifier: x", 1, 40);
+            ShouldFailTypeChecking("{ int x = 0; int y = 1; int z = 2; int x = 3; true; }").WithError("Duplicate identifier: x", 1, 40);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenLocalVariableNamesShadowSurroundingScope()
         {
-            TypeChecking("{ int x = 0; int y = 1; int z = 2; true; }", z => Integer).ShouldFail("Duplicate identifier: z", 1, 29);
+            ShouldFailTypeChecking("{ int x = 0; int y = 1; int z = 2; true; }", z => Integer).WithError("Duplicate identifier: z", 1, 29);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenDeclaredTypeDoesNotMatchInitializationExpressionType()
         {
-            TypeChecking("{ int x = false; x; }").ShouldFail("Type mismatch: expected int, found bool.", 1, 11);
+            ShouldFailTypeChecking("{ int x = false; x; }").WithError("Type mismatch: expected int, found bool.", 1, 11);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingWhenOutOfRange()
         {
-            TypeChecking("2147483648").ShouldFail("Invalid constant: 2147483648", 1, 1);
+            ShouldFailTypeChecking("2147483648").WithError("Invalid constant: 2147483648", 1, 1);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
+using Rook.Core.Collections;
 using Should;
 using Xunit;
 
@@ -48,19 +49,19 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingWhenInstanceExpressionFailsTypeChecking()
         {
-            TypeChecking("math.Square(2)").ShouldFail("Reference to undefined identifier: math", 1, 1);
+            ShouldFailTypeChecking("math.Square(2)").WithError("Reference to undefined identifier: math", 1, 1);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenInstanceExpressionTypeIsNotANamedType()
         {
-            TypeChecking("math.Square(2)", math => new TypeVariable(123456)).ShouldFail("Cannot invoke method against instance of unknown type.", 1, 5);
+            ShouldFailTypeChecking("math.Square(2)", math => new TypeVariable(123456)).WithError("Cannot invoke method against instance of unknown type.", 1, 5);
         }
 
         [Fact]
         public void FailsTypeCheckingForUndefinedInstanceType()
         {
-            TypeChecking("math.Square(2)", math => new NamedType("Math")).ShouldFail("Type is undefined: Math", 1, 1);
+            ShouldFailTypeChecking("math.Square(2)", math => new NamedType("Math")).WithError("Type is undefined: Math", 1, 1);
         }
         [Fact]
         public void TypeChecksAsExtensionMethodCallWhenPossibleForUndefinedInstanceType()
@@ -75,7 +76,7 @@ namespace Rook.Compiling.Syntax
                                                                           math => new NamedType("Math"),
                                                                           Square => Function(new[] {new NamedType("Math"), Integer}, Integer)));
             
-            var typedCall = (Call)typeCheckedCall.Syntax;
+            var typedCall = (Call)typeCheckedCall;
             typedCall.Callable.Type.ShouldEqual(Function(new[] { new NamedType("Math"), Integer }, Integer));
             typedCall.Arguments.ShouldHaveTypes(new NamedType("Math"), Integer);
             typedCall.Type.ShouldEqual(Integer);
@@ -139,7 +140,7 @@ namespace Rook.Compiling.Syntax
                                                                           math => new NamedType("Math"),
                                                                           SomeExtensionMethod => Function(new[] { new NamedType("Math"), Boolean }, Integer)));
 
-            var typedCall = (Call)typeCheckedCall.Syntax;
+            var typedCall = (Call)typeCheckedCall;
 
             typedCall.Callable.Type.ShouldEqual(Function(new[] { new NamedType("Math"), Boolean }, Integer));
             typedCall.Arguments.ShouldHaveTypes(new NamedType("Math"), Boolean);
@@ -149,20 +150,20 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingForIncorrectNumberOfArguments()
         {
-            TypeChecking("math.Zero(false)", knownClass, math => new NamedType("Math")).ShouldFail(
+            ShouldFailTypeChecking("math.Zero(false)", knownClass, math => new NamedType("Math")).WithError(
                 "Type mismatch: expected System.Func<int>, found System.Func<bool, int>.", 1, 5);
 
-            TypeChecking("math.Square(1, true)", knownClass, math => new NamedType("Math")).ShouldFail(
+            ShouldFailTypeChecking("math.Square(1, true)", knownClass, math => new NamedType("Math")).WithError(
                 "Type mismatch: expected System.Func<int, int>, found System.Func<int, bool, int>.", 1, 5);
-            
-            TypeChecking("math.Max(1, 2, 3)", knownClass, math => new NamedType("Math")).ShouldFail(
+
+            ShouldFailTypeChecking("math.Max(1, 2, 3)", knownClass, math => new NamedType("Math")).WithError(
                 "Type mismatch: expected System.Func<int, int, int>, found System.Func<int, int, int, int>.", 1, 5);
         }
 
         [Fact]
         public void FailsTypeCheckingForMismatchedArgumentTypes()
         {
-            TypeChecking("math.Square(true)", knownClass, math => new NamedType("Math")).ShouldFail(
+            ShouldFailTypeChecking("math.Square(true)", knownClass, math => new NamedType("Math")).WithError(
                 "Type mismatch: expected int, found bool.", 1, 5);
         }
 
@@ -171,8 +172,8 @@ namespace Rook.Compiling.Syntax
         {
             var typeChecker = new TypeChecker();
             typeChecker.TypeRegistry.Register(new NamedType("Sample"), new StubBinding("IntegerProperty", Integer));
-            
-            TypeChecking("sample.IntegerProperty()", typeChecker, sample => new NamedType("Sample")).ShouldFail("Attempted to call a noncallable object.", 1, 7);
+
+            ShouldFailTypeChecking("sample.IntegerProperty()", typeChecker, sample => new NamedType("Sample")).WithError("Attempted to call a noncallable object.", 1, 7);
         }
 
         private static Class ParseClass(string classDeclaration)
@@ -190,12 +191,12 @@ namespace Rook.Compiling.Syntax
             return Type(source, typeChecker, symbols);
         }
 
-        private TypeChecked<Expression> TypeChecking(string source, Class knownClass, params TypeMapping[] symbols)
+        private Vector<CompilerError> ShouldFailTypeChecking(string source, Class knownClass, params TypeMapping[] symbols)
         {
             var typeChecker = new TypeChecker();
             typeChecker.TypeRegistry.Register(knownClass);
 
-            return TypeChecking(source, typeChecker, symbols);
+            return ShouldFailTypeChecking(source, typeChecker, symbols);
         }
 
         private T WithTypes<T>(T syntaxTree, Class knownClass, params TypeMapping[] symbols) where T : Expression

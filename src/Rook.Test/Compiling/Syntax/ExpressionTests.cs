@@ -1,5 +1,7 @@
 ﻿using Parsley;
 using Rook.Compiling.Types;
+using Rook.Core.Collections;
+using Should;
 
 namespace Rook.Compiling.Syntax
 {
@@ -14,24 +16,35 @@ namespace Rook.Compiling.Syntax
 
         protected DataType Type(string source, TypeChecker typeChecker, params TypeMapping[] symbols)
         {
-            return TypeChecking(source, typeChecker, symbols).Syntax.Type;
+            var expression = Parse(source);
+            var typeCheckedExpression = typeChecker.TypeCheck(expression, Scope(typeChecker, symbols));
+
+            typeCheckedExpression.ShouldNotBeNull();
+            typeChecker.HasErrors.ShouldBeFalse();
+
+            return typeCheckedExpression.Type;
         }
 
         protected DataType Type(string source, Scope scope, TypeChecker typeChecker)
         {
             var expression = Parse(source);
-            return typeChecker.TypeCheck(expression, scope).Syntax.Type;
+            return typeChecker.TypeCheck(expression, scope).Type;
         }
 
-        protected TypeChecked<Expression> TypeChecking(string source, params TypeMapping[] symbols)
+        protected Vector<CompilerError> ShouldFailTypeChecking(string source, params TypeMapping[] symbols)
         {
-            return TypeChecking(source, new TypeChecker(), symbols);
+            return ShouldFailTypeChecking(source, new TypeChecker(), symbols);
         }
 
-        protected TypeChecked<Expression> TypeChecking(string source, TypeChecker typeChecker, params TypeMapping[] symbols)
+        protected Vector<CompilerError> ShouldFailTypeChecking(string source, TypeChecker typeChecker, params TypeMapping[] symbols)
         {
             var expression = Parse(source);
-            return typeChecker.TypeCheck(expression, Scope(typeChecker, symbols));
+            var typeCheckedExpression = typeChecker.TypeCheck(expression, Scope(typeChecker, symbols));
+
+            typeCheckedExpression.ShouldBeNull();
+            typeChecker.HasErrors.ShouldBeTrue();
+
+            return typeChecker.Errors;
         }
 
         protected T WithTypes<T>(T syntaxTree, params TypeMapping[] symbols) where T : Expression
@@ -42,7 +55,8 @@ namespace Rook.Compiling.Syntax
         protected T WithTypes<T>(T syntaxTree, TypeChecker typeChecker, params TypeMapping[] symbols) where T : Expression
         {
             var typeCheckedExpression = typeChecker.TypeCheck(syntaxTree, Scope(typeChecker, symbols));
-            return (T)typeCheckedExpression.Syntax;
+            typeChecker.HasErrors.ShouldBeFalse();
+            return (T)typeCheckedExpression;
         }
     }
 }

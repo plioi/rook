@@ -28,7 +28,7 @@ namespace Rook.Compiling.Syntax
             return visitor.Visit(this);
         }
 
-        public TypeChecked<Expression> WithTypes(TypeChecker visitor, Scope scope)
+        public Expression WithTypes(TypeChecker visitor, Scope scope)
         {
             return visitor.TypeCheck(this, scope);
         }

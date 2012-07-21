@@ -1,4 +1,3 @@
-using System.Linq;
 using Rook.Compiling.Types;
 using Should;
 using Xunit;
@@ -60,7 +59,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingForIdentifiersNotInScope()
         {
-            TypeChecking("foo").ShouldFail("Reference to undefined identifier: foo", 1, 1);
+            ShouldFailTypeChecking("foo").WithError("Reference to undefined identifier: foo", 1, 1);
         }
     }
 }
