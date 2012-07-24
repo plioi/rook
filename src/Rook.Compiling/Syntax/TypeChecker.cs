@@ -128,8 +128,6 @@ namespace Rook.Compiling.Syntax
 
             DataType type;
 
-            //TODO: We should probably normalize 'type' before freshening its variables.
-
             if (scope.TryGet(Identifier, out type))
                 return new Name(Position, Identifier, FreshenGenericTypeVariables(scope, type));
 
@@ -216,7 +214,6 @@ namespace Rook.Compiling.Syntax
                 return null;
 
             var normalizedParameters = NormalizeTypes(typedParameters);
-            //TODO: Determine whether I should also normalize typedBody.Type for the return below.
 
             var parameterTypes = normalizedParameters.Select(p => p.Type).ToArray();
 
@@ -337,8 +334,7 @@ namespace Rook.Compiling.Syntax
                 var Callable = MethodName;
 
                 //EXPERIMENTAL - TRY EXTENSION METHOD WHEN WE FAILED TO FIND THE METHOD IN THE TYPE MEMBER SCOPE
-                DataType type;
-                if (!typeMemberScope.TryGet(Callable.Identifier, out type))
+                if (!typeMemberScope.Contains(Callable.Identifier))
                 {
                     var extensionMethodCall = TypeCheck(new Call(Position, MethodName, new[] { Instance }.Concat(Arguments)), scope);
 
@@ -381,8 +377,7 @@ namespace Rook.Compiling.Syntax
                 //HACK: Because TypeRegistry cannot yet look up members for concretions of generic types like int*,
                 //  we have to double-check whether this is an extension method call for a regular built-in generic function.
                 //  Once TypeRegistry lets you look up the members for a type like int*, this block should be removed.
-                DataType type;
-                if (scope.TryGet(MethodName.Identifier, out type))
+                if (scope.Contains(MethodName.Identifier))
                 {
                     var typeCheckedCallable = TypeCheck(MethodName, scope);
                     if (typeCheckedCallable != null)
