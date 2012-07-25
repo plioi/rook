@@ -103,7 +103,7 @@ namespace Rook.Compiling
         {
             if (locals.ContainsKey(key))
             {
-                value = locals[key];
+                value = FreshenGenericTypeVariables(locals[key]);
                 return true;
             }
 
@@ -114,6 +114,16 @@ namespace Rook.Compiling
             }
 
             return parent.TryGet(key, out value);
+        }
+
+        private DataType FreshenGenericTypeVariables(DataType type)
+        {
+            var substitutions = new Dictionary<TypeVariable, DataType>();
+            var genericTypeVariables = type.FindTypeVariables().Where(IsGeneric);
+            foreach (var genericTypeVariable in genericTypeVariables)
+                substitutions[genericTypeVariable] = CreateTypeVariable();
+
+            return type.ReplaceTypeVariables(substitutions);
         }
 
         public bool Contains(string key)

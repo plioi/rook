@@ -129,20 +129,10 @@ namespace Rook.Compiling.Syntax
             DataType type;
 
             if (scope.TryGet(Identifier, out type))
-                return new Name(Position, Identifier, FreshenGenericTypeVariables(scope, type));
+                return new Name(Position, Identifier, type);
 
             LogError(CompilerError.UndefinedIdentifier(name));
             return null;
-        }
-
-        private DataType FreshenGenericTypeVariables(Scope scope, DataType type)
-        {
-            var substitutions = new Dictionary<TypeVariable, DataType>();
-            var genericTypeVariables = type.FindTypeVariables().Where(scope.IsGeneric);
-            foreach (var genericTypeVariable in genericTypeVariables)
-                substitutions[genericTypeVariable] = CreateTypeVariable();
-
-            return type.ReplaceTypeVariables(substitutions);
         }
 
         public Expression TypeCheck(Block block, Scope scope)

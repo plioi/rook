@@ -85,21 +85,21 @@ namespace Rook.Compiling
             AssertType("System.Func<bool, bool, bool>", root, "&&");
             AssertType("System.Func<bool, bool>", root, "!");
 
-            AssertType("System.Func<Rook.Core.Nullable<0>, 0, 0>", root, "??");
-            AssertType("System.Func<0, Rook.Core.Void>", root, "Print");
-            AssertType("System.Func<0, Rook.Core.Nullable<0>>", root, "Nullable");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, 0>", root, "First");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, int, System.Collections.Generic.IEnumerable<0>>", root, "Take");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, int, System.Collections.Generic.IEnumerable<0>>", root, "Skip");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, bool>", root, "Any");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, int>", root, "Count");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, System.Func<0, 1>, System.Collections.Generic.IEnumerable<1>>", root, "Select");
-            AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, System.Func<0, bool>, System.Collections.Generic.IEnumerable<0>>", root, "Where");
-            AssertType("System.Func<Rook.Core.Collections.Vector<0>, System.Collections.Generic.IEnumerable<0>>", root, "Each");
-            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, 0>", root, "Index");
-            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, int, Rook.Core.Collections.Vector<0>>", root, "Slice");
-            AssertType("System.Func<Rook.Core.Collections.Vector<0>, 0, Rook.Core.Collections.Vector<0>>", root, "Append");
-            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, 0, Rook.Core.Collections.Vector<0>>", root, "With");
+            AssertType("System.Func<Rook.Core.Nullable<2>, 2, 2>", root, "??");
+            AssertType("System.Func<3, Rook.Core.Void>", root, "Print");
+            AssertType("System.Func<4, Rook.Core.Nullable<4>>", root, "Nullable");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<5>, 5>", root, "First");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<6>, int, System.Collections.Generic.IEnumerable<6>>", root, "Take");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<7>, int, System.Collections.Generic.IEnumerable<7>>", root, "Skip");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<8>, bool>", root, "Any");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<9>, int>", root, "Count");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<10>, System.Func<10, 11>, System.Collections.Generic.IEnumerable<11>>", root, "Select");
+            AssertType("System.Func<System.Collections.Generic.IEnumerable<12>, System.Func<12, bool>, System.Collections.Generic.IEnumerable<12>>", root, "Where");
+            AssertType("System.Func<Rook.Core.Collections.Vector<13>, System.Collections.Generic.IEnumerable<13>>", root, "Each");
+            AssertType("System.Func<Rook.Core.Collections.Vector<14>, int, 14>", root, "Index");
+            AssertType("System.Func<Rook.Core.Collections.Vector<15>, int, int, Rook.Core.Collections.Vector<15>>", root, "Slice");
+            AssertType("System.Func<Rook.Core.Collections.Vector<16>, 16, Rook.Core.Collections.Vector<16>>", root, "Append");
+            AssertType("System.Func<Rook.Core.Collections.Vector<17>, int, 17, Rook.Core.Collections.Vector<17>>", root, "With");
         }
 
         [Fact]
@@ -146,6 +146,39 @@ namespace Rook.Compiling
             bc.IsGeneric(var1).ShouldBeFalse();
             bc.IsGeneric(var2).ShouldBeFalse();
             bc.IsGeneric(var3).ShouldBeFalse();
+        }
+
+        [Fact]
+        public void FreshensTypeVariablesOnEachLookup()
+        {
+            var scope = Scope.CreateRoot(new TypeChecker());
+
+            scope["concreteType"] = Integer;
+            AssertType(Integer, scope, "concreteType");
+
+            scope["typeVariable"] = new TypeVariable(0);
+            AssertType(new TypeVariable(2), scope, "typeVariable");
+            AssertType(new TypeVariable(3), scope, "typeVariable");
+
+            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(4), new TypeVariable(5), new NamedType("B", new TypeVariable(4), new TypeVariable(5)));
+            var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(1), new NamedType("B", new TypeVariable(0), new TypeVariable(1)));
+            scope["genericTypeIncludingTypeVariables"] = definedType;
+            AssertType(expectedTypeAfterLookup, scope, "genericTypeIncludingTypeVariables");
+        }
+
+        [Fact]
+        public void FreshensOnlyGenericTypeVariablesOnEachLookup()
+        {
+            //Prevents type '1' from being freshened on type lookup by marking it as non-generic in the scope:
+
+            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(2), new TypeVariable(1), new NamedType("B", new TypeVariable(2), new TypeVariable(1)));
+            var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(1), new NamedType("B", new TypeVariable(0), new TypeVariable(1)));
+
+            var scope = Scope.CreateRoot(new TypeChecker());
+            scope.TreatAsNonGeneric(new[] { new TypeVariable(1) });
+            scope["genericTypeIncludingGenericAndNonGenericTypeVariables"] = definedType;
+
+            AssertType(expectedTypeAfterLookup, scope, "genericTypeIncludingGenericAndNonGenericTypeVariables");
         }
 
         private static void AssertType(DataType expectedType, Scope scope, string key)
