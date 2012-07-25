@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
 
@@ -6,12 +8,15 @@ namespace Rook.Compiling
 {
     public class Scope
     {
+        private readonly Func<TypeVariable> CreateTypeVariable;
+
         private readonly IDictionary<string, DataType> locals;
         private readonly List<TypeVariable> localNonGenericTypeVariables;
         private readonly Scope parent;
 
-        private Scope(Scope parent)
+        private Scope(Scope parent, Func<TypeVariable> createTypeVariable)
         {
+            CreateTypeVariable = createTypeVariable;
             locals = new Dictionary<string, DataType>();
             localNonGenericTypeVariables = new List<TypeVariable>();
             this.parent = parent;
@@ -19,7 +24,7 @@ namespace Rook.Compiling
 
         public static Scope CreateRoot(TypeChecker typeChecker)
         {
-            var scope = new Scope(null);
+            var scope = new Scope(null, typeChecker.CreateTypeVariable);
 
             DataType @int = NamedType.Integer;
             DataType @bool = NamedType.Boolean;
@@ -68,7 +73,7 @@ namespace Rook.Compiling
 
         public Scope CreateLocalScope()
         {
-            return new Scope(this);
+            return new Scope(this, CreateTypeVariable);
         }
 
         public DataType this[string key]
@@ -81,7 +86,7 @@ namespace Rook.Compiling
             IEnumerable<Binding> typeMembers;
             if (typeRegistry.TryGetMembers(typeKey, out typeMembers))
             {
-                var scope = new Scope(null);
+                var scope = new Scope(null, CreateTypeVariable);
 
                 foreach (var member in typeMembers)
                     scope.TryIncludeUniqueBinding(member);
