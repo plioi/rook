@@ -76,7 +76,6 @@ namespace Rook.Compiling
             set { locals[key] = value; }
         }
 
-        //TODO: Test, and should probably just CreateTypeMemberScope a new scope for the given type, and let that be empty for unknown types.
         public bool TryGetMemberScope(TypeRegistry typeRegistry, NamedType typeKey, out Scope typeMemberScope)
         {
             IEnumerable<Binding> typeMembers;
