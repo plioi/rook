@@ -40,10 +40,11 @@ namespace Rook.Compiling.Syntax
 
             var typeChecker = new TypeChecker();
             var scope = Compiling.Scope.CreateRoot(typeChecker);
-            scope.TreatAsNonGeneric(new[] { new TypeVariable(1) });
-            scope["foo"] = definedType;
+            var lambdaScope = scope.CreateLambdaScope();
+            lambdaScope.TreatAsNonGeneric(new[] { new TypeVariable(1) });
+            lambdaScope["foo"] = definedType;
 
-            Type("foo", scope, typeChecker).ShouldEqual(expectedTypeAfterLookup);
+            Type("foo", lambdaScope, typeChecker).ShouldEqual(expectedTypeAfterLookup);
         }
 
         [Fact]

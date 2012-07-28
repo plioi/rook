@@ -186,20 +186,20 @@ namespace Rook.Compiling.Syntax
             var Parameters = lambda.Parameters;
             var Body = lambda.Body;
 
-            var localScope = scope.CreateLocalScope();
+            var lambdaScope = scope.CreateLambdaScope();
 
-            var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters, localScope);
+            var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters, lambdaScope);
 
             foreach (var parameter in typedParameters)
             {
-                if (!localScope.TryIncludeUniqueBinding(parameter))
+                if (!lambdaScope.TryIncludeUniqueBinding(parameter))
                 {
                     LogError(CompilerError.DuplicateIdentifier(parameter));
                     return null;
                 }
             }
 
-            var typeCheckedBody = TypeCheck(Body, localScope);
+            var typeCheckedBody = TypeCheck(Body, lambdaScope);
             if (typeCheckedBody == null)
                 return null;
 
@@ -210,7 +210,7 @@ namespace Rook.Compiling.Syntax
             return new Lambda(Position, normalizedParameters, typeCheckedBody, NamedType.Function(parameterTypes, typeCheckedBody.Type));
         }
 
-        private Parameter[] ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters, Scope localScope)
+        private Parameter[] ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters, LambdaScope lambdaScope)
         {
             var decoratedParameters = new List<Parameter>();
             var typeVariables = new List<TypeVariable>();
@@ -229,7 +229,7 @@ namespace Rook.Compiling.Syntax
                 }
             }
 
-            localScope.TreatAsNonGeneric(typeVariables);
+            lambdaScope.TreatAsNonGeneric(typeVariables);
 
             return decoratedParameters.ToArray();
         }

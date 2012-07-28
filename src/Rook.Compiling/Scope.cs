@@ -11,14 +11,12 @@ namespace Rook.Compiling
         private readonly Func<TypeVariable> CreateTypeVariable;
 
         private readonly IDictionary<string, DataType> locals;
-        private readonly List<TypeVariable> localNonGenericTypeVariables;
-        private readonly Scope parent;
+        protected readonly Scope parent;
 
-        private Scope(Scope parent, Func<TypeVariable> createTypeVariable)
+        protected Scope(Scope parent, Func<TypeVariable> createTypeVariable)
         {
             CreateTypeVariable = createTypeVariable;
             locals = new Dictionary<string, DataType>();
-            localNonGenericTypeVariables = new List<TypeVariable>();
             this.parent = parent;
         }
 
@@ -74,6 +72,11 @@ namespace Rook.Compiling
         public Scope CreateLocalScope()
         {
             return new Scope(this, CreateTypeVariable);
+        }
+
+        public LambdaScope CreateLambdaScope()
+        {
+            return new LambdaScope(this, CreateTypeVariable);
         }
 
         public DataType this[string key]
@@ -140,18 +143,31 @@ namespace Rook.Compiling
             return true;
         }
 
+        public virtual bool IsGeneric(TypeVariable typeVariable)
+        {
+            return parent == null || parent.IsGeneric(typeVariable);
+        }
+    }
+
+    public class LambdaScope : Scope
+    {
+        private readonly List<TypeVariable> localNonGenericTypeVariables;
+
+        public LambdaScope(Scope parent, Func<TypeVariable> createTypeVariable)
+            : base(parent, createTypeVariable)
+        {
+            localNonGenericTypeVariables = new List<TypeVariable>();
+        }
+
         public void TreatAsNonGeneric(IEnumerable<TypeVariable> typeVariables)
         {
             localNonGenericTypeVariables.AddRange(typeVariables);
         }
 
-        public bool IsGeneric(TypeVariable typeVariable)
+        public override bool IsGeneric(TypeVariable typeVariable)
         {
             if (localNonGenericTypeVariables.Contains(typeVariable))
                 return false;
-
-            if (parent == null)
-                return true;
 
             return parent.IsGeneric(typeVariable);
         }

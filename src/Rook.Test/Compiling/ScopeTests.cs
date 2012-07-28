@@ -128,24 +128,30 @@ namespace Rook.Compiling
             var var2 = new TypeVariable(2);
             var var3 = new TypeVariable(3);
 
-            root.TreatAsNonGeneric(new[] {var0});
-            ab.TreatAsNonGeneric(new[] {var1, var2});
-            bc.TreatAsNonGeneric(new[] {var3});
+            var outerLambda = bc.CreateLambdaScope();
+            var local = outerLambda.CreateLocalScope();
+            var middleLambda = local.CreateLambdaScope();
+            var local2 = middleLambda.CreateLocalScope();
+            var innerLambda = local2.CreateLambdaScope();
 
-            root.IsGeneric(var0).ShouldBeFalse();
-            root.IsGeneric(var1).ShouldBeTrue();
-            root.IsGeneric(var2).ShouldBeTrue();
-            root.IsGeneric(var3).ShouldBeTrue();
+            outerLambda.TreatAsNonGeneric(new[] { var0 });
+            middleLambda.TreatAsNonGeneric(new[] { var1, var2 });
+            innerLambda.TreatAsNonGeneric(new[] { var3 });
 
-            ab.IsGeneric(var0).ShouldBeFalse();
-            ab.IsGeneric(var1).ShouldBeFalse();
-            ab.IsGeneric(var2).ShouldBeFalse();
-            ab.IsGeneric(var3).ShouldBeTrue();
+            outerLambda.IsGeneric(var0).ShouldBeFalse();
+            outerLambda.IsGeneric(var1).ShouldBeTrue();
+            outerLambda.IsGeneric(var2).ShouldBeTrue();
+            outerLambda.IsGeneric(var3).ShouldBeTrue();
 
-            bc.IsGeneric(var0).ShouldBeFalse();
-            bc.IsGeneric(var1).ShouldBeFalse();
-            bc.IsGeneric(var2).ShouldBeFalse();
-            bc.IsGeneric(var3).ShouldBeFalse();
+            middleLambda.IsGeneric(var0).ShouldBeFalse();
+            middleLambda.IsGeneric(var1).ShouldBeFalse();
+            middleLambda.IsGeneric(var2).ShouldBeFalse();
+            middleLambda.IsGeneric(var3).ShouldBeTrue();
+
+            innerLambda.IsGeneric(var0).ShouldBeFalse();
+            innerLambda.IsGeneric(var1).ShouldBeFalse();
+            innerLambda.IsGeneric(var2).ShouldBeFalse();
+            innerLambda.IsGeneric(var3).ShouldBeFalse();
         }
 
         [Fact]
@@ -175,10 +181,11 @@ namespace Rook.Compiling
             var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(1), new NamedType("B", new TypeVariable(0), new TypeVariable(1)));
 
             var scope = Scope.CreateRoot(new TypeChecker());
-            scope.TreatAsNonGeneric(new[] { new TypeVariable(1) });
-            scope["genericTypeIncludingGenericAndNonGenericTypeVariables"] = definedType;
+            var lambdaScope = scope.CreateLambdaScope();
+            lambdaScope.TreatAsNonGeneric(new[] { new TypeVariable(1) });
+            lambdaScope["genericTypeIncludingGenericAndNonGenericTypeVariables"] = definedType;
 
-            AssertType(expectedTypeAfterLookup, scope, "genericTypeIncludingGenericAndNonGenericTypeVariables");
+            AssertType(expectedTypeAfterLookup, lambdaScope, "genericTypeIncludingGenericAndNonGenericTypeVariables");
         }
 
         private static void AssertType(DataType expectedType, Scope scope, string key)
