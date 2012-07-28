@@ -316,9 +316,11 @@ namespace Rook.Compiling.Syntax
                 return null;
             }
 
-            Scope typeMemberScope;
-            if (scope.TryGetMemberScope(typeRegistry, instanceNamedType, out typeMemberScope))
+            Vector<Binding> typeMembers;
+            if (typeRegistry.TryGetMembers(instanceNamedType, out typeMembers))
             {
+                Scope typeMemberScope = new TypeMemberScope(this, typeMembers);
+
                 //This block is SUSPICIOUSLY like all of TypeCheck(Call, Scope), but Callable/MethodName is evaluated in a special scope and the successful return is different.
 
                 var Callable = MethodName;

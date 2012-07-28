@@ -4,6 +4,7 @@ using System.Linq;
 using Parsley;
 using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
+using Rook.Core.Collections;
 using Should;
 using Xunit;
 
@@ -42,7 +43,7 @@ namespace Rook.Compiling
         [Fact]
         public void FailsToLookUpMemberBindingsForUnknownTypes()
         {
-            IEnumerable<Binding> expectedFailure;
+            Vector<Binding> expectedFailure;
             typeRegistry.TryGetMembers(new NamedType("UnknownType"), out expectedFailure).ShouldBeFalse();
             expectedFailure.ShouldBeNull();
         }
@@ -56,7 +57,7 @@ namespace Rook.Compiling
 
         private void AssertMemberType(DataType expectedType, NamedType typeKey, string memberKey)
         {
-            IEnumerable<Binding> memberBindings;
+            Vector<Binding> memberBindings;
 
             if (typeRegistry.TryGetMembers(typeKey, out memberBindings))
                 AssertMemberType(expectedType, memberBindings, memberKey);

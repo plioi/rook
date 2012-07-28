@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling
 {
@@ -33,24 +34,6 @@ namespace Rook.Compiling
         public DataType this[string key]
         {
             set { locals[key] = value; }
-        }
-
-        public bool TryGetMemberScope(TypeRegistry typeRegistry, NamedType typeKey, out Scope typeMemberScope)
-        {
-            IEnumerable<Binding> typeMembers;
-            if (typeRegistry.TryGetMembers(typeKey, out typeMembers))
-            {
-                var scope = new Scope(null, CreateTypeVariable);
-
-                foreach (var member in typeMembers)
-                    scope.TryIncludeUniqueBinding(member);
-
-                typeMemberScope = scope;
-                return true;
-            }
-
-            typeMemberScope = null;
-            return false;
         }
 
         public bool TryGet(string key, out DataType value)
@@ -146,6 +129,16 @@ namespace Rook.Compiling
             this["Slice"] = NamedType.Function(new[] { NamedType.Vector(T), @int, @int }, NamedType.Vector(T));
             this["Append"] = NamedType.Function(new DataType[] { NamedType.Vector(T), T }, NamedType.Vector(T));
             this["With"] = NamedType.Function(new[] { NamedType.Vector(T), @int, T }, NamedType.Vector(T));
+        }
+    }
+
+    public class TypeMemberScope : Scope
+    {
+        public TypeMemberScope(TypeChecker typeChecker, Vector<Binding> typeMembers)
+            : base(null, typeChecker.CreateTypeVariable)
+        {
+            foreach (var member in typeMembers)
+                TryIncludeUniqueBinding(member);
         }
     }
 

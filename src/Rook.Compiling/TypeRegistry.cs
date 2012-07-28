@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling
 {
@@ -32,11 +33,11 @@ namespace Rook.Compiling
         }
 
         //TODO: Just return empty collection for unknown types?  Is it important to distinguish empty versus unknown?
-        public bool TryGetMembers(NamedType typeKey, out IEnumerable<Binding> memberBindings)
+        public bool TryGetMembers(NamedType typeKey, out Vector<Binding> memberBindings)
         {
             if (typeMembers.ContainsKey(typeKey))
             {
-                memberBindings = typeMembers[typeKey];
+                memberBindings = typeMembers[typeKey].ToVector();
                 return true;
             }
 
