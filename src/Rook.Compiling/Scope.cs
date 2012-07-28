@@ -7,60 +7,25 @@ using Rook.Core.Collections;
 
 namespace Rook.Compiling
 {
-    public class Scope
+    public abstract class Scope
     {
-        private readonly Func<TypeVariable> CreateTypeVariable;
-
+        protected readonly Func<TypeVariable> CreateTypeVariable;
         protected readonly IDictionary<string, DataType> locals;
-        protected readonly Scope parent;
 
-        protected Scope(Scope parent, Func<TypeVariable> createTypeVariable)
+        protected Scope(Func<TypeVariable> createTypeVariable)
         {
             CreateTypeVariable = createTypeVariable;
             locals = new Dictionary<string, DataType>();
-            this.parent = parent;
         }
 
-        public Scope CreateLocalScope()
+        public LocalScope CreateLocalScope()
         {
-            return new Scope(this, CreateTypeVariable);
+            return new LocalScope(this, CreateTypeVariable);
         }
 
         public LambdaScope CreateLambdaScope()
         {
             return new LambdaScope(this, CreateTypeVariable);
-        }
-
-        public bool TryGet(string key, out DataType value)
-        {
-            if (locals.ContainsKey(key))
-            {
-                value = FreshenGenericTypeVariables(locals[key]);
-                return true;
-            }
-
-            if (parent == null)
-            {
-                value = null;
-                return false;
-            }
-
-            return parent.TryGet(key, out value);
-        }
-
-        private DataType FreshenGenericTypeVariables(DataType type)
-        {
-            var substitutions = new Dictionary<TypeVariable, DataType>();
-            var genericTypeVariables = type.FindTypeVariables().Where(IsGeneric);
-            foreach (var genericTypeVariable in genericTypeVariables)
-                substitutions[genericTypeVariable] = CreateTypeVariable();
-
-            return type.ReplaceTypeVariables(substitutions);
-        }
-
-        public bool Contains(string key)
-        {
-            return locals.ContainsKey(key) || (parent != null && parent.Contains(key));
         }
 
         public bool TryIncludeUniqueBinding(Binding binding)
@@ -72,16 +37,69 @@ namespace Rook.Compiling
             return true;
         }
 
+        public virtual bool TryGet(string key, out DataType value)
+        {
+            if (locals.ContainsKey(key))
+            {
+                value = FreshenGenericTypeVariables(locals[key]);
+                return true;
+            }
+
+            value = null;
+            return false;
+        }
+
+        public virtual bool Contains(string key)
+        {
+            return locals.ContainsKey(key);
+        }
+
         public virtual bool IsGeneric(TypeVariable typeVariable)
         {
-            return parent == null || parent.IsGeneric(typeVariable);
+            return true;
+        }
+
+        private DataType FreshenGenericTypeVariables(DataType type)
+        {
+            var substitutions = new Dictionary<TypeVariable, DataType>();
+            var genericTypeVariables = type.FindTypeVariables().Where(IsGeneric);
+            foreach (var genericTypeVariable in genericTypeVariables)
+                substitutions[genericTypeVariable] = CreateTypeVariable();
+
+            return type.ReplaceTypeVariables(substitutions);
+        }
+    }
+
+    public class LocalScope : Scope
+    {
+        protected readonly Scope parent;
+
+        public LocalScope(Scope parent, Func<TypeVariable> createTypeVariable)
+            : base(createTypeVariable)
+        {
+            this.parent = parent;
+        }
+
+        public override bool TryGet(string key, out DataType value)
+        {
+            return base.TryGet(key, out value) || parent.TryGet(key, out value);
+        }
+
+        public override bool Contains(string key)
+        {
+            return locals.ContainsKey(key) || parent.Contains(key);
+        }
+
+        public override bool IsGeneric(TypeVariable typeVariable)
+        {
+            return parent.IsGeneric(typeVariable);
         }
     }
 
     public class GlobalScope : Scope
     {
         public GlobalScope(TypeChecker typeChecker)
-            : base(null, typeChecker.CreateTypeVariable)
+            : base(typeChecker.CreateTypeVariable)
         {
             DataType @int = NamedType.Integer;
             DataType @bool = NamedType.Boolean;
@@ -127,17 +145,17 @@ namespace Rook.Compiling
         }
     }
 
-    public class TypeMemberScope : Scope
+    public sealed class TypeMemberScope : Scope
     {
         public TypeMemberScope(TypeChecker typeChecker, Vector<Binding> typeMembers)
-            : base(null, typeChecker.CreateTypeVariable)
+            : base(typeChecker.CreateTypeVariable)
         {
             foreach (var member in typeMembers)
                 TryIncludeUniqueBinding(member);
         }
     }
 
-    public class LambdaScope : Scope
+    public class LambdaScope : LocalScope
     {
         private readonly List<TypeVariable> localNonGenericTypeVariables;
 
@@ -154,10 +172,7 @@ namespace Rook.Compiling
 
         public override bool IsGeneric(TypeVariable typeVariable)
         {
-            if (localNonGenericTypeVariables.Contains(typeVariable))
-                return false;
-
-            return parent.IsGeneric(typeVariable);
+            return !localNonGenericTypeVariables.Contains(typeVariable) && parent.IsGeneric(typeVariable);
         }
     }
 }
