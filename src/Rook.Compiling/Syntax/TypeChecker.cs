@@ -40,7 +40,7 @@ namespace Rook.Compiling.Syntax
             foreach (var @class in Classes)//TODO: Test coverage.
                 typeRegistry.Register(@class);
 
-            var scope = Scope.CreateGlobalScope(this);
+            var scope = new GlobalScope(this);
 
             foreach (var @class in Classes)
                 if (!scope.TryIncludeUniqueBinding(@class))

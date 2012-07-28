@@ -16,7 +16,7 @@ namespace Rook.Compiling
         public ScopeTests()
         {
             var typeChecker = new TypeChecker();
-            global = Scope.CreateGlobalScope(typeChecker);
+            global = new GlobalScope(typeChecker);
 
             ab = global.CreateLocalScope();
             ab["a"] = Integer;
@@ -157,7 +157,7 @@ namespace Rook.Compiling
         [Fact]
         public void FreshensTypeVariablesOnEachLookup()
         {
-            var scope = Scope.CreateGlobalScope(new TypeChecker());
+            var scope = new GlobalScope(new TypeChecker());
 
             scope["concreteType"] = Integer;
             AssertType(Integer, scope, "concreteType");
@@ -180,7 +180,7 @@ namespace Rook.Compiling
             var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(2), new TypeVariable(1), new NamedType("B", new TypeVariable(2), new TypeVariable(1)));
             var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(1), new NamedType("B", new TypeVariable(0), new TypeVariable(1)));
 
-            var globalScope = Scope.CreateGlobalScope(new TypeChecker());
+            var globalScope = new GlobalScope(new TypeChecker());
             var lambdaScope = globalScope.CreateLambdaScope();
             lambdaScope.TreatAsNonGeneric(new[] { new TypeVariable(1) });
             lambdaScope["genericTypeIncludingGenericAndNonGenericTypeVariables"] = definedType;

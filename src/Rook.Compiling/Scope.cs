@@ -20,55 +20,6 @@ namespace Rook.Compiling
             this.parent = parent;
         }
 
-        public static Scope CreateGlobalScope(TypeChecker typeChecker)
-        {
-            var scope = new Scope(null, typeChecker.CreateTypeVariable);
-
-            DataType @int = NamedType.Integer;
-            DataType @bool = NamedType.Boolean;
-
-            DataType integerOperation = NamedType.Function(new[] { @int, @int }, @int);
-            DataType integerComparison = NamedType.Function(new[] { @int, @int }, @bool);
-            DataType booleanOperation = NamedType.Function(new[] { @bool, @bool }, @bool);
-
-            scope["<"] = integerComparison;
-            scope["<="] = integerComparison;
-            scope[">"] = integerComparison;
-            scope[">="] = integerComparison;
-            scope["=="] = integerComparison;
-            scope["!="] = integerComparison;
-
-            scope["+"] = integerOperation;
-            scope["*"] = integerOperation;
-            scope["/"] = integerOperation;
-            scope["-"] = integerOperation;
-
-            scope["&&"] = booleanOperation;
-            scope["||"] = booleanOperation;
-            scope["!"] = NamedType.Function(new[] { @bool }, @bool);
-
-            var T = typeChecker.CreateTypeVariable(); //TypeVariable 0
-            var S = typeChecker.CreateTypeVariable(); //TypeVariable 1
-
-            scope["??"] = NamedType.Function(new DataType[] { NamedType.Nullable(T), T }, T);
-            scope["Print"] = NamedType.Function(new[] { T }, NamedType.Void);
-            scope["Nullable"] = NamedType.Function(new[] { T }, NamedType.Nullable(T));
-            scope["First"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, T);
-            scope["Take"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
-            scope["Skip"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
-            scope["Any"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @bool);
-            scope["Count"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @int);
-            scope["Select"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, S) }, NamedType.Enumerable(S));
-            scope["Where"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, @bool) }, NamedType.Enumerable(T));
-            scope["Each"] = NamedType.Function(new[] { NamedType.Vector(T) }, NamedType.Enumerable(T));
-            scope["Index"] = NamedType.Function(new[] { NamedType.Vector(T), @int }, T);
-            scope["Slice"] = NamedType.Function(new[] { NamedType.Vector(T), @int, @int }, NamedType.Vector(T));
-            scope["Append"] = NamedType.Function(new DataType[] { NamedType.Vector(T), T }, NamedType.Vector(T));
-            scope["With"] = NamedType.Function(new[] { NamedType.Vector(T), @int, T }, NamedType.Vector(T));
-
-            return scope;
-        }
-
         public Scope CreateLocalScope()
         {
             return new Scope(this, CreateTypeVariable);
@@ -146,6 +97,55 @@ namespace Rook.Compiling
         public virtual bool IsGeneric(TypeVariable typeVariable)
         {
             return parent == null || parent.IsGeneric(typeVariable);
+        }
+    }
+
+    public class GlobalScope : Scope
+    {
+        public GlobalScope(TypeChecker typeChecker)
+            : base(null, typeChecker.CreateTypeVariable)
+        {
+            DataType @int = NamedType.Integer;
+            DataType @bool = NamedType.Boolean;
+
+            DataType integerOperation = NamedType.Function(new[] { @int, @int }, @int);
+            DataType integerComparison = NamedType.Function(new[] { @int, @int }, @bool);
+            DataType booleanOperation = NamedType.Function(new[] { @bool, @bool }, @bool);
+
+            this["<"] = integerComparison;
+            this["<="] = integerComparison;
+            this[">"] = integerComparison;
+            this[">="] = integerComparison;
+            this["=="] = integerComparison;
+            this["!="] = integerComparison;
+
+            this["+"] = integerOperation;
+            this["*"] = integerOperation;
+            this["/"] = integerOperation;
+            this["-"] = integerOperation;
+
+            this["&&"] = booleanOperation;
+            this["||"] = booleanOperation;
+            this["!"] = NamedType.Function(new[] { @bool }, @bool);
+
+            var T = typeChecker.CreateTypeVariable(); //TypeVariable 0
+            var S = typeChecker.CreateTypeVariable(); //TypeVariable 1
+
+            this["??"] = NamedType.Function(new DataType[] { NamedType.Nullable(T), T }, T);
+            this["Print"] = NamedType.Function(new[] { T }, NamedType.Void);
+            this["Nullable"] = NamedType.Function(new[] { T }, NamedType.Nullable(T));
+            this["First"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, T);
+            this["Take"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
+            this["Skip"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
+            this["Any"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @bool);
+            this["Count"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @int);
+            this["Select"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, S) }, NamedType.Enumerable(S));
+            this["Where"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, @bool) }, NamedType.Enumerable(T));
+            this["Each"] = NamedType.Function(new[] { NamedType.Vector(T) }, NamedType.Enumerable(T));
+            this["Index"] = NamedType.Function(new[] { NamedType.Vector(T), @int }, T);
+            this["Slice"] = NamedType.Function(new[] { NamedType.Vector(T), @int, @int }, NamedType.Vector(T));
+            this["Append"] = NamedType.Function(new DataType[] { NamedType.Vector(T), T }, NamedType.Vector(T));
+            this["With"] = NamedType.Function(new[] { NamedType.Vector(T), @int, T }, NamedType.Vector(T));
         }
     }
 
