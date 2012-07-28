@@ -11,7 +11,7 @@ namespace Rook.Compiling
     {
         private readonly Func<TypeVariable> CreateTypeVariable;
 
-        private readonly IDictionary<string, DataType> locals;
+        protected readonly IDictionary<string, DataType> locals;
         protected readonly Scope parent;
 
         protected Scope(Scope parent, Func<TypeVariable> createTypeVariable)
@@ -29,11 +29,6 @@ namespace Rook.Compiling
         public LambdaScope CreateLambdaScope()
         {
             return new LambdaScope(this, CreateTypeVariable);
-        }
-
-        public DataType this[string key]
-        {
-            set { locals[key] = value; }
         }
 
         public bool TryGet(string key, out DataType value)
@@ -73,7 +68,7 @@ namespace Rook.Compiling
             if (Contains(binding.Identifier))
                 return false;
 
-            this[binding.Identifier] = binding.Type;
+            locals[binding.Identifier] = binding.Type;
             return true;
         }
 
@@ -95,40 +90,40 @@ namespace Rook.Compiling
             DataType integerComparison = NamedType.Function(new[] { @int, @int }, @bool);
             DataType booleanOperation = NamedType.Function(new[] { @bool, @bool }, @bool);
 
-            this["<"] = integerComparison;
-            this["<="] = integerComparison;
-            this[">"] = integerComparison;
-            this[">="] = integerComparison;
-            this["=="] = integerComparison;
-            this["!="] = integerComparison;
+            locals["<"] = integerComparison;
+            locals["<="] = integerComparison;
+            locals[">"] = integerComparison;
+            locals[">="] = integerComparison;
+            locals["=="] = integerComparison;
+            locals["!="] = integerComparison;
 
-            this["+"] = integerOperation;
-            this["*"] = integerOperation;
-            this["/"] = integerOperation;
-            this["-"] = integerOperation;
+            locals["+"] = integerOperation;
+            locals["*"] = integerOperation;
+            locals["/"] = integerOperation;
+            locals["-"] = integerOperation;
 
-            this["&&"] = booleanOperation;
-            this["||"] = booleanOperation;
-            this["!"] = NamedType.Function(new[] { @bool }, @bool);
+            locals["&&"] = booleanOperation;
+            locals["||"] = booleanOperation;
+            locals["!"] = NamedType.Function(new[] { @bool }, @bool);
 
             var T = typeChecker.CreateTypeVariable(); //TypeVariable 0
             var S = typeChecker.CreateTypeVariable(); //TypeVariable 1
 
-            this["??"] = NamedType.Function(new DataType[] { NamedType.Nullable(T), T }, T);
-            this["Print"] = NamedType.Function(new[] { T }, NamedType.Void);
-            this["Nullable"] = NamedType.Function(new[] { T }, NamedType.Nullable(T));
-            this["First"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, T);
-            this["Take"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
-            this["Skip"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
-            this["Any"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @bool);
-            this["Count"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @int);
-            this["Select"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, S) }, NamedType.Enumerable(S));
-            this["Where"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, @bool) }, NamedType.Enumerable(T));
-            this["Each"] = NamedType.Function(new[] { NamedType.Vector(T) }, NamedType.Enumerable(T));
-            this["Index"] = NamedType.Function(new[] { NamedType.Vector(T), @int }, T);
-            this["Slice"] = NamedType.Function(new[] { NamedType.Vector(T), @int, @int }, NamedType.Vector(T));
-            this["Append"] = NamedType.Function(new DataType[] { NamedType.Vector(T), T }, NamedType.Vector(T));
-            this["With"] = NamedType.Function(new[] { NamedType.Vector(T), @int, T }, NamedType.Vector(T));
+            locals["??"] = NamedType.Function(new DataType[] { NamedType.Nullable(T), T }, T);
+            locals["Print"] = NamedType.Function(new[] { T }, NamedType.Void);
+            locals["Nullable"] = NamedType.Function(new[] { T }, NamedType.Nullable(T));
+            locals["First"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, T);
+            locals["Take"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
+            locals["Skip"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
+            locals["Any"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @bool);
+            locals["Count"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @int);
+            locals["Select"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, S) }, NamedType.Enumerable(S));
+            locals["Where"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, @bool) }, NamedType.Enumerable(T));
+            locals["Each"] = NamedType.Function(new[] { NamedType.Vector(T) }, NamedType.Enumerable(T));
+            locals["Index"] = NamedType.Function(new[] { NamedType.Vector(T), @int }, T);
+            locals["Slice"] = NamedType.Function(new[] { NamedType.Vector(T), @int, @int }, NamedType.Vector(T));
+            locals["Append"] = NamedType.Function(new DataType[] { NamedType.Vector(T), T }, NamedType.Vector(T));
+            locals["With"] = NamedType.Function(new[] { NamedType.Vector(T), @int, T }, NamedType.Vector(T));
         }
     }
 

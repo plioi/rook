@@ -37,7 +37,7 @@ namespace Rook.Compiling.Syntax
             {
                 var item = local(null);
                 var name = local.Method.GetParameters()[0].Name;
-                localScope[name] = item;
+                localScope.Bind(name, item);
             }
 
             return localScope;

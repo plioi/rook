@@ -26,9 +26,9 @@ namespace Rook.Compiling
             return new CompilerError(position, "Invalid constant: " + literal);
         }
 
-        public static CompilerError DuplicateIdentifier(Binding duplicate)
+        public static CompilerError DuplicateIdentifier(Position position, Binding duplicate)
         {
-            return new CompilerError(duplicate.Position, "Duplicate identifier: " + duplicate.Identifier);
+            return new CompilerError(position, "Duplicate identifier: " + duplicate.Identifier);
         }
 
         public static CompilerError UndefinedIdentifier(Name undefined)

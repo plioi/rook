@@ -11,7 +11,7 @@ namespace Rook.Compiling
         private static readonly NamedType Integer = NamedType.Integer;
         private static readonly NamedType Boolean = NamedType.Boolean;
 
-        private readonly Scope global, ab, bc;
+        private readonly Scope global, ab, cd;
 
         public ScopeTests()
         {
@@ -19,12 +19,12 @@ namespace Rook.Compiling
             global = new GlobalScope(typeChecker);
 
             ab = global.CreateLocalScope();
-            ab["a"] = Integer;
-            ab["b"] = Integer;
+            ab.Bind("a", Integer);
+            ab.Bind("b", Integer);
 
-            bc = ab.CreateLocalScope();
-            bc["b"] = Boolean;
-            bc["c"] = Boolean;
+            cd = ab.CreateLocalScope();
+            cd.Bind("c", Boolean);
+            cd.Bind("d", Boolean);
         }
 
         [Fact]
@@ -32,24 +32,16 @@ namespace Rook.Compiling
         {
             AssertType(Integer, ab, "a");
             AssertType(Integer, ab, "b");
+
+            AssertType(Boolean, cd, "c");
+            AssertType(Boolean, cd, "d");
         }
 
         [Fact]
         public void DefersToSurroundingScopeAfterSearchingLocals()
         {
-            AssertType(Integer, bc, "a");
-            AssertType(Boolean, bc, "b");
-            AssertType(Boolean, bc, "c");
-        }
-
-        [Fact]
-        public void AllowsOverwritingInsideLocals()
-        {
-            ab["b"] = Boolean;
-            bc["b"] = Integer;
-
-            AssertType(Boolean, ab, "b");
-            AssertType(Integer, bc, "b");
+            AssertType(Integer, cd, "a");
+            AssertType(Integer, cd, "b");
         }
 
         [Fact]
@@ -58,12 +50,14 @@ namespace Rook.Compiling
             ab.Contains("a").ShouldBeTrue();
             ab.Contains("b").ShouldBeTrue();
             ab.Contains("c").ShouldBeFalse();
+            ab.Contains("d").ShouldBeFalse();
             ab.Contains("z").ShouldBeFalse();
 
-            bc.Contains("a").ShouldBeTrue();
-            bc.Contains("b").ShouldBeTrue();
-            bc.Contains("c").ShouldBeTrue();
-            bc.Contains("z").ShouldBeFalse();
+            cd.Contains("a").ShouldBeTrue();
+            cd.Contains("b").ShouldBeTrue();
+            cd.Contains("c").ShouldBeTrue();
+            cd.Contains("d").ShouldBeTrue();
+            cd.Contains("z").ShouldBeFalse();
         }
 
         [Fact]
@@ -128,7 +122,7 @@ namespace Rook.Compiling
             var var2 = new TypeVariable(2);
             var var3 = new TypeVariable(3);
 
-            var outerLambda = bc.CreateLambdaScope();
+            var outerLambda = cd.CreateLambdaScope();
             var local = outerLambda.CreateLocalScope();
             var middleLambda = local.CreateLambdaScope();
             var local2 = middleLambda.CreateLocalScope();
@@ -159,16 +153,16 @@ namespace Rook.Compiling
         {
             var scope = new GlobalScope(new TypeChecker());
 
-            scope["concreteType"] = Integer;
+            scope.Bind("concreteType", Integer);
             AssertType(Integer, scope, "concreteType");
 
-            scope["typeVariable"] = new TypeVariable(0);
+            scope.Bind("typeVariable", new TypeVariable(0));
             AssertType(new TypeVariable(2), scope, "typeVariable");
             AssertType(new TypeVariable(3), scope, "typeVariable");
 
             var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(4), new TypeVariable(5), new NamedType("B", new TypeVariable(4), new TypeVariable(5)));
             var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(1), new NamedType("B", new TypeVariable(0), new TypeVariable(1)));
-            scope["genericTypeIncludingTypeVariables"] = definedType;
+            scope.Bind("genericTypeIncludingTypeVariables", definedType);
             AssertType(expectedTypeAfterLookup, scope, "genericTypeIncludingTypeVariables");
         }
 
@@ -183,7 +177,7 @@ namespace Rook.Compiling
             var globalScope = new GlobalScope(new TypeChecker());
             var lambdaScope = globalScope.CreateLambdaScope();
             lambdaScope.TreatAsNonGeneric(new[] { new TypeVariable(1) });
-            lambdaScope["genericTypeIncludingGenericAndNonGenericTypeVariables"] = definedType;
+            lambdaScope.Bind("genericTypeIncludingGenericAndNonGenericTypeVariables", definedType);
 
             AssertType(expectedTypeAfterLookup, lambdaScope, "genericTypeIncludingGenericAndNonGenericTypeVariables");
         }

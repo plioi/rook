@@ -45,14 +45,14 @@ namespace Rook.Compiling.Syntax
             foreach (var @class in Classes)
                 if (!scope.TryIncludeUniqueBinding(@class))
                 {
-                    LogError(CompilerError.DuplicateIdentifier(@class));
+                    LogError(CompilerError.DuplicateIdentifier(@class.Position, @class));
                     return null;
                 }
 
             foreach (var function in Functions)
                 if (!scope.TryIncludeUniqueBinding(function))
                 {
-                    LogError(CompilerError.DuplicateIdentifier(function));
+                    LogError(CompilerError.DuplicateIdentifier(function.Position, function));
                     return null;
                 }
 
@@ -76,7 +76,7 @@ namespace Rook.Compiling.Syntax
             foreach (var method in Methods)
                 if (!localScope.TryIncludeUniqueBinding(method))
                 {
-                    LogError(CompilerError.DuplicateIdentifier(method));
+                    LogError(CompilerError.DuplicateIdentifier(method.Position, method));
                     return null;
                 }
 
@@ -102,7 +102,7 @@ namespace Rook.Compiling.Syntax
             foreach (var parameter in Parameters)
                 if (!localScope.TryIncludeUniqueBinding(parameter))
                 {
-                    LogError(CompilerError.DuplicateIdentifier(parameter));
+                    LogError(CompilerError.DuplicateIdentifier(parameter.Position, parameter));
                     return null;
                 }
 
@@ -151,13 +151,13 @@ namespace Rook.Compiling.Syntax
                 if (typeCheckedValue == null)
                     return null;
 
-                Binding binding = variable;
+                var binding = variable;
                 if (variable.IsImplicitlyTyped())
                     binding = new VariableDeclaration(variable.Position, /*Replaces implicit type.*/ typeCheckedValue.Type, variable.Identifier, variable.Value);
 
                 if (!localScope.TryIncludeUniqueBinding(binding))
                 {
-                    LogError(CompilerError.DuplicateIdentifier(binding));
+                    LogError(CompilerError.DuplicateIdentifier(binding.Position, binding));
                     return null;
                 }
 
@@ -194,7 +194,7 @@ namespace Rook.Compiling.Syntax
             {
                 if (!lambdaScope.TryIncludeUniqueBinding(parameter))
                 {
-                    LogError(CompilerError.DuplicateIdentifier(parameter));
+                    LogError(CompilerError.DuplicateIdentifier(parameter.Position, parameter));
                     return null;
                 }
             }
