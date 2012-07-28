@@ -46,31 +46,6 @@ namespace Rook.Compiling
         }
     }
 
-    public class LocalScope : Scope
-    {
-        protected readonly Scope parent;
-
-        public LocalScope(Scope parent)
-        {
-            this.parent = parent;
-        }
-
-        public override bool TryGet(string key, out DataType value)
-        {
-            return base.TryGet(key, out value) || parent.TryGet(key, out value);
-        }
-
-        public override bool Contains(string key)
-        {
-            return locals.ContainsKey(key) || parent.Contains(key);
-        }
-
-        public override bool IsGeneric(TypeVariable typeVariable)
-        {
-            return parent.IsGeneric(typeVariable);
-        }
-    }
-
     public class GlobalScope : Scope
     {
         public GlobalScope(TypeChecker typeChecker)
@@ -125,6 +100,31 @@ namespace Rook.Compiling
         {
             foreach (var member in typeMembers)
                 TryIncludeUniqueBinding(member);
+        }
+    }
+
+    public class LocalScope : Scope
+    {
+        protected readonly Scope parent;
+
+        public LocalScope(Scope parent)
+        {
+            this.parent = parent;
+        }
+
+        public override bool TryGet(string key, out DataType value)
+        {
+            return base.TryGet(key, out value) || parent.TryGet(key, out value);
+        }
+
+        public override bool Contains(string key)
+        {
+            return locals.ContainsKey(key) || parent.Contains(key);
+        }
+
+        public override bool IsGeneric(TypeVariable typeVariable)
+        {
+            return parent.IsGeneric(typeVariable);
         }
     }
 
