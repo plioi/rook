@@ -31,7 +31,7 @@ namespace Rook.Compiling.Syntax
         protected static Scope Scope(TypeChecker typeChecker, params TypeMapping[] locals)
         {
             var globalScope = new GlobalScope(typeChecker);
-            var localScope = globalScope.CreateLocalScope();
+            var localScope = new LocalScope(globalScope);
 
             foreach (var local in locals)
             {

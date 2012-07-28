@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
@@ -9,23 +7,11 @@ namespace Rook.Compiling
 {
     public abstract class Scope
     {
-        protected readonly Func<TypeVariable> CreateTypeVariable;
         protected readonly IDictionary<string, DataType> locals;
 
-        protected Scope(Func<TypeVariable> createTypeVariable)
+        protected Scope()
         {
-            CreateTypeVariable = createTypeVariable;
             locals = new Dictionary<string, DataType>();
-        }
-
-        public LocalScope CreateLocalScope()
-        {
-            return new LocalScope(this, CreateTypeVariable);
-        }
-
-        public LambdaScope CreateLambdaScope()
-        {
-            return new LambdaScope(this, CreateTypeVariable);
         }
 
         public bool TryIncludeUniqueBinding(Binding binding)
@@ -41,7 +27,7 @@ namespace Rook.Compiling
         {
             if (locals.ContainsKey(key))
             {
-                value = FreshenGenericTypeVariables(locals[key]);
+                value = locals[key];
                 return true;
             }
 
@@ -58,24 +44,13 @@ namespace Rook.Compiling
         {
             return true;
         }
-
-        private DataType FreshenGenericTypeVariables(DataType type)
-        {
-            var substitutions = new Dictionary<TypeVariable, DataType>();
-            var genericTypeVariables = type.FindTypeVariables().Where(IsGeneric);
-            foreach (var genericTypeVariable in genericTypeVariables)
-                substitutions[genericTypeVariable] = CreateTypeVariable();
-
-            return type.ReplaceTypeVariables(substitutions);
-        }
     }
 
     public class LocalScope : Scope
     {
         protected readonly Scope parent;
 
-        public LocalScope(Scope parent, Func<TypeVariable> createTypeVariable)
-            : base(createTypeVariable)
+        public LocalScope(Scope parent)
         {
             this.parent = parent;
         }
@@ -99,7 +74,6 @@ namespace Rook.Compiling
     public class GlobalScope : Scope
     {
         public GlobalScope(TypeChecker typeChecker)
-            : base(typeChecker.CreateTypeVariable)
         {
             DataType @int = NamedType.Integer;
             DataType @bool = NamedType.Boolean;
@@ -147,8 +121,7 @@ namespace Rook.Compiling
 
     public sealed class TypeMemberScope : Scope
     {
-        public TypeMemberScope(TypeChecker typeChecker, Vector<Binding> typeMembers)
-            : base(typeChecker.CreateTypeVariable)
+        public TypeMemberScope(Vector<Binding> typeMembers)
         {
             foreach (var member in typeMembers)
                 TryIncludeUniqueBinding(member);
@@ -159,8 +132,8 @@ namespace Rook.Compiling
     {
         private readonly List<TypeVariable> localNonGenericTypeVariables;
 
-        public LambdaScope(Scope parent, Func<TypeVariable> createTypeVariable)
-            : base(parent, createTypeVariable)
+        public LambdaScope(Scope parent)
+            : base(parent)
         {
             localNonGenericTypeVariables = new List<TypeVariable>();
         }

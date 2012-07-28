@@ -40,7 +40,7 @@ namespace Rook.Compiling.Syntax
 
             var typeChecker = new TypeChecker();
             var globalScope = new GlobalScope(typeChecker);
-            var lambdaScope = globalScope.CreateLambdaScope();
+            var lambdaScope = new LambdaScope(globalScope);
             lambdaScope.TreatAsNonGeneric(new[] { new TypeVariable(1) });
             lambdaScope.Bind("foo", definedType);
 

@@ -71,7 +71,7 @@ namespace Rook.Compiling.Syntax
             var Name = @class.Name;
             var Methods = @class.Methods;
 
-            var localScope = scope.CreateLocalScope();
+            var localScope = new LocalScope(scope);
 
             foreach (var method in Methods)
                 if (!localScope.TryIncludeUniqueBinding(method))
@@ -97,7 +97,7 @@ namespace Rook.Compiling.Syntax
             var Body = function.Body;
             var DeclaredType = function.DeclaredType;
 
-            var localScope = scope.CreateLocalScope();
+            var localScope = new LocalScope(scope);
 
             foreach (var parameter in Parameters)
                 if (!localScope.TryIncludeUniqueBinding(parameter))
@@ -129,10 +129,20 @@ namespace Rook.Compiling.Syntax
             DataType type;
 
             if (scope.TryGet(Identifier, out type))
-                return new Name(Position, Identifier, type);
+                return new Name(Position, Identifier, FreshenGenericTypeVariables(scope, type));
 
             LogError(CompilerError.UndefinedIdentifier(name));
             return null;
+        }
+
+        private DataType FreshenGenericTypeVariables(Scope scope, DataType type)
+        {
+            var substitutions = new Dictionary<TypeVariable, DataType>();
+            var genericTypeVariables = type.FindTypeVariables().Where(scope.IsGeneric);
+            foreach (var genericTypeVariable in genericTypeVariables)
+                substitutions[genericTypeVariable] = CreateTypeVariable();
+
+            return type.ReplaceTypeVariables(substitutions);
         }
 
         public Expression TypeCheck(Block block, Scope scope)
@@ -141,7 +151,7 @@ namespace Rook.Compiling.Syntax
             var VariableDeclarations = block.VariableDeclarations;
             var InnerExpressions = block.InnerExpressions;
 
-            var localScope = scope.CreateLocalScope();
+            var localScope = new LocalScope(scope);
 
             var typedVariableDeclarations = new List<VariableDeclaration>();
             foreach (var variable in VariableDeclarations)
@@ -186,7 +196,7 @@ namespace Rook.Compiling.Syntax
             var Parameters = lambda.Parameters;
             var Body = lambda.Body;
 
-            var lambdaScope = scope.CreateLambdaScope();
+            var lambdaScope = new LambdaScope(scope);
 
             var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters, lambdaScope);
 
@@ -319,7 +329,7 @@ namespace Rook.Compiling.Syntax
             Vector<Binding> typeMembers;
             if (typeRegistry.TryGetMembers(instanceNamedType, out typeMembers))
             {
-                Scope typeMemberScope = new TypeMemberScope(this, typeMembers);
+                Scope typeMemberScope = new TypeMemberScope(typeMembers);
 
                 //This block is SUSPICIOUSLY like all of TypeCheck(Call, Scope), but Callable/MethodName is evaluated in a special scope and the successful return is different.
 
