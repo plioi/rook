@@ -169,19 +169,20 @@ namespace Rook.Compiling
 
         private Scope ScopeForExpression(TypeChecker typeChecker)
         {
+            var relevantClasses = classes.Values.Where(c => c.Name.Identifier != "Main").ToArray();
+            var relevantFunctions = functions.Values.Where(f => f.Name.Identifier != "Main").ToArray();
+
             var scope = Scope.CreateRoot(typeChecker);
 
-            foreach (var c in classes.Values)
-            {
-                if (c.Name.Identifier != "Main")
-                {
-                    scope.TryIncludeUniqueBinding(c);
-                    typeChecker.TypeRegistry.Register(c);
-                }
-            }
-            foreach (var f in functions.Values)
-                if (f.Name.Identifier != "Main")
-                    scope.TryIncludeUniqueBinding(f);
+            foreach (var c in relevantClasses)
+                typeChecker.TypeRegistry.Register(c);
+
+            foreach (var c in relevantClasses)
+                scope.TryIncludeUniqueBinding(c);
+
+            foreach (var f in relevantFunctions)
+                scope.TryIncludeUniqueBinding(f);
+
             return scope;
         }
 
