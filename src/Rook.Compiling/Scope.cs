@@ -20,7 +20,7 @@ namespace Rook.Compiling
             this.parent = parent;
         }
 
-        public static Scope CreateRoot(TypeChecker typeChecker)
+        public static Scope CreateGlobalScope(TypeChecker typeChecker)
         {
             var scope = new Scope(null, typeChecker.CreateTypeVariable);
 

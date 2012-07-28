@@ -39,8 +39,8 @@ namespace Rook.Compiling.Syntax
             var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(1), new NamedType("B", new TypeVariable(0), new TypeVariable(1)));
 
             var typeChecker = new TypeChecker();
-            var scope = Compiling.Scope.CreateRoot(typeChecker);
-            var lambdaScope = scope.CreateLambdaScope();
+            var globalScope = Compiling.Scope.CreateGlobalScope(typeChecker);
+            var lambdaScope = globalScope.CreateLambdaScope();
             lambdaScope.TreatAsNonGeneric(new[] { new TypeVariable(1) });
             lambdaScope["foo"] = definedType;
 

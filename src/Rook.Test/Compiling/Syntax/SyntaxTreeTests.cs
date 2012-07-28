@@ -30,8 +30,8 @@ namespace Rook.Compiling.Syntax
 
         protected static Scope Scope(TypeChecker typeChecker, params TypeMapping[] locals)
         {
-            var root = Compiling.Scope.CreateRoot(typeChecker);
-            var localScope = root.CreateLocalScope();
+            var globalScope = Compiling.Scope.CreateGlobalScope(typeChecker);
+            var localScope = globalScope.CreateLocalScope();
 
             foreach (var local in locals)
             {
