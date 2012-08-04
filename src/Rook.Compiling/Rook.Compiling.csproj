@@ -69,6 +69,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AssemblyExtensions.cs" />
+    <Compile Include="BindingDictionary.cs" />
     <Compile Include="CodeGeneration\CodeWriter.cs" />
     <Compile Include="CodeGeneration\WriteAction.cs" />
     <Compile Include="Compiler.cs" />

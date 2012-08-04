@@ -5,51 +5,22 @@ using Rook.Core.Collections;
 
 namespace Rook.Compiling
 {
-    public abstract class Scope
+    public interface Scope
     {
-        protected readonly IDictionary<string, DataType> locals;
-
-        protected Scope()
-        {
-            locals = new Dictionary<string, DataType>();
-        }
-
-        public bool TryIncludeUniqueBinding(Binding binding)
-        {
-            if (Contains(binding.Identifier))
-                return false;
-
-            locals[binding.Identifier] = binding.Type;
-            return true;
-        }
-
-        public virtual bool TryGet(string key, out DataType value)
-        {
-            if (locals.ContainsKey(key))
-            {
-                value = locals[key];
-                return true;
-            }
-
-            value = null;
-            return false;
-        }
-
-        public virtual bool Contains(string key)
-        {
-            return locals.ContainsKey(key);
-        }
-
-        public virtual bool IsGeneric(TypeVariable typeVariable)
-        {
-            return true;
-        }
+        bool TryIncludeUniqueBinding(Binding binding);
+        bool TryGet(string identifier, out DataType type);
+        bool Contains(string identifier);
+        bool IsGeneric(TypeVariable typeVariable);
     }
 
     public class GlobalScope : Scope
     {
+        private readonly BindingDictionary globals;
+
         public GlobalScope(TypeChecker typeChecker)
         {
+            globals = new BindingDictionary();
+
             DataType @int = NamedType.Integer;
             DataType @bool = NamedType.Boolean;
 
@@ -57,95 +28,165 @@ namespace Rook.Compiling
             DataType integerComparison = NamedType.Function(new[] { @int, @int }, @bool);
             DataType booleanOperation = NamedType.Function(new[] { @bool, @bool }, @bool);
 
-            locals["<"] = integerComparison;
-            locals["<="] = integerComparison;
-            locals[">"] = integerComparison;
-            locals[">="] = integerComparison;
-            locals["=="] = integerComparison;
-            locals["!="] = integerComparison;
+            globals["<"] = integerComparison;
+            globals["<="] = integerComparison;
+            globals[">"] = integerComparison;
+            globals[">="] = integerComparison;
+            globals["=="] = integerComparison;
+            globals["!="] = integerComparison;
 
-            locals["+"] = integerOperation;
-            locals["*"] = integerOperation;
-            locals["/"] = integerOperation;
-            locals["-"] = integerOperation;
+            globals["+"] = integerOperation;
+            globals["*"] = integerOperation;
+            globals["/"] = integerOperation;
+            globals["-"] = integerOperation;
 
-            locals["&&"] = booleanOperation;
-            locals["||"] = booleanOperation;
-            locals["!"] = NamedType.Function(new[] { @bool }, @bool);
+            globals["&&"] = booleanOperation;
+            globals["||"] = booleanOperation;
+            globals["!"] = NamedType.Function(new[] { @bool }, @bool);
 
             var T = typeChecker.CreateTypeVariable(); //TypeVariable 0
             var S = typeChecker.CreateTypeVariable(); //TypeVariable 1
 
-            locals["??"] = NamedType.Function(new DataType[] { NamedType.Nullable(T), T }, T);
-            locals["Print"] = NamedType.Function(new[] { T }, NamedType.Void);
-            locals["Nullable"] = NamedType.Function(new[] { T }, NamedType.Nullable(T));
-            locals["First"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, T);
-            locals["Take"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
-            locals["Skip"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
-            locals["Any"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @bool);
-            locals["Count"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @int);
-            locals["Select"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, S) }, NamedType.Enumerable(S));
-            locals["Where"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, @bool) }, NamedType.Enumerable(T));
-            locals["Each"] = NamedType.Function(new[] { NamedType.Vector(T) }, NamedType.Enumerable(T));
-            locals["Index"] = NamedType.Function(new[] { NamedType.Vector(T), @int }, T);
-            locals["Slice"] = NamedType.Function(new[] { NamedType.Vector(T), @int, @int }, NamedType.Vector(T));
-            locals["Append"] = NamedType.Function(new DataType[] { NamedType.Vector(T), T }, NamedType.Vector(T));
-            locals["With"] = NamedType.Function(new[] { NamedType.Vector(T), @int, T }, NamedType.Vector(T));
+            globals["??"] = NamedType.Function(new DataType[] { NamedType.Nullable(T), T }, T);
+            globals["Print"] = NamedType.Function(new[] { T }, NamedType.Void);
+            globals["Nullable"] = NamedType.Function(new[] { T }, NamedType.Nullable(T));
+            globals["First"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, T);
+            globals["Take"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
+            globals["Skip"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
+            globals["Any"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @bool);
+            globals["Count"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @int);
+            globals["Select"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, S) }, NamedType.Enumerable(S));
+            globals["Where"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, @bool) }, NamedType.Enumerable(T));
+            globals["Each"] = NamedType.Function(new[] { NamedType.Vector(T) }, NamedType.Enumerable(T));
+            globals["Index"] = NamedType.Function(new[] { NamedType.Vector(T), @int }, T);
+            globals["Slice"] = NamedType.Function(new[] { NamedType.Vector(T), @int, @int }, NamedType.Vector(T));
+            globals["Append"] = NamedType.Function(new DataType[] { NamedType.Vector(T), T }, NamedType.Vector(T));
+            globals["With"] = NamedType.Function(new[] { NamedType.Vector(T), @int, T }, NamedType.Vector(T));
+        }
+
+        public bool TryIncludeUniqueBinding(Binding binding)
+        {
+            return globals.TryIncludeUniqueBinding(binding);
+        }
+
+        public bool TryGet(string identifier, out DataType type)
+        {
+            return globals.TryGet(identifier, out type);
+        }
+
+        public bool Contains(string identifier)
+        {
+            return globals.Contains(identifier);
+        }
+
+        public bool IsGeneric(TypeVariable typeVariable)
+        {
+            return true;
         }
     }
 
     public sealed class TypeMemberScope : Scope
     {
+        private readonly BindingDictionary members;
+
         public TypeMemberScope(Vector<Binding> typeMembers)
         {
+            members = new BindingDictionary();
             foreach (var member in typeMembers)
                 TryIncludeUniqueBinding(member);
+        }
+
+        public bool TryIncludeUniqueBinding(Binding binding)
+        {
+            return members.TryIncludeUniqueBinding(binding);
+        }
+
+        public bool TryGet(string identifier, out DataType type)
+        {
+            return members.TryGet(identifier, out type);
+        }
+
+        public bool Contains(string identifier)
+        {
+            return members.Contains(identifier);
+        }
+
+        public bool IsGeneric(TypeVariable typeVariable)
+        {
+            return true;
         }
     }
 
     public class LocalScope : Scope
     {
         protected readonly Scope parent;
+        private readonly BindingDictionary locals;
 
         public LocalScope(Scope parent)
         {
             this.parent = parent;
+            locals  = new BindingDictionary();
         }
 
-        public override bool TryGet(string key, out DataType value)
+        public bool TryIncludeUniqueBinding(Binding binding)
         {
-            return base.TryGet(key, out value) || parent.TryGet(key, out value);
+            if (Contains(binding.Identifier))
+                return false;
+
+            return locals.TryIncludeUniqueBinding(binding);
         }
 
-        public override bool Contains(string key)
+        public bool TryGet(string identifier, out DataType type)
         {
-            return locals.ContainsKey(key) || parent.Contains(key);
+            return locals.TryGet(identifier, out type) || parent.TryGet(identifier, out type);
         }
 
-        public override bool IsGeneric(TypeVariable typeVariable)
+        public bool Contains(string identifier)
+        {
+            return locals.Contains(identifier) || parent.Contains(identifier);
+        }
+
+        public bool IsGeneric(TypeVariable typeVariable)
         {
             return parent.IsGeneric(typeVariable);
         }
     }
 
-    public class LambdaScope : LocalScope
+    public class LambdaScope : Scope
     {
         private readonly List<TypeVariable> localNonGenericTypeVariables;
+        private readonly LocalScope lambdaBodyScope;
 
         public LambdaScope(Scope parent)
-            : base(parent)
         {
+            lambdaBodyScope = new LocalScope(parent);
+
             localNonGenericTypeVariables = new List<TypeVariable>();
+        }
+
+        public bool TryIncludeUniqueBinding(Binding binding)
+        {
+            return lambdaBodyScope.TryIncludeUniqueBinding(binding);
+        }
+
+        public bool TryGet(string identifier, out DataType type)
+        {
+            return lambdaBodyScope.TryGet(identifier, out type);
+        }
+
+        public bool Contains(string identifier)
+        {
+            return lambdaBodyScope.Contains(identifier);
+        }
+
+        public bool IsGeneric(TypeVariable typeVariable)
+        {
+            return !localNonGenericTypeVariables.Contains(typeVariable) && lambdaBodyScope.IsGeneric(typeVariable);
         }
 
         public void TreatAsNonGeneric(IEnumerable<TypeVariable> typeVariables)
         {
             localNonGenericTypeVariables.AddRange(typeVariables);
-        }
-
-        public override bool IsGeneric(TypeVariable typeVariable)
-        {
-            return !localNonGenericTypeVariables.Contains(typeVariable) && parent.IsGeneric(typeVariable);
         }
     }
 }
