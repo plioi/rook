@@ -204,7 +204,7 @@ namespace Rook.Compiling.Syntax
             var Parameters = lambda.Parameters;
             var Body = lambda.Body;
 
-            var lambdaScope = new LambdaScope(scope);
+            var lambdaScope = new LocalScope(scope);
 
             var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters);
 

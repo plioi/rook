@@ -135,32 +135,4 @@ namespace Rook.Compiling
             return locals.Contains(identifier) || parent.Contains(identifier);
         }
     }
-
-    public class LambdaScope : Scope
-    {
-        private readonly List<TypeVariable> localNonGenericTypeVariables;
-        private readonly LocalScope lambdaBodyScope;
-
-        public LambdaScope(Scope parent)
-        {
-            lambdaBodyScope = new LocalScope(parent);
-
-            localNonGenericTypeVariables = new List<TypeVariable>();
-        }
-
-        public bool TryIncludeUniqueBinding(Binding binding)
-        {
-            return lambdaBodyScope.TryIncludeUniqueBinding(binding);
-        }
-
-        public bool TryGet(string identifier, out DataType type)
-        {
-            return lambdaBodyScope.TryGet(identifier, out type);
-        }
-
-        public bool Contains(string identifier)
-        {
-            return lambdaBodyScope.Contains(identifier);
-        }
-    }
 }
