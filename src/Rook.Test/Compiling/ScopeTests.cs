@@ -114,40 +114,6 @@ namespace Rook.Compiling
             AssertType(Integer, global, "a");
         }
 
-        [Fact]
-        public void CanDetermineWhetherAGivenTypeVariableIsGenericWhenPreparedWithAKnownListOfNonGenericTypeVariables()
-        {
-            var var0 = new TypeVariable(0);
-            var var1 = new TypeVariable(1);
-            var var2 = new TypeVariable(2);
-            var var3 = new TypeVariable(3);
-
-            var outerLambda = new LambdaScope(cd);
-            var local = new LocalScope(outerLambda);
-            var middleLambda = new LambdaScope(local);
-            var local2 = new LocalScope(middleLambda);
-            var innerLambda = new LambdaScope(local2);
-
-            outerLambda.TreatAsNonGeneric(new[] { var0 });
-            middleLambda.TreatAsNonGeneric(new[] { var1, var2 });
-            innerLambda.TreatAsNonGeneric(new[] { var3 });
-
-            outerLambda.IsGeneric(var0).ShouldBeFalse();
-            outerLambda.IsGeneric(var1).ShouldBeTrue();
-            outerLambda.IsGeneric(var2).ShouldBeTrue();
-            outerLambda.IsGeneric(var3).ShouldBeTrue();
-
-            middleLambda.IsGeneric(var0).ShouldBeFalse();
-            middleLambda.IsGeneric(var1).ShouldBeFalse();
-            middleLambda.IsGeneric(var2).ShouldBeFalse();
-            middleLambda.IsGeneric(var3).ShouldBeTrue();
-
-            innerLambda.IsGeneric(var0).ShouldBeFalse();
-            innerLambda.IsGeneric(var1).ShouldBeFalse();
-            innerLambda.IsGeneric(var2).ShouldBeFalse();
-            innerLambda.IsGeneric(var3).ShouldBeFalse();
-        }
-
         private static void AssertType(DataType expectedType, Scope scope, string key)
         {
             DataType value;

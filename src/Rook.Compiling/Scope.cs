@@ -10,7 +10,6 @@ namespace Rook.Compiling
         bool TryIncludeUniqueBinding(Binding binding);
         bool TryGet(string identifier, out DataType type);
         bool Contains(string identifier);
-        bool IsGeneric(TypeVariable typeVariable);
     }
 
     public class GlobalScope : Scope
@@ -44,8 +43,8 @@ namespace Rook.Compiling
             globals["||"] = booleanOperation;
             globals["!"] = NamedType.Function(new[] { @bool }, @bool);
 
-            var T = typeChecker.CreateTypeVariable(); //TypeVariable 0
-            var S = typeChecker.CreateTypeVariable(); //TypeVariable 1
+            var T = typeChecker.CreateGenericTypeVariable(); //TypeVariable 0
+            var S = typeChecker.CreateGenericTypeVariable(); //TypeVariable 1
 
             globals["??"] = NamedType.Function(new DataType[] { NamedType.Nullable(T), T }, T);
             globals["Print"] = NamedType.Function(new[] { T }, NamedType.Void);
@@ -78,11 +77,6 @@ namespace Rook.Compiling
         {
             return globals.Contains(identifier);
         }
-
-        public bool IsGeneric(TypeVariable typeVariable)
-        {
-            return true;
-        }
     }
 
     public sealed class TypeMemberScope : Scope
@@ -109,11 +103,6 @@ namespace Rook.Compiling
         public bool Contains(string identifier)
         {
             return members.Contains(identifier);
-        }
-
-        public bool IsGeneric(TypeVariable typeVariable)
-        {
-            return true;
         }
     }
 
@@ -145,11 +134,6 @@ namespace Rook.Compiling
         {
             return locals.Contains(identifier) || parent.Contains(identifier);
         }
-
-        public bool IsGeneric(TypeVariable typeVariable)
-        {
-            return parent.IsGeneric(typeVariable);
-        }
     }
 
     public class LambdaScope : Scope
@@ -177,16 +161,6 @@ namespace Rook.Compiling
         public bool Contains(string identifier)
         {
             return lambdaBodyScope.Contains(identifier);
-        }
-
-        public bool IsGeneric(TypeVariable typeVariable)
-        {
-            return !localNonGenericTypeVariables.Contains(typeVariable) && lambdaBodyScope.IsGeneric(typeVariable);
-        }
-
-        public void TreatAsNonGeneric(IEnumerable<TypeVariable> typeVariables)
-        {
-            localNonGenericTypeVariables.AddRange(typeVariables);
         }
     }
 }

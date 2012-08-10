@@ -33,18 +33,18 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasATypeInWhichOnlyGenericTypeVariablesAreFreshenedOnEachScopeLookup()
         {
-            //Prevents type '1' from being freshened on type lookup by marking it as non-generic in the scope:
+            //Prevent type '1' from being freshened on type lookup by marking it as non-generic:
+            var typeVariable1 = new TypeVariable(1, isGeneric: false);
 
-            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(2), new TypeVariable(1), new NamedType("B", new TypeVariable(2), new TypeVariable(1)));
-            var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(1), new NamedType("B", new TypeVariable(0), new TypeVariable(1)));
+            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(2), typeVariable1, new NamedType("B", new TypeVariable(2), typeVariable1));
+            var definedType = new NamedType("A", new TypeVariable(0), typeVariable1, new NamedType("B", new TypeVariable(0), typeVariable1));
 
             var typeChecker = new TypeChecker();
             var globalScope = new GlobalScope(typeChecker);
-            var lambdaScope = new LambdaScope(globalScope);
-            lambdaScope.TreatAsNonGeneric(new[] { new TypeVariable(1) });
-            lambdaScope.Bind("foo", definedType);
+            var localScope = new LocalScope(globalScope);
+            localScope.Bind("foo", definedType);
 
-            Type("foo", lambdaScope, typeChecker).ShouldEqual(expectedTypeAfterLookup);
+            Type("foo", localScope, typeChecker).ShouldEqual(expectedTypeAfterLookup);
         }
 
         [Fact]

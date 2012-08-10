@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Parsley;
@@ -9,7 +8,7 @@ namespace Rook.Compiling.Syntax
 {
     public class TypeChecker
     {
-        public readonly Func<TypeVariable> CreateTypeVariable;
+        public readonly TypeVariableSource typeVariables;
         private readonly TypeUnifier unifier;
         private readonly TypeRegistry typeRegistry;
         private readonly List<CompilerError> errorLog;
@@ -20,8 +19,17 @@ namespace Rook.Compiling.Syntax
             typeRegistry = new TypeRegistry();
             errorLog = new List<CompilerError>();
 
-            int next = 0;
-            CreateTypeVariable = () => new TypeVariable(next++);
+            typeVariables = new TypeVariableSource();
+        }
+
+        public TypeVariable CreateGenericTypeVariable()
+        {
+            return typeVariables.CreateGenericTypeVariable();
+        }
+
+        public TypeVariable CreateNonGenericTypeVariable()
+        {
+            return typeVariables.CreateNonGenericTypeVariable();
         }
 
         public Vector<CompilerError> Errors { get { return errorLog.ToVector(); } }
@@ -129,18 +137,18 @@ namespace Rook.Compiling.Syntax
             DataType type;
 
             if (scope.TryGet(Identifier, out type))
-                return new Name(Position, Identifier, FreshenGenericTypeVariables(scope, type));
+                return new Name(Position, Identifier, FreshenGenericTypeVariables(type));
 
             LogError(CompilerError.UndefinedIdentifier(name));
             return null;
         }
 
-        private DataType FreshenGenericTypeVariables(Scope scope, DataType type)
+        private DataType FreshenGenericTypeVariables(DataType type)
         {
             var substitutions = new Dictionary<TypeVariable, DataType>();
-            var genericTypeVariables = type.FindTypeVariables().Where(scope.IsGeneric);
+            var genericTypeVariables = type.FindTypeVariables().Where(x => x.IsGeneric);
             foreach (var genericTypeVariable in genericTypeVariables)
-                substitutions[genericTypeVariable] = CreateTypeVariable();
+                substitutions[genericTypeVariable] = typeVariables.CreateGenericTypeVariable();
 
             return type.ReplaceTypeVariables(substitutions);
         }
@@ -198,7 +206,7 @@ namespace Rook.Compiling.Syntax
 
             var lambdaScope = new LambdaScope(scope);
 
-            var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters, lambdaScope);
+            var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters);
 
             foreach (var parameter in typedParameters)
             {
@@ -220,7 +228,7 @@ namespace Rook.Compiling.Syntax
             return new Lambda(Position, normalizedParameters, typeCheckedBody, NamedType.Function(parameterTypes, typeCheckedBody.Type));
         }
 
-        private Parameter[] ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters, LambdaScope lambdaScope)
+        private Parameter[] ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters)
         {
             var decoratedParameters = new List<Parameter>();
             var typeVariables = new List<TypeVariable>();
@@ -229,7 +237,7 @@ namespace Rook.Compiling.Syntax
             {
                 if (parameter.IsImplicitlyTyped())
                 {
-                    var typeVariable = CreateTypeVariable();
+                    var typeVariable = this.typeVariables.CreateNonGenericTypeVariable();
                     typeVariables.Add(typeVariable);
                     decoratedParameters.Add(new Parameter(parameter.Position, typeVariable, parameter.Identifier));
                 }
@@ -238,8 +246,6 @@ namespace Rook.Compiling.Syntax
                     decoratedParameters.Add(parameter);
                 }
             }
-
-            lambdaScope.TreatAsNonGeneric(typeVariables);
 
             return decoratedParameters.ToArray();
         }
@@ -450,7 +456,7 @@ namespace Rook.Compiling.Syntax
         {
             var Position = nullLiteral.Position;
 
-            return new Null(Position, NamedType.Nullable(CreateTypeVariable()));
+            return new Null(Position, NamedType.Nullable(typeVariables.CreateGenericTypeVariable()));
         }
 
         public Expression TypeCheck(VectorLiteral vectorLiteral, Scope scope)

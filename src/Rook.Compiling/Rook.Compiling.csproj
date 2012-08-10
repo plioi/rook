@@ -91,6 +91,7 @@
     <Compile Include="Syntax\RookLexer.cs" />
     <Compile Include="Syntax\StringLiteral.cs" />
     <Compile Include="Syntax\TypeChecker.cs" />
+    <Compile Include="Syntax\TypeVariableSource.cs" />
     <Compile Include="Syntax\VectorLiteral.cs" />
     <Compile Include="Syntax\Binding.cs" />
     <Compile Include="Syntax\Block.cs" />

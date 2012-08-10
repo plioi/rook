@@ -6,15 +6,27 @@ namespace Rook.Compiling.Types
     public class TypeVariable : DataType
     {
         private readonly int name;
+        private readonly bool isGeneric;
 
         public TypeVariable(int name)
+            : this(name, true)
+        {
+        }
+
+        public TypeVariable(int name, bool isGeneric)
         {
             this.name = name;
+            this.isGeneric = isGeneric;
         }
 
         public override string Name
         {
             get { return name.ToString(); }
+        }
+
+        public bool IsGeneric
+        {
+            get { return isGeneric; }
         }
 
         public override IEnumerable<DataType> InnerTypes
