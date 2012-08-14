@@ -28,9 +28,9 @@ namespace Rook.Compiling.Syntax
 
         protected delegate DataType TypeMapping(string name);
 
-        protected static Scope Scope(TypeChecker typeChecker, params TypeMapping[] locals)
+        protected static Scope Scope(params TypeMapping[] locals)
         {
-            var globalScope = new GlobalScope(typeChecker);
+            var globalScope = new GlobalScope();
             var localScope = new LocalScope(globalScope);
 
             foreach (var local in locals)

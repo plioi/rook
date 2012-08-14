@@ -16,7 +16,7 @@ namespace Rook.Compiling
     {
         private readonly BindingDictionary globals;
 
-        public GlobalScope(TypeChecker typeChecker)
+        public GlobalScope()
         {
             globals = new BindingDictionary();
 
@@ -43,8 +43,8 @@ namespace Rook.Compiling
             globals["||"] = booleanOperation;
             globals["!"] = NamedType.Function(new[] { @bool }, @bool);
 
-            var T = typeChecker.CreateGenericTypeVariable(); //TypeVariable 0
-            var S = typeChecker.CreateGenericTypeVariable(); //TypeVariable 1
+            var T = TypeVariable.CreateGeneric(); //TypeVariable 0
+            var S = TypeVariable.CreateGeneric(); //TypeVariable 1
 
             globals["??"] = NamedType.Function(new DataType[] { NamedType.Nullable(T), T }, T);
             globals["Print"] = NamedType.Function(new[] { T }, NamedType.Void);

@@ -72,9 +72,8 @@ namespace Rook.Compiling.Syntax
             var node = (MethodInvocation)Parse("math.Square(2)");
 
             var typeChecker = new TypeChecker();
-            var typeCheckedCall = typeChecker.TypeCheck(node, Scope(typeChecker,
-                                                                          math => new NamedType("Math"),
-                                                                          Square => Function(new[] {new NamedType("Math"), Integer}, Integer)));
+            var typeCheckedCall = typeChecker.TypeCheck(node, Scope(math => new NamedType("Math"),
+                                                                    Square => Function(new[] {new NamedType("Math"), Integer}, Integer)));
             
             var typedCall = (Call)typeCheckedCall;
             typedCall.Callable.Type.ShouldEqual(Function(new[] { new NamedType("Math"), Integer }, Integer));
@@ -136,9 +135,8 @@ namespace Rook.Compiling.Syntax
             typeChecker.TypeRegistry.Register(knownClass);
 
             var node = (MethodInvocation)Parse("math.SomeExtensionMethod(false)");
-            var typeCheckedCall = typeChecker.TypeCheck(node, Scope(typeChecker,
-                                                                          math => new NamedType("Math"),
-                                                                          SomeExtensionMethod => Function(new[] { new NamedType("Math"), Boolean }, Integer)));
+            var typeCheckedCall = typeChecker.TypeCheck(node, Scope(math => new NamedType("Math"),
+                                                                    SomeExtensionMethod => Function(new[] { new NamedType("Math"), Boolean }, Integer)));
 
             var typedCall = (Call)typeCheckedCall;
 

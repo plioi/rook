@@ -1,19 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Rook.Core;
 
 namespace Rook.Compiling.Types
 {
-    public class TypeVariable : DataType
+    public partial class TypeVariable : DataType
     {
-        private readonly int name;
+        private readonly ulong name;
         private readonly bool isGeneric;
 
-        public TypeVariable(int name)
+        public TypeVariable(ulong name)
             : this(name, true)
         {
         }
 
-        public TypeVariable(int name, bool isGeneric)
+        public TypeVariable(ulong name, bool isGeneric)
         {
             this.name = name;
             this.isGeneric = isGeneric;
@@ -55,6 +57,40 @@ namespace Rook.Compiling.Types
         public override string ToString()
         {
             return Name;
+        }
+    }
+
+    public partial class TypeVariable
+    {
+        private static ulong next;
+        private static Factory createNext;
+
+        public delegate TypeVariable Factory(bool isGeneric);
+
+        static TypeVariable()
+        {
+            next = 0;
+            createNext = isGeneric => new TypeVariable(next++, isGeneric);
+        }
+
+        public static TypeVariable CreateGeneric()
+        {
+            return createNext(true);
+        }
+
+        public static TypeVariable CreateNonGeneric()
+        {
+            return createNext(false);
+        }
+
+        public static IDisposable TestFactory()
+        {
+            var previousFactory = createNext;
+
+            ulong nextForTest = 0;
+            createNext = isGeneric => new TypeVariable(nextForTest++, isGeneric);
+
+            return new DisposableAction(() => createNext = previousFactory);
         }
     }
 }

@@ -44,6 +44,7 @@
     <Compile Include="Collections\SliceVector.cs" />
     <Compile Include="Collections\Vector.cs" />
     <Compile Include="Constructor.cs" />
+    <Compile Include="DisposableAction.cs" />
     <Compile Include="Nullable.cs" />
     <Compile Include="Prelude.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

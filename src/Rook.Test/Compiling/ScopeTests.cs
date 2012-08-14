@@ -15,16 +15,18 @@ namespace Rook.Compiling
 
         public ScopeTests()
         {
-            var typeChecker = new TypeChecker();
-            global = new GlobalScope(typeChecker);
+            using (TypeVariable.TestFactory())
+            {
+                global = new GlobalScope();
 
-            ab = new LocalScope(global);
-            ab.Bind("a", Integer);
-            ab.Bind("b", Integer);
+                ab = new LocalScope(global);
+                ab.Bind("a", Integer);
+                ab.Bind("b", Integer);
 
-            cd = new LocalScope(ab);
-            cd.Bind("c", Boolean);
-            cd.Bind("d", Boolean);
+                cd = new LocalScope(ab);
+                cd.Bind("c", Boolean);
+                cd.Bind("d", Boolean);
+            }
         }
 
         [Fact]

@@ -84,7 +84,7 @@ namespace Rook.Compiling.Syntax
             node.Type.ShouldBeNull();
 
             var typeChecker = new TypeChecker();
-            var typedNode = typeChecker.TypeCheck(node, Scope(typeChecker));
+            var typedNode = typeChecker.TypeCheck(node, Scope());
             typedNode.Parameters.ShouldHaveTypes(Integer, Integer, Boolean);
             typedNode.Body.Type.ShouldEqual(Boolean);
             typedNode.Type.ShouldEqual(NamedType.Function(new[] { Integer, Integer, Boolean }, Boolean));
@@ -119,7 +119,7 @@ namespace Rook.Compiling.Syntax
             var function = Parse(source);
 
             var typeChecker = new TypeChecker();
-            var typeCheckedFunction = typeChecker.TypeCheck(function, Scope(typeChecker, symbols));
+            var typeCheckedFunction = typeChecker.TypeCheck(function, Scope(symbols));
 
             typeCheckedFunction.ShouldNotBeNull();
             typeChecker.HasErrors.ShouldBeFalse();
@@ -132,7 +132,7 @@ namespace Rook.Compiling.Syntax
             var function = Parse(source);
 
             var typeChecker = new TypeChecker();
-            var typeCheckedFunction = typeChecker.TypeCheck(function, Scope(typeChecker, symbols));
+            var typeCheckedFunction = typeChecker.TypeCheck(function, Scope(symbols));
 
             typeCheckedFunction.ShouldBeNull();
             typeChecker.HasErrors.ShouldBeTrue();

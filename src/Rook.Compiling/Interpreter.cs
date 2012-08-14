@@ -172,7 +172,7 @@ namespace Rook.Compiling
             var relevantClasses = classes.Values.Where(c => c.Name.Identifier != "Main").ToArray();
             var relevantFunctions = functions.Values.Where(f => f.Name.Identifier != "Main").ToArray();
 
-            var scope = new GlobalScope(typeChecker);
+            var scope = new GlobalScope();
 
             foreach (var c in relevantClasses)
                 typeChecker.TypeRegistry.Register(c);

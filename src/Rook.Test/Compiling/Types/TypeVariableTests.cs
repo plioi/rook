@@ -66,5 +66,36 @@ namespace Rook.Compiling.Types
             a.GetHashCode().ShouldEqual(new TypeVariable(0).GetHashCode());
             a.GetHashCode().ShouldNotEqual(b.GetHashCode());
         }
+
+        [Fact]
+        public void HasFactoryThatProvidesStreamOfUniqueTypeVariables()
+        {
+            var x = TypeVariable.CreateGeneric();
+            var y = TypeVariable.CreateGeneric();
+
+            ulong xName = ulong.Parse(x.Name);
+
+            x.ShouldEqual(new TypeVariable(xName));
+            y.ShouldEqual(new TypeVariable(xName + 1));
+            TypeVariable.CreateGeneric().ShouldEqual(new TypeVariable(xName + 2));
+            TypeVariable.CreateNonGeneric().ShouldEqual(new TypeVariable(xName + 3, false));
+            TypeVariable.CreateGeneric().ShouldEqual(new TypeVariable(xName + 4));
+        }
+
+        [Fact]
+        public void HasFactoryThatCanBeTemporarilyReplacedForTestingPursposes()
+        {
+            using (TypeVariable.TestFactory())
+            {
+                var x = TypeVariable.CreateGeneric();
+                var y = TypeVariable.CreateGeneric();
+
+                x.ShouldEqual(new TypeVariable(0));
+                y.ShouldEqual(new TypeVariable(1));
+                TypeVariable.CreateGeneric().ShouldEqual(new TypeVariable(2));
+                TypeVariable.CreateNonGeneric().ShouldEqual(new TypeVariable(3, false));
+                TypeVariable.CreateGeneric().ShouldEqual(new TypeVariable(4));
+            }
+        }
     }
 }

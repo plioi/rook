@@ -76,7 +76,7 @@ namespace Rook.Compiling.Syntax
             @class.Type.ShouldEqual(constructorReturningFoo);
 
             var typeChecker = new TypeChecker();
-            var typeCheckedClass = typeChecker.TypeCheck(@class, Scope(typeChecker));
+            var typeCheckedClass = typeChecker.TypeCheck(@class, Scope());
 
             typeCheckedClass.Methods.ShouldList(
                 even =>
@@ -134,7 +134,7 @@ namespace Rook.Compiling.Syntax
             var @class = Parse(source);
 
             var typeChecker = new TypeChecker();
-            var typeCheckedClass = typeChecker.TypeCheck(@class, Scope(typeChecker, symbols));
+            var typeCheckedClass = typeChecker.TypeCheck(@class, Scope(symbols));
 
             typeCheckedClass.ShouldNotBeNull();
             typeChecker.HasErrors.ShouldBeFalse();
@@ -147,7 +147,7 @@ namespace Rook.Compiling.Syntax
             var @class = Parse(source);
 
             var typeChecker = new TypeChecker();
-            var typeCheckedClass = typeChecker.TypeCheck(@class, Scope(typeChecker, symbols));
+            var typeCheckedClass = typeChecker.TypeCheck(@class, Scope(symbols));
 
             typeCheckedClass.ShouldBeNull();
             typeChecker.HasErrors.ShouldBeTrue();

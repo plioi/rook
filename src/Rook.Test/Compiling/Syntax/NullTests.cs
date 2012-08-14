@@ -15,17 +15,23 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasUniqueTypeVariableAsItsType()
         {
-            Type("null").ShouldEqual(NamedType.Nullable(new TypeVariable(2)));
+            using (TypeVariable.TestFactory())
+            {
+                Type("null").ShouldEqual(NamedType.Nullable(new TypeVariable(2)));
+            }
         }
 
         [Fact]
         public void CanCreateFullyTypedInstance()
         {
-            var @null = (Null)Parse("null");
-            @null.Type.ShouldBeNull();
+            using (TypeVariable.TestFactory())
+            {
+                var @null = (Null) Parse("null");
+                @null.Type.ShouldBeNull();
 
-            var typedNull = WithTypes(@null);
-            typedNull.Type.ShouldEqual(NamedType.Nullable(new TypeVariable(2)));
+                var typedNull = WithTypes(@null);
+                typedNull.Type.ShouldEqual(NamedType.Nullable(new TypeVariable(2)));
+            }
         }
     }
 }

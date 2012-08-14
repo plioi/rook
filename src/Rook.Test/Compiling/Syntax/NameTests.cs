@@ -23,28 +23,38 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasATypeInWhichTypeVariablesAreFreshenedOnEachScopeLookup()
         {
-            Type("foo", foo => new TypeVariable(0)).ShouldEqual(new TypeVariable(2));
+            using (TypeVariable.TestFactory())
+            {
+                Type("foo", foo => new TypeVariable(0)).ShouldEqual(new TypeVariable(2));
+            }
 
-            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(2), new TypeVariable(3), new NamedType("B", new TypeVariable(2), new TypeVariable(3)));
-            var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(1), new NamedType("B", new TypeVariable(0), new TypeVariable(1)));
-            Type("foo", foo => definedType).ShouldEqual(expectedTypeAfterLookup);
+            using (TypeVariable.TestFactory())
+            {
+                var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(2), new TypeVariable(3), new NamedType("B", new TypeVariable(2), new TypeVariable(3)));
+                var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(1), new NamedType("B", new TypeVariable(0), new TypeVariable(1)));
+                Type("foo", foo => definedType).ShouldEqual(expectedTypeAfterLookup);
+            }
         }
 
         [Fact]
         public void HasATypeInWhichOnlyGenericTypeVariablesAreFreshenedOnEachScopeLookup()
         {
-            //Prevent type '1' from being freshened on type lookup by marking it as non-generic:
-            var typeVariable1 = new TypeVariable(1, isGeneric: false);
+            using (TypeVariable.TestFactory())
+            {
+                //Prevent type '1' from being freshened on type lookup by marking it as non-generic:
+                var typeVariable0 = TypeVariable.CreateGeneric();
+                var typeVariable1 = TypeVariable.CreateNonGeneric();
 
-            var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(2), typeVariable1, new NamedType("B", new TypeVariable(2), typeVariable1));
-            var definedType = new NamedType("A", new TypeVariable(0), typeVariable1, new NamedType("B", new TypeVariable(0), typeVariable1));
+                var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(4), typeVariable1, new NamedType("B", new TypeVariable(4), typeVariable1));
+                var definedType = new NamedType("A", typeVariable0, typeVariable1, new NamedType("B", typeVariable0, typeVariable1));
 
-            var typeChecker = new TypeChecker();
-            var globalScope = new GlobalScope(typeChecker);
-            var localScope = new LocalScope(globalScope);
-            localScope.Bind("foo", definedType);
+                var typeChecker = new TypeChecker();
+                var globalScope = new GlobalScope();
+                var localScope = new LocalScope(globalScope);
+                localScope.Bind("foo", definedType);
 
-            Type("foo", localScope, typeChecker).ShouldEqual(expectedTypeAfterLookup);
+                Type("foo", localScope, typeChecker).ShouldEqual(expectedTypeAfterLookup);
+            }
         }
 
         [Fact]
