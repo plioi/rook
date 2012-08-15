@@ -183,7 +183,7 @@ namespace Rook.Compiling.Syntax
 
             var lambdaScope = new LocalScope(scope);
 
-            var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters);
+            var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters).ToArray();
 
             foreach (var parameter in typedParameters)
             {
@@ -205,26 +205,13 @@ namespace Rook.Compiling.Syntax
             return new Lambda(Position, normalizedParameters, typeCheckedBody, NamedType.Function(parameterTypes, typeCheckedBody.Type));
         }
 
-        private Parameter[] ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters)
+        private static IEnumerable<Parameter> ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters)
         {
-            var decoratedParameters = new List<Parameter>();
-            var typeVariables = new List<TypeVariable>();
-
             foreach (var parameter in parameters)
-            {
                 if (parameter.IsImplicitlyTyped())
-                {
-                    var typeVariable = TypeVariable.CreateNonGeneric();
-                    typeVariables.Add(typeVariable);
-                    decoratedParameters.Add(new Parameter(parameter.Position, typeVariable, parameter.Identifier));
-                }
+                    yield return new Parameter(parameter.Position, TypeVariable.CreateNonGeneric(), parameter.Identifier);
                 else
-                {
-                    decoratedParameters.Add(parameter);
-                }
-            }
-
-            return decoratedParameters.ToArray();
+                    yield return parameter;
         }
 
         private Vector<Parameter> NormalizeTypes(IEnumerable<Parameter> typedParameters)
