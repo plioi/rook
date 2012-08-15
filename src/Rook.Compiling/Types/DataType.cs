@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Rook.Core;
 
 namespace Rook.Compiling.Types
@@ -22,6 +23,17 @@ namespace Rook.Compiling.Types
             //      implement value equality.  Change InnerTypes to be a 
             //      collection type with value equality semantics.
             return new object[] {ToString()};
+        }
+
+        public DataType FreshenGenericTypeVariables()
+        {
+            var genericTypeVariables = FindTypeVariables().Where(x => x.IsGeneric);
+
+            var substitutions = new Dictionary<TypeVariable, DataType>();
+            foreach (var genericTypeVariable in genericTypeVariables)
+                substitutions[genericTypeVariable] = TypeVariable.CreateGeneric();
+
+            return ReplaceTypeVariables(substitutions);
         }
     }
 }
