@@ -37,19 +37,8 @@ namespace Rook.Compiling.Syntax
 
             var scope = new GlobalScope();
 
-            foreach (var @class in Classes)
-                if (!scope.TryIncludeUniqueBinding(@class))
-                {
-                    LogError(CompilerError.DuplicateIdentifier(@class.Position, @class));
-                    return null;
-                }
-
-            foreach (var function in Functions)
-                if (!scope.TryIncludeUniqueBinding(function))
-                {
-                    LogError(CompilerError.DuplicateIdentifier(function.Position, function));
-                    return null;
-                }
+            if (!TryIncludeUniqueBindings(scope, Classes, Functions))
+                return null;
 
             var typeCheckedClasses = TypeCheckAll(Classes, scope);
             var typeCheckedFunctions = TypeCheckAll(Functions, scope);
@@ -68,12 +57,8 @@ namespace Rook.Compiling.Syntax
 
             var localScope = new LocalScope(scope);
 
-            foreach (var method in Methods)
-                if (!localScope.TryIncludeUniqueBinding(method))
-                {
-                    LogError(CompilerError.DuplicateIdentifier(method.Position, method));
-                    return null;
-                }
+            if (!TryIncludeUniqueBindings(localScope, Methods))
+                return null;
 
             var typeCheckedMethods = TypeCheckAll(Methods, localScope);
 
@@ -94,12 +79,8 @@ namespace Rook.Compiling.Syntax
 
             var localScope = new LocalScope(scope);
 
-            foreach (var parameter in Parameters)
-                if (!localScope.TryIncludeUniqueBinding(parameter))
-                {
-                    LogError(CompilerError.DuplicateIdentifier(parameter.Position, parameter));
-                    return null;
-                }
+            if (!TryIncludeUniqueBindings(localScope, Parameters))
+                return null;
 
             var typeCheckedBody = TypeCheck(Body, localScope);
             if (typeCheckedBody == null)
@@ -183,16 +164,10 @@ namespace Rook.Compiling.Syntax
 
             var lambdaScope = new LocalScope(scope);
 
-            var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters).ToArray();
+            var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters).ToVector();
 
-            foreach (var parameter in typedParameters)
-            {
-                if (!lambdaScope.TryIncludeUniqueBinding(parameter))
-                {
-                    LogError(CompilerError.DuplicateIdentifier(parameter.Position, parameter));
-                    return null;
-                }
-            }
+            if (!TryIncludeUniqueBindings(lambdaScope, typedParameters))
+                return null;
 
             var typeCheckedBody = TypeCheck(Body, lambdaScope);
             if (typeCheckedBody == null)
@@ -478,6 +453,55 @@ namespace Rook.Compiling.Syntax
         private void LogError(CompilerError error)
         {
             errorLog.Add(error);
+        }
+
+        private bool TryIncludeUniqueBindings(GlobalScope globals, Vector<Class> classes, Vector<Function> functions)
+        {
+            bool success = true;
+
+            foreach (var @class in classes)
+                if (!globals.TryIncludeUniqueBinding(@class))
+                {
+                    LogError(CompilerError.DuplicateIdentifier(@class.Position, @class));
+                    success = false;
+                }
+
+            foreach (var function in functions)
+                if (!globals.TryIncludeUniqueBinding(function))
+                {
+                    LogError(CompilerError.DuplicateIdentifier(function.Position, function));
+                    success = false;
+                }
+
+            return success;
+        }
+
+        private bool TryIncludeUniqueBindings(LocalScope locals, Vector<Function> methods)
+        {
+            bool success = true;
+
+            foreach (var method in methods)
+                if (!locals.TryIncludeUniqueBinding(method))
+                {
+                    LogError(CompilerError.DuplicateIdentifier(method.Position, method));
+                    success = false;
+                }
+
+            return success;
+        }
+
+        private bool TryIncludeUniqueBindings(LocalScope locals, Vector<Parameter> parameters)
+        {
+            bool success = true;
+
+            foreach (var parameter in parameters)
+                if (!locals.TryIncludeUniqueBinding(parameter))
+                {
+                    LogError(CompilerError.DuplicateIdentifier(parameter.Position, parameter));
+                    success = false;
+                }
+
+            return success;
         }
     }
 }
