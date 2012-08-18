@@ -37,7 +37,7 @@ namespace Rook.Compiling.Syntax
 
             var scope = CreateGlobalScope(classes, functions);
 
-            return new CompilationUnit(position, TypeCheckAll(classes, scope), TypeCheckAll(functions, scope));
+            return new CompilationUnit(position, TypeCheck(classes, scope), TypeCheck(functions, scope));
         }
 
         public Class TypeCheck(Class @class, Scope scope)
@@ -48,7 +48,7 @@ namespace Rook.Compiling.Syntax
 
             var localScope = CreateLocalScope(scope, methods);
 
-            return new Class(position, name, TypeCheckAll(methods, localScope));
+            return new Class(position, name, TypeCheck(methods, localScope));
         }
 
         public Function TypeCheck(Function function, Scope scope)
@@ -116,7 +116,7 @@ namespace Rook.Compiling.Syntax
                 Unify(typeCheckedValue.Position, binding.Type, typeCheckedValue.Type);
             }
 
-            var typeCheckedInnerExpressions = TypeCheckAll(innerExpressions, localScope);
+            var typeCheckedInnerExpressions = TypeCheck(innerExpressions, localScope);
 
             var blockType = typeCheckedInnerExpressions.Last().Type;
 
@@ -181,7 +181,7 @@ namespace Rook.Compiling.Syntax
             var isOperator = call.IsOperator;
 
             var typeCheckedCallable = TypeCheck(callable, scope);
-            var typeCheckedArguments = TypeCheckAll(arguments, scope);
+            var typeCheckedArguments = TypeCheck(arguments, scope);
 
             var calleeType = typeCheckedCallable.Type;
             var calleeFunctionType = calleeType as NamedType;
@@ -242,7 +242,7 @@ namespace Rook.Compiling.Syntax
                 
                 //END EXPERIMENT
 
-                var typeCheckedArguments = TypeCheckAll(arguments, scope);
+                var typeCheckedArguments = TypeCheck(arguments, scope);
 
                 var calleeType = typeCheckedCallable.Type;
                 var calleeFunctionType = calleeType as NamedType;
@@ -345,7 +345,7 @@ namespace Rook.Compiling.Syntax
             var position = vectorLiteral.Position;
             var items = vectorLiteral.Items;
 
-            var typeCheckedItems = TypeCheckAll(items, scope);
+            var typeCheckedItems = TypeCheck(items, scope);
 
             var firstItemType = typeCheckedItems.First().Type;
 
@@ -355,17 +355,17 @@ namespace Rook.Compiling.Syntax
             return new VectorLiteral(position, typeCheckedItems, NamedType.Vector(firstItemType));
         }
 
-        private Vector<Expression> TypeCheckAll(Vector<Expression> expressions, Scope scope)
+        private Vector<Expression> TypeCheck(Vector<Expression> expressions, Scope scope)
         {
             return expressions.Select(x => TypeCheck(x, scope)).ToVector();
         }
 
-        private Vector<Function> TypeCheckAll(Vector<Function> functions, Scope scope)
+        private Vector<Function> TypeCheck(Vector<Function> functions, Scope scope)
         {
             return functions.Select(x => TypeCheck(x, scope)).ToVector();
         }
 
-        private Vector<Class> TypeCheckAll(Vector<Class> classes, Scope scope)
+        private Vector<Class> TypeCheck(Vector<Class> classes, Scope scope)
         {
             return classes.Select(x => TypeCheck(x, scope)).ToVector();
         }
