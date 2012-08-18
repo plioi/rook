@@ -9,7 +9,7 @@ namespace Rook.Compiling.Syntax
         public DataType Type { get; private set; }
 
         public Null(Position position) 
-            : this(position, null) { }
+            : this(position, UnknownType.Instance) { }
 
         public Null(Position position, DataType type)
         {

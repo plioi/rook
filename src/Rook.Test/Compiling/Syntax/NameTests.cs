@@ -61,7 +61,7 @@ namespace Rook.Compiling.Syntax
         public void CanCreateFullyTypedInstance()
         {
             var name = (Name)Parse("foo");
-            name.Type.ShouldBeNull();
+            name.Type.ShouldEqual(Unknown);
 
             var typedName = WithTypes(name, foo => Boolean);
             typedName.Type.ShouldEqual(Boolean);

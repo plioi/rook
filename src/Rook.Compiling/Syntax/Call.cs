@@ -14,13 +14,13 @@ namespace Rook.Compiling.Syntax
         public DataType Type { get; private set; }
 
         public Call(Position position, string symbol, Expression operand)
-            : this(position, new Name(position, symbol), new[] { operand }.ToVector(), true, null) { }
+            : this(position, new Name(position, symbol), new[] { operand }.ToVector(), true, UnknownType.Instance) { }
 
         public Call(Position position, string symbol, Expression leftOperand, Expression rightOperand)
-            : this(position, new Name(position, symbol), new[] { leftOperand, rightOperand }.ToVector(), true, null) { }
+            : this(position, new Name(position, symbol), new[] { leftOperand, rightOperand }.ToVector(), true, UnknownType.Instance) { }
 
         public Call(Position position, Expression callable, IEnumerable<Expression> arguments)
-            : this(position, callable, arguments.ToVector(), false, null) { }
+            : this(position, callable, arguments.ToVector(), false, UnknownType.Instance) { }
 
         public Call(Position position, Expression callable, Vector<Expression> arguments, bool isOperator, DataType type)
         {

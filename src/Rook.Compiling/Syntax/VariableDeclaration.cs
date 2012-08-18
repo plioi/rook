@@ -11,7 +11,7 @@ namespace Rook.Compiling.Syntax
         public Expression Value { get; private set; }
 
         public VariableDeclaration(Position position, string identifier, Expression value)
-            : this(position, null, identifier, value) { }
+            : this(position, UnknownType.Instance, identifier, value) { }
 
         public VariableDeclaration(Position position, DataType declaredType, string identifier, Expression value)
         {

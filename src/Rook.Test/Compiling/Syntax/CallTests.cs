@@ -144,9 +144,9 @@ namespace Rook.Compiling.Syntax
         public void CanCreateFullyTypedInstance()
         {
             var call = (Call)Parse("func(yes, zero)");
-            call.Callable.Type.ShouldBeNull();
-            call.Arguments.ShouldHaveTypes(null, null);
-            call.Type.ShouldBeNull();
+            call.Callable.Type.ShouldEqual(Unknown);
+            call.Arguments.ShouldHaveTypes(Unknown, Unknown);
+            call.Type.ShouldEqual(Unknown);
 
             var typedCall = WithTypes(call,
                                       func => Function(new[] {Boolean, Integer}, Integer),

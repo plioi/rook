@@ -44,8 +44,8 @@ namespace Rook.Compiling.Syntax
             var constructorType = NamedType.Constructor(constructedType);
 
             var @new = (New)Parse("new Foo()");
-            @new.Type.ShouldBeNull();
-            @new.TypeName.Type.ShouldBeNull();
+            @new.Type.ShouldEqual(Unknown);
+            @new.TypeName.Type.ShouldEqual(Unknown);
 
             var typedNew = WithTypes(@new, Foo => constructorType);
             typedNew.Type.ShouldEqual(constructedType);

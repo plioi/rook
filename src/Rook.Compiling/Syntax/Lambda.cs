@@ -13,7 +13,7 @@ namespace Rook.Compiling.Syntax
         public DataType Type { get; private set; }
 
         public Lambda(Position position, IEnumerable<Parameter> parameters, Expression body)
-        : this(position, parameters.ToVector(), body, null) { }
+            : this(position, parameters.ToVector(), body, UnknownType.Instance) { }
 
         public Lambda(Position position, Vector<Parameter> parameters, Expression body, DataType type)
         {

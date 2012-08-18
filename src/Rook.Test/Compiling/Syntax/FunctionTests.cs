@@ -80,8 +80,8 @@ namespace Rook.Compiling.Syntax
         {
             var node = Parse("bool foo(int x, int y, bool z) x+y>0 && z");
             node.Parameters.ShouldHaveTypes(Integer, Integer, Boolean);
-            node.Body.Type.ShouldBeNull();
-            node.Type.ShouldBeNull();
+            node.Body.Type.ShouldEqual(Unknown);
+            node.Type.ShouldEqual(Unknown);
 
             var typeChecker = new TypeChecker();
             var typedNode = typeChecker.TypeCheck(node, Scope());

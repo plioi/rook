@@ -42,8 +42,8 @@ namespace Rook.Compiling.Syntax
         public void CanCreateFullyTypedInstance()
         {
             var vector = (VectorLiteral)Parse("[foo, bar]");
-            vector.Items.ShouldHaveTypes(null, null);
-            vector.Type.ShouldBeNull();
+            vector.Items.ShouldHaveTypes(Unknown, Unknown);
+            vector.Type.ShouldEqual(Unknown);
 
             var typedVector = WithTypes(vector, foo => Boolean, bar => Boolean);
             typedVector.Items.ShouldHaveTypes(Boolean, Boolean);

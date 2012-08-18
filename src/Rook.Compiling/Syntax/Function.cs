@@ -16,7 +16,7 @@ namespace Rook.Compiling.Syntax
         public DataType Type { get; private set; }
 
         public Function(Position position, NamedType returnType, Name name, IEnumerable<Parameter> parameters, Expression body)
-            : this(position, returnType, name, parameters.ToVector(), body, null) { }
+            : this(position, returnType, name, parameters.ToVector(), body, UnknownType.Instance) { }
 
         public Function(Position position, NamedType returnType, Name name, Vector<Parameter> parameters, Expression body, DataType type)
         {

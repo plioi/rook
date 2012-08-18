@@ -8,6 +8,7 @@ namespace Rook.Compiling.Syntax
         protected static RookGrammar RookGrammar { get { return new RookGrammar(); } }
         protected static DataType Integer { get { return NamedType.Integer; } }
         protected static DataType Boolean { get { return NamedType.Boolean; } }
+        protected static DataType Unknown { get { return UnknownType.Instance; } }
 
         protected TSyntax Parse(string source)
         {

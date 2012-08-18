@@ -13,7 +13,7 @@ namespace Rook.Compiling.Syntax
         public DataType Type { get; private set; }
 
         public Block(Position position, IEnumerable<VariableDeclaration> variableDeclarations, IEnumerable<Expression> innerExpressions)
-            : this(position, variableDeclarations.ToVector(), innerExpressions.ToVector(), null) { }
+            : this(position, variableDeclarations.ToVector(), innerExpressions.ToVector(), UnknownType.Instance) { }
 
         public Block(Position position, Vector<VariableDeclaration> variableDeclarations, Vector<Expression> innerExpressions, DataType type)
         {

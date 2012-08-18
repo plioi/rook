@@ -12,7 +12,7 @@ namespace Rook.Compiling.Syntax
         public DataType Type { get; private set; }
 
         public If(Position position, Expression condition, Expression bodyWhenTrue, Expression bodyWhenFalse)
-            : this(position, condition, bodyWhenTrue, bodyWhenFalse, null) { }
+            : this(position, condition, bodyWhenTrue, bodyWhenFalse, UnknownType.Instance) { }
 
         public If(Position position, Expression condition, Expression bodyWhenTrue, Expression bodyWhenFalse, DataType type)
         {

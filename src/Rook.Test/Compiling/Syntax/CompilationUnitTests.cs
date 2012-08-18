@@ -65,20 +65,20 @@ namespace Rook.Compiling.Syntax
                 even =>
                 {
                     even.Name.Identifier.ShouldEqual("Even");
-                    even.Type.ShouldBeNull();
-                    even.Body.Type.ShouldBeNull();
+                    even.Type.ShouldEqual(Unknown);
+                    even.Body.Type.ShouldEqual(Unknown);
                 },
                 odd =>
                 {
                     odd.Name.Identifier.ShouldEqual("Odd");
-                    odd.Type.ShouldBeNull();
-                    odd.Body.Type.ShouldBeNull();
+                    odd.Type.ShouldEqual(Unknown);
+                    odd.Body.Type.ShouldEqual(Unknown);
                 },
                 main =>
                 {
                     main.Name.Identifier.ShouldEqual("Main");
-                    main.Type.ShouldBeNull();
-                    main.Body.Type.ShouldBeNull();
+                    main.Type.ShouldEqual(Unknown);
+                    main.Body.Type.ShouldEqual(Unknown);
                 });
 
             typeCheckedCompilationUnit.Classes.ShouldList(

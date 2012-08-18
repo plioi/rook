@@ -57,9 +57,9 @@ namespace Rook.Compiling.Syntax
         public void CanCreateFullyTypedInstance()
         {
             var lambda = (Lambda)Parse("fn (x, int y, bool z) x+y>0 && z");
-            lambda.Parameters.ShouldHaveTypes(null, Integer, Boolean);
-            lambda.Body.Type.ShouldBeNull();
-            lambda.Type.ShouldBeNull();
+            lambda.Parameters.ShouldHaveTypes(Unknown, Integer, Boolean);
+            lambda.Body.Type.ShouldEqual(Unknown);
+            lambda.Type.ShouldEqual(Unknown);
 
             var typedLambda = WithTypes(lambda);
             typedLambda.Parameters.ShouldHaveTypes(Integer, Integer, Boolean);

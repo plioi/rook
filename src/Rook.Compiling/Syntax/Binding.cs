@@ -12,7 +12,7 @@ namespace Rook.Compiling.Syntax
     {
         public static bool IsImplicitlyTyped(this Binding binding)
         {
-            return binding.Type == null;
+            return binding.Type == UnknownType.Instance;
         }
     }
 }

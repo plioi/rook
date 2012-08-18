@@ -83,10 +83,10 @@ namespace Rook.Compiling.Syntax
         public void CanCreateFullyTypedInstance()
         {
             var @if = (If)Parse("if (foo) bar else baz");
-            @if.Condition.Type.ShouldBeNull();
-            @if.BodyWhenTrue.Type.ShouldBeNull();
-            @if.BodyWhenFalse.Type.ShouldBeNull();
-            @if.Type.ShouldBeNull();
+            @if.Condition.Type.ShouldEqual(Unknown);
+            @if.BodyWhenTrue.Type.ShouldEqual(Unknown);
+            @if.BodyWhenFalse.Type.ShouldEqual(Unknown);
+            @if.Type.ShouldEqual(Unknown);
 
             var typedIf = WithTypes(@if, foo => Boolean, bar => Boolean, baz => Boolean);
             typedIf.Condition.Type.ShouldEqual(Boolean);

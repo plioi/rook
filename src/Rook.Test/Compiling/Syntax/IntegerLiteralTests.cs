@@ -26,7 +26,7 @@ namespace Rook.Compiling.Syntax
         public void CanCreateFullyTypedInstance()
         {
             var integer = (IntegerLiteral)Parse("12345");
-            integer.Type.ShouldBeNull();
+            integer.Type.ShouldEqual(Unknown);
 
             var typedInteger = WithTypes(integer);
             typedInteger.Type.ShouldEqual(Integer);

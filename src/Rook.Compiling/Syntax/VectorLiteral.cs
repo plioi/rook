@@ -12,7 +12,7 @@ namespace Rook.Compiling.Syntax
         public DataType Type { get; private set; }
 
         public VectorLiteral(Position position, IEnumerable<Expression> items)
-            : this(position, items.ToVector(), null) { }
+            : this(position, items.ToVector(), UnknownType.Instance) { }
 
         public VectorLiteral(Position position, Vector<Expression> items, DataType type)
         {

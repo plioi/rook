@@ -10,7 +10,7 @@ namespace Rook.Compiling.Syntax
         public DataType Type { get; private set; }
 
         public New(Position position, Name typeName)
-            :this(position, typeName, null) { }
+            : this(position, typeName, UnknownType.Instance) { }
 
         public New(Position position, Name typeName, DataType type)
         {

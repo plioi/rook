@@ -117,10 +117,10 @@ namespace Rook.Compiling.Syntax
         public void CanCreateFullyTypedInstance()
         {
             var node = (MethodInvocation)Parse("math.Even(two)");
-            node.Instance.Type.ShouldBeNull();
-            node.MethodName.Type.ShouldBeNull();
-            node.Arguments.Single().Type.ShouldBeNull();
-            node.Type.ShouldBeNull();
+            node.Instance.Type.ShouldEqual(Unknown);
+            node.MethodName.Type.ShouldEqual(Unknown);
+            node.Arguments.Single().Type.ShouldEqual(Unknown);
+            node.Type.ShouldEqual(Unknown);
 
             var typedNode = WithTypes(node, knownClass, math => new NamedType("Math"), two => Integer);
             typedNode.Instance.Type.ShouldEqual(new NamedType("Math"));

@@ -14,7 +14,7 @@ namespace Rook.Compiling.Syntax
         public DataType Type { get; private set; }
 
         public MethodInvocation(Position position, Expression instance, Name methodName, IEnumerable<Expression> arguments)
-            : this(position, instance, methodName, arguments.ToVector(), null) { }
+            : this(position, instance, methodName, arguments.ToVector(), UnknownType.Instance) { }
 
         public MethodInvocation(Position position, Expression instance, Name methodName, Vector<Expression> arguments, DataType type)
         {

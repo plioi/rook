@@ -10,7 +10,7 @@ namespace Rook.Compiling.Syntax
         public DataType Type { get; private set; }
 
         public IntegerLiteral(Position position, string digits)
-            : this (position, digits, null) { }
+            : this(position, digits, UnknownType.Instance) { }
 
         public IntegerLiteral(Position position, string digits, DataType type)
         {

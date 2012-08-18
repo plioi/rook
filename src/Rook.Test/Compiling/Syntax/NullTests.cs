@@ -27,7 +27,7 @@ namespace Rook.Compiling.Syntax
             using (TypeVariable.TestFactory())
             {
                 var @null = (Null) Parse("null");
-                @null.Type.ShouldBeNull();
+                @null.Type.ShouldEqual(Unknown);
 
                 var typedNull = WithTypes(@null);
                 typedNull.Type.ShouldEqual(NamedType.Nullable(new TypeVariable(2)));

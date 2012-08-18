@@ -58,20 +58,20 @@ namespace Rook.Compiling.Syntax
                 even =>
                 {
                     even.Name.Identifier.ShouldEqual("Even");
-                    even.Type.ShouldBeNull();
-                    even.Body.Type.ShouldBeNull();
+                    even.Type.ShouldEqual(Unknown);
+                    even.Body.Type.ShouldEqual(Unknown);
                 },
                 odd =>
                 {
                     odd.Name.Identifier.ShouldEqual("Odd");
-                    odd.Type.ShouldBeNull();
-                    odd.Body.Type.ShouldBeNull();
+                    odd.Type.ShouldEqual(Unknown);
+                    odd.Body.Type.ShouldEqual(Unknown);
                 },
                 test =>
                 {
                     test.Name.Identifier.ShouldEqual("Test");
-                    test.Type.ShouldBeNull();
-                    test.Body.Type.ShouldBeNull();
+                    test.Type.ShouldEqual(Unknown);
+                    test.Body.Type.ShouldEqual(Unknown);
                 });
             @class.Type.ShouldEqual(constructorReturningFoo);
 
