@@ -50,15 +50,9 @@ namespace Rook.Compiling.Syntax
 
             var localScope = new LocalScope(scope);
 
-            if (!TryIncludeUniqueBindings(localScope, Methods))
-                return null;
+            TryIncludeUniqueBindings(localScope, Methods);
 
-            var typeCheckedMethods = TypeCheckAll(Methods, localScope);
-
-            if (typeCheckedMethods.Any(x => x == null))
-                return null;
-
-            return new Class(Position, Name, typeCheckedMethods);
+            return new Class(Position, Name, TypeCheckAll(Methods, localScope));
         }
 
         public Function TypeCheck(Function function, Scope scope)

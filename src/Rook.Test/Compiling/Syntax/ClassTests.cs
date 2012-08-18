@@ -147,9 +147,7 @@ namespace Rook.Compiling.Syntax
             var @class = Parse(source);
 
             var typeChecker = new TypeChecker();
-            var typeCheckedClass = typeChecker.TypeCheck(@class, Scope(symbols));
-
-            typeCheckedClass.ShouldBeNull();
+            typeChecker.TypeCheck(@class, Scope(symbols));
             typeChecker.HasErrors.ShouldBeTrue();
 
             return typeChecker.Errors;
