@@ -49,7 +49,10 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingWhenInstanceExpressionFailsTypeChecking()
         {
-            ShouldFailTypeChecking("math.Square(2)").WithError("Reference to undefined identifier: math", 1, 1);
+            ShouldFailTypeChecking("math.Square(2)")
+                .WithErrors(
+                    error => error.ShouldEqual("Reference to undefined identifier: math", 1, 1),
+                    error => error.ShouldEqual("Cannot invoke method against instance of unknown type.", 1, 5));
         }
 
         [Fact]

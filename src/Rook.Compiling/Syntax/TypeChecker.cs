@@ -66,15 +66,11 @@ namespace Rook.Compiling.Syntax
 
             var localScope = new LocalScope(scope);
 
-            if (!TryIncludeUniqueBindings(localScope, Parameters))
-                return null;
+            TryIncludeUniqueBindings(localScope, Parameters);
 
             var typeCheckedBody = TypeCheck(Body, localScope);
-            if (typeCheckedBody == null)
-                return null;
 
-            if (!Unify(typeCheckedBody.Position, ReturnType, typeCheckedBody.Type))
-                return null;
+            Unify(typeCheckedBody.Position, ReturnType, typeCheckedBody.Type);
 
             return new Function(Position, ReturnType, Name, Parameters, typeCheckedBody, DeclaredType);
         }
@@ -95,7 +91,7 @@ namespace Rook.Compiling.Syntax
                 return new Name(Position, Identifier, type.FreshenGenericTypeVariables());
 
             LogError(CompilerError.UndefinedIdentifier(name));
-            return null;
+            return name;
         }
 
         public Expression TypeCheck(Block block, Scope scope)
@@ -111,32 +107,22 @@ namespace Rook.Compiling.Syntax
             {
                 var typeCheckedValue = TypeCheck(variable.Value, localScope);
 
-                if (typeCheckedValue == null)
-                    return null;
-
                 var binding = variable;
                 if (variable.IsImplicitlyTyped())
                     binding = new VariableDeclaration(variable.Position, /*Replaces implicit type.*/ typeCheckedValue.Type, variable.Identifier, variable.Value);
 
                 if (!localScope.TryIncludeUniqueBinding(binding))
-                {
                     LogError(CompilerError.DuplicateIdentifier(binding.Position, binding));
-                    return null;
-                }
 
                 typedVariableDeclarations.Add(new VariableDeclaration(variable.Position,
                                                                       binding.Type,
                                                                       variable.Identifier,
                                                                       typeCheckedValue));
 
-                if (!Unify(typeCheckedValue.Position, binding.Type, typeCheckedValue.Type))
-                    return null;
+                Unify(typeCheckedValue.Position, binding.Type, typeCheckedValue.Type);
             }
 
             var typeCheckedInnerExpressions = TypeCheckAll(InnerExpressions, localScope);
-
-            if (typeCheckedInnerExpressions.Any(x => x == null))
-                return null;
 
             var blockType = typeCheckedInnerExpressions.Last().Type;
 
@@ -153,12 +139,9 @@ namespace Rook.Compiling.Syntax
 
             var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters).ToVector();
 
-            if (!TryIncludeUniqueBindings(lambdaScope, typedParameters))
-                return null;
+            TryIncludeUniqueBindings(lambdaScope, typedParameters);
 
             var typeCheckedBody = TypeCheck(Body, lambdaScope);
-            if (typeCheckedBody == null)
-                return null;
 
             var normalizedParameters = NormalizeTypes(typedParameters);
 
@@ -192,14 +175,8 @@ namespace Rook.Compiling.Syntax
             var typeCheckedWhenTrue = TypeCheck(BodyWhenTrue, scope);
             var typeCheckedWhenFalse = TypeCheck(BodyWhenFalse, scope);
 
-            if (typeCheckedCondition == null || typeCheckedWhenTrue == null || typeCheckedWhenFalse == null)
-                return null;
-
-            var unifiedA = Unify(typeCheckedCondition.Position, NamedType.Boolean, typeCheckedCondition.Type);
-            var unifiedB = Unify(typeCheckedWhenFalse.Position, typeCheckedWhenTrue.Type, typeCheckedWhenFalse.Type);
-
-            if (!unifiedA || !unifiedB)
-                return null;
+            Unify(typeCheckedCondition.Position, NamedType.Boolean, typeCheckedCondition.Type);
+            Unify(typeCheckedWhenFalse.Position, typeCheckedWhenTrue.Type, typeCheckedWhenFalse.Type);
 
             return new If(Position, typeCheckedCondition, typeCheckedWhenTrue, typeCheckedWhenFalse, typeCheckedWhenTrue.Type);
         }
@@ -214,23 +191,19 @@ namespace Rook.Compiling.Syntax
             var typeCheckedCallable = TypeCheck(Callable, scope);
             var typeCheckedArguments = TypeCheckAll(Arguments, scope);
 
-            if (typeCheckedCallable == null || typeCheckedArguments.Any(x => x == null))
-                return null;
-
             var calleeType = typeCheckedCallable.Type;
             var calleeFunctionType = calleeType as NamedType;
 
             if (calleeFunctionType == null || calleeFunctionType.Name != "System.Func")
             {
                 LogError(CompilerError.ObjectNotCallable(Position));
-                return null;
+                return call;
             }
 
             var returnType = calleeType.InnerTypes.Last();
             var argumentTypes = typeCheckedArguments.Select(x => x.Type).ToVector();
 
-            if (!Unify(Position, calleeType, NamedType.Function(argumentTypes, returnType)))
-                return null;
+            Unify(Position, calleeType, NamedType.Function(argumentTypes, returnType));
 
             var callType = unifier.Normalize(returnType);
 
@@ -246,16 +219,13 @@ namespace Rook.Compiling.Syntax
 
             var typeCheckedInstance = TypeCheck(Instance, scope);
 
-            if (typeCheckedInstance == null)
-                return null;
-
             var instanceType = typeCheckedInstance.Type;
             var instanceNamedType = instanceType as NamedType;
 
             if (instanceNamedType == null)
             {
                 LogError(CompilerError.AmbiguousMethodInvocation(Position));
-                return null;
+                return methodInvocation;
             }
 
             Vector<Binding> typeMembers;
@@ -282,23 +252,19 @@ namespace Rook.Compiling.Syntax
 
                 var typeCheckedArguments = TypeCheckAll(Arguments, scope);
 
-                if (typeCheckedCallable == null || typeCheckedArguments.Any(x => x == null))
-                    return null;
-
                 var calleeType = typeCheckedCallable.Type;
                 var calleeFunctionType = calleeType as NamedType;
 
                 if (calleeFunctionType == null || calleeFunctionType.Name != "System.Func")
                 {
                     LogError(CompilerError.ObjectNotCallable(Position));
-                    return null;
+                    return methodInvocation;
                 }
 
                 var returnType = calleeType.InnerTypes.Last();
                 var argumentTypes = typeCheckedArguments.Select(x => x.Type).ToVector();
 
-                if (!Unify(Position, calleeType, NamedType.Function(argumentTypes, returnType)))
-                    return null;
+                Unify(Position, calleeType, NamedType.Function(argumentTypes, returnType));
 
                 var callType = unifier.Normalize(returnType);
                 //End of suspiciously duplicated code.
@@ -325,7 +291,7 @@ namespace Rook.Compiling.Syntax
                 //END HACK
 
                 LogError(CompilerError.UndefinedType(Instance.Position, instanceNamedType));
-                return null;
+                return methodInvocation;
             }
         }
 
@@ -336,9 +302,6 @@ namespace Rook.Compiling.Syntax
 
             var typeCheckedTypeName = TypeCheck(TypeName, scope);
 
-            if (typeCheckedTypeName == null)
-                return null;
-
             var typedTypeName = (Name)typeCheckedTypeName;
 
             var constructorType = typedTypeName.Type as NamedType;
@@ -346,7 +309,7 @@ namespace Rook.Compiling.Syntax
             if (constructorType == null || constructorType.Name != "Rook.Core.Constructor")
             {
                 LogError(CompilerError.TypeNameExpectedForConstruction(TypeName.Position, TypeName));
-                return null;
+                return @new;
             }
 
             var constructedType = constructorType.InnerTypes.Last();
@@ -370,7 +333,7 @@ namespace Rook.Compiling.Syntax
                 return new IntegerLiteral(Position, Digits, NamedType.Integer);
 
             LogError(CompilerError.InvalidConstant(Position, Digits));
-            return null;
+            return integerLiteral;
         }
 
         public Expression TypeCheck(StringLiteral stringLiteral, Scope scope)
@@ -392,15 +355,10 @@ namespace Rook.Compiling.Syntax
 
             var typeCheckedItems = TypeCheckAll(Items, scope);
 
-            if (typeCheckedItems.Any(typeCheckedItem => typeCheckedItem == null))
-                return null;
-
             var firstItemType = typeCheckedItems.First().Type;
 
-            var unificationResults = typeCheckedItems.Select(typedItem => Unify(typedItem.Position, firstItemType, typedItem.Type)).ToArray();
-
-            if (unificationResults.Any(x => x == false))
-                return null;
+            foreach (var typedItem in typeCheckedItems)
+                Unify(typedItem.Position, firstItemType, typedItem.Type);
 
             return new VectorLiteral(Position, typeCheckedItems, NamedType.Vector(firstItemType));
         }
@@ -420,16 +378,22 @@ namespace Rook.Compiling.Syntax
             return classes.Select(x => TypeCheck(x, scope)).ToVector();
         }
 
-        private bool Unify(Position position, DataType typeA, DataType typeB)
+        private void Unify(Position position, DataType typeA, DataType typeB)
         {
+            //Attempts to unify a type with UnknownType.Instance would produce
+            //a redundant and unhelpful error message.  Errors that would lead
+            //to unifying with UnknownType.Instance should already report useful
+            //error messages prior to unification.
+
+            if (typeA == UnknownType.Instance || typeB == UnknownType.Instance)
+                return;
+
             var errors = unifier.Unify(typeA, typeB).Select(error => new CompilerError(position, error)).ToVector();
 
             var succeeded = !errors.Any();
 
             if (!succeeded)
                 LogErrors(errors);
-
-            return succeeded;
         }
 
         private void LogErrors(IEnumerable<CompilerError> errors)
@@ -442,53 +406,29 @@ namespace Rook.Compiling.Syntax
             errorLog.Add(error);
         }
 
-        private bool TryIncludeUniqueBindings(GlobalScope globals, Vector<Class> classes, Vector<Function> functions)
+        private void TryIncludeUniqueBindings(GlobalScope globals, Vector<Class> classes, Vector<Function> functions)
         {
-            bool success = true;
-
             foreach (var @class in classes)
                 if (!globals.TryIncludeUniqueBinding(@class))
-                {
                     LogError(CompilerError.DuplicateIdentifier(@class.Position, @class));
-                    success = false;
-                }
 
             foreach (var function in functions)
                 if (!globals.TryIncludeUniqueBinding(function))
-                {
                     LogError(CompilerError.DuplicateIdentifier(function.Position, function));
-                    success = false;
-                }
-
-            return success;
         }
 
-        private bool TryIncludeUniqueBindings(LocalScope locals, Vector<Function> methods)
+        private void TryIncludeUniqueBindings(LocalScope locals, Vector<Function> methods)
         {
-            bool success = true;
-
             foreach (var method in methods)
                 if (!locals.TryIncludeUniqueBinding(method))
-                {
                     LogError(CompilerError.DuplicateIdentifier(method.Position, method));
-                    success = false;
-                }
-
-            return success;
         }
 
-        private bool TryIncludeUniqueBindings(LocalScope locals, Vector<Parameter> parameters)
+        private void TryIncludeUniqueBindings(LocalScope locals, Vector<Parameter> parameters)
         {
-            bool success = true;
-
             foreach (var parameter in parameters)
                 if (!locals.TryIncludeUniqueBinding(parameter))
-                {
                     LogError(CompilerError.DuplicateIdentifier(parameter.Position, parameter));
-                    success = false;
-                }
-
-            return success;
         }
     }
 }

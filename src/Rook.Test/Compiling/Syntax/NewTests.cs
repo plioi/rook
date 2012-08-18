@@ -27,7 +27,10 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingForTypeNameNotInScope()
         {
-            ShouldFailTypeChecking("new Foo()").WithError("Reference to undefined identifier: Foo", 1, 5);
+            ShouldFailTypeChecking("new Foo()")
+                .WithErrors(
+                    error => error.ShouldEqual("Reference to undefined identifier: Foo", 1, 5),
+                    error => error.ShouldEqual("Cannot construct 'Foo' because it is not a type.", 1, 5));
         }
 
         [Fact]

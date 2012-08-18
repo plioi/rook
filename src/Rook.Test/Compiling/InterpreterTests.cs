@@ -261,7 +261,9 @@ namespace Rook.Compiling
 
             var result = interpreter.Interpret("Main()");
             result.Value.ShouldBeNull();
-            result.Errors.Single().ToString().ShouldEqual("(1, 1): Reference to undefined identifier: Main");
+            result.Errors.Count.ShouldEqual(2);
+            result.Errors[0].ToString().ShouldEqual("(1, 1): Reference to undefined identifier: Main");
+            result.Errors[1].ToString().ShouldEqual("(1, 1): Attempted to call a noncallable object.");
         }
 
         [Fact]

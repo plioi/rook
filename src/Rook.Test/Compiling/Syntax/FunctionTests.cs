@@ -132,9 +132,7 @@ namespace Rook.Compiling.Syntax
             var function = Parse(source);
 
             var typeChecker = new TypeChecker();
-            var typeCheckedFunction = typeChecker.TypeCheck(function, Scope(symbols));
-
-            typeCheckedFunction.ShouldBeNull();
+            typeChecker.TypeCheck(function, Scope(symbols));
             typeChecker.HasErrors.ShouldBeTrue();
 
             return typeChecker.Errors;

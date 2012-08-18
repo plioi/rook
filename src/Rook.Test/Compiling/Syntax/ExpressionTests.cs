@@ -39,9 +39,7 @@ namespace Rook.Compiling.Syntax
         protected Vector<CompilerError> ShouldFailTypeChecking(string source, TypeChecker typeChecker, params TypeMapping[] symbols)
         {
             var expression = Parse(source);
-            var typeCheckedExpression = typeChecker.TypeCheck(expression, Scope(symbols));
-
-            typeCheckedExpression.ShouldBeNull();
+            typeChecker.TypeCheck(expression, Scope(symbols));
             typeChecker.HasErrors.ShouldBeTrue();
 
             return typeChecker.Errors;

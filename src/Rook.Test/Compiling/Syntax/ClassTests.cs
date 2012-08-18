@@ -111,7 +111,10 @@ namespace Rook.Compiling.Syntax
 
             ShouldFailTypeChecking("class Foo { int Square(int x) x*x; int Mismatch() Square(1, 2); }").WithError("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 51);
 
-            ShouldFailTypeChecking("class Foo { int A() Square(2); }").WithError("Reference to undefined identifier: Square", 1, 21);
+            ShouldFailTypeChecking("class Foo { int A() Square(2); }")
+                .WithErrors(
+                    error => error.ShouldEqual("Reference to undefined identifier: Square", 1, 21),
+                    error => error.ShouldEqual("Attempted to call a noncallable object.", 1, 21));
         }
 
         [Fact]
