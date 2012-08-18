@@ -147,9 +147,7 @@ namespace Rook.Compiling.Syntax
             var compilationUnit = Parse(source);
 
             var typeChecker = new TypeChecker();
-            var typeCheckedCompilationUnit = typeChecker.TypeCheck(compilationUnit);
-
-            typeCheckedCompilationUnit.ShouldBeNull();
+            typeChecker.TypeCheck(compilationUnit);
             typeChecker.HasErrors.ShouldBeTrue();
 
             return typeChecker.Errors;

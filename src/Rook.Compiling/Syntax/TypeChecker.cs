@@ -37,16 +37,9 @@ namespace Rook.Compiling.Syntax
 
             var scope = new GlobalScope();
 
-            if (!TryIncludeUniqueBindings(scope, Classes, Functions))
-                return null;
+            TryIncludeUniqueBindings(scope, Classes, Functions);
 
-            var typeCheckedClasses = TypeCheckAll(Classes, scope);
-            var typeCheckedFunctions = TypeCheckAll(Functions, scope);
-
-            if (typeCheckedClasses.Any(x => x == null) || typeCheckedFunctions.Any(x => x == null))
-                return null;
-
-            return new CompilationUnit(Position, typeCheckedClasses, typeCheckedFunctions);
+            return new CompilationUnit(Position, TypeCheckAll(Classes, scope), TypeCheckAll(Functions, scope));
         }
 
         public Class TypeCheck(Class @class, Scope scope)
