@@ -96,6 +96,7 @@
     <Compile Include="Compiling\Syntax\TypeCheckingAssertions.cs" />
     <Compile Include="Compiling\TypeRegistryTests.cs" />
     <Compile Include="Compiling\Types\DataTypeTests.cs" />
+    <Compile Include="Compiling\Types\UnknownTypeTests.cs" />
     <Compile Include="Core\Collections\ArrayVectorTests.cs" />
     <Compile Include="Core\Collections\SliceVectorTests.cs" />
     <Compile Include="Core\NullableTests.cs" />

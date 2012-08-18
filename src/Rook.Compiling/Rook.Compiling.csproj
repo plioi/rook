@@ -115,6 +115,7 @@
     <Compile Include="Scope.cs" />
     <Compile Include="Types\TypeUnifier.cs" />
     <Compile Include="Types\TypeVariable.cs" />
+    <Compile Include="Types\UnknownType.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rook.Core\Rook.Core.csproj">
