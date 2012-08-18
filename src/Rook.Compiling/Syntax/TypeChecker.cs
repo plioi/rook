@@ -53,22 +53,20 @@ namespace Rook.Compiling.Syntax
 
         public Function TypeCheck(Function function, Scope scope)
         {
-            var Position = function.Position;
-            var ReturnType = function.ReturnType;
-            var Name = function.Name;
-            var Parameters = function.Parameters;
-            var Body = function.Body;
-            var DeclaredType = function.DeclaredType;
+            var position = function.Position;
+            var returnType = function.ReturnType;
+            var name = function.Name;
+            var parameters = function.Parameters;
+            var body = function.Body;
+            var declaredType = function.DeclaredType;
 
-            var localScope = new LocalScope(scope);
+            var localScope = CreateLocalScope(scope, parameters);
 
-            TryIncludeUniqueBindings(localScope, Parameters);
+            var typeCheckedBody = TypeCheck(body, localScope);
 
-            var typeCheckedBody = TypeCheck(Body, localScope);
+            Unify(typeCheckedBody.Position, returnType, typeCheckedBody.Type);
 
-            Unify(typeCheckedBody.Position, ReturnType, typeCheckedBody.Type);
-
-            return new Function(Position, ReturnType, Name, Parameters, typeCheckedBody, DeclaredType);
+            return new Function(position, returnType, name, parameters, typeCheckedBody, declaredType);
         }
 
         public Expression TypeCheck(Expression expression, Scope scope)
@@ -127,23 +125,21 @@ namespace Rook.Compiling.Syntax
 
         public Expression TypeCheck(Lambda lambda, Scope scope)
         {
-            var Position = lambda.Position;
-            var Parameters = lambda.Parameters;
-            var Body = lambda.Body;
+            var position = lambda.Position;
+            var parameters = lambda.Parameters;
+            var body = lambda.Body;
 
-            var lambdaScope = new LocalScope(scope);
+            var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(parameters).ToVector();
 
-            var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(Parameters).ToVector();
+            var localScope = CreateLocalScope(scope, typedParameters);
 
-            TryIncludeUniqueBindings(lambdaScope, typedParameters);
-
-            var typeCheckedBody = TypeCheck(Body, lambdaScope);
+            var typeCheckedBody = TypeCheck(body, localScope);
 
             var normalizedParameters = NormalizeTypes(typedParameters);
 
             var parameterTypes = normalizedParameters.Select(p => p.Type).ToArray();
 
-            return new Lambda(Position, normalizedParameters, typeCheckedBody, NamedType.Function(parameterTypes, typeCheckedBody.Type));
+            return new Lambda(position, normalizedParameters, typeCheckedBody, NamedType.Function(parameterTypes, typeCheckedBody.Type));
         }
 
         private static IEnumerable<Parameter> ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters)
@@ -428,11 +424,15 @@ namespace Rook.Compiling.Syntax
             return locals;
         }
 
-        private void TryIncludeUniqueBindings(LocalScope locals, Vector<Parameter> parameters)
+        private LocalScope CreateLocalScope(Scope parent, Vector<Parameter> parameters)
         {
+            var locals = new LocalScope(parent);
+
             foreach (var parameter in parameters)
                 if (!locals.TryIncludeUniqueBinding(parameter))
                     LogError(CompilerError.DuplicateIdentifier(parameter.Position, parameter));
+
+            return locals;
         }
     }
 }
