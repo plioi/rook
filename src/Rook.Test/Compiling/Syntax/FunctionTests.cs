@@ -99,13 +99,13 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingWhenParameterNamesAreNotUnique()
         {
-            ShouldFailTypeChecking("int foo(int x, int y, int z, int x) true").WithError("Duplicate identifier: x", 1, 34);
+            ShouldFailTypeChecking("int foo(int x, int y, int z, int x) 0").WithError("Duplicate identifier: x", 1, 34);
         }
 
         [Fact]
         public void FailsTypeCheckingWhenParameterNamesShadowSurroundingScope()
         {
-            ShouldFailTypeChecking("int foo(int x, int y, int z) true", z => Integer).WithError("Duplicate identifier: z", 1, 27);
+            ShouldFailTypeChecking("int foo(int x, int y, int z) 0", z => Integer).WithError("Duplicate identifier: z", 1, 27);
         }
 
         [Fact]
