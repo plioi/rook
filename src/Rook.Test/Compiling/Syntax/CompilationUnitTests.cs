@@ -55,7 +55,7 @@ namespace Rook.Compiling.Syntax
                   int Main() if (Even(4)) 0 else 1;");
 
             var typeChecker = new TypeChecker();
-            var typeCheckedCompilationUnit = typeChecker.TypeCheck(compilationUnit);
+            var typedCompilationUnit = typeChecker.TypeCheck(compilationUnit);
 
             compilationUnit.Classes.ShouldList(
                 foo => foo.Type.ShouldEqual(fooConstructorType),
@@ -81,11 +81,11 @@ namespace Rook.Compiling.Syntax
                     main.Body.Type.ShouldEqual(Unknown);
                 });
 
-            typeCheckedCompilationUnit.Classes.ShouldList(
+            typedCompilationUnit.Classes.ShouldList(
                 foo => foo.Type.ShouldEqual(fooConstructorType),
                 bar => bar.Type.ShouldEqual(barConstructorType));
 
-            typeCheckedCompilationUnit.Functions.ShouldList(
+            typedCompilationUnit.Functions.ShouldList(
                 even =>
                 {
                     even.Name.Identifier.ShouldEqual("Even");

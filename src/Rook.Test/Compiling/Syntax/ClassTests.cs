@@ -76,9 +76,9 @@ namespace Rook.Compiling.Syntax
             @class.Type.ShouldEqual(constructorReturningFoo);
 
             var typeChecker = new TypeChecker();
-            var typeCheckedClass = typeChecker.TypeCheck(@class, Scope());
+            var typedClass = typeChecker.TypeCheck(@class, Scope());
 
-            typeCheckedClass.Methods.ShouldList(
+            typedClass.Methods.ShouldList(
                 even =>
                 {
                     even.Name.Identifier.ShouldEqual("Even");
@@ -97,7 +97,7 @@ namespace Rook.Compiling.Syntax
                     test.Type.ToString().ShouldEqual("System.Func<int>");
                     test.Body.Type.ShouldEqual(Integer);
                 });
-            typeCheckedClass.Type.ShouldEqual(constructorReturningFoo);
+            typedClass.Type.ShouldEqual(constructorReturningFoo);
         }
 
         [Fact]
@@ -137,12 +137,12 @@ namespace Rook.Compiling.Syntax
             var @class = Parse(source);
 
             var typeChecker = new TypeChecker();
-            var typeCheckedClass = typeChecker.TypeCheck(@class, Scope(symbols));
+            var typedClass = typeChecker.TypeCheck(@class, Scope(symbols));
 
-            typeCheckedClass.ShouldNotBeNull();
+            typedClass.ShouldNotBeNull();
             typeChecker.HasErrors.ShouldBeFalse();
 
-            return typeCheckedClass.Type;
+            return typedClass.Type;
         }
 
         private Vector<CompilerError> ShouldFailTypeChecking(string source, params TypeMapping[] symbols)

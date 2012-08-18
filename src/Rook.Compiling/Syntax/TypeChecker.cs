@@ -62,11 +62,11 @@ namespace Rook.Compiling.Syntax
 
             var localScope = CreateLocalScope(scope, parameters);
 
-            var typeCheckedBody = TypeCheck(body, localScope);
+            var typedBody = TypeCheck(body, localScope);
 
-            Unify(typeCheckedBody.Position, returnType, typeCheckedBody.Type);
+            Unify(typedBody.Position, returnType, typedBody.Type);
 
-            return new Function(position, returnType, name, parameters, typeCheckedBody, declaredType);
+            return new Function(position, returnType, name, parameters, typedBody, declaredType);
         }
 
         public Expression TypeCheck(Expression expression, Scope scope)
@@ -99,28 +99,25 @@ namespace Rook.Compiling.Syntax
             var typedVariableDeclarations = new List<VariableDeclaration>();
             foreach (var variable in variableDeclarations)
             {
-                var typeCheckedValue = TypeCheck(variable.Value, localScope);
+                var typedValue = TypeCheck(variable.Value, localScope);
 
                 var binding = variable;
                 if (variable.IsImplicitlyTyped())
-                    binding = new VariableDeclaration(variable.Position, /*Replaces implicit type.*/ typeCheckedValue.Type, variable.Identifier, variable.Value);
+                    binding = new VariableDeclaration(variable.Position, /*Replaces implicit type.*/ typedValue.Type, variable.Identifier, variable.Value);
 
                 if (!localScope.TryIncludeUniqueBinding(binding))
                     LogError(CompilerError.DuplicateIdentifier(binding.Position, binding));
 
-                typedVariableDeclarations.Add(new VariableDeclaration(variable.Position,
-                                                                      binding.Type,
-                                                                      variable.Identifier,
-                                                                      typeCheckedValue));
+                typedVariableDeclarations.Add(new VariableDeclaration(variable.Position, binding.Type, variable.Identifier, typedValue));
 
-                Unify(typeCheckedValue.Position, binding.Type, typeCheckedValue.Type);
+                Unify(typedValue.Position, binding.Type, typedValue.Type);
             }
 
-            var typeCheckedInnerExpressions = TypeCheck(innerExpressions, localScope);
+            var typedInnerExpressions = TypeCheck(innerExpressions, localScope);
 
-            var blockType = typeCheckedInnerExpressions.Last().Type;
+            var blockType = typedInnerExpressions.Last().Type;
 
-            return new Block(position, typedVariableDeclarations.ToVector(), typeCheckedInnerExpressions, blockType);
+            return new Block(position, typedVariableDeclarations.ToVector(), typedInnerExpressions, blockType);
         }
 
         public Expression TypeCheck(Lambda lambda, Scope scope)
@@ -133,13 +130,13 @@ namespace Rook.Compiling.Syntax
 
             var localScope = CreateLocalScope(scope, typedParameters);
 
-            var typeCheckedBody = TypeCheck(body, localScope);
+            var typedBody = TypeCheck(body, localScope);
 
             var normalizedParameters = NormalizeTypes(typedParameters);
 
             var parameterTypes = normalizedParameters.Select(p => p.Type).ToArray();
 
-            return new Lambda(position, normalizedParameters, typeCheckedBody, NamedType.Function(parameterTypes, typeCheckedBody.Type));
+            return new Lambda(position, normalizedParameters, typedBody, NamedType.Function(parameterTypes, typedBody.Type));
         }
 
         private static IEnumerable<Parameter> ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters)
@@ -163,14 +160,14 @@ namespace Rook.Compiling.Syntax
             var bodyWhenTrue = conditional.BodyWhenTrue;
             var bodyWhenFalse = conditional.BodyWhenFalse;
 
-            var typeCheckedCondition = TypeCheck(condition, scope);
-            var typeCheckedWhenTrue = TypeCheck(bodyWhenTrue, scope);
-            var typeCheckedWhenFalse = TypeCheck(bodyWhenFalse, scope);
+            var typedCondition = TypeCheck(condition, scope);
+            var typedWhenTrue = TypeCheck(bodyWhenTrue, scope);
+            var typedWhenFalse = TypeCheck(bodyWhenFalse, scope);
 
-            Unify(typeCheckedCondition.Position, NamedType.Boolean, typeCheckedCondition.Type);
-            Unify(typeCheckedWhenFalse.Position, typeCheckedWhenTrue.Type, typeCheckedWhenFalse.Type);
+            Unify(typedCondition.Position, NamedType.Boolean, typedCondition.Type);
+            Unify(typedWhenFalse.Position, typedWhenTrue.Type, typedWhenFalse.Type);
 
-            return new If(position, typeCheckedCondition, typeCheckedWhenTrue, typeCheckedWhenFalse, typeCheckedWhenTrue.Type);
+            return new If(position, typedCondition, typedWhenTrue, typedWhenFalse, typedWhenTrue.Type);
         }
 
         public Expression TypeCheck(Call call, Scope scope)
@@ -180,10 +177,10 @@ namespace Rook.Compiling.Syntax
             var arguments = call.Arguments;
             var isOperator = call.IsOperator;
 
-            var typeCheckedCallable = TypeCheck(callable, scope);
-            var typeCheckedArguments = TypeCheck(arguments, scope);
+            var typedCallable = TypeCheck(callable, scope);
+            var typedArguments = TypeCheck(arguments, scope);
 
-            var calleeType = typeCheckedCallable.Type;
+            var calleeType = typedCallable.Type;
             var calleeFunctionType = calleeType as NamedType;
 
             if (calleeFunctionType == null || calleeFunctionType.Name != "System.Func")
@@ -193,13 +190,13 @@ namespace Rook.Compiling.Syntax
             }
 
             var returnType = calleeType.InnerTypes.Last();
-            var argumentTypes = typeCheckedArguments.Select(x => x.Type).ToVector();
+            var argumentTypes = typedArguments.Select(x => x.Type).ToVector();
 
             Unify(position, calleeType, NamedType.Function(argumentTypes, returnType));
 
             var callType = unifier.Normalize(returnType);
 
-            return new Call(position, typeCheckedCallable, typeCheckedArguments, isOperator, callType);
+            return new Call(position, typedCallable, typedArguments, isOperator, callType);
         }
 
         public Expression TypeCheck(MethodInvocation methodInvocation, Scope scope)
@@ -209,9 +206,9 @@ namespace Rook.Compiling.Syntax
             var methodName = methodInvocation.MethodName;
             var arguments = methodInvocation.Arguments;
 
-            var typeCheckedInstance = TypeCheck(instance, scope);
+            var typedInstance = TypeCheck(instance, scope);
 
-            var instanceType = typeCheckedInstance.Type;
+            var instanceType = typedInstance.Type;
             var instanceNamedType = instanceType as NamedType;
 
             if (instanceNamedType == null)
@@ -238,13 +235,13 @@ namespace Rook.Compiling.Syntax
                         return extensionMethodCall;
                 }
 
-                var typeCheckedCallable = TypeCheck(Callable, typeMemberScope);
+                var typedCallable = TypeCheck(Callable, typeMemberScope);
                 
                 //END EXPERIMENT
 
-                var typeCheckedArguments = TypeCheck(arguments, scope);
+                var typedArguments = TypeCheck(arguments, scope);
 
-                var calleeType = typeCheckedCallable.Type;
+                var calleeType = typedCallable.Type;
                 var calleeFunctionType = calleeType as NamedType;
 
                 if (calleeFunctionType == null || calleeFunctionType.Name != "System.Func")
@@ -254,15 +251,15 @@ namespace Rook.Compiling.Syntax
                 }
 
                 var returnType = calleeType.InnerTypes.Last();
-                var argumentTypes = typeCheckedArguments.Select(x => x.Type).ToVector();
+                var argumentTypes = typedArguments.Select(x => x.Type).ToVector();
 
                 Unify(position, calleeType, NamedType.Function(argumentTypes, returnType));
 
                 var callType = unifier.Normalize(returnType);
                 //End of suspiciously duplicated code.
 
-                var typedMethodName = (Name)typeCheckedCallable;
-                return new MethodInvocation(position, typeCheckedInstance, typedMethodName, typeCheckedArguments, callType);
+                var typedMethodName = (Name)typedCallable;
+                return new MethodInvocation(position, typedInstance, typedMethodName, typedArguments, callType);
             }
             else
             {
@@ -271,8 +268,8 @@ namespace Rook.Compiling.Syntax
                 //  Once TypeRegistry lets you look up the members for a type like int*, this block should be removed.
                 if (scope.Contains(methodName.Identifier))
                 {
-                    var typeCheckedCallable = TypeCheck(methodName, scope);
-                    if (typeCheckedCallable != null)
+                    var typedCallable = TypeCheck(methodName, scope);
+                    if (typedCallable != null)
                     {
                         var extensionMethodCall = TypeCheck(new Call(position, methodName, new[] { instance }.Concat(arguments)), scope);
 
@@ -292,9 +289,7 @@ namespace Rook.Compiling.Syntax
             var position = @new.Position;
             var typeName = @new.TypeName;
 
-            var typeCheckedTypeName = TypeCheck(typeName, scope);
-
-            var typedTypeName = (Name)typeCheckedTypeName;
+            var typedTypeName = (Name)TypeCheck(typeName, scope);
 
             var constructorType = typedTypeName.Type as NamedType;
 
@@ -345,14 +340,14 @@ namespace Rook.Compiling.Syntax
             var position = vectorLiteral.Position;
             var items = vectorLiteral.Items;
 
-            var typeCheckedItems = TypeCheck(items, scope);
+            var typedItems = TypeCheck(items, scope);
 
-            var firstItemType = typeCheckedItems.First().Type;
+            var firstItemType = typedItems.First().Type;
 
-            foreach (var typedItem in typeCheckedItems)
+            foreach (var typedItem in typedItems)
                 Unify(typedItem.Position, firstItemType, typedItem.Type);
 
-            return new VectorLiteral(position, typeCheckedItems, NamedType.Vector(firstItemType));
+            return new VectorLiteral(position, typedItems, NamedType.Vector(firstItemType));
         }
 
         private Vector<Expression> TypeCheck(Vector<Expression> expressions, Scope scope)

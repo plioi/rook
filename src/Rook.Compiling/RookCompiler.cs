@@ -28,12 +28,12 @@ namespace Rook.Compiling
         public CompilerResult Build(CompilationUnit compilationUnit)
         {
             var typeChecker = new TypeChecker();
-            var typeCheckedCompilationUnit = typeChecker.TypeCheck(compilationUnit);
+            var typedCompilationUnit = typeChecker.TypeCheck(compilationUnit);
 
             if (typeChecker.HasErrors)
                 return new CompilerResult(Language.Rook, typeChecker.Errors);
 
-            string translatedCode = Translate(typeCheckedCompilationUnit);
+            string translatedCode = Translate(typedCompilationUnit);
             return csCompiler.Build(translatedCode);
         }
 

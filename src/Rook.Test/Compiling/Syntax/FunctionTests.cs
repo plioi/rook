@@ -119,12 +119,12 @@ namespace Rook.Compiling.Syntax
             var function = Parse(source);
 
             var typeChecker = new TypeChecker();
-            var typeCheckedFunction = typeChecker.TypeCheck(function, Scope(symbols));
+            var typedFunction = typeChecker.TypeCheck(function, Scope(symbols));
 
-            typeCheckedFunction.ShouldNotBeNull();
+            typedFunction.ShouldNotBeNull();
             typeChecker.HasErrors.ShouldBeFalse();
 
-            return typeCheckedFunction.Type;
+            return typedFunction.Type;
         }
 
         private Vector<CompilerError> ShouldFailTypeChecking(string source, params TypeMapping[] symbols)

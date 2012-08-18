@@ -58,10 +58,10 @@ namespace Rook.Compiling
         {
             var typeChecker = new TypeChecker();
             var compilationUnit = new CompilationUnit(new Text("").Position, classes.Values, functions.Values);
-            var typeCheckedCompilationUnit = typeChecker.TypeCheck(compilationUnit);
+            var typedCompilationUnit = typeChecker.TypeCheck(compilationUnit);
 
             var code = new CodeWriter();
-            WriteAction write = typeCheckedCompilationUnit.Visit(new CSharpTranslator());
+            WriteAction write = typedCompilationUnit.Visit(new CSharpTranslator());
             write(code);
             return code.ToString();
         }
@@ -69,11 +69,11 @@ namespace Rook.Compiling
         private InterpreterResult InterpretExpression(Expression expression, Position pos)
         {
             var typeChecker = new TypeChecker();
-            var typeCheckedExpression = typeChecker.TypeCheck(expression, ScopeForExpression(typeChecker));
+            var typedExpression = typeChecker.TypeCheck(expression, ScopeForExpression(typeChecker));
             if (typeChecker.HasErrors)
                 return new InterpreterResult(Language.Rook, typeChecker.Errors);
                 
-            var main = WrapAsMain(typeCheckedExpression, pos);
+            var main = WrapAsMain(typedExpression, pos);
             var compilerResult = compiler.Build(CompilationUnitWithNewFunction(main, pos));
 
             functions[main.Name.Identifier] = main;
