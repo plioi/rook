@@ -28,18 +28,16 @@ namespace Rook.Compiling.Syntax
 
         public CompilationUnit TypeCheck(CompilationUnit compilationUnit)
         {
-            var Position = compilationUnit.Position;
-            var Classes = compilationUnit.Classes;
-            var Functions = compilationUnit.Functions;
+            var position = compilationUnit.Position;
+            var classes = compilationUnit.Classes;
+            var functions = compilationUnit.Functions;
 
-            foreach (var @class in Classes)//TODO: Test coverage.
+            foreach (var @class in classes)//TODO: Test coverage.
                 typeRegistry.Register(@class);
 
-            var scope = new GlobalScope();
+            var scope = CreateGlobalScope(classes, functions);
 
-            TryIncludeUniqueBindings(scope, Classes, Functions);
-
-            return new CompilationUnit(Position, TypeCheckAll(Classes, scope), TypeCheckAll(Functions, scope));
+            return new CompilationUnit(position, TypeCheckAll(classes, scope), TypeCheckAll(functions, scope));
         }
 
         public Class TypeCheck(Class @class, Scope scope)
@@ -404,8 +402,10 @@ namespace Rook.Compiling.Syntax
             errorLog.Add(error);
         }
 
-        private void TryIncludeUniqueBindings(GlobalScope globals, Vector<Class> classes, Vector<Function> functions)
+        private GlobalScope CreateGlobalScope(Vector<Class> classes, Vector<Function> functions)
         {
+            var globals = new GlobalScope();
+
             foreach (var @class in classes)
                 if (!globals.TryIncludeUniqueBinding(@class))
                     LogError(CompilerError.DuplicateIdentifier(@class.Position, @class));
@@ -413,17 +413,19 @@ namespace Rook.Compiling.Syntax
             foreach (var function in functions)
                 if (!globals.TryIncludeUniqueBinding(function))
                     LogError(CompilerError.DuplicateIdentifier(function.Position, function));
+
+            return globals;
         }
 
         private LocalScope CreateLocalScope(Scope parent, Vector<Function> methods)
         {
-            var localScope = new LocalScope(parent);
+            var locals = new LocalScope(parent);
 
             foreach (var method in methods)
-                if (!localScope.TryIncludeUniqueBinding(method))
+                if (!locals.TryIncludeUniqueBinding(method))
                     LogError(CompilerError.DuplicateIdentifier(method.Position, method));
 
-            return localScope;
+            return locals;
         }
 
         private void TryIncludeUniqueBindings(LocalScope locals, Vector<Parameter> parameters)
