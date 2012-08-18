@@ -44,15 +44,13 @@ namespace Rook.Compiling.Syntax
 
         public Class TypeCheck(Class @class, Scope scope)
         {
-            var Position = @class.Position;
-            var Name = @class.Name;
-            var Methods = @class.Methods;
+            var position = @class.Position;
+            var name = @class.Name;
+            var methods = @class.Methods;
 
-            var localScope = new LocalScope(scope);
+            var localScope = CreateLocalScope(scope, methods);
 
-            TryIncludeUniqueBindings(localScope, Methods);
-
-            return new Class(Position, Name, TypeCheckAll(Methods, localScope));
+            return new Class(position, name, TypeCheckAll(methods, localScope));
         }
 
         public Function TypeCheck(Function function, Scope scope)
@@ -417,11 +415,15 @@ namespace Rook.Compiling.Syntax
                     LogError(CompilerError.DuplicateIdentifier(function.Position, function));
         }
 
-        private void TryIncludeUniqueBindings(LocalScope locals, Vector<Function> methods)
+        private LocalScope CreateLocalScope(Scope parent, Vector<Function> methods)
         {
+            var localScope = new LocalScope(parent);
+
             foreach (var method in methods)
-                if (!locals.TryIncludeUniqueBinding(method))
+                if (!localScope.TryIncludeUniqueBinding(method))
                     LogError(CompilerError.DuplicateIdentifier(method.Position, method));
+
+            return localScope;
         }
 
         private void TryIncludeUniqueBindings(LocalScope locals, Vector<Parameter> parameters)
