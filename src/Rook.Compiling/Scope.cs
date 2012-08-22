@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Rook.Compiling.Syntax;
+﻿using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
 
@@ -108,7 +107,7 @@ namespace Rook.Compiling
 
     public class LocalScope : Scope
     {
-        protected readonly Scope parent;
+        private readonly Scope parent;
         private readonly BindingDictionary locals;
 
         public LocalScope(Scope parent)

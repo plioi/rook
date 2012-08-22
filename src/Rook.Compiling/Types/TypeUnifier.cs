@@ -34,9 +34,7 @@ namespace Rook.Compiling.Types
                 if (b.Contains(variableA))
                 {
                     if (a != b)
-                    {
                         return Error(a, b);
-                    }
 
                     return success;
                 }
@@ -46,19 +44,13 @@ namespace Rook.Compiling.Types
             }
 
             if (b is TypeVariable)
-            {
                 return Unify(b, a);
-            }
 
             if (a.Name != b.Name)
-            {
                 return Error(a, b);
-            }
 
             if (a.InnerTypes.Count() != b.InnerTypes.Count())
-            {
                 return Error(a, b);
-            }
 
             return PairwiseUnify(a.InnerTypes, b.InnerTypes);
         }
