@@ -77,9 +77,9 @@ namespace Rook.Compiling.Types
             using (TypeVariable.TestFactory())
             {
                 var openEnumerable = new NamedType(typeof(IEnumerable<>));
-                openEnumerable.Name.ShouldEqual("System.Collections.Generic.IEnumerable`1");
+                openEnumerable.Name.ShouldEqual("System.Collections.Generic.IEnumerable");
                 openEnumerable.InnerTypes.Single().ShouldEqual(new TypeVariable(0));
-                openEnumerable.ToString().ShouldEqual("System.Collections.Generic.IEnumerable`1<0>");
+                openEnumerable.ToString().ShouldEqual("System.Collections.Generic.IEnumerable<0>");
             }
         }
 
@@ -106,9 +106,9 @@ namespace Rook.Compiling.Types
         public void CanBeConstructedFromClosedGenericClrTypes()
         {
             var closedEnumerable = new NamedType(typeof(IEnumerable<int>));
-            closedEnumerable.Name.ShouldEqual("System.Collections.Generic.IEnumerable`1");
+            closedEnumerable.Name.ShouldEqual("System.Collections.Generic.IEnumerable");
             closedEnumerable.InnerTypes.Single().ShouldEqual(new NamedType(typeof(int)));
-            closedEnumerable.ToString().ShouldEqual("System.Collections.Generic.IEnumerable`1<int>");
+            closedEnumerable.ToString().ShouldEqual("System.Collections.Generic.IEnumerable<int>");
         }
 
         [Fact]

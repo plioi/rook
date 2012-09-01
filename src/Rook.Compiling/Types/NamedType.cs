@@ -65,8 +65,9 @@ namespace Rook.Compiling.Types
             if (type.IsGenericParameter)
                 throw new ArgumentException("NamedType cannot be constructed for generic parameter: " + type);
 
-            this.name = type.Namespace + "." + type.Name;
             var genericArguments = type.GetGenericArguments();
+
+            this.name = type.Namespace + "." + type.Name.Replace("`" + genericArguments.Length, "");
 
             if (type.IsGenericTypeDefinition)
             {
