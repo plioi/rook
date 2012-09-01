@@ -49,10 +49,10 @@ namespace Rook.Compiling.Types
             if (a.Name != b.Name)
                 return Error(a, b);
 
-            if (a.InnerTypes.Count() != b.InnerTypes.Count())
+            if (a.GenericArguments.Count() != b.GenericArguments.Count())
                 return Error(a, b);
 
-            return PairwiseUnify(a.InnerTypes, b.InnerTypes);
+            return PairwiseUnify(a.GenericArguments, b.GenericArguments);
         }
 
         private IEnumerable<string> PairwiseUnify(IEnumerable<DataType> first, IEnumerable<DataType> second)
@@ -70,7 +70,7 @@ namespace Rook.Compiling.Types
 
         private DataType NormalizeNamedType(NamedType named)
         {
-            return new NamedType(named.Name, named.InnerTypes.Select(Normalize).ToArray());
+            return new NamedType(named.Name, named.GenericArguments.Select(Normalize).ToArray());
         }
 
         private DataType NormalizeVariable(TypeVariable variable)

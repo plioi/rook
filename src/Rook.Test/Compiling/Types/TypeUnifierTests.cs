@@ -173,9 +173,9 @@ namespace Rook.Compiling.Types
             errorsD.ShouldList("Type mismatch: expected D, found F.", "Type mismatch: expected E, found G.");
         }
 
-        private static NamedType Type(string name, params DataType[] innerTypes)
+        private static NamedType Type(string name, params DataType[] genericArguments)
         {
-            return new NamedType(name, innerTypes);
+            return new NamedType(name, genericArguments);
         }
     }
 }

@@ -21,9 +21,9 @@ namespace Rook.Compiling.Types
         }
 
         [Fact]
-        public void HasZeroInnerTypes()
+        public void HasZeroGenericArguments()
         {
-            Unknown.InnerTypes.ShouldBeEmpty();
+            Unknown.GenericArguments.ShouldBeEmpty();
         }
 
         [Fact]

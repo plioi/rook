@@ -16,13 +16,13 @@ namespace Rook.Compiling.Types
         }
 
         [Fact]
-        public void HasZeroOrMoreInnerTypes()
+        public void HasZeroOrMoreGenericArguments()
         {
-            Create("A").InnerTypes.ShouldBeEmpty();
+            Create("A").GenericArguments.ShouldBeEmpty();
 
-            Create("B", Create("A")).InnerTypes.ShouldList(Create("A"));
+            Create("B", Create("A")).GenericArguments.ShouldList(Create("A"));
 
-            Create("C", Create("B", Create("A"))).InnerTypes.ShouldList(Create("B", Create("A")));
+            Create("C", Create("B", Create("A"))).GenericArguments.ShouldList(Create("B", Create("A")));
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace Rook.Compiling.Types
         }
 
         [Fact]
-        public void IsGenericWhenInnerTypesExist()
+        public void IsGenericWhenGenericArgumentsExist()
         {
             Create("A").IsGeneric.ShouldBeFalse();
 
@@ -77,7 +77,7 @@ namespace Rook.Compiling.Types
         {
             var intType = new NamedType(typeof(int));
             intType.Name.ShouldEqual("System.Int32");
-            intType.InnerTypes.ShouldBeEmpty();
+            intType.GenericArguments.ShouldBeEmpty();
             intType.ToString().ShouldEqual("int");
         }
 
@@ -88,7 +88,7 @@ namespace Rook.Compiling.Types
             {
                 var openEnumerable = new NamedType(typeof(IEnumerable<>));
                 openEnumerable.Name.ShouldEqual("System.Collections.Generic.IEnumerable");
-                openEnumerable.InnerTypes.Single().ShouldEqual(new TypeVariable(0));
+                openEnumerable.GenericArguments.Single().ShouldEqual(new TypeVariable(0));
                 openEnumerable.ToString().ShouldEqual("System.Collections.Generic.IEnumerable<0>");
             }
         }
@@ -101,8 +101,8 @@ namespace Rook.Compiling.Types
                 var enumerableT = new NamedType(typeof(IEnumerable<>));
                 var enumerableS = new NamedType(typeof(IEnumerable<>));
 
-                var T = enumerableT.InnerTypes.Single();
-                var S = enumerableS.InnerTypes.Single();
+                var T = enumerableT.GenericArguments.Single();
+                var S = enumerableS.GenericArguments.Single();
 
                 enumerableT.ShouldNotEqual(enumerableS);
                 T.ShouldNotEqual(S);
@@ -117,7 +117,7 @@ namespace Rook.Compiling.Types
         {
             var closedEnumerable = new NamedType(typeof(IEnumerable<int>));
             closedEnumerable.Name.ShouldEqual("System.Collections.Generic.IEnumerable");
-            closedEnumerable.InnerTypes.Single().ShouldEqual(new NamedType(typeof(int)));
+            closedEnumerable.GenericArguments.Single().ShouldEqual(new NamedType(typeof(int)));
             closedEnumerable.ToString().ShouldEqual("System.Collections.Generic.IEnumerable<int>");
         }
 
@@ -179,9 +179,9 @@ namespace Rook.Compiling.Types
             Create("B", b, a, b).ReplaceTypeVariables(replaceBoth).ShouldEqual(Create("B", a, NamedType.Integer, a));
         }
 
-        private static DataType Create(string name, params DataType[] innerTypes)
+        private static DataType Create(string name, params DataType[] genericArguments)
         {
-            return new NamedType(name, innerTypes);
+            return new NamedType(name, genericArguments);
         }
     }
 }

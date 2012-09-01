@@ -189,7 +189,7 @@ namespace Rook.Compiling.Syntax
                 return call;
             }
 
-            var returnType = calleeType.InnerTypes.Last();
+            var returnType = calleeType.GenericArguments.Last();
             var argumentTypes = typedArguments.Select(x => x.Type).ToVector();
 
             Unify(position, calleeType, NamedType.Function(argumentTypes, returnType));
@@ -250,7 +250,7 @@ namespace Rook.Compiling.Syntax
                     return methodInvocation;
                 }
 
-                var returnType = calleeType.InnerTypes.Last();
+                var returnType = calleeType.GenericArguments.Last();
                 var argumentTypes = typedArguments.Select(x => x.Type).ToVector();
 
                 Unify(position, calleeType, NamedType.Function(argumentTypes, returnType));
@@ -299,7 +299,7 @@ namespace Rook.Compiling.Syntax
                 return @new;
             }
 
-            var constructedType = constructorType.InnerTypes.Last();
+            var constructedType = constructorType.GenericArguments.Last();
 
             return new New(position, typedTypeName, constructedType);
         }

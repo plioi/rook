@@ -8,7 +8,7 @@ namespace Rook.Compiling.Types
     {
         public abstract string Name { get; }
 
-        public abstract IEnumerable<DataType> InnerTypes { get; }
+        public abstract IEnumerable<DataType> GenericArguments { get; }
 
         public abstract bool IsGeneric { get; }
 
@@ -20,9 +20,9 @@ namespace Rook.Compiling.Types
 
         protected override object[] ImmutableFields()
         {
-            //TODO: Ideally, we'd return new object[] { Name, InnerTypes },
+            //TODO: Ideally, we'd return new object[] { Name, GenericArguments },
             //      but the IEnumerable<T> being compared would probably not
-            //      implement value equality.  Change InnerTypes to be a 
+            //      implement value equality.  Change GenericArguments to be a 
             //      collection type with value equality semantics.
             return new object[] {ToString()};
         }

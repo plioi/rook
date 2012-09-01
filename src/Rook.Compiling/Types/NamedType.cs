@@ -50,13 +50,13 @@ namespace Rook.Compiling.Types
         }
 
         private readonly string name;
-        private readonly DataType[] innerTypes;
+        private readonly DataType[] genericArguments;
         private readonly Lazy<string> fullName;
 
-        public NamedType(string name, params DataType[] innerTypes)
+        public NamedType(string name, params DataType[] genericArguments)
         {
             this.name = name;
-            this.innerTypes = innerTypes;
+            this.genericArguments = genericArguments;
             fullName = new Lazy<string>(GetFullName);
         }
 
@@ -69,7 +69,7 @@ namespace Rook.Compiling.Types
 
             name = type.Namespace + "." + type.Name.Replace("`" + genericArguments.Length, "");
 
-            innerTypes = type.IsGenericTypeDefinition
+            this.genericArguments = type.IsGenericTypeDefinition
                 ? genericArguments.Select(x => (DataType)TypeVariable.CreateGeneric()).ToArray()
                 : genericArguments.Select(x => (DataType)new NamedType(x)).ToArray();
 
@@ -81,29 +81,29 @@ namespace Rook.Compiling.Types
             get { return name; }
         }
 
-        public override IEnumerable<DataType> InnerTypes
+        public override IEnumerable<DataType> GenericArguments
         {
-            get { return innerTypes; }
+            get { return genericArguments; }
         }
 
         public override bool IsGeneric
         {
-            get { return InnerTypes.Any(); }
+            get { return GenericArguments.Any(); }
         }
 
         public override bool Contains(TypeVariable typeVariable)
         {
-            return innerTypes.Any(innerType => innerType.Contains(typeVariable));
+            return genericArguments.Any(genericArgument => genericArgument.Contains(typeVariable));
         }
 
         public override IEnumerable<TypeVariable> FindTypeVariables()
         {
-            return innerTypes.SelectMany(t => t.FindTypeVariables()).Distinct();
+            return genericArguments.SelectMany(t => t.FindTypeVariables()).Distinct();
         }
 
         public override DataType ReplaceTypeVariables(IDictionary<TypeVariable, DataType> substitutions)
         {
-            return new NamedType(name, innerTypes.Select(t => t.ReplaceTypeVariables(substitutions)).ToArray());
+            return new NamedType(name, genericArguments.Select(t => t.ReplaceTypeVariables(substitutions)).ToArray());
         }
 
         public override string ToString()
@@ -113,8 +113,8 @@ namespace Rook.Compiling.Types
 
         private string GetFullName()
         {
-            if (innerTypes.Any())
-                return System.String.Format("{0}<{1}>", CleanedName, System.String.Join(", ", (IEnumerable<DataType>)innerTypes));
+            if (genericArguments.Any())
+                return System.String.Format("{0}<{1}>", CleanedName, System.String.Join(", ", (IEnumerable<DataType>)genericArguments));
             
             return CleanedName;
         }

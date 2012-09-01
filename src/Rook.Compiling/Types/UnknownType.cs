@@ -14,7 +14,7 @@ namespace Rook.Compiling.Types
             get { return "?"; }
         }
 
-        public override IEnumerable<DataType> InnerTypes
+        public override IEnumerable<DataType> GenericArguments
         {
             get { return Enumerable.Empty<DataType>(); }
         }
