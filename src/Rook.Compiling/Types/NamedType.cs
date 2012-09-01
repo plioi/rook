@@ -50,7 +50,7 @@ namespace Rook.Compiling.Types
         }
 
         private readonly string name;
-        private readonly IEnumerable<DataType> innerTypes;
+        private readonly DataType[] innerTypes;
         private readonly Lazy<string> fullName;
 
         public NamedType(string name, params DataType[] innerTypes)
@@ -67,16 +67,11 @@ namespace Rook.Compiling.Types
 
             var genericArguments = type.GetGenericArguments();
 
-            this.name = type.Namespace + "." + type.Name.Replace("`" + genericArguments.Length, "");
+            name = type.Namespace + "." + type.Name.Replace("`" + genericArguments.Length, "");
 
-            if (type.IsGenericTypeDefinition)
-            {
-                this.innerTypes = genericArguments.Select(x => TypeVariable.CreateGeneric()).ToArray();
-            }
-            else
-            {
-                this.innerTypes = genericArguments.Select(x => new NamedType(x)).ToArray();
-            }
+            innerTypes = type.IsGenericTypeDefinition
+                ? genericArguments.Select(x => (DataType)TypeVariable.CreateGeneric()).ToArray()
+                : genericArguments.Select(x => (DataType)new NamedType(x)).ToArray();
 
             fullName = new Lazy<string>(GetFullName);
         }
@@ -119,17 +114,20 @@ namespace Rook.Compiling.Types
         private string GetFullName()
         {
             if (innerTypes.Any())
-                return System.String.Format("{0}<{1}>", CleanedName(name), System.String.Join(", ", innerTypes));
+                return System.String.Format("{0}<{1}>", CleanedName, System.String.Join(", ", (IEnumerable<DataType>)innerTypes));
             
-            return CleanedName(name);
+            return CleanedName;
         }
 
-        private static string CleanedName(string name)
+        private string CleanedName
         {
-            return name
-                .Replace("System.Boolean", "bool")
-                .Replace("System.Int32", "int")
-                .Replace("System.String", "string");
+            get
+            {
+                return name
+                    .Replace("System.Boolean", "bool")
+                    .Replace("System.Int32", "int")
+                    .Replace("System.String", "string");
+            }
         }
     }
 }
