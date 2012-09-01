@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Should;
 using Xunit;
 
@@ -58,6 +59,39 @@ namespace Rook.Compiling.Types
             NamedType.Function(new[] { NamedType.Boolean, NamedType.Enumerable(NamedType.Boolean) }, NamedType.Integer)
                 .ShouldEqual(Create("System.Func", Create("bool"), Create("System.Collections.Generic.IEnumerable", Create("bool")), Create("int")));
             NamedType.Constructor(Create("A")).ShouldEqual(Create("Rook.Core.Constructor", Create("A")));
+        }
+
+        [Fact]
+        public void CanBeConstructedFromNongenericClrTypes()
+        {
+            var intType = new NamedType(typeof(int));
+            intType.Name.ShouldEqual("System.Int32");
+            intType.InnerTypes.ShouldBeEmpty();
+            intType.ToString().ShouldEqual("int");
+        }
+
+        [Fact]
+        public void CanBeConstructedFromOpenGenericClrTypes()
+        {
+            using (TypeVariable.TestFactory())
+            {
+                var openEnumerable = new NamedType(typeof(IEnumerable<>));
+                openEnumerable.Name.ShouldEqual("System.Collections.Generic.IEnumerable`1");
+                openEnumerable.InnerTypes.Single().ShouldEqual(new TypeVariable(0));
+                openEnumerable.ToString().ShouldEqual("System.Collections.Generic.IEnumerable`1<0>");
+            }
+        }
+
+        [Fact]
+        public void CanBeConstructedFromClosedGenericClrTypes()
+        {
+            using (TypeVariable.TestFactory())
+            {
+                var closedEnumerable = new NamedType(typeof(IEnumerable<int>));
+                closedEnumerable.Name.ShouldEqual("System.Collections.Generic.IEnumerable`1");
+                closedEnumerable.InnerTypes.Single().ShouldEqual(new NamedType(typeof(int)));
+                closedEnumerable.ToString().ShouldEqual("System.Collections.Generic.IEnumerable`1<int>");
+            }
         }
 
         [Fact]

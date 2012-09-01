@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Void = Rook.Core.Void;
 
 namespace Rook.Compiling.Types
 {
@@ -10,22 +11,22 @@ namespace Rook.Compiling.Types
 
         public static NamedType Void
         {
-            get { return new NamedType("Rook.Core.Void"); }
+            get { return new NamedType(typeof(Void)); }
         }
 
         public static NamedType Boolean
         {
-            get { return new NamedType("System.Boolean"); }
+            get { return new NamedType(typeof(bool)); }
         }
 
         public static NamedType String
         {
-            get { return new NamedType("System.String"); }
+            get { return new NamedType(typeof(string)); }
         }
 
         public static NamedType Integer
         {
-            get { return new NamedType("System.Int32"); }
+            get { return new NamedType(typeof(int)); }
         }
 
         public static NamedType Enumerable(DataType itemType)
@@ -75,6 +76,23 @@ namespace Rook.Compiling.Types
         {
             this.name = name;
             this.innerTypes = innerTypes;
+            fullName = new Lazy<string>(GetFullName);
+        }
+
+        public NamedType(Type type)
+        {
+            this.name = type.Namespace + "." + type.Name;
+            var genericArguments = type.GetGenericArguments();
+
+            if (type.IsGenericTypeDefinition)
+            {
+                this.innerTypes = genericArguments.Select(x => TypeVariable.CreateGeneric()).ToArray();
+            }
+            else
+            {
+                this.innerTypes = genericArguments.Select(x => new NamedType(x)).ToArray();
+            }
+
             fullName = new Lazy<string>(GetFullName);
         }
 
