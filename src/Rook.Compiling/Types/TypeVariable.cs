@@ -26,7 +26,7 @@ namespace Rook.Compiling.Types
             get { return name.ToString(); }
         }
 
-        public bool IsGeneric
+        public override bool IsGeneric
         {
             get { return isGeneric; }
         }

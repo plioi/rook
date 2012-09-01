@@ -10,6 +10,8 @@ namespace Rook.Compiling.Types
 
         public abstract IEnumerable<DataType> InnerTypes { get; }
 
+        public abstract bool IsGeneric { get; }
+
         public abstract bool Contains(TypeVariable typeVariable);
 
         public abstract IEnumerable<TypeVariable> FindTypeVariables();

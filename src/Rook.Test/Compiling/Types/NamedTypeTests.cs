@@ -34,6 +34,16 @@ namespace Rook.Compiling.Types
         }
 
         [Fact]
+        public void IsGenericWhenInnerTypesExist()
+        {
+            Create("A").IsGeneric.ShouldBeFalse();
+
+            Create("B", Create("A")).IsGeneric.ShouldBeTrue();
+
+            Create("C", Create("B", Create("A"))).IsGeneric.ShouldBeTrue();
+        }
+
+        [Fact]
         public void HasValueEqualitySemantics()
         {
             var type = Create("B", Create("A"));

@@ -19,6 +19,11 @@ namespace Rook.Compiling.Types
             get { return Enumerable.Empty<DataType>(); }
         }
 
+        public override bool IsGeneric
+        {
+            get { return false; }
+        }
+
         public override bool Contains(TypeVariable typeVariable)
         {
             return false;

@@ -91,6 +91,11 @@ namespace Rook.Compiling.Types
             get { return innerTypes; }
         }
 
+        public override bool IsGeneric
+        {
+            get { return InnerTypes.Any(); }
+        }
+
         public override bool Contains(TypeVariable typeVariable)
         {
             return innerTypes.Any(innerType => innerType.Contains(typeVariable));
