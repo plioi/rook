@@ -84,15 +84,31 @@ namespace Rook.Compiling.Types
         }
 
         [Fact]
-        public void CanBeConstructedFromClosedGenericClrTypes()
+        public void UsesFreshTypeVariablesUponEachConstructionFromAnOpenGenericClrType()
         {
             using (TypeVariable.TestFactory())
             {
-                var closedEnumerable = new NamedType(typeof(IEnumerable<int>));
-                closedEnumerable.Name.ShouldEqual("System.Collections.Generic.IEnumerable`1");
-                closedEnumerable.InnerTypes.Single().ShouldEqual(new NamedType(typeof(int)));
-                closedEnumerable.ToString().ShouldEqual("System.Collections.Generic.IEnumerable`1<int>");
+                var enumerableT = new NamedType(typeof(IEnumerable<>));
+                var enumerableS = new NamedType(typeof(IEnumerable<>));
+
+                var T = enumerableT.InnerTypes.Single();
+                var S = enumerableS.InnerTypes.Single();
+
+                enumerableT.ShouldNotEqual(enumerableS);
+                T.ShouldNotEqual(S);
+
+                T.ShouldEqual(new TypeVariable(0));
+                S.ShouldEqual(new TypeVariable(1));
             }
+        }
+
+        [Fact]
+        public void CanBeConstructedFromClosedGenericClrTypes()
+        {
+            var closedEnumerable = new NamedType(typeof(IEnumerable<int>));
+            closedEnumerable.Name.ShouldEqual("System.Collections.Generic.IEnumerable`1");
+            closedEnumerable.InnerTypes.Single().ShouldEqual(new NamedType(typeof(int)));
+            closedEnumerable.ToString().ShouldEqual("System.Collections.Generic.IEnumerable`1<int>");
         }
 
         [Fact]
@@ -127,7 +143,7 @@ namespace Rook.Compiling.Types
         }
 
         [Fact]
-        public void CanPerformTypeVariableSubstitutios()
+        public void CanPerformTypeVariableSubstitutions()
         {
             var a = new TypeVariable(0);
             var b = new TypeVariable(1);
