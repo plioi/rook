@@ -7,27 +7,12 @@ namespace Rook.Compiling.Types
 {
     public class NamedType : DataType
     {
+        public static readonly NamedType Void = new NamedType(typeof(Void));
+        public static readonly NamedType Boolean = new NamedType(typeof(bool));
+        public static readonly NamedType String = new NamedType(typeof(string));
+        public static readonly NamedType Integer = new NamedType(typeof(int));
+
         #region Factory Methods
-
-        public static NamedType Void
-        {
-            get { return new NamedType(typeof(Void)); }
-        }
-
-        public static NamedType Boolean
-        {
-            get { return new NamedType(typeof(bool)); }
-        }
-
-        public static NamedType String
-        {
-            get { return new NamedType(typeof(string)); }
-        }
-
-        public static NamedType Integer
-        {
-            get { return new NamedType(typeof(int)); }
-        }
 
         public static NamedType Enumerable(DataType itemType)
         {
