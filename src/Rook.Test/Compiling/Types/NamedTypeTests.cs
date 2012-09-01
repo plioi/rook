@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Should;
 using Xunit;
@@ -92,6 +93,14 @@ namespace Rook.Compiling.Types
                 closedEnumerable.InnerTypes.Single().ShouldEqual(new NamedType(typeof(int)));
                 closedEnumerable.ToString().ShouldEqual("System.Collections.Generic.IEnumerable`1<int>");
             }
+        }
+
+        [Fact]
+        public void CannotBeConstructedFromGenericParameterTypeObjects()
+        {
+            var T = typeof(IEnumerable<>).GetGenericArguments().Single();
+            Action nameTheUnnamable = () => new NamedType(T);
+            nameTheUnnamable.ShouldThrow<ArgumentException>("NamedType cannot be constructed for generic parameter: T");
         }
 
         [Fact]

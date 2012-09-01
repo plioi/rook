@@ -12,8 +12,6 @@ namespace Rook.Compiling.Types
         public static readonly NamedType String = new NamedType(typeof(string));
         public static readonly NamedType Integer = new NamedType(typeof(int));
 
-        #region Factory Methods
-
         public static NamedType Enumerable(DataType itemType)
         {
             return new NamedType("System.Collections.Generic.IEnumerable", itemType);
@@ -51,8 +49,6 @@ namespace Rook.Compiling.Types
             yield return returnType;
         }
 
-        #endregion
-
         private readonly string name;
         private readonly IEnumerable<DataType> innerTypes;
         private readonly Lazy<string> fullName;
@@ -66,6 +62,9 @@ namespace Rook.Compiling.Types
 
         public NamedType(Type type)
         {
+            if (type.IsGenericParameter)
+                throw new ArgumentException("NamedType cannot be constructed for generic parameter: " + type);
+
             this.name = type.Namespace + "." + type.Name;
             var genericArguments = type.GetGenericArguments();
 
