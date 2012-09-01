@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.CSharp;
 using Parsley;
 using Rook.Compiling.Syntax;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling
 {

@@ -106,7 +106,6 @@
     <Compile Include="Syntax\Parameter.cs" />
     <Compile Include="Syntax\CompilationUnit.cs" />
     <Compile Include="Syntax\SyntaxTree.cs" />
-    <Compile Include="Syntax\TypeCheckingExtensions.cs" />
     <Compile Include="Syntax\VariableDeclaration.cs" />
     <Compile Include="Syntax\Visitor.cs" />
     <Compile Include="TypeRegistry.cs" />

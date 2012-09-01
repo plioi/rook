@@ -43,6 +43,7 @@
     <Compile Include="Collections\ArrayVector.cs" />
     <Compile Include="Collections\SliceVector.cs" />
     <Compile Include="Collections\Vector.cs" />
+    <Compile Include="Collections\VectorExtensions.cs" />
     <Compile Include="Constructor.cs" />
     <Compile Include="DisposableAction.cs" />
     <Compile Include="Nullable.cs" />

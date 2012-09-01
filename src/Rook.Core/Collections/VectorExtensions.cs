@@ -1,14 +1,15 @@
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rook.Core.Collections;
+using System.Text;
 
-namespace Rook.Compiling.Syntax
+namespace Rook.Core.Collections
 {
-    public static class TypeCheckingExtensions
+    public static class VectorExtensions
     {
         public static Vector<T> ToVector<T>(this IEnumerable<T> items)
         {
             return new ArrayVector<T>(items.ToArray());
-        }
+        } 
     }
 }
