@@ -36,7 +36,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void HasATypeCorrespondingWithTheDefaultConstructor()
         {
-            var constructorReturningFoo = NamedType.Constructor(new NamedType("Foo"));
+            var constructorReturningFoo = NamedType.Constructor.MakeGenericType(new NamedType("Foo"));
 
             Type("class Foo { }").ShouldEqual(constructorReturningFoo);
         }
@@ -44,7 +44,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void CanCreateFullyTypedInstance()
         {
-            var constructorReturningFoo = NamedType.Constructor(new NamedType("Foo"));
+            var constructorReturningFoo = NamedType.Constructor.MakeGenericType(new NamedType("Foo"));
 
             var @class = Parse(
                 @"class Foo
@@ -126,7 +126,7 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void FailsTypeCheckingWhenMethodNamesShadowSurroundingScope()
         {
-            var pointConstructor = NamedType.Constructor(new NamedType("Point"));
+            var pointConstructor = NamedType.Constructor.MakeGenericType(new NamedType("Point"));
 
             ShouldFailTypeChecking("class Foo { int A() 0; int Point() 2; }", Point => pointConstructor)
                 .WithError("Duplicate identifier: Point", 1, 28);

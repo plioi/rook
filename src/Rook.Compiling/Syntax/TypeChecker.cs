@@ -332,7 +332,7 @@ namespace Rook.Compiling.Syntax
         {
             var Position = nullLiteral.Position;
 
-            return new Null(Position, NamedType.Nullable(TypeVariable.CreateGeneric()));
+            return new Null(Position, NamedType.Nullable.MakeGenericType(TypeVariable.CreateGeneric()));
         }
 
         public Expression TypeCheck(VectorLiteral vectorLiteral, Scope scope)
@@ -347,7 +347,7 @@ namespace Rook.Compiling.Syntax
             foreach (var typedItem in typedItems)
                 Unify(typedItem.Position, firstItemType, typedItem.Type);
 
-            return new VectorLiteral(position, typedItems, NamedType.Vector(firstItemType));
+            return new VectorLiteral(position, typedItems, NamedType.Vector.MakeGenericType(firstItemType));
         }
 
         private Vector<Expression> TypeCheck(Vector<Expression> expressions, Scope scope)

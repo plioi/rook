@@ -274,12 +274,12 @@ namespace Rook.Compiling.Syntax
         private static NamedType ApplyTypeModifier(NamedType targetType, Token modifier)
         {
             if (modifier.Literal == "*")
-                return NamedType.Enumerable(targetType);
+                return NamedType.Enumerable.MakeGenericType(targetType);
 
             if (modifier.Literal == "[]")
-                return NamedType.Vector(targetType);
+                return NamedType.Vector.MakeGenericType(targetType);
 
-            return NamedType.Nullable(targetType);
+            return NamedType.Nullable.MakeGenericType(targetType);
         }
     }
 

@@ -44,8 +44,8 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void TypesAllClassesAndFunctions()
         {
-            var fooConstructorType = NamedType.Constructor(new NamedType("Foo"));
-            var barConstructorType = NamedType.Constructor(new NamedType("Bar"));
+            var fooConstructorType = NamedType.Constructor.MakeGenericType(new NamedType("Foo"));
+            var barConstructorType = NamedType.Constructor.MakeGenericType(new NamedType("Bar"));
 
             var compilationUnit = Parse(
                 @"class Foo { }

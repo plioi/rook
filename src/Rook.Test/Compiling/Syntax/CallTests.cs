@@ -130,8 +130,8 @@ namespace Rook.Compiling.Syntax
         {
             var x = new TypeVariable(123456);
 
-            Type("func([1, 2, 3])", func => Function(new[] { Vector(x) }, x)).ShouldEqual(Integer);
-            Type("func([true, false])", func => Function(new[] { Vector(x) }, x)).ShouldEqual(Boolean);
+            Type("func([1, 2, 3])", func => Function(new[] { Vector.MakeGenericType(x) }, x)).ShouldEqual(Integer);
+            Type("func([true, false])", func => Function(new[] { Vector.MakeGenericType(x) }, x)).ShouldEqual(Boolean);
         }
 
         [Fact]
@@ -189,11 +189,6 @@ namespace Rook.Compiling.Syntax
         private static DataType Function(DataType returnType)
         {
             return Function(new DataType[] { }, returnType);
-        }
-
-        private static NamedType Vector(DataType itemType)
-        {
-            return NamedType.Vector(itemType);
         }
     }
 }

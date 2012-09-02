@@ -35,7 +35,7 @@ namespace Rook.Compiling.Syntax
 
         private static NamedType ConstructorFunctionType(Name name)
         {
-            return NamedType.Constructor(new NamedType(name.Identifier));
+            return NamedType.Constructor.MakeGenericType(new NamedType(name.Identifier));
         }
 
         string Binding.Identifier

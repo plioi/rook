@@ -63,13 +63,13 @@ namespace Rook.Compiling.Types
             NamedType.Integer.ShouldEqual(Create("int"));
             NamedType.Boolean.ShouldEqual(Create("bool"));
             NamedType.String.ShouldEqual(Create("string"));
-            NamedType.Enumerable(NamedType.Integer).ShouldEqual(Create("System.Collections.Generic.IEnumerable", Create("int")));
-            NamedType.Vector(NamedType.Integer).ShouldEqual(Create("Rook.Core.Collections.Vector", Create("int")));
-            NamedType.Nullable(NamedType.Integer).ShouldEqual(Create("Rook.Core.Nullable", Create("int")));
+            NamedType.Enumerable.MakeGenericType(NamedType.Integer).ShouldEqual(Create("System.Collections.Generic.IEnumerable", Create("int")));
+            NamedType.Vector.MakeGenericType(NamedType.Integer).ShouldEqual(Create("Rook.Core.Collections.Vector", Create("int")));
+            NamedType.Nullable.MakeGenericType(NamedType.Integer).ShouldEqual(Create("Rook.Core.Nullable", Create("int")));
             NamedType.Function(NamedType.Integer).ShouldEqual(Create("System.Func", Create("int")));
-            NamedType.Function(new[] { NamedType.Boolean, NamedType.Enumerable(NamedType.Boolean) }, NamedType.Integer)
+            NamedType.Function(new[] { NamedType.Boolean, NamedType.Enumerable.MakeGenericType(NamedType.Boolean) }, NamedType.Integer)
                 .ShouldEqual(Create("System.Func", Create("bool"), Create("System.Collections.Generic.IEnumerable", Create("bool")), Create("int")));
-            NamedType.Constructor(Create("A")).ShouldEqual(Create("Rook.Core.Constructor", Create("A")));
+            NamedType.Constructor.MakeGenericType(Create("A")).ShouldEqual(Create("Rook.Core.Constructor", Create("A")));
         }
 
         [Fact]

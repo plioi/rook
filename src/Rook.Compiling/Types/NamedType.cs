@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rook.Core;
+using Rook.Core.Collections;
 using Void = Rook.Core.Void;
 
 namespace Rook.Compiling.Types
@@ -11,21 +13,10 @@ namespace Rook.Compiling.Types
         public static readonly NamedType Boolean = new NamedType(typeof(bool));
         public static readonly NamedType String = new NamedType(typeof(string));
         public static readonly NamedType Integer = new NamedType(typeof(int));
-
-        public static NamedType Enumerable(DataType itemType)
-        {
-            return new NamedType("System.Collections.Generic.IEnumerable", itemType);
-        }
-
-        public static NamedType Vector(DataType itemType)
-        {
-            return new NamedType("Rook.Core.Collections.Vector", itemType);
-        }
-
-        public static NamedType Nullable(DataType itemType)
-        {
-            return new NamedType("Rook.Core.Nullable", itemType);
-        }
+        public static readonly NamedType Enumerable = new NamedType(typeof(IEnumerable<>));
+        public static readonly NamedType Vector = new NamedType(typeof(Vector<>));
+        public static readonly NamedType Nullable = new NamedType(typeof(Core.Nullable<>));
+        public static readonly NamedType Constructor = new NamedType(typeof(Constructor<>));
 
         public static NamedType Function(IEnumerable<DataType> parameterTypes, DataType returnType)
         {
@@ -35,11 +26,6 @@ namespace Rook.Compiling.Types
         public static NamedType Function(DataType returnType)
         {
             return Function(new DataType[] {}, returnType);
-        }
-
-        public static NamedType Constructor(DataType constructedType)
-        {
-            return new NamedType("Rook.Core.Constructor", constructedType);
         }
 
         private static IEnumerable<DataType> Enumerate(IEnumerable<DataType> parameterTypes, DataType returnType)

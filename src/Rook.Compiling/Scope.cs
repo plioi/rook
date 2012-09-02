@@ -45,21 +45,26 @@ namespace Rook.Compiling
             var T = TypeVariable.CreateGeneric(); //TypeVariable 0
             var S = TypeVariable.CreateGeneric(); //TypeVariable 1
 
-            globals["??"] = NamedType.Function(new DataType[] { NamedType.Nullable(T), T }, T);
+            var enumerableT = NamedType.Enumerable.MakeGenericType(T);
+            var nullableT = NamedType.Nullable.MakeGenericType(T);
+            var vectorT = NamedType.Vector.MakeGenericType(T);
+            var enumerableS = NamedType.Enumerable.MakeGenericType(S);
+
+            globals["??"] = NamedType.Function(new DataType[] { nullableT, T }, T);
             globals["Print"] = NamedType.Function(new[] { T }, NamedType.Void);
-            globals["Nullable"] = NamedType.Function(new[] { T }, NamedType.Nullable(T));
-            globals["First"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, T);
-            globals["Take"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
-            globals["Skip"] = NamedType.Function(new[] { NamedType.Enumerable(T), @int }, NamedType.Enumerable(T));
-            globals["Any"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @bool);
-            globals["Count"] = NamedType.Function(new[] { NamedType.Enumerable(T) }, @int);
-            globals["Select"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, S) }, NamedType.Enumerable(S));
-            globals["Where"] = NamedType.Function(new[] { NamedType.Enumerable(T), NamedType.Function(new[] { T }, @bool) }, NamedType.Enumerable(T));
-            globals["Each"] = NamedType.Function(new[] { NamedType.Vector(T) }, NamedType.Enumerable(T));
-            globals["Index"] = NamedType.Function(new[] { NamedType.Vector(T), @int }, T);
-            globals["Slice"] = NamedType.Function(new[] { NamedType.Vector(T), @int, @int }, NamedType.Vector(T));
-            globals["Append"] = NamedType.Function(new DataType[] { NamedType.Vector(T), T }, NamedType.Vector(T));
-            globals["With"] = NamedType.Function(new[] { NamedType.Vector(T), @int, T }, NamedType.Vector(T));
+            globals["Nullable"] = NamedType.Function(new[] { T }, nullableT);
+            globals["First"] = NamedType.Function(new[] { enumerableT }, T);
+            globals["Take"] = NamedType.Function(new[] { enumerableT, @int }, enumerableT);
+            globals["Skip"] = NamedType.Function(new[] { enumerableT, @int }, enumerableT);
+            globals["Any"] = NamedType.Function(new[] { enumerableT }, @bool);
+            globals["Count"] = NamedType.Function(new[] { enumerableT }, @int);
+            globals["Select"] = NamedType.Function(new[] { enumerableT, NamedType.Function(new[] { T }, S) }, enumerableS);
+            globals["Where"] = NamedType.Function(new[] { enumerableT, NamedType.Function(new[] { T }, @bool) }, enumerableT);
+            globals["Each"] = NamedType.Function(new[] { vectorT }, enumerableT);
+            globals["Index"] = NamedType.Function(new[] { vectorT, @int }, T);
+            globals["Slice"] = NamedType.Function(new[] { vectorT, @int, @int }, vectorT);
+            globals["Append"] = NamedType.Function(new DataType[] { vectorT, T }, vectorT);
+            globals["With"] = NamedType.Function(new[] { vectorT, @int, T }, vectorT);
         }
 
         public bool TryIncludeUniqueBinding(Binding binding)

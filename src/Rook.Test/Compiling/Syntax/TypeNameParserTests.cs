@@ -10,6 +10,10 @@ namespace Rook.Compiling.Syntax
         private static readonly NamedType Boolean = NamedType.Boolean;
         private static readonly NamedType String = NamedType.String;
         private static readonly NamedType Void = NamedType.Void;
+        private static readonly NamedType Enumerable = NamedType.Enumerable;
+        private static readonly NamedType Vector = NamedType.Vector;
+        private static readonly NamedType Nullable = NamedType.Nullable;
+        private static readonly NamedType Constructor = NamedType.Constructor;
         private static readonly NamedType Foo = new NamedType("Foo");
         
         [Fact]
@@ -34,38 +38,38 @@ namespace Rook.Compiling.Syntax
         [Fact]
         public void ParsesNullableTypeNames()
         {
-            Parses("int?").WithValue(NamedType.Nullable(Integer));
-            Parses("bool?").WithValue(NamedType.Nullable(Boolean));
-            Parses("Foo?").WithValue(NamedType.Nullable(Foo));
+            Parses("int?").WithValue(Nullable.MakeGenericType(Integer));
+            Parses("bool?").WithValue(Nullable.MakeGenericType(Boolean));
+            Parses("Foo?").WithValue(Nullable.MakeGenericType(Foo));
         }
 
         [Fact]
         public void ParsesEnumerableTypeNames()
         {
-            Parses("int*").WithValue(NamedType.Enumerable(Integer));
-            Parses("bool*").WithValue(NamedType.Enumerable(Boolean));
-            Parses("Foo**").WithValue(NamedType.Enumerable(NamedType.Enumerable(Foo)));
+            Parses("int*").WithValue(Enumerable.MakeGenericType(Integer));
+            Parses("bool*").WithValue(Enumerable.MakeGenericType(Boolean));
+            Parses("Foo**").WithValue(Enumerable.MakeGenericType(Enumerable.MakeGenericType(Foo)));
         }
 
         [Fact]
         public void ParsesVectorTypeNames()
         {
-            Parses("int[]").WithValue(NamedType.Vector(Integer));
-            Parses("bool[]").WithValue(NamedType.Vector(Boolean));
-            Parses("Foo[][]").WithValue(NamedType.Vector(NamedType.Vector(Foo)));
+            Parses("int[]").WithValue(Vector.MakeGenericType(Integer));
+            Parses("bool[]").WithValue(Vector.MakeGenericType(Boolean));
+            Parses("Foo[][]").WithValue(Vector.MakeGenericType(Vector.MakeGenericType(Foo)));
         }
 
         [Fact]
         public void ParsesTypeNamesWithMixedModifiers()
         {
-            Parses("int*?").WithValue(NamedType.Nullable(NamedType.Enumerable(Integer)));
-            Parses("bool?*").WithValue(NamedType.Enumerable(NamedType.Nullable(Boolean)));
+            Parses("int*?").WithValue(Nullable.MakeGenericType(Enumerable.MakeGenericType(Integer)));
+            Parses("bool?*").WithValue(Enumerable.MakeGenericType(Nullable.MakeGenericType(Boolean)));
 
-            Parses("int[]?").WithValue(NamedType.Nullable(NamedType.Vector(Integer)));
-            Parses("bool?[]").WithValue(NamedType.Vector(NamedType.Nullable(Boolean)));
+            Parses("int[]?").WithValue(Nullable.MakeGenericType(Vector.MakeGenericType(Integer)));
+            Parses("bool?[]").WithValue(Vector.MakeGenericType(Nullable.MakeGenericType(Boolean)));
 
-            Parses("int*[]").WithValue(NamedType.Vector(NamedType.Enumerable(Integer)));
-            Parses("bool[]*").WithValue(NamedType.Enumerable(NamedType.Vector(Boolean)));
+            Parses("int*[]").WithValue(Vector.MakeGenericType(Enumerable.MakeGenericType(Integer)));
+            Parses("bool[]*").WithValue(Enumerable.MakeGenericType(Vector.MakeGenericType(Boolean)));
         }
 
         private static Reply<NamedType> FailsToParse(string source)

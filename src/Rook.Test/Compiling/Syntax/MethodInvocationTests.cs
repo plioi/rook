@@ -97,7 +97,7 @@ namespace Rook.Compiling.Syntax
             var x = new TypeVariable(123456);
 
             var typeChecker = new TypeChecker();
-            typeChecker.TypeRegistry.Register(new NamedType("Utility"), new StubBinding("Last", Function(new[] { Vector(x) }, x)));
+            typeChecker.TypeRegistry.Register(new NamedType("Utility"), new StubBinding("Last", Function(new[] { Vector.MakeGenericType(x) }, x)));
 
             Type("utility.Last([1, 2, 3])", typeChecker, utility => new NamedType("Utility")).ShouldEqual(Integer);
             Type("utility.Last([true, false])", typeChecker, utility => new NamedType("Utility")).ShouldEqual(Boolean);
@@ -214,11 +214,6 @@ namespace Rook.Compiling.Syntax
         private static DataType Function(DataType returnType)
         {
             return Function(new DataType[] { }, returnType);
-        }
-
-        private static NamedType Vector(DataType itemType)
-        {
-            return NamedType.Vector(itemType);
         }
 
         private class StubBinding : Binding
