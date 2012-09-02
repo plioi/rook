@@ -24,6 +24,11 @@ namespace Rook.Compiling.Types
             get { return false; }
         }
 
+        public override bool IsGenericTypeDefinition
+        {
+            get { return false; }
+        }
+
         public override bool Contains(TypeVariable typeVariable)
         {
             return false;

@@ -30,6 +30,20 @@ namespace Rook.Compiling.Types
         }
 
         [Fact]
+        public void CanBeEitherGenericOrNonGeneric()
+        {
+            TypeVariable.CreateGeneric().IsGeneric.ShouldBeTrue();
+            TypeVariable.CreateNonGeneric().IsGeneric.ShouldBeFalse();
+        }
+
+        [Fact]
+        public void CanNeverBeAGenericTypeDefinition()
+        {
+            TypeVariable.CreateGeneric().IsGenericTypeDefinition.ShouldBeFalse();
+            TypeVariable.CreateNonGeneric().IsGenericTypeDefinition.ShouldBeFalse();
+        }
+
+        [Fact]
         public void ContainsOnlyItself()
         {
             a.Contains(a).ShouldBeTrue();

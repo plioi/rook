@@ -33,6 +33,12 @@ namespace Rook.Compiling.Types
         }
 
         [Fact]
+        public void IsNotAGenericTypeDefinition()
+        {
+            Unknown.IsGenericTypeDefinition.ShouldBeFalse();
+        }
+
+        [Fact]
         public void DoesNotContainTypeVariables()
         {
             Unknown.Contains(new TypeVariable(0)).ShouldBeFalse();

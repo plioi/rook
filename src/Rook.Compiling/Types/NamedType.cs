@@ -52,11 +52,13 @@ namespace Rook.Compiling.Types
         private readonly string name;
         private readonly DataType[] genericArguments;
         private readonly Lazy<string> fullName;
+        private readonly bool isGenericTypeDefinition;
 
         public NamedType(string name, params DataType[] genericArguments)
         {
             this.name = name;
             this.genericArguments = genericArguments;
+            isGenericTypeDefinition = false;
             fullName = new Lazy<string>(GetFullName);
         }
 
@@ -69,7 +71,9 @@ namespace Rook.Compiling.Types
 
             name = type.Namespace + "." + type.Name.Replace("`" + genericArguments.Length, "");
 
-            this.genericArguments = type.IsGenericTypeDefinition
+            isGenericTypeDefinition = type.IsGenericTypeDefinition;
+
+            this.genericArguments = isGenericTypeDefinition
                 ? genericArguments.Select(x => (DataType)TypeVariable.CreateGeneric()).ToArray()
                 : genericArguments.Select(x => (DataType)new NamedType(x)).ToArray();
 
@@ -89,6 +93,11 @@ namespace Rook.Compiling.Types
         public override bool IsGeneric
         {
             get { return GenericArguments.Any(); }
+        }
+
+        public override bool IsGenericTypeDefinition
+        {
+            get { return isGenericTypeDefinition; }
         }
 
         public override bool Contains(TypeVariable typeVariable)

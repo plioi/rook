@@ -31,6 +31,11 @@ namespace Rook.Compiling.Types
             get { return isGeneric; }
         }
 
+        public override bool IsGenericTypeDefinition
+        {
+            get { return false; }
+        }
+
         public override IEnumerable<DataType> GenericArguments
         {
             get { return Enumerable.Empty<DataType>(); }

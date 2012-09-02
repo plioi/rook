@@ -130,6 +130,20 @@ namespace Rook.Compiling.Types
         }
 
         [Fact]
+        public void CanDistinguishGenericTypeDefinitionsFromSpecializations()
+        {
+            var intType = new NamedType(typeof(int));
+            var closedEnumerable = new NamedType(typeof(IEnumerable<int>));
+            var openEnumerable = new NamedType(typeof(IEnumerable<>));
+            var nonClrType = Create("A", new TypeVariable(0));
+
+            intType.IsGenericTypeDefinition.ShouldBeFalse();
+            closedEnumerable.IsGenericTypeDefinition.ShouldBeFalse();
+            openEnumerable.IsGenericTypeDefinition.ShouldBeTrue();
+            nonClrType.IsGenericTypeDefinition.ShouldBeFalse();
+        }
+
+        [Fact]
         public void CanDetermineWhetherTheTypeContainsASpecificTypeVariable()
         {
             var x = new TypeVariable(12345);

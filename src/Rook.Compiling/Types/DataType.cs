@@ -12,6 +12,8 @@ namespace Rook.Compiling.Types
 
         public abstract bool IsGeneric { get; }
 
+        public abstract bool IsGenericTypeDefinition { get; }
+
         public abstract bool Contains(TypeVariable typeVariable);
 
         public abstract IEnumerable<TypeVariable> FindTypeVariables();
