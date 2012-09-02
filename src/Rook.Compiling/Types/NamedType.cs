@@ -80,6 +80,17 @@ namespace Rook.Compiling.Types
             fullName = new Lazy<string>(GetFullName);
         }
 
+        public NamedType MakeGenericType(params DataType[] typeArguments)
+        {
+            if (!IsGenericTypeDefinition)
+                throw new InvalidOperationException(this + " is not a generic type definition, so it cannot be used to make generic types.");
+
+            if (typeArguments.Length != genericArguments.Length)
+                throw new ArgumentException("Invalid number of generic type arguments.");
+
+            return new NamedType(name, typeArguments);
+        }
+
         public override string Name
         {
             get { return name; }

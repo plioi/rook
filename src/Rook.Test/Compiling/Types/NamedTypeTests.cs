@@ -144,6 +144,28 @@ namespace Rook.Compiling.Types
         }
 
         [Fact]
+        public void CanBeConstructedFromSpecializingAGenericTypeDefinition()
+        {
+            using (TypeVariable.TestFactory())
+            {
+                Action nonGenericOrigin = () => NamedType.Integer.MakeGenericType();
+                nonGenericOrigin.ShouldThrow<InvalidOperationException>("int is not a generic type definition, so it cannot be used to make generic types.");
+
+                Action closedGenericOrigin = () => new NamedType(typeof(IEnumerable<int>)).MakeGenericType();
+                closedGenericOrigin.ShouldThrow<InvalidOperationException>("System.Collections.Generic.IEnumerable<int> is not a generic type definition, so it cannot be used to make generic types.");
+
+                Action invalidTypeArgumentCount = () => new NamedType(typeof(IEnumerable<>)).MakeGenericType(NamedType.Integer, NamedType.Boolean);
+                invalidTypeArgumentCount.ShouldThrow<ArgumentException>("Invalid number of generic type arguments.");
+
+                new NamedType(typeof(IEnumerable<>)).MakeGenericType(NamedType.Integer)
+                    .ShouldEqual(new NamedType(typeof(IEnumerable<int>)));
+
+                new NamedType(typeof(IDictionary<,>)).MakeGenericType(NamedType.String, NamedType.Integer)
+                    .ShouldEqual(new NamedType(typeof(IDictionary<string, int>)));
+            }
+        }
+
+        [Fact]
         public void CanDetermineWhetherTheTypeContainsASpecificTypeVariable()
         {
             var x = new TypeVariable(12345);
