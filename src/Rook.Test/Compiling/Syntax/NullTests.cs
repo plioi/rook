@@ -1,18 +1,16 @@
 using Rook.Compiling.Types;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
+    [Facts]
     public class NullTests : ExpressionTests
     {
-        [Fact]
         public void IsIdentifiedByKeyword()
         {
             Parses("null").IntoTree("null");
         }
 
-        [Fact]
         public void HasUniqueTypeVariableAsItsType()
         {
             using (TypeVariable.TestFactory())
@@ -21,7 +19,6 @@ namespace Rook.Compiling.Syntax
             }
         }
 
-        [Fact]
         public void CanCreateFullyTypedInstance()
         {
             using (TypeVariable.TestFactory())

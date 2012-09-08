@@ -1,25 +1,22 @@
 using Should;
-using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
+    [Facts]
     public class BooleanLiteralTests : ExpressionTests
     {
-        [Fact]
         public void IsIdentifiedByKeywords()
         {
             Parses("true").IntoTree("true");
             Parses("false").IntoTree("false");
         }
 
-        [Fact]
         public void HasBooleanType()
         {
             Type("true").ShouldEqual(Boolean);
             Type("false").ShouldEqual(Boolean);
         }
 
-        [Fact]
         public void AreAlwaysFullyTyped()
         {
             var boolean = (BooleanLiteral) Parse("false");

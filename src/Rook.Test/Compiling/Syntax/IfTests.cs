@@ -1,12 +1,11 @@
 using Parsley;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
+    [Facts]
     public class IfTests : ExpressionTests
     {
-        [Fact]
         public void ContainsConditionExpressionAndTwoBodyExpressions()
         {
             FailsToParse("if").AtEndOfInput().WithMessage("(1, 3): ( expected");
@@ -23,7 +22,6 @@ namespace Rook.Compiling.Syntax
             Parses("if (a || b) 1 else 0").IntoTree("(if (((a) || (b))) (1) else (0))");
         }
 
-        [Fact]
         public void AssociatesElseExpressionWithNearestPrecedingIf()
         {
             const string source =
@@ -41,37 +39,31 @@ namespace Rook.Compiling.Syntax
             Parses(source).IntoTree("(if (x) ((if (y) (0) else (1))) else ((if (z) (2) else (3))))");
         }
 
-        [Fact]
         public void FailsTypeCheckingWhenConditionExpressionFailsTypeChecking()
         {
             ShouldFailTypeChecking("if (a) true else false").WithError("Reference to undefined identifier: a", 1, 5);
         }
 
-        [Fact]
         public void FailsTypeCheckingWhenFirstBodyExpressionFailsTypeChecking()
         {
             ShouldFailTypeChecking("if (true) a else false").WithError("Reference to undefined identifier: a", 1, 11);
         }
 
-        [Fact]
         public void FailsTypeCheckingWhenSecondBodyExpressionFailsTypeChecking()
         {
             ShouldFailTypeChecking("if (true) true else a").WithError("Reference to undefined identifier: a", 1, 21);
         }
 
-        [Fact]
         public void FailsTypeCheckingWhenConditionExpressionIsNotBoolean()
         {
             ShouldFailTypeChecking("if (0) false else true").WithError("Type mismatch: expected bool, found int.", 1, 5);
         }
 
-        [Fact]
         public void FailsTypeCheckingWhenBodyExpressionTypesDoNotMatch()
         {
             ShouldFailTypeChecking("if (true) 0 else true").WithError("Type mismatch: expected int, found bool.", 1, 18);
         }
 
-        [Fact]
         public void HasATypeEqualToThatOfItsBodyExpressions()
         {
             Type("if (true) 1 else 0").ShouldEqual(Integer);
@@ -79,7 +71,6 @@ namespace Rook.Compiling.Syntax
             Type("if (true) if (true) 0 else 1 else if (false) 2 else 3").ShouldEqual(Integer);
         }
 
-        [Fact]
         public void CanCreateFullyTypedInstance()
         {
             var @if = (If)Parse("if (foo) bar else baz");

@@ -1,10 +1,10 @@
 ﻿using System;
 using Parsley;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
+    [Facts]
     public class TokenParserTests : RookGrammar
     {
         private static Action<Token> Token(TokenKind expectedKind, string expectedLiteral)
@@ -21,7 +21,6 @@ namespace Rook.Compiling.Syntax
             };
         }
 
-        [Fact]
         public void ParsesExpectedOperators()
         {
             var operators = new[]
@@ -38,7 +37,6 @@ namespace Rook.Compiling.Syntax
             }
         }
 
-        [Fact]
         public void ParsesIdentifiers()
         {
             Identifier.Parses("a").WithValue(Token(RookLexer.Identifier, "a"));
@@ -54,7 +52,6 @@ namespace Rook.Compiling.Syntax
                 Identifier.FailsToParse(keyword).LeavingUnparsedTokens(keyword);
         }
 
-        [Fact]
         public void ParsesLineEndings()
         {
             //Endlines are the end of input, \n, or semicolons (with optional trailing whitespace).

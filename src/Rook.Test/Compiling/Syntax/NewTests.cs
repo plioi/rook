@@ -1,13 +1,12 @@
 using Parsley;
 using Rook.Compiling.Types;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
+    [Facts]
     public class NewTests : ExpressionTests
     {
-        [Fact]
         public void InvokesConstructorByTypeName()
         {
             FailsToParse("new").AtEndOfInput().WithMessage("(1, 4): identifier expected");
@@ -16,7 +15,6 @@ namespace Rook.Compiling.Syntax
             Parses("new Foo()").IntoTree("(new Foo())");
         }
 
-        [Fact]
         public void HasATypeEqualToThatOfTheTypeBeingConstructed()
         {
             var constructedType = new NamedType("Foo");
@@ -24,7 +22,6 @@ namespace Rook.Compiling.Syntax
             Type("new Foo()", Foo => constructorType).ShouldEqual(constructedType);
         }
 
-        [Fact]
         public void FailsTypeCheckingForTypeNameNotInScope()
         {
             ShouldFailTypeChecking("new Foo()")
@@ -33,14 +30,12 @@ namespace Rook.Compiling.Syntax
                     error => error.ShouldEqual("Cannot construct 'Foo' because it is not a type.", 1, 5));
         }
 
-        [Fact]
         public void FailsTypeCheckingForNamesThatAreNotConstructorNames()
         {
             ShouldFailTypeChecking("new Foo()", Foo => Integer).WithError("Cannot construct 'Foo' because it is not a type.", 1, 5);
             ShouldFailTypeChecking("new Foo()", Foo => NamedType.Function(Integer)).WithError("Cannot construct 'Foo' because it is not a type.", 1, 5);
         }
 
-        [Fact]
         public void CanCreateFullyTypedInstance()
         {
             var constructedType = new NamedType("Foo");

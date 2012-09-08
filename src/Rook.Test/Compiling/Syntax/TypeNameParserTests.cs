@@ -1,9 +1,9 @@
 ﻿using Parsley;
 using Rook.Compiling.Types;
-using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
+    [Facts]
     public class TypeNameParserTests
     {
         private static readonly NamedType Integer = NamedType.Integer;
@@ -16,7 +16,6 @@ namespace Rook.Compiling.Syntax
         private static readonly NamedType Constructor = NamedType.Constructor;
         private static readonly NamedType Foo = new NamedType("Foo");
         
-        [Fact]
         public void DemandsSimpleNameAtAMinimum()
         {
             FailsToParse("").AtEndOfInput().WithMessage("(1, 1): type name expected");
@@ -25,7 +24,6 @@ namespace Rook.Compiling.Syntax
             FailsToParse("[]").LeavingUnparsedTokens("[]").WithMessage("(1, 1): type name expected");
         }
 
-        [Fact]
         public void ParsesSimpleTypeNames()
         {
             Parses("int").WithValue(Integer);
@@ -35,7 +33,6 @@ namespace Rook.Compiling.Syntax
             Parses("Foo").WithValue(Foo);
         }
 
-        [Fact]
         public void ParsesNullableTypeNames()
         {
             Parses("int?").WithValue(Nullable.MakeGenericType(Integer));
@@ -43,7 +40,6 @@ namespace Rook.Compiling.Syntax
             Parses("Foo?").WithValue(Nullable.MakeGenericType(Foo));
         }
 
-        [Fact]
         public void ParsesEnumerableTypeNames()
         {
             Parses("int*").WithValue(Enumerable.MakeGenericType(Integer));
@@ -51,7 +47,6 @@ namespace Rook.Compiling.Syntax
             Parses("Foo**").WithValue(Enumerable.MakeGenericType(Enumerable.MakeGenericType(Foo)));
         }
 
-        [Fact]
         public void ParsesVectorTypeNames()
         {
             Parses("int[]").WithValue(Vector.MakeGenericType(Integer));
@@ -59,7 +54,6 @@ namespace Rook.Compiling.Syntax
             Parses("Foo[][]").WithValue(Vector.MakeGenericType(Vector.MakeGenericType(Foo)));
         }
 
-        [Fact]
         public void ParsesTypeNamesWithMixedModifiers()
         {
             Parses("int*?").WithValue(Nullable.MakeGenericType(Enumerable.MakeGenericType(Integer)));

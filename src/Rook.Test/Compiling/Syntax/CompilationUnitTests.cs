@@ -2,15 +2,14 @@
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
+    [Facts]
     public class CompilationUnitTests : SyntaxTreeTests<CompilationUnit>
     {
         protected override Parser<CompilationUnit> Parser { get { return RookGrammar.CompilationUnit; } }
 
-        [Fact]
         public void ParsesZeroOrMoreClasses()
         {
             Parses(" \t\r\n").IntoTree("");
@@ -18,7 +17,6 @@ namespace Rook.Compiling.Syntax
                 .IntoTree("class Foo {}; class Bar {}; class Baz {}");
         }
 
-        [Fact]
         public void ParsesZeroOrMoreFunctions()
         {
             Parses(" \t\r\n").IntoTree("");
@@ -26,7 +24,6 @@ namespace Rook.Compiling.Syntax
                 .IntoTree("int life() 42; int universe() 42; int everything() 42");
         }
 
-        [Fact]
         public void DemandsClassesAppearBeforeFunctions()
         {
             Parses(" \t\r\n class Foo {}; class Bar {}; int life() 42; int universe() 42; int everything() 42; \t\r\n")
@@ -34,14 +31,12 @@ namespace Rook.Compiling.Syntax
             FailsToParse("int square(int x) x*x; class Foo { }").LeavingUnparsedTokens("class", "Foo", "{", "}").WithMessage("(1, 24): end of input expected");
         }
 
-        [Fact]
         public void DemandsEndOfInputAfterLastValidClassOrFunction()
         {
             FailsToParse("int life() 42; int univ").AtEndOfInput().WithMessage("(1, 24): ( expected");
             FailsToParse("class Foo { }; class").AtEndOfInput().WithMessage("(1, 21): identifier expected");
         }
 
-        [Fact]
         public void TypesAllClassesAndFunctions()
         {
             var fooConstructorType = NamedType.Constructor.MakeGenericType(new NamedType("Foo"));
@@ -106,7 +101,6 @@ namespace Rook.Compiling.Syntax
                 });
         }
 
-        [Fact]
         public void FailsValidationWhenFunctionsFailValidation()
         {
             ShouldFailTypeChecking("int a() 0; int b() true+0; int Main() 1;").WithError("Type mismatch: expected int, found bool.", 1, 24);
@@ -123,7 +117,6 @@ namespace Rook.Compiling.Syntax
                     error => error.ShouldEqual("Attempted to call a noncallable object.", 1, 12));
         }
 
-        [Fact]
         public void FailsValidationWhenClassesFailValidation()
         {
             ShouldFailTypeChecking("class Foo { int A() 0; int B() true+0; }").WithError("Type mismatch: expected int, found bool.", 1, 36);
@@ -140,7 +133,6 @@ namespace Rook.Compiling.Syntax
                     error => error.ShouldEqual("Attempted to call a noncallable object.", 1, 21));
         }
 
-        [Fact]
         public void FailsValidationWhenFunctionAndClassNamesAreNotUnique()
         {
             ShouldFailTypeChecking("int a() 0; int b() 1; int a() 2; int Main() 1;").WithError("Duplicate identifier: a", 1, 27);

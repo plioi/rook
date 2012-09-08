@@ -2,15 +2,14 @@ using Parsley;
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
+    [Facts]
     public class ClassTests : SyntaxTreeTests<Class>
     {
         protected override Parser<Class> Parser { get { return RookGrammar.Class; } }
 
-        [Fact]
         public void ParsesEmptyClassDeclarations()
         {
             FailsToParse("").AtEndOfInput().WithMessage("(1, 1): class expected");
@@ -20,20 +19,17 @@ namespace Rook.Compiling.Syntax
             Parses("class Foo {}").IntoTree("class Foo {}");
         }
 
-        [Fact]
         public void ParsesMethods()
         {
             Parses("class Hitchhiker {int life() 42; int universe() 42; int everything() 42;}")
                 .IntoTree("class Hitchhiker {int life() 42; int universe() 42; int everything() 42}");
         }
 
-        [Fact]
         public void DemandsEndOfClassAfterLastValidMethod()
         {
             FailsToParse("class Hitchhiker { int life() 42;").AtEndOfInput().WithMessage("(1, 34): } expected");
         }
 
-        [Fact]
         public void HasATypeCorrespondingWithTheDefaultConstructor()
         {
             var constructorReturningFoo = NamedType.Constructor.MakeGenericType(new NamedType("Foo"));
@@ -41,7 +37,6 @@ namespace Rook.Compiling.Syntax
             Type("class Foo { }").ShouldEqual(constructorReturningFoo);
         }
 
-        [Fact]
         public void CanCreateFullyTypedInstance()
         {
             var constructorReturningFoo = NamedType.Constructor.MakeGenericType(new NamedType("Foo"));
@@ -100,7 +95,6 @@ namespace Rook.Compiling.Syntax
             typedClass.Type.ShouldEqual(constructorReturningFoo);
         }
 
-        [Fact]
         public void FailsTypeCheckingWhenMethodsFailTypeChecking()
         {
             ShouldFailTypeChecking("class Foo { int A() 0; int B() true+0; }").WithError("Type mismatch: expected int, found bool.", 1, 36);
@@ -117,13 +111,11 @@ namespace Rook.Compiling.Syntax
                     error => error.ShouldEqual("Attempted to call a noncallable object.", 1, 21));
         }
 
-        [Fact]
         public void FailsTypeCheckingWhenMethodNamesAreNotUnique()
         {
             ShouldFailTypeChecking("class Foo { int A() 0; bool B() true; int A() 1; }").WithError("Duplicate identifier: A", 1, 43);
         }
 
-        [Fact]
         public void FailsTypeCheckingWhenMethodNamesShadowSurroundingScope()
         {
             var pointConstructor = NamedType.Constructor.MakeGenericType(new NamedType("Point"));

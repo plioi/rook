@@ -1,26 +1,23 @@
 using Rook.Compiling.Types;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
+    [Facts]
     public class NameTests : ExpressionTests
     {
-        [Fact]
         public void CanBeIdentifier()
         {
             Parses("a").IntoTree("a");
             Parses("abc").IntoTree("abc");
         }
 
-        [Fact]
         public void HasATypeProvidedByTheGivenScope()
         {
             Type("foo", foo => Boolean, bar => Integer).ShouldEqual(Boolean);
             Type("bar", foo => Boolean, bar => Integer).ShouldEqual(Integer);
         }
 
-        [Fact]
         public void HasATypeInWhichTypeVariablesAreFreshenedOnEachScopeLookup()
         {
             using (TypeVariable.TestFactory())
@@ -36,7 +33,6 @@ namespace Rook.Compiling.Syntax
             }
         }
 
-        [Fact]
         public void HasATypeInWhichOnlyGenericTypeVariablesAreFreshenedOnEachScopeLookup()
         {
             using (TypeVariable.TestFactory())
@@ -57,7 +53,6 @@ namespace Rook.Compiling.Syntax
             }
         }
 
-        [Fact]
         public void CanCreateFullyTypedInstance()
         {
             var name = (Name)Parse("foo");
@@ -67,7 +62,6 @@ namespace Rook.Compiling.Syntax
             typedName.Type.ShouldEqual(Boolean);
         }
 
-        [Fact]
         public void FailsTypeCheckingForIdentifiersNotInScope()
         {
             ShouldFailTypeChecking("foo").WithError("Reference to undefined identifier: foo", 1, 1);

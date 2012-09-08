@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Parsley;
-using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
+    [Facts]
     public class RookLexerTests : Grammar
     {
         private static IEnumerable<Token> Tokenize(string input)
@@ -12,7 +12,6 @@ namespace Rook.Compiling.Syntax
             return new RookLexer().Tokenize(input);
         }
 
-        [Fact]
         public void ShouldRecognizeIntegers()
         {
             Tokenize("0").Single().ShouldEqual(RookLexer.Integer, "0");
@@ -26,7 +25,6 @@ namespace Rook.Compiling.Syntax
             Tokenize("2147483648").Single().ShouldEqual(RookLexer.Integer, "2147483648");
         }
 
-        [Fact]
         public void ShouldRecognizeStringLiterals()
         {
             Tokenize("\"\"").Single().ShouldEqual(RookLexer.StringLiteral, "\"\"");
@@ -45,7 +43,6 @@ namespace Rook.Compiling.Syntax
                             t => t.ShouldEqual(RookLexer.StringLiteral, "\" c \""));
         }
 
-        [Fact]
         public void ShouldRecognizeKeywords()
         {
             Tokenize("true").Single().ShouldEqual(RookLexer.@true, "true");
@@ -62,7 +59,6 @@ namespace Rook.Compiling.Syntax
             Tokenize("new").Single().ShouldEqual(RookLexer.@new, "new");
         }
 
-        [Fact]
         public void ShouldRecognizeIdentifiers()
         {
             Tokenize("a").Single().ShouldEqual(RookLexer.Identifier, "a");
@@ -70,7 +66,6 @@ namespace Rook.Compiling.Syntax
             Tokenize("a0").Single().ShouldEqual(RookLexer.Identifier, "a0");
         }
 
-        [Fact]
         public void ShouldRecognizeOperatorsGreedily()
         {
             Tokenize("<=>=<>!====*/+-&&||!{}[][,]()???:.")
@@ -102,7 +97,6 @@ namespace Rook.Compiling.Syntax
                             t => t.ShouldEqual(RookLexer.MemberAccess, "."));
         }
 
-        [Fact]
         public void ShouldRecognizeEndOfLogicalLine()
         {
             //Endlines are \n or semicolons (with optional preceding spaces/tabs and optional trailing whitspace).
@@ -115,7 +109,6 @@ namespace Rook.Compiling.Syntax
             Tokenize("; \r\n \t ").Single().ShouldEqual(RookLexer.EndOfLine, "; \n \t ");
         }
 
-        [Fact]
         public void ShouldRecognizeAndSkipOverIntralineWhitespace()
         {
             //Note that Parsley normalizes \r, \n, and \r\n to a single line feed \n.

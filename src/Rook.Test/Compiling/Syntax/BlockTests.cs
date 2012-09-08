@@ -1,13 +1,12 @@
 using System.Linq;
 using Parsley;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
+    [Facts]
     public class BlockTests : ExpressionTests
     {
-        [Fact]
         public void ContainsOneOrMoreInnerExpressions()
         {
             FailsToParse("{}").LeavingUnparsedTokens("}");
@@ -17,7 +16,6 @@ namespace Rook.Compiling.Syntax
             Parses("{(1 + 2); (true || false);}").IntoTree("{((1) + (2)); ((true) || (false));}");
         }
 
-        [Fact]
         public void AllowsOptionalLeadingVariableDeclarations()
         {
             FailsToParse("{int 0}").LeavingUnparsedTokens("int", "0", "}");
@@ -29,14 +27,12 @@ namespace Rook.Compiling.Syntax
             Parses("{ int a = 0; bool b = true||false; false; 0; }").IntoTree("{int a = 0; bool b = ((true) || (false));false; 0;}");
         }
 
-        [Fact]
         public void AllowsVariableDeclarationsToOmitExplicitTypeDeclaration()
         {
             Parses("{ a = 0; 1; }").IntoTree("{a = 0;1;}");
             Parses("{ a = 0; b = true||false; false; 0; }").IntoTree("{a = 0; b = ((true) || (false));false; 0;}");
         }
 
-        [Fact]
         public void HasATypeEqualToTheTypeOfTheLastInnerExpression()
         {
             Type("{ true; false; 1; }").ShouldEqual(Integer);
@@ -45,28 +41,24 @@ namespace Rook.Compiling.Syntax
             Type("{ 1; 2; 3; 4; test; }", test => Boolean).ShouldEqual(Boolean);
         }
 
-        [Fact]
         public void EvaluatesBodyExpressionTypesInANewScopeIncludingLocalVariableDeclarations()
         {
             Type("{ int x = 0; x; }").ShouldEqual(Integer);
             Type("{ int x = 0; int y = 1; bool t = true; x==y || t; }").ShouldEqual(Boolean);
         }
 
-        [Fact]
         public void EvaluatesDeclarationExpressionsInANewScopeIncludingPrecedingVariableDeclarations()
         {
             Type("{ int x = 0; int y = x+1; x+y; }").ShouldEqual(Integer);
             Type("{ int x = 0; bool b = x==0; !b; }").ShouldEqual(Boolean);
         }
 
-        [Fact]
         public void InfersLocalVariableTypeFromInitializationExpressionTypeWhenExplicitTypeDeclarationIsOmitted()
         {
             Type("{ x = 0; x; }").ShouldEqual(Integer);
             Type("{ x = 0; y = 1; t = true; x==y || t; }").ShouldEqual(Boolean);
         }
 
-        [Fact]
         public void CanCreateFullyTypedInstance()
         {
             var block = (Block)Parse("{ int x = y; int z = 0; xz = x>z; x; z; xz; }");
@@ -82,31 +74,26 @@ namespace Rook.Compiling.Syntax
             typedBlock.Type.ShouldEqual(Boolean);
         }
 
-        [Fact]
         public void FailsTypeCheckingWhenLocalVariableInitializationExpressionFailsTypeChecking()
         {
             ShouldFailTypeChecking("{ int x = a; x; }").WithError("Reference to undefined identifier: a", 1, 11);
         }
 
-        [Fact]
         public void FailsTypeCheckingWhenAnyBodyExpressionFailsTypeChecking()
         {
             ShouldFailTypeChecking("{ true+0; 0; }").WithError("Type mismatch: expected int, found bool.", 1, 7);
         }
 
-        [Fact]
         public void FailsTypeCheckingWhenLocalVariableNamesAreNotUnique()
         {
             ShouldFailTypeChecking("{ int x = 0; int y = 1; int z = 2; int x = 3; true; }").WithError("Duplicate identifier: x", 1, 40);
         }
 
-        [Fact]
         public void FailsTypeCheckingWhenLocalVariableNamesShadowSurroundingScope()
         {
             ShouldFailTypeChecking("{ int x = 0; int y = 1; int z = 2; true; }", z => Integer).WithError("Duplicate identifier: z", 1, 29);
         }
 
-        [Fact]
         public void FailsTypeCheckingWhenDeclaredTypeDoesNotMatchInitializationExpressionType()
         {
             ShouldFailTypeChecking("{ int x = false; x; }").WithError("Type mismatch: expected int, found bool.", 1, 11);

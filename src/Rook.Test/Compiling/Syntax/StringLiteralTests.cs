@@ -1,20 +1,18 @@
 ﻿using Parsley;
 using Rook.Compiling.Types;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling.Syntax
 {
+    [Facts]
     public class StringLiteralTests : ExpressionTests
     {
-        [Fact]
         public void IsIdentifiedByQuotedContentCharacters()
         {
             Parses("\"\"").IntoTree("\"\"");
             Parses("\"abcdef\"").IntoTree("\"abcdef\"");
         }
 
-        [Fact]
         public void ExposesBothTheQuotedLiteralAndTheAssociatedRawValue()
         {
             Parses("\"\"").WithValue(syntaxTree =>
@@ -33,20 +31,17 @@ namespace Rook.Compiling.Syntax
             });
         }
 
-        [Fact]
         public void HasPositionOfOpeningQuotationMark()
         {
             Parses("\"abcdef\"").WithValue(
                 syntaxTree => ((StringLiteral) syntaxTree).Position.ShouldEqual(new Position(1, 1)));
         }
 
-        [Fact]
         public void HasStringType()
         {
             Type("\"abcdef\"").ShouldEqual(NamedType.String);
         }
 
-        [Fact]
         public void AreAlwaysFullyTyped()
         {
             var str = (StringLiteral)Parse("\"abcdef\"");
