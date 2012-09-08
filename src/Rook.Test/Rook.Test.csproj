@@ -101,6 +101,8 @@
     <Compile Include="Core\Collections\SliceVectorTests.cs" />
     <Compile Include="Core\NullableTests.cs" />
     <Compile Include="Core\ValueTests.cs" />
+    <Compile Include="FactsAttribute.cs" />
+    <Compile Include="FactsTestClassCommand.cs" />
     <Compile Include="ScopeExtensions.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="Compiling\ScopeTests.cs" />
@@ -123,6 +125,7 @@
     <Compile Include="Compiling\Types\NamedTypeTests.cs" />
     <Compile Include="Compiling\Types\TypeUnifierTests.cs" />
     <Compile Include="Compiling\Types\TypeVariableTests.cs" />
+    <Compile Include="TestDiscoveryCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rook.Compiling\Rook.Compiling.csproj">
