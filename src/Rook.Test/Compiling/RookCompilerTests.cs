@@ -1,10 +1,10 @@
 ﻿using Parsley;
 using Rook.Compiling.Syntax;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling
 {
+    [Facts]
     public class RookCompilerTests : CompilerTests<RookCompiler>
     {
         protected override RookCompiler Compiler
@@ -12,7 +12,6 @@ namespace Rook.Compiling
             get { return new RookCompiler(CompilerParameters.ForBasicEvaluation()); }
         }
 
-        [Fact]
         public void ShouldReportParseErrors()
         {
             Build("int Main() $1;");
@@ -20,7 +19,6 @@ namespace Rook.Compiling
             AssertError(1, 12, "Parse error.");
         }
 
-        [Fact]
         public void ShouldReportValidationErrors()
         {
             Build("int Main() x;");
@@ -28,7 +26,6 @@ namespace Rook.Compiling
             AssertError(1, 12, "Reference to undefined identifier: x");
         }
 
-        [Fact]
         public void ShouldBuildAssembliesFromSourceCode()
         {
             Build("int Main() 123;");
@@ -36,7 +33,6 @@ namespace Rook.Compiling
             Execute().ShouldEqual(123);
         }
 
-        [Fact]
         public void ShouldBuildAssembliesFromSyntaxTrees()
         {
             var tokens = new RookLexer().Tokenize("int Main() 123;");

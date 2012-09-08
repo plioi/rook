@@ -2,10 +2,10 @@
 using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling
 {
+    [Facts]
     public class ScopeTests
     {
         private static readonly NamedType Integer = NamedType.Integer;
@@ -29,7 +29,6 @@ namespace Rook.Compiling
             }
         }
 
-        [Fact]
         public void StoresLocals()
         {
             AssertType(Integer, ab, "a");
@@ -39,14 +38,12 @@ namespace Rook.Compiling
             AssertType(Boolean, cd, "d");
         }
 
-        [Fact]
         public void DefersToSurroundingScopeAfterSearchingLocals()
         {
             AssertType(Integer, cd, "a");
             AssertType(Integer, cd, "b");
         }
 
-        [Fact]
         public void ProvidesContainmentPredicate()
         {
             ab.Contains("a").ShouldBeTrue();
@@ -62,7 +59,6 @@ namespace Rook.Compiling
             cd.Contains("z").ShouldBeFalse();
         }
 
-        [Fact]
         public void ProvidesBuiltinSignaturesInTheGlobalScope()
         {
             AssertType("System.Func<int, int, bool>", global, "<");
@@ -98,7 +94,6 @@ namespace Rook.Compiling
             AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, 0, Rook.Core.Collections.Vector<0>>", global, "With");
         }
 
-        [Fact]
         public void CanBePopulatedWithAUniqueBinding()
         {
             global.TryIncludeUniqueBinding(new Parameter(null, Integer, "a")).ShouldBeTrue();
@@ -107,7 +102,6 @@ namespace Rook.Compiling
             AssertType(Boolean, global, "b");
         }
 
-        [Fact]
         public void DemandsUniqueBindingsWhenIncludingUniqueBindings()
         {
             global.TryIncludeUniqueBinding(new Parameter(null, Integer, "a")).ShouldBeTrue();

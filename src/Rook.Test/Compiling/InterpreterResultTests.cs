@@ -1,12 +1,11 @@
 ﻿using Parsley;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling
 {
+    [Facts]
     public class InterpreterResultTests
     {
-        [Fact]
         public void ShouldDescribeSuccessfulInterpretation()
         {
             object value = 123;
@@ -17,7 +16,6 @@ namespace Rook.Compiling
             result.Language.ShouldEqual(Language.Rook);
         }
 
-        [Fact]
         public void ShouldDescribeFailedInterpretation()
         {
             var errorA = new CompilerError(new Position(1, 10), "Error A");

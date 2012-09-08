@@ -1,13 +1,12 @@
 ﻿using System.Reflection;
 using Parsley;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling
 {
+    [Facts]
     public class CompilerResultTests
     {
-        [Fact]
         public void ShouldDescribeSuccessfulCompilation()
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -18,7 +17,6 @@ namespace Rook.Compiling
             result.Language.ShouldEqual(Language.Rook);
         }
 
-        [Fact]
         public void ShouldDescribeFailedCompilation()
         {
             var errorA = new CompilerError(new Position(1, 10), "Error A");

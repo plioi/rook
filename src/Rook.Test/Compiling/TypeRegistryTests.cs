@@ -6,10 +6,10 @@ using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling
 {
+    [Facts]
     public class TypeRegistryTests
     {
         private static readonly NamedType Integer = NamedType.Integer;
@@ -22,7 +22,6 @@ namespace Rook.Compiling
             typeRegistry = new TypeRegistry();
         }
 
-        [Fact]
         public void LooksUpMemberBindingsForKnownClassDefinitions()
         {
             var foo = new NamedType("Foo");
@@ -40,7 +39,6 @@ namespace Rook.Compiling
             AssertMemberType(NamedType.Function(new[] { Integer }, Boolean), math, "Zero");
         }
 
-        [Fact]
         public void FailsToLookUpMemberBindingsForUnknownTypes()
         {
             Vector<Binding> expectedFailure;

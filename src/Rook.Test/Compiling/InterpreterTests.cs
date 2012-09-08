@@ -2,10 +2,10 @@
 using System.Text;
 using Rook.Compiling.Syntax;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling
 {
+    [Facts]
     public class InterpreterTests
     {
         private readonly Interpreter interpreter;
@@ -15,7 +15,6 @@ namespace Rook.Compiling
             interpreter = new Interpreter();
         }
 
-        [Fact]
         public void ShouldDetermineWhetherSourceCodeParsesCompletelyAsAnExpressionOrFunctionOrClass()
         {
             const string expression = "((5 + 2) > 5) && true";
@@ -34,7 +33,6 @@ namespace Rook.Compiling
             interpreter.CanParse(classWithAdditionalContent).ShouldBeFalse();
         }
 
-        [Fact]
         public void ShouldEvaluateSimpleExpressions()
         {
             var result = interpreter.Interpret("1");
@@ -42,7 +40,6 @@ namespace Rook.Compiling
             result.Errors.ShouldBeEmpty();
         }
 
-        [Fact]
         public void ShouldAllowEndLineCausedByUserHittingReturn()
         {
             var result = interpreter.Interpret("1\n");
@@ -50,7 +47,6 @@ namespace Rook.Compiling
             result.Errors.ShouldBeEmpty();
         }
 
-        [Fact]
         public void ShouldDisallowUnparsedTokensAfterSuccessfullyParsingLeadingTokens()
         {
             var result = interpreter.Interpret("1 1");
@@ -58,7 +54,6 @@ namespace Rook.Compiling
             result.Errors.Single().ToString().ShouldEqual("(1, 1): Cannot evaluate this code: must be a class, function or expression.");
         }
 
-        [Fact]
         public void ShouldFailWhenCannotParse()
         {
             var result = interpreter.Interpret("(5 + ");
@@ -66,7 +61,6 @@ namespace Rook.Compiling
             result.Errors.Single().ToString().ShouldEqual("(1, 1): Cannot evaluate this code: must be a class, function or expression.");
         }
 
-        [Fact]
         public void ShouldFailWhenExpressionFailsTypeChecking()
         {
             var result = interpreter.Interpret("(5 + true)");
@@ -74,7 +68,6 @@ namespace Rook.Compiling
             result.Errors.Single().ToString().ShouldEqual("(1, 4): Type mismatch: expected int, found bool.");
         }
 
-        [Fact]
         public void ShouldFailWhenFunctionFailsTypeChecking()
         {
             var result = interpreter.Interpret("int Square(int x) true");
@@ -82,7 +75,6 @@ namespace Rook.Compiling
             result.Errors.Single().ToString().ShouldEqual("(1, 19): Type mismatch: expected int, found bool.");
         }
 
-        [Fact]
         public void ShouldFailWhenClassFailsTypeChecking()
         {
             var result = interpreter.Interpret("class Math { int Square(int x) true; }");
@@ -90,7 +82,6 @@ namespace Rook.Compiling
             result.Errors.Single().ToString().ShouldEqual("(1, 32): Type mismatch: expected int, found bool.");
         }
 
-        [Fact]
         public void ShouldEvaluateExpressionsAgainstPreviouslyInterpretedClassesAndFunctions()
         {
             var foo = interpreter.Interpret("class Foo { }");
@@ -109,7 +100,6 @@ namespace Rook.Compiling
             result.Errors.ShouldBeEmpty();
         }
 
-        [Fact]
         public void ShouldAllowClassAndFunctionDefinitionsToBeReplaced()
         {
             //First definitions compile but aren't defined accurately.
@@ -181,7 +171,6 @@ namespace Rook.Compiling
             result.Errors.ShouldBeEmpty();
         }
 
-        [Fact]
         public void ShouldValidateFunctionsAgainstPreviouslyInterpretedFunctions()
         {
             var square = interpreter.Interpret("int Square(int x) x*x");
@@ -194,7 +183,6 @@ namespace Rook.Compiling
             result.Errors.ShouldBeEmpty();
         }
 
-        [Fact]
         public void ShouldTranslateClassesAndFunctionsToTargetLanguage()
         {
             interpreter.Interpret("class Foo { }");
@@ -252,7 +240,6 @@ namespace Rook.Compiling
             interpreter.Translate().ShouldEqual(expectedWithMainExpression.ToString());
         }
 
-        [Fact]
         public void DisallowsCallsToMainBecauseMainIsReservedForExpressionEvaluation()
         {
             interpreter.Interpret("5");
@@ -266,7 +253,6 @@ namespace Rook.Compiling
             result.Errors[1].ToString().ShouldEqual("(1, 1): Attempted to call a noncallable object.");
         }
 
-        [Fact]
         public void DisallowsExplicitDefinitionOfMainClassBecauseMainIsReservedForExpressionEvaluation()
         {
             var result = interpreter.Interpret("class Main { }");
@@ -274,7 +260,6 @@ namespace Rook.Compiling
             result.Errors.Single().ToString().ShouldEqual("(1, 1): The Main function is reserved for expression evaluation, and cannot be explicitly defined.");
         }
 
-        [Fact]
         public void DisallowsExplicitDefinitionOfMainFunctionBecauseMainIsReservedForExpressionEvaluation()
         {
             var result = interpreter.Interpret("int Main(int x) x*x");

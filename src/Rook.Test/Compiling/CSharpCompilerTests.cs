@@ -2,10 +2,10 @@
 using System.Text;
 using Microsoft.CSharp;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling
 {
+    [Facts]
     public class CSharpCompilerTests : CompilerTests<CSharpCompiler>
     {
         protected override CSharpCompiler Compiler
@@ -23,7 +23,6 @@ namespace Rook.Compiling
             }
         }
 
-        [Fact]
         public void ShouldBuildAssembliesFromCsharpCode()
         {
             Build(ValidProgram);
@@ -31,7 +30,6 @@ namespace Rook.Compiling
             Execute().ShouldEqual(123);
         }
 
-        [Fact]
         public void ShouldReportErrors()
         {
             Build(InvalidProgram);
