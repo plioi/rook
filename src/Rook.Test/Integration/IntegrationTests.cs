@@ -5,26 +5,26 @@ using System.Reflection;
 using System.Text;
 using Rook.Compiling;
 using Should;
-using Xunit;
 
 namespace Rook.Integration
 {
+    [Facts]
     public class IntegrationTests
     {
-        [Fact] public void ArithmeticExpression() { Run("ArithmeticExpression"); }
-        [Fact] public void BooleanExpression() { Run("BooleanExpression"); }
-        [Fact] public void FunctionCall() { Run("FunctionCall"); }
-        [Fact] public void MethodInvocation() { Run("MethodInvocation"); }
-        [Fact] public void BlockExpression() { Run("BlockExpression"); }
-        [Fact] public void Closure() { Run("Closure"); }
-        [Fact] public void Recursion() { Run("Recursion"); }
-        [Fact] public void MutualRecursion() { Run("MutualRecursion"); }
-        [Fact] public void Enumerable() { Run("Enumerable"); }
-        [Fact] public void Vector() { Run("Vector"); }
-        [Fact] public void Void() { Run("Void"); }
-        [Fact] public void Nullable() { Run("Nullable"); }
-        [Fact] public void String() { Run("String"); }
-        [Fact] public void Classes() { Run("Classes"); }
+        public void ArithmeticExpression() { Run("ArithmeticExpression"); }
+        public void BooleanExpression() { Run("BooleanExpression"); }
+        public void FunctionCall() { Run("FunctionCall"); }
+        public void MethodInvocation() { Run("MethodInvocation"); }
+        public void BlockExpression() { Run("BlockExpression"); }
+        public void Closure() { Run("Closure"); }
+        public void Recursion() { Run("Recursion"); }
+        public void MutualRecursion() { Run("MutualRecursion"); }
+        public void Enumerable() { Run("Enumerable"); }
+        public void Vector() { Run("Vector"); }
+        public void Void() { Run("Void"); }
+        public void Nullable() { Run("Nullable"); }
+        public void String() { Run("String"); }
+        public void Classes() { Run("Classes"); }
 
         #region Integration Test Runner
 
