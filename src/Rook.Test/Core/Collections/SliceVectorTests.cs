@@ -1,12 +1,11 @@
 ﻿using System;
 using Should;
-using Xunit;
 
 namespace Rook.Core.Collections
 {
+    [Facts]
     public class SliceVectorTests
     {
-        [Fact]
         public void ShouldProvideItemCount()
         {
             SliceDigits(0, 0).Count.ShouldEqual(0);
@@ -14,7 +13,6 @@ namespace Rook.Core.Collections
             SliceDigits(7, 10).Count.ShouldEqual(3);
         }
 
-        [Fact]
         public void ShouldBeEnumerable()
         {
             Vector<int> empty = SliceDigits(0, 0);
@@ -24,7 +22,6 @@ namespace Rook.Core.Collections
             nonempty.ShouldList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
         }
 
-        [Fact]
         public void ShouldSliceFromStartIndexInclusiveToEndIndexExclusive()
         {
             SliceDigits(0, 0).ShouldBeEmpty();
@@ -42,7 +39,6 @@ namespace Rook.Core.Collections
             SliceDigits(5, 10).ShouldList(5, 6, 7, 8, 9);
         }
 
-        [Fact]
         public void ShouldGetItemsByIndex()
         {
             Vector<int> start = SliceDigits(0, 2);
@@ -57,7 +53,6 @@ namespace Rook.Core.Collections
             end[4].ShouldEqual(9);
         }
 
-        [Fact]
         public void ShouldCreateNewVectorWithNewValueAppended()
         {
             Vector<int> interiorSlice = SliceDigits(1, 4);
@@ -73,7 +68,6 @@ namespace Rook.Core.Collections
             tailSlice.ShouldList(7, 8, 9);
         }
 
-        [Fact]
         public void ShouldCreateNewVectorWithAlteredCell()
         {
             Vector<int> interiorSlice = SliceDigits(1, 4);
@@ -94,7 +88,6 @@ namespace Rook.Core.Collections
             tailSlice.ShouldList(7, 8, 9);
         }
 
-        [Fact]
         public void ShouldCreateSlices()
         {
             Vector<int> sliceOfInteriorSlice = SliceDigits(2, 9).Slice(1, 4);
@@ -104,35 +97,30 @@ namespace Rook.Core.Collections
             sliceOfTailSlice.ShouldList(4, 5, 6);
         }
 
-        [Fact]
         public void ShouldDemandUpperLimitCannotBeSmallerThanLowerLimit()
         {
             Action upperLimitSmallerThanLowerLimit = () => SliceDigits(1, 0);
             upperLimitSmallerThanLowerLimit.ShouldThrow<ArgumentException>("endIndexExclusive must be greater than or equal to startIndexInclusive.");
         }
 
-        [Fact]
         public void ShouldDemandUpperLimitCannotExceedSourceVectorCount()
         {
             Action upperLimitTooLarge = () => SliceDigits(0, 11);
             upperLimitTooLarge.ShouldThrow<ArgumentException>("endIndexExclusive must be less than or equal to the source vector's Count.");
         }
 
-        [Fact]
         public void ShouldDemandLowerLimitCannotBeNegative()
         {
             Action lowerLimitNegative = () => SliceDigits(-1, 0);
             lowerLimitNegative.ShouldThrow<ArgumentException>("startIndexInclusive cannot be negative.");
         }
 
-        [Fact]
         public void ShouldDemandLowerLimitMustBeValidForSoureVector()
         {
             Action lowerLimitTooLarge = () => SliceDigits(10, 10);
             lowerLimitTooLarge.ShouldThrow<ArgumentException>("startIndexInclusive must be a valid index for the source vector.");
         }
 
-        [Fact]
         public void ShouldAllowTakingAnEmptySliceOfAnEmptySourceVector()
         {
             //This is a test of the internal SliceVector constructor,
@@ -143,7 +131,6 @@ namespace Rook.Core.Collections
             empty.Slice(0, 0).ShouldBeEmpty();
         }
 
-        [Fact]
         public void ShouldThrowExceptionWhenGivenIndexIsOutOfRange()
         {
             Vector<int> fiveToNine = SliceDigits(5, 10);

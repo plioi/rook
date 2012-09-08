@@ -1,19 +1,17 @@
 ﻿using System;
 using Should;
-using Xunit;
 
 namespace Rook.Core
 {
+    [Facts]
     public class NullableTests
     {
-        [Fact]
         public void CanWrapValueTypes()
         {
             var zero = new Nullable<int>(0);
             zero.Value.ShouldEqual(0);
         }
 
-        [Fact]
         public void CanWrapReferenceTypes()
         {
             var o = new object();
@@ -21,7 +19,6 @@ namespace Rook.Core
             nullable.Value.ShouldBeSameAs(o);
         }
 
-        [Fact]
         public void CannotWrapNullReferences()
         {
             Action wrapNull = () => new Nullable<object>(null);

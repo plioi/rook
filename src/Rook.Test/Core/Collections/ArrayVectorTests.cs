@@ -1,12 +1,11 @@
 ﻿using System;
 using Should;
-using Xunit;
 
 namespace Rook.Core.Collections
 {
+    [Facts]
     public class ArrayVectorTests
     {
-        [Fact]
         public void ShouldProvideItemCount()
         {
             Vector<int> empty = new ArrayVector<int>();
@@ -16,7 +15,6 @@ namespace Rook.Core.Collections
             single.Count.ShouldEqual(1);
         }
 
-        [Fact]
         public void ShouldRemainImmutableEvenWhenSourceArrayIsMutated()
         {
             var source = new[] {1, 2};
@@ -30,7 +28,6 @@ namespace Rook.Core.Collections
             vector.ShouldList(1, 2);
         }
 
-        [Fact]
         public void ShouldCreateNewVectorWithNewValueAppended()
         {
             Vector<int> original = new ArrayVector<int>(1, 2, 3);
@@ -41,7 +38,6 @@ namespace Rook.Core.Collections
             appended.ShouldList(1, 2, 3, 4);
         }
 
-        [Fact]
         public void ShouldCreateNewVectorWithAlteredCell()
         {
             Vector<int> original = new ArrayVector<int>(1, 2, 3);
@@ -52,7 +48,6 @@ namespace Rook.Core.Collections
             original.ShouldList(1, 2, 3);
         }
 
-        [Fact]
         public void ShouldGetItemsByIndex()
         {
             Vector<int> vector = new ArrayVector<int>(1, 2, 3);
@@ -61,14 +56,12 @@ namespace Rook.Core.Collections
             vector[2].ShouldEqual(3);
         }
 
-        [Fact]
         public void ShouldCreateSlices()
         {
             Vector<int> slice = new ArrayVector<int>(0, 1, 2, 3, 4, 5, 6).Slice(1, 6);
             slice.ShouldList(1, 2, 3, 4, 5);
         }
 
-        [Fact]
         public void ShouldThrowExceptionWhenGivenIndexIsOutOfRange()
         {
             Vector<int> empty = new ArrayVector<int>();
@@ -85,7 +78,6 @@ namespace Rook.Core.Collections
                 action.ShouldThrow<IndexOutOfRangeException>("Index was outside the bounds of the vector.");
         }
 
-        [Fact]
         public void ShouldBeEnumerable()
         {
             Vector<int> empty = new ArrayVector<int>();
