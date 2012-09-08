@@ -1,11 +1,10 @@
 using Should;
-using Xunit;
 
 namespace Rook.Compiling.Types
 {
+    [Facts]
     public class DataTypeTests
     {
-        [Fact]
         public void CanFreshenGenericTypeVariables()
         {
             using (TypeVariable.TestFactory())

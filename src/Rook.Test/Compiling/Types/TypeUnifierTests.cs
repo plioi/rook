@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling.Types
 {
+    [Facts]
     public class TypeUnifierTests
     {
         private static readonly NamedType Integer = NamedType.Integer;
@@ -32,21 +32,18 @@ namespace Rook.Compiling.Types
             return unifier.Normalize(type);
         }
 
-        [Fact]
         public void FailsToUnifyTypesWithDifferentNames()
         {
             var errors = Unify(Integer, Boolean);
             errors.ShouldList("Type mismatch: expected int, found bool.");
         }
 
-        [Fact]
         public void UnifiesSimpleNamedTypesWithThemselves()
         {
             var errors = Unify(Integer, Integer);
             errors.ShouldBeEmpty();
         }
 
-        [Fact]
         public void FailsToUnifyFunctionTypesWithDifferentArity()
         {
             var errors = Unify(Type("A", Integer, Boolean),
@@ -54,7 +51,6 @@ namespace Rook.Compiling.Types
             errors.ShouldList("Type mismatch: expected A<int, bool>, found A<int, bool, bool>.");
         }
 
-        [Fact]
         public void FailsToUnifyCompoundTypesWithConflictingComponentTypes()
         {
             var errors = Unify(Type("A", Integer, Type("B", Integer)),
@@ -62,7 +58,6 @@ namespace Rook.Compiling.Types
             errors.ShouldList("Type mismatch: expected int, found bool.");
         }
 
-        [Fact]
         public void UnifiesCompoundTypesByRecursivelyUnifyingPairwiseComponentTypes()
         {
             var errors = Unify(Type("Foo", Integer, Boolean, Type("B", Integer)),
@@ -70,21 +65,18 @@ namespace Rook.Compiling.Types
             errors.ShouldBeEmpty();
         }
 
-        [Fact]
         public void NormalizesConcreteTypesByPerformingNoChanges()
         {
             Normalize(Integer).ShouldEqual(Integer);
             Normalize(Type("A", Boolean)).ShouldEqual(Type("A", Boolean));
         }
 
-        [Fact]
         public void NormalizesUnunifiedTypeVariablesByPerformingNoChanges()
         {
             Normalize(x).ShouldEqual(x);
             Normalize(Type("A", x)).ShouldEqual(Type("A", x));
         }
 
-        [Fact]
         public void NormalizesUnifiedTypeVariablesByPerformingSubstitution()
         {
             var errorsA = Unify(x, Integer);
@@ -98,7 +90,6 @@ namespace Rook.Compiling.Types
             errorsB.ShouldBeEmpty();
         }
 
-        [Fact]
         public void UnunifiesTypeVariablesWithTheselves()
         {
             var errors = Unify(x, x);
@@ -109,14 +100,12 @@ namespace Rook.Compiling.Types
             errors.ShouldBeEmpty();
         }
 
-        [Fact]
         public void FailsToUnifyRecursiveTypes()
         {
             var errors = Unify(x, Type("A", x));
             errors.ShouldList("Type mismatch: expected 0, found A<0>.");
         }
 
-        [Fact]
         public void SimplifiesChainsOfTypeVariablesIntroducedDuringUnification()
         {
             var errorsA = Unify(x, y);
@@ -133,7 +122,6 @@ namespace Rook.Compiling.Types
             errorsC.ShouldBeEmpty();
         }
 
-        [Fact]
         public void FailsToUnifyTypeVariablesWithAConflictingPreviousUnification()
         {
             var errorsA = Unify(x, Integer);
@@ -143,7 +131,6 @@ namespace Rook.Compiling.Types
             errorsB.ShouldList("Type mismatch: expected int, found bool.");
         }
 
-        [Fact]
         public void UnifiesCircularChainsOfTypeVariablesByIgnoringRedundantRequests()
         {
             var errorsA = Unify(x, y);
@@ -159,7 +146,6 @@ namespace Rook.Compiling.Types
             Normalize(z).ShouldBeSameAs(z);
         }
 
-        [Fact]
         public void CollectsAllErrorsFoundDuringUnification()
         {
             var errorsA = Unify(Integer, Boolean);

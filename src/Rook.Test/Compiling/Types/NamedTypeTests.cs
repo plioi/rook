@@ -2,20 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling.Types
 {
+    [Facts]
     public class NamedTypeTests
     {
-        [Fact]
         public void HasAName()
         {
             Create("A").Name.ShouldEqual("A");
             Create("B", Create("A")).Name.ShouldEqual("B");
         }
 
-        [Fact]
         public void HasZeroOrMoreGenericArguments()
         {
             Create("A").GenericArguments.ShouldBeEmpty();
@@ -25,7 +23,6 @@ namespace Rook.Compiling.Types
             Create("C", Create("B", Create("A"))).GenericArguments.ShouldList(Create("B", Create("A")));
         }
 
-        [Fact]
         public void HasAStringRepresentation()
         {
             Create("A").ToString().ShouldEqual("A");
@@ -33,7 +30,6 @@ namespace Rook.Compiling.Types
             Create("A", Create("B", Create("C"), Create("D"))).ToString().ShouldEqual("A<B<C, D>>");
         }
 
-        [Fact]
         public void IsGenericWhenGenericArgumentsExist()
         {
             Create("A").IsGeneric.ShouldBeFalse();
@@ -43,7 +39,6 @@ namespace Rook.Compiling.Types
             Create("C", Create("B", Create("A"))).IsGeneric.ShouldBeTrue();
         }
 
-        [Fact]
         public void HasValueEqualitySemantics()
         {
             var type = Create("B", Create("A"));
@@ -56,7 +51,6 @@ namespace Rook.Compiling.Types
             type.GetHashCode().ShouldNotEqual(Create("B").GetHashCode());
         }
 
-        [Fact]
         public void CanBeCreatedFromConvenienceFactories()
         {
             NamedType.Void.ShouldEqual(Create("Rook.Core.Void"));
@@ -72,7 +66,6 @@ namespace Rook.Compiling.Types
             NamedType.Constructor.MakeGenericType(Create("A")).ShouldEqual(Create("Rook.Core.Constructor", Create("A")));
         }
 
-        [Fact]
         public void CanBeConstructedFromNongenericClrTypes()
         {
             var intType = new NamedType(typeof(int));
@@ -81,7 +74,6 @@ namespace Rook.Compiling.Types
             intType.ToString().ShouldEqual("int");
         }
 
-        [Fact]
         public void CanBeConstructedFromOpenGenericClrTypes()
         {
             using (TypeVariable.TestFactory())
@@ -93,7 +85,6 @@ namespace Rook.Compiling.Types
             }
         }
 
-        [Fact]
         public void UsesFreshTypeVariablesUponEachConstructionFromAnOpenGenericClrType()
         {
             using (TypeVariable.TestFactory())
@@ -112,7 +103,6 @@ namespace Rook.Compiling.Types
             }
         }
 
-        [Fact]
         public void CanBeConstructedFromClosedGenericClrTypes()
         {
             var closedEnumerable = new NamedType(typeof(IEnumerable<int>));
@@ -121,7 +111,6 @@ namespace Rook.Compiling.Types
             closedEnumerable.ToString().ShouldEqual("System.Collections.Generic.IEnumerable<int>");
         }
 
-        [Fact]
         public void CannotBeConstructedFromGenericParameterTypeObjects()
         {
             var T = typeof(IEnumerable<>).GetGenericArguments().Single();
@@ -129,7 +118,6 @@ namespace Rook.Compiling.Types
             nameTheUnnamable.ShouldThrow<ArgumentException>("NamedType cannot be constructed for generic parameter: T");
         }
 
-        [Fact]
         public void CanDistinguishGenericTypeDefinitionsFromSpecializations()
         {
             var intType = new NamedType(typeof(int));
@@ -143,7 +131,6 @@ namespace Rook.Compiling.Types
             nonClrType.IsGenericTypeDefinition.ShouldBeFalse();
         }
 
-        [Fact]
         public void CanBeConstructedFromSpecializingAGenericTypeDefinition()
         {
             using (TypeVariable.TestFactory())
@@ -165,7 +152,6 @@ namespace Rook.Compiling.Types
             }
         }
 
-        [Fact]
         public void CanDetermineWhetherTheTypeContainsASpecificTypeVariable()
         {
             var x = new TypeVariable(12345);
@@ -175,7 +161,6 @@ namespace Rook.Compiling.Types
             Create("A", Create("B", x)).Contains(x).ShouldBeTrue();
         }
 
-        [Fact]
         public void CanFindAllDistinctOccurrencesOfContainedTypeVariables()
         {
             var x = new TypeVariable(0);
@@ -188,7 +173,6 @@ namespace Rook.Compiling.Types
             Create("A", Create("B", x, y), Create("C", y, z)).FindTypeVariables().ShouldList(x, y, z);
         }
 
-        [Fact]
         public void CanPerformTypeVariableSubstitutions()
         {
             var a = new TypeVariable(0);

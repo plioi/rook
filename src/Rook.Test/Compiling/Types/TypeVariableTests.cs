@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Should;
-using Xunit;
 
 namespace Rook.Compiling.Types
 {
+    [Facts]
     public class TypeVariableTests
     {
         private readonly TypeVariable a;
@@ -15,35 +15,30 @@ namespace Rook.Compiling.Types
             b = new TypeVariable(1);
         }
 
-        [Fact]
         public void HasAName()
         {
             a.Name.ShouldEqual("0");
             b.Name.ShouldEqual("1");
         }
 
-        [Fact]
         public void HasZeroGenericArguments()
         {
             a.GenericArguments.ShouldBeEmpty();
             b.GenericArguments.ShouldBeEmpty();
         }
 
-        [Fact]
         public void CanBeEitherGenericOrNonGeneric()
         {
             TypeVariable.CreateGeneric().IsGeneric.ShouldBeTrue();
             TypeVariable.CreateNonGeneric().IsGeneric.ShouldBeFalse();
         }
 
-        [Fact]
         public void CanNeverBeAGenericTypeDefinition()
         {
             TypeVariable.CreateGeneric().IsGenericTypeDefinition.ShouldBeFalse();
             TypeVariable.CreateNonGeneric().IsGenericTypeDefinition.ShouldBeFalse();
         }
 
-        [Fact]
         public void ContainsOnlyItself()
         {
             a.Contains(a).ShouldBeTrue();
@@ -53,14 +48,12 @@ namespace Rook.Compiling.Types
             b.Contains(a).ShouldBeFalse();
         }
 
-        [Fact]
         public void YieldsOnlyItselfWhenAskedToFindTypeVariableOccurrences()
         {
             a.FindTypeVariables().ShouldList(a);
             b.FindTypeVariables().ShouldList(b);
         }
 
-        [Fact]
         public void CanPerformTypeVariableSubstitutionOnItself()
         {
             var replaceAWithInteger = new Dictionary<TypeVariable, DataType> { { a, NamedType.Integer } };
@@ -69,7 +62,6 @@ namespace Rook.Compiling.Types
             b.ReplaceTypeVariables(replaceAWithInteger).ShouldEqual(b);
         }
 
-        [Fact]
         public void HasValueEqualitySemantics()
         {
             a.ShouldEqual(a);
@@ -81,7 +73,6 @@ namespace Rook.Compiling.Types
             a.GetHashCode().ShouldNotEqual(b.GetHashCode());
         }
 
-        [Fact]
         public void HasFactoryThatProvidesStreamOfUniqueTypeVariables()
         {
             var x = TypeVariable.CreateGeneric();
@@ -96,7 +87,6 @@ namespace Rook.Compiling.Types
             TypeVariable.CreateGeneric().ShouldEqual(new TypeVariable(xName + 4));
         }
 
-        [Fact]
         public void HasFactoryThatCanBeTemporarilyReplacedForTestingPursposes()
         {
             using (TypeVariable.TestFactory())
