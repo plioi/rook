@@ -5,7 +5,7 @@ using Should;
 namespace Rook.Compiling.Syntax
 {
     [Facts]
-    public class TokenParserTests : RookGrammar
+    public class TokenParserTests
     {
         private static Action<Token> Token(TokenKind expectedKind, string expectedLiteral)
         {
@@ -21,6 +21,8 @@ namespace Rook.Compiling.Syntax
             };
         }
 
+        private readonly RookGrammar grammar = new RookGrammar();
+
         public void ParsesExpectedOperators()
         {
             var operators = new[]
@@ -31,25 +33,27 @@ namespace Rook.Compiling.Syntax
 
             foreach (var o in operators)
             {
-                Token(o).Parses(o).WithValue(Operator(o));
-                Token(o).Parses(o + " \t ").WithValue(Operator(o));
-                Token(o).FailsToParse("x").LeavingUnparsedTokens("x").WithMessage("(1, 1): " + o + " expected");
+                Grammar.Token(o).Parses(o).WithValue(Operator(o));
+                Grammar.Token(o).Parses(o + " \t ").WithValue(Operator(o));
+                Grammar.Token(o).FailsToParse("x").LeavingUnparsedTokens("x").WithMessage("(1, 1): " + o + " expected");
             }
         }
 
         public void ParsesIdentifiers()
         {
-            Identifier.Parses("a").WithValue(Token(RookLexer.Identifier, "a"));
-            Identifier.Parses("a \t ").WithValue(Token(RookLexer.Identifier, "a"));
-            Identifier.Parses("ab").WithValue(Token(RookLexer.Identifier, "ab"));
-            Identifier.Parses("a0").WithValue(Token(RookLexer.Identifier, "a0"));
-            Identifier.Parses("a01").WithValue(Token(RookLexer.Identifier, "a01"));
+            var identifier = grammar.Identifier;
+
+            identifier.Parses("a").WithValue(Token(RookLexer.Identifier, "a"));
+            identifier.Parses("a \t ").WithValue(Token(RookLexer.Identifier, "a"));
+            identifier.Parses("ab").WithValue(Token(RookLexer.Identifier, "ab"));
+            identifier.Parses("a0").WithValue(Token(RookLexer.Identifier, "a0"));
+            identifier.Parses("a01").WithValue(Token(RookLexer.Identifier, "a01"));
 
             var keywords = new[] {"true", "false", "int", "bool", "string", "void", "null", "if", "else", "fn", "class", "new"};
 
-            Identifier.FailsToParse("0").LeavingUnparsedTokens("0");
+            identifier.FailsToParse("0").LeavingUnparsedTokens("0");
             foreach (string keyword in keywords)
-                Identifier.FailsToParse(keyword).LeavingUnparsedTokens(keyword);
+                identifier.FailsToParse(keyword).LeavingUnparsedTokens(keyword);
         }
 
         public void ParsesLineEndings()
@@ -57,17 +61,19 @@ namespace Rook.Compiling.Syntax
             //Endlines are the end of input, \n, or semicolons (with optional trailing whitespace).
             //Note that Parsley normalizes \r, \n, and \r\n to a single line feed \n.
 
-            EndOfLine.Parses("").WithValue(Token(TokenKind.EndOfInput, ""));
+            var endOfLine = grammar.EndOfLine;
 
-            EndOfLine.Parses("\r\n").WithValue(Token(RookLexer.EndOfLine, "\n"));
-            EndOfLine.Parses("\r\n \t \t").WithValue(Token(RookLexer.EndOfLine, "\n \t \t"));
-            EndOfLine.Parses("\r\n \r\n \t ").WithValue(Token(RookLexer.EndOfLine, "\n \n \t "));
+            endOfLine.Parses("").WithValue(Token(TokenKind.EndOfInput, ""));
 
-            EndOfLine.Parses(";").WithValue(Token(RookLexer.EndOfLine, ";"));
-            EndOfLine.Parses("; \t \t").WithValue(Token(RookLexer.EndOfLine, "; \t \t"));
-            EndOfLine.Parses("; \r\n \t ").WithValue(Token(RookLexer.EndOfLine, "; \n \t "));
+            endOfLine.Parses("\r\n").WithValue(Token(RookLexer.EndOfLine, "\n"));
+            endOfLine.Parses("\r\n \t \t").WithValue(Token(RookLexer.EndOfLine, "\n \t \t"));
+            endOfLine.Parses("\r\n \r\n \t ").WithValue(Token(RookLexer.EndOfLine, "\n \n \t "));
 
-            EndOfLine.FailsToParse("x").LeavingUnparsedTokens("x").WithMessage("(1, 1): end of line expected");
+            endOfLine.Parses(";").WithValue(Token(RookLexer.EndOfLine, ";"));
+            endOfLine.Parses("; \t \t").WithValue(Token(RookLexer.EndOfLine, "; \t \t"));
+            endOfLine.Parses("; \r\n \t ").WithValue(Token(RookLexer.EndOfLine, "; \n \t "));
+
+            endOfLine.FailsToParse("x").LeavingUnparsedTokens("x").WithMessage("(1, 1): end of line expected");
         }
     }
 }
