@@ -108,7 +108,7 @@
     <Compile Include="Syntax\SyntaxTree.cs" />
     <Compile Include="Syntax\VariableDeclaration.cs" />
     <Compile Include="Syntax\Visitor.cs" />
-    <Compile Include="TypeRegistry.cs" />
+    <Compile Include="TypeMemberRegistry.cs" />
     <Compile Include="Types\DataType.cs" />
     <Compile Include="Types\NamedType.cs" />
     <Compile Include="Scope.cs" />

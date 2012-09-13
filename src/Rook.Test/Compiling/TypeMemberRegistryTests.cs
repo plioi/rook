@@ -10,16 +10,16 @@ using Should;
 namespace Rook.Compiling
 {
     [Facts]
-    public class TypeRegistryTests
+    public class TypeMemberRegistryTests
     {
         private static readonly NamedType Integer = NamedType.Integer;
         private static readonly NamedType Boolean = NamedType.Boolean;
 
-        private readonly TypeRegistry typeRegistry;
+        private readonly TypeMemberRegistry typeMemberRegistry;
 
-        public TypeRegistryTests()
+        public TypeMemberRegistryTests()
         {
-            typeRegistry = new TypeRegistry();
+            typeMemberRegistry = new TypeMemberRegistry();
         }
 
         public void LooksUpMemberBindingsForKnownClassDefinitions()
@@ -30,8 +30,8 @@ namespace Rook.Compiling
             var fooBinding = ParseClass("class Foo { int I() 0; bool B() true; }");
             var mathBinding = ParseClass("class Math { int Square(int x) x*x; bool Zero(int x) x==0; }");
 
-            typeRegistry.Register(fooBinding);
-            typeRegistry.Register(mathBinding);
+            typeMemberRegistry.Register(fooBinding);
+            typeMemberRegistry.Register(mathBinding);
 
             AssertMemberType(NamedType.Function(Integer), foo, "I");
             AssertMemberType(NamedType.Function(Boolean), foo, "B");
@@ -42,7 +42,7 @@ namespace Rook.Compiling
         public void FailsToLookUpMemberBindingsForUnknownTypes()
         {
             Vector<Binding> expectedFailure;
-            typeRegistry.TryGetMembers(new NamedType("UnknownType"), out expectedFailure).ShouldBeFalse();
+            typeMemberRegistry.TryGetMembers(new NamedType("UnknownType"), out expectedFailure).ShouldBeFalse();
             expectedFailure.ShouldBeNull();
         }
 
@@ -57,7 +57,7 @@ namespace Rook.Compiling
         {
             Vector<Binding> memberBindings;
 
-            if (typeRegistry.TryGetMembers(typeKey, out memberBindings))
+            if (typeMemberRegistry.TryGetMembers(typeKey, out memberBindings))
                 AssertMemberType(expectedType, memberBindings, memberKey);
             else
                 throw new Exception("Failed to look up the type of '" + typeKey + "+" + memberKey + "' in the Scope");

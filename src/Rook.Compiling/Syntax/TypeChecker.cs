@@ -9,22 +9,22 @@ namespace Rook.Compiling.Syntax
     public class TypeChecker
     {
         private readonly TypeUnifier unifier;
-        private readonly TypeRegistry typeRegistry;
+        private readonly TypeMemberRegistry typeMemberRegistry;
         private readonly List<CompilerError> errorLog;
 
         public TypeChecker()
         {
             unifier = new TypeUnifier();
-            typeRegistry = new TypeRegistry();
+            typeMemberRegistry = new TypeMemberRegistry();
             errorLog = new List<CompilerError>();
         }
 
         public Vector<CompilerError> Errors { get { return errorLog.ToVector(); } }
         public bool HasErrors { get { return errorLog.Any(); } }
 
-        //TODO: This property is deprecated.  Once TypeRegistry can discover .NET types via reflection,
-        //rephrase unit test usages of this so they don't have to manually prepare the TypeRegistry.
-        public TypeRegistry TypeRegistry { get { return typeRegistry; } }
+        //TODO: This property is deprecated.  Once TypeMemberRegistry can discover .NET types via reflection,
+        //rephrase unit test usages of this so they don't have to manually prepare the TypeMemberRegistry.
+        public TypeMemberRegistry TypeMemberRegistry { get { return typeMemberRegistry; } }
 
         public CompilationUnit TypeCheck(CompilationUnit compilationUnit)
         {
@@ -33,7 +33,7 @@ namespace Rook.Compiling.Syntax
             var functions = compilationUnit.Functions;
 
             foreach (var @class in classes)//TODO: Test coverage.
-                typeRegistry.Register(@class);
+                typeMemberRegistry.Register(@class);
 
             var scope = CreateGlobalScope(classes, functions);
 
@@ -218,7 +218,7 @@ namespace Rook.Compiling.Syntax
             }
 
             Vector<Binding> typeMembers;
-            if (typeRegistry.TryGetMembers(instanceNamedType, out typeMembers))
+            if (typeMemberRegistry.TryGetMembers(instanceNamedType, out typeMembers))
             {
                 Scope typeMemberScope = new TypeMemberScope(typeMembers);
 
@@ -263,9 +263,9 @@ namespace Rook.Compiling.Syntax
             }
             else
             {
-                //HACK: Because TypeRegistry cannot yet look up members for concretions of generic types like int*,
+                //HACK: Because TypeMemberRegistry cannot yet look up members for concretions of generic types like int*,
                 //  we have to double-check whether this is an extension method call for a regular built-in generic function.
-                //  Once TypeRegistry lets you look up the members for a type like int*, this block should be removed.
+                //  Once TypeMemberRegistry lets you look up the members for a type like int*, this block should be removed.
                 if (scope.Contains(methodName.Identifier))
                 {
                     var typedCallable = TypeCheck(methodName, scope);

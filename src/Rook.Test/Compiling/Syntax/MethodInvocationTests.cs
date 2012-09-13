@@ -90,7 +90,7 @@ namespace Rook.Compiling.Syntax
             var x = new TypeVariable(123456);
 
             var typeChecker = new TypeChecker();
-            typeChecker.TypeRegistry.Register(new NamedType("Utility"), new StubBinding("Last", Function(new[] { Vector.MakeGenericType(x) }, x)));
+            typeChecker.TypeMemberRegistry.Register(new NamedType("Utility"), new StubBinding("Last", Function(new[] { Vector.MakeGenericType(x) }, x)));
 
             Type("utility.Last([1, 2, 3])", typeChecker, utility => new NamedType("Utility")).ShouldEqual(Integer);
             Type("utility.Last([true, false])", typeChecker, utility => new NamedType("Utility")).ShouldEqual(Boolean);
@@ -123,7 +123,7 @@ namespace Rook.Compiling.Syntax
         public void TypeChecksAsExtensionMethodCallWhenInstanceTypeDoesNotContainMethodWithExpectedName()
         {
             var typeChecker = new TypeChecker();
-            typeChecker.TypeRegistry.Register(knownClass);
+            typeChecker.TypeMemberRegistry.Register(knownClass);
 
             var node = (MethodInvocation)Parse("math.SomeExtensionMethod(false)");
 
@@ -156,7 +156,7 @@ namespace Rook.Compiling.Syntax
         public void FailsTypeCheckingWhenAttemptingToCallANoncallableMember()
         {
             var typeChecker = new TypeChecker();
-            typeChecker.TypeRegistry.Register(new NamedType("Sample"), new StubBinding("IntegerProperty", Integer));
+            typeChecker.TypeMemberRegistry.Register(new NamedType("Sample"), new StubBinding("IntegerProperty", Integer));
 
             ShouldFailTypeChecking("sample.IntegerProperty()", typeChecker, sample => new NamedType("Sample")).WithError("Attempted to call a noncallable object.", 1, 7);
         }
@@ -171,7 +171,7 @@ namespace Rook.Compiling.Syntax
         private DataType Type(string source, Class knownClass, params TypeMapping[] symbols)
         {
             var typeChecker = new TypeChecker();
-            typeChecker.TypeRegistry.Register(knownClass);
+            typeChecker.TypeMemberRegistry.Register(knownClass);
 
             return Type(source, typeChecker, symbols);
         }
@@ -179,7 +179,7 @@ namespace Rook.Compiling.Syntax
         private Vector<CompilerError> ShouldFailTypeChecking(string source, Class knownClass, params TypeMapping[] symbols)
         {
             var typeChecker = new TypeChecker();
-            typeChecker.TypeRegistry.Register(knownClass);
+            typeChecker.TypeMemberRegistry.Register(knownClass);
 
             return ShouldFailTypeChecking(source, typeChecker, symbols);
         }
@@ -187,7 +187,7 @@ namespace Rook.Compiling.Syntax
         private T WithTypes<T>(T syntaxTree, Class knownClass, params TypeMapping[] symbols) where T : Expression
         {
             var typeChecker = new TypeChecker();
-            typeChecker.TypeRegistry.Register(knownClass);
+            typeChecker.TypeMemberRegistry.Register(knownClass);
 
             return WithTypes(syntaxTree, typeChecker, symbols);
         }

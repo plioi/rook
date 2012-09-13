@@ -175,7 +175,7 @@ namespace Rook.Compiling
             var scope = new GlobalScope();
 
             foreach (var c in relevantClasses)
-                typeChecker.TypeRegistry.Register(c);
+                typeChecker.TypeMemberRegistry.Register(c);
 
             foreach (var c in relevantClasses)
                 scope.TryIncludeUniqueBinding(c);
