@@ -40,6 +40,7 @@ namespace Rook.Compiling.Types
         private readonly DataType[] genericArguments;
         private readonly Lazy<string> fullName;
         private readonly bool isGenericTypeDefinition;
+        private readonly Binding[] methods;
 
         public NamedType(string name, params DataType[] genericArguments)
         {
@@ -50,7 +51,10 @@ namespace Rook.Compiling.Types
         }
 
         public NamedType(Class @class)
-            : this(@class.Name.Identifier) { }
+            : this(@class.Name.Identifier)
+        {
+            methods = @class.Methods.Cast<Binding>().ToArray();
+        }
 
         public NamedType(Type type)
         {
@@ -99,6 +103,11 @@ namespace Rook.Compiling.Types
         public override bool IsGenericTypeDefinition
         {
             get { return isGenericTypeDefinition; }
+        }
+
+        public IEnumerable<Binding> Methods
+        {
+            get { return methods; }
         }
 
         public override bool Contains(TypeVariable typeVariable)

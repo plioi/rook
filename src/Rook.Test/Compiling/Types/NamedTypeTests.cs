@@ -66,7 +66,7 @@ namespace Rook.Compiling.Types
             NamedType.Constructor.MakeGenericType(Create("A")).ShouldEqual(Create("Rook.Core.Constructor", Create("A")));
         }
 
-        public void CanBeConstructedFromRookClassDeclarations()
+        public void CanBeConstructedFromEmptyRookClassDeclarations()
         {
             var @class = "class Foo { }".ParseClass();
 
@@ -74,6 +74,23 @@ namespace Rook.Compiling.Types
             foo.Name.ShouldEqual("Foo");
             foo.GenericArguments.ShouldBeEmpty();
             foo.ToString().ShouldEqual("Foo");
+        }
+
+        public void CanBeConstructedFromRookClassDeclarationsIncludingMethods()
+        {
+            var @class = "class Foo { int Square(int x) x*x; }".ParseClass();
+
+            var foo = new NamedType(@class);
+            foo.Name.ShouldEqual("Foo");
+            foo.GenericArguments.ShouldBeEmpty();
+            foo.ToString().ShouldEqual("Foo");
+
+            foo.Methods.ShouldList(
+                method =>
+                {
+                    method.Identifier.ShouldEqual("Square");
+                    method.Type.ShouldEqual(NamedType.Function(new[] {NamedType.Integer}, NamedType.Integer));
+                });
         }
 
         public void CanBeConstructedFromNongenericClrTypes()
