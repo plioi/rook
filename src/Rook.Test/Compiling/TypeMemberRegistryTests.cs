@@ -27,8 +27,8 @@ namespace Rook.Compiling
             var foo = new NamedType("Foo");
             var math = new NamedType("Math");
 
-            var fooBinding = ParseClass("class Foo { int I() 0; bool B() true; }");
-            var mathBinding = ParseClass("class Math { int Square(int x) x*x; bool Zero(int x) x==0; }");
+            var fooBinding = "class Foo { int I() 0; bool B() true; }".ParseClass();
+            var mathBinding = "class Math { int Square(int x) x*x; bool Zero(int x) x==0; }".ParseClass();
 
             typeMemberRegistry.Register(fooBinding);
             typeMemberRegistry.Register(mathBinding);
@@ -44,13 +44,6 @@ namespace Rook.Compiling
             Vector<Binding> expectedFailure;
             typeMemberRegistry.TryGetMembers(new NamedType("UnknownType"), out expectedFailure).ShouldBeFalse();
             expectedFailure.ShouldBeNull();
-        }
-
-        private static Class ParseClass(string classDeclaration)
-        {
-            var tokens = new RookLexer().Tokenize(classDeclaration);
-            var parser = new RookGrammar().Class;
-            return parser.Parse(new TokenStream(tokens)).Value;
         }
 
         private void AssertMemberType(DataType expectedType, NamedType typeKey, string memberKey)

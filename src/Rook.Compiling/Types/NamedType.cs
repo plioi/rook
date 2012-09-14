@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rook.Compiling.Syntax;
 using Rook.Core;
 using Rook.Core.Collections;
 using Void = Rook.Core.Void;
@@ -47,6 +48,9 @@ namespace Rook.Compiling.Types
             isGenericTypeDefinition = false;
             fullName = new Lazy<string>(GetFullName);
         }
+
+        public NamedType(Class @class)
+            : this(@class.Name.Identifier) { }
 
         public NamedType(Type type)
         {

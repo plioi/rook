@@ -66,6 +66,16 @@ namespace Rook.Compiling.Types
             NamedType.Constructor.MakeGenericType(Create("A")).ShouldEqual(Create("Rook.Core.Constructor", Create("A")));
         }
 
+        public void CanBeConstructedFromRookClassDeclarations()
+        {
+            var @class = "class Foo { }".ParseClass();
+
+            var foo = new NamedType(@class);
+            foo.Name.ShouldEqual("Foo");
+            foo.GenericArguments.ShouldBeEmpty();
+            foo.ToString().ShouldEqual("Foo");
+        }
+
         public void CanBeConstructedFromNongenericClrTypes()
         {
             var intType = new NamedType(typeof(int));

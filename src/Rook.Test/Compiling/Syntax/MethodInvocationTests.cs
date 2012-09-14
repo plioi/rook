@@ -15,14 +15,14 @@ namespace Rook.Compiling.Syntax
 
         public MethodInvocationTests()
         {
-            knownClass = ParseClass(@"class Math
+            knownClass = @"class Math
             {
                 int Zero() 0;
                 int Square(int x) x*x;
                 bool Even(int n) if (n==0) true else Odd(n-1);
                 bool Odd(int n) if (n==0) false else Even(n-1);
                 int Max(int a, int b) if (a > b) a else b;
-            }");
+            }".ParseClass();
         }
 
         public void DemandsMethodNameWithOptionalArguments()
@@ -159,13 +159,6 @@ namespace Rook.Compiling.Syntax
             typeChecker.TypeMemberRegistry.Register(new NamedType("Sample"), new StubBinding("IntegerProperty", Integer));
 
             ShouldFailTypeChecking("sample.IntegerProperty()", typeChecker, sample => new NamedType("Sample")).WithError("Attempted to call a noncallable object.", 1, 7);
-        }
-
-        private static Class ParseClass(string classDeclaration)
-        {
-            var tokens = new RookLexer().Tokenize(classDeclaration);
-            var parser = new RookGrammar().Class;
-            return parser.Parse(new TokenStream(tokens)).Value;
         }
 
         private DataType Type(string source, Class knownClass, params TypeMapping[] symbols)
