@@ -1,20 +1,18 @@
-﻿using Parsley;
-using Rook.Compiling.Types;
+﻿using System.Collections.Generic;
+using Parsley;
+using Rook.Core;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
 {
     [Facts]
     public class TypeNameParserTests
     {
-        private static readonly NamedType Integer = NamedType.Integer;
-        private static readonly NamedType Boolean = NamedType.Boolean;
-        private static readonly NamedType String = NamedType.String;
-        private static readonly NamedType Void = NamedType.Void;
-        private static readonly NamedType Enumerable = NamedType.Enumerable;
-        private static readonly NamedType Vector = NamedType.Vector;
-        private static readonly NamedType Nullable = NamedType.Nullable;
-        private static readonly NamedType Constructor = NamedType.Constructor;
-        private static readonly NamedType Foo = new NamedType("Foo");
+        private static readonly TypeName Integer = new TypeName("System.Int32");
+        private static readonly TypeName Boolean = new TypeName("System.Boolean");
+        private static readonly TypeName String = new TypeName("System.String");
+        private static readonly TypeName Void = new TypeName("Rook.Core.Void");
+        private static readonly TypeName Foo = new TypeName("Foo");
         
         public void DemandsSimpleNameAtAMinimum()
         {
@@ -35,45 +33,60 @@ namespace Rook.Compiling.Syntax
 
         public void ParsesNullableTypeNames()
         {
-            Parses("int?").WithValue(Nullable.MakeGenericType(Integer));
-            Parses("bool?").WithValue(Nullable.MakeGenericType(Boolean));
-            Parses("Foo?").WithValue(Nullable.MakeGenericType(Foo));
+            Parses("int?").WithValue(Nullable(Integer));
+            Parses("bool?").WithValue(Nullable(Boolean));
+            Parses("Foo?").WithValue(Nullable(Foo));
         }
 
         public void ParsesEnumerableTypeNames()
         {
-            Parses("int*").WithValue(Enumerable.MakeGenericType(Integer));
-            Parses("bool*").WithValue(Enumerable.MakeGenericType(Boolean));
-            Parses("Foo**").WithValue(Enumerable.MakeGenericType(Enumerable.MakeGenericType(Foo)));
+            Parses("int*").WithValue(Enumerable(Integer));
+            Parses("bool*").WithValue(Enumerable(Boolean));
+            Parses("Foo**").WithValue(Enumerable(Enumerable(Foo)));
         }
 
         public void ParsesVectorTypeNames()
         {
-            Parses("int[]").WithValue(Vector.MakeGenericType(Integer));
-            Parses("bool[]").WithValue(Vector.MakeGenericType(Boolean));
-            Parses("Foo[][]").WithValue(Vector.MakeGenericType(Vector.MakeGenericType(Foo)));
+            Parses("int[]").WithValue(Vector(Integer));
+            Parses("bool[]").WithValue(Vector(Boolean));
+            Parses("Foo[][]").WithValue(Vector(Vector(Foo)));
         }
 
         public void ParsesTypeNamesWithMixedModifiers()
         {
-            Parses("int*?").WithValue(Nullable.MakeGenericType(Enumerable.MakeGenericType(Integer)));
-            Parses("bool?*").WithValue(Enumerable.MakeGenericType(Nullable.MakeGenericType(Boolean)));
+            Parses("int*?").WithValue(Nullable(Enumerable(Integer)));
+            Parses("bool?*").WithValue(Enumerable(Nullable(Boolean)));
 
-            Parses("int[]?").WithValue(Nullable.MakeGenericType(Vector.MakeGenericType(Integer)));
-            Parses("bool?[]").WithValue(Vector.MakeGenericType(Nullable.MakeGenericType(Boolean)));
+            Parses("int[]?").WithValue(Nullable(Vector(Integer)));
+            Parses("bool?[]").WithValue(Vector(Nullable(Boolean)));
 
-            Parses("int*[]").WithValue(Vector.MakeGenericType(Enumerable.MakeGenericType(Integer)));
-            Parses("bool[]*").WithValue(Enumerable.MakeGenericType(Vector.MakeGenericType(Boolean)));
+            Parses("int*[]").WithValue(Vector(Enumerable(Integer)));
+            Parses("bool[]*").WithValue(Enumerable(Vector(Boolean)));
         }
 
-        private static Reply<NamedType> FailsToParse(string source)
+        private static Reply<TypeName> FailsToParse(string source)
         {
             return new RookGrammar().TypeName.FailsToParse(source);
         }
 
-        private static Reply<NamedType> Parses(string source)
+        private static Reply<TypeName> Parses(string source)
         {
             return new RookGrammar().TypeName.Parses(source);
+        }
+
+        private static TypeName Enumerable(TypeName itemType)
+        {
+            return new TypeName("System.Collections.Generic.IEnumerable", itemType);
+        }
+
+        private static TypeName Vector(TypeName itemType)
+        {
+            return new TypeName("Rook.Core.Collections.Vector", itemType);
+        }
+
+        private static TypeName Nullable(TypeName itemType)
+        {
+            return new TypeName("Rook.Core.Nullable", itemType);
         }
     }
 }

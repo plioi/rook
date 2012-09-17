@@ -114,6 +114,7 @@
     <Compile Include="Types\DataType.cs" />
     <Compile Include="Types\NamedType.cs" />
     <Compile Include="Scope.cs" />
+    <Compile Include="Types\TypeExtensions.cs" />
     <Compile Include="Types\TypeUnifier.cs" />
     <Compile Include="Types\TypeVariable.cs" />
     <Compile Include="Types\UnknownType.cs" />

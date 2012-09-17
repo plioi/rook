@@ -63,7 +63,7 @@ namespace Rook.Compiling.Types
 
             var genericArguments = type.GetGenericArguments();
 
-            name = type.Namespace + "." + type.Name.Replace("`" + genericArguments.Length, "");
+            name = type.QualifiedName();
 
             isGenericTypeDefinition = type.IsGenericTypeDefinition;
 

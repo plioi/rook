@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
+using Rook.Core.Collections;
+using Void = Rook.Core.Void;
 
 namespace Rook.Compiling.Syntax
 {
@@ -10,14 +13,14 @@ namespace Rook.Compiling.Syntax
         public readonly GrammarRule<CompilationUnit> CompilationUnit = new GrammarRule<CompilationUnit>();
         public readonly GrammarRule<Class> Class = new GrammarRule<Class>();
         public readonly GrammarRule<Function> Function = new GrammarRule<Function>();
-        public readonly GrammarRule<NamedType> TypeName = new GrammarRule<NamedType>();
+        public readonly GrammarRule<TypeName> TypeName = new GrammarRule<TypeName>();
         public readonly GrammarRule<Token> EndOfLine = new GrammarRule<Token>();
         public readonly GrammarRule<Token> Identifier = new GrammarRule<Token>();
         public readonly GrammarRule<Name> Name = new GrammarRule<Name>();
 
-        private readonly GrammarRule<NamedType> NameType = new GrammarRule<NamedType>();
+        private readonly GrammarRule<TypeName> NameType = new GrammarRule<TypeName>();
         private readonly GrammarRule<Token> TypeModifier = new GrammarRule<Token>();
-        private readonly GrammarRule<NamedType> KeywordType = new GrammarRule<NamedType>();
+        private readonly GrammarRule<TypeName> KeywordType = new GrammarRule<TypeName>();
         private readonly GrammarRule<Parameter> ExplicitlyTypedParameter = new GrammarRule<Parameter>();
         private readonly GrammarRule<Parameter> ImplicitlyTypedParameter = new GrammarRule<Parameter>();
 
@@ -72,23 +75,23 @@ namespace Rook.Compiling.Syntax
                 from parameters in Tuple(ExplicitlyTypedParameter).TerminatedBy(Optional(EndOfLine))
                 from body in Expression
                 from end in EndOfLine
-                select new Function(name.Position, returnType, name, parameters, body);
+                select new Function(name.Position, returnType.ToDataType(), name, parameters, body);
         }
 
         private void TypeNames()
         {
             NameType.Rule =
                 from name in Name
-                select new NamedType(name.Identifier);
+                select new TypeName(name.Identifier);
 
             TypeModifier.Rule =
                 Choice(Token("*"), Token("?"), Token("[]"));
 
             KeywordType.Rule =
-                Choice(from _ in Token(RookLexer.@int) select NamedType.Integer,
-                       from _ in Token(RookLexer.@bool) select NamedType.Boolean,
-                       from _ in Token(RookLexer.@string) select NamedType.String,
-                       from _ in Token(RookLexer.@void) select NamedType.Void);
+                Choice(from _ in Token(RookLexer.@int) select new TypeName(typeof(int).FullName),
+                       from _ in Token(RookLexer.@bool) select new TypeName(typeof(bool).FullName),
+                       from _ in Token(RookLexer.@string) select new TypeName(typeof(string).FullName),
+                       from _ in Token(RookLexer.@void) select new TypeName(typeof(Void).FullName));
 
             TypeName.Rule =
                 Label(from rootType in Choice(NameType, KeywordType)
@@ -102,7 +105,7 @@ namespace Rook.Compiling.Syntax
             ExplicitlyTypedParameter.Rule =
                 from type in TypeName
                 from identifier in Identifier
-                select new Parameter(identifier.Position, type, identifier.Literal);
+                select new Parameter(identifier.Position, type.ToDataType(), identifier.Literal);
 
             ImplicitlyTypedParameter.Rule =
                 from identifier in Identifier
@@ -159,7 +162,7 @@ namespace Rook.Compiling.Syntax
                 from assignment in Token("=")
                 from value in Expression
                 from end in EndOfLine
-                select new VariableDeclaration(identifier.Position, type, identifier.Literal, value);
+                select new VariableDeclaration(identifier.Position, type.ToDataType(), identifier.Literal, value);
 
             ImplicitlyTypedVariableDeclaration.Rule =
                 from identifier in Identifier
@@ -271,15 +274,15 @@ namespace Rook.Compiling.Syntax
             return Parenthesized(ZeroOrMore(item, Token(",")));
         }
 
-        private static NamedType ApplyTypeModifier(NamedType targetType, Token modifier)
+        private static TypeName ApplyTypeModifier(TypeName targetType, Token modifier)
         {
             if (modifier.Literal == "*")
-                return NamedType.Enumerable.MakeGenericType(targetType);
+                return new TypeName(typeof(IEnumerable<>).QualifiedName(), targetType);
 
             if (modifier.Literal == "[]")
-                return NamedType.Vector.MakeGenericType(targetType);
+                return new TypeName(typeof(Vector<>).QualifiedName(), targetType);
 
-            return NamedType.Nullable.MakeGenericType(targetType);
+            return new TypeName(typeof(Core.Nullable<>).QualifiedName(), targetType);
         }
     }
 
