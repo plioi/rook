@@ -75,7 +75,7 @@ namespace Rook.Compiling.Syntax
                 from parameters in Tuple(ExplicitlyTypedParameter).TerminatedBy(Optional(EndOfLine))
                 from body in Expression
                 from end in EndOfLine
-                select new Function(name.Position, returnType.ToDataType(), name, parameters, body);
+                select new Function(name.Position, returnType, name, parameters, body);
         }
 
         private void TypeNames()

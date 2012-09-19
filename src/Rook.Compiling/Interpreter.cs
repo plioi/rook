@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Parsley;
 using Rook.Compiling.CodeGeneration;
@@ -138,7 +139,7 @@ namespace Rook.Compiling
             return new CompilationUnit(pos, new[]{@class}.Concat(classesExceptPotentialOverwrite), functionsExceptPotentialOverwrite);
         }
 
-        private static bool TryParse<T>(TokenStream tokens, Parser<T> parser, out T syntax) where T : SyntaxTree
+        private static bool TryParse<T>(TokenStream tokens, Parser<T> parser, out T syntax)
         {
             var reply = parser.Parse(tokens);
 
@@ -186,9 +187,20 @@ namespace Rook.Compiling
             return scope;
         }
 
-        private static Function WrapAsMain(Expression typedExpression, Position pos)
+        private Function WrapAsMain(Expression typedExpression, Position pos)
         {
-            return new Function(pos, (NamedType)typedExpression.Type, new Name(pos, "Main"), Enumerable.Empty<Parameter>(), typedExpression);
+            //Parse (NamedType)typedExpression.Type to a TypeName so that we can
+            //write down the inferred return type of the Main method.
+
+            var trustedReturnType = (NamedType)typedExpression.Type;
+
+            var tokens = new TokenStream(new RookLexer().Tokenize(trustedReturnType.ToString()));
+
+            TypeName trustedReturnTypeName;
+            if (TryParse(tokens, grammar.TypeName, out trustedReturnTypeName))
+                return new Function(pos, trustedReturnTypeName, new Name(pos, "Main"), Enumerable.Empty<Parameter>(), typedExpression);
+
+            throw new Exception(string.Format("Interpreter failed to generate Main method.  The return type {0} could not be declared.", trustedReturnType));
         }
 
         private static InterpreterResult Error(string message)

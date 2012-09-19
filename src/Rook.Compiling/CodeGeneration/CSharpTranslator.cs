@@ -42,7 +42,7 @@ namespace Rook.Compiling.CodeGeneration
             return Each(
                 Line("public@ @ @(@)",
                      Literal(isStatic ? " static" : ""),
-                     Translate(function.ReturnType),
+                     Translate(function.ReturnTypeName),
                      Translate(function.Name),
                      Translate(function.Parameters, ", ")),
                 Block(Line("return @;", Translate(function.Body))));
@@ -171,9 +171,14 @@ namespace Rook.Compiling.CodeGeneration
             return Format(ReservedName.__vector__ + "(@)", Translate(vectorLiteral.Items, ", "));
         }
 
-        private static WriteAction Translate(NamedType type)
+        private static WriteAction Translate(TypeName typeName)
         {
-            return Literal(type.ToString());
+            var cleanName = typeName.ToString()
+                .Replace("System.Boolean", "bool")
+                .Replace("System.Int32", "int")
+                .Replace("System.String", "string");
+
+            return Literal(cleanName);
         }
 
         private static WriteAction Translate(DataType type)

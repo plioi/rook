@@ -54,7 +54,7 @@ namespace Rook.Compiling.Syntax
         public Function TypeCheck(Function function, Scope scope)
         {
             var position = function.Position;
-            var returnType = function.ReturnType;
+            var returnTypeName = function.ReturnTypeName;
             var name = function.Name;
             var parameters = function.Parameters;
             var body = function.Body;
@@ -64,9 +64,10 @@ namespace Rook.Compiling.Syntax
 
             var typedBody = TypeCheck(body, localScope);
 
+            var returnType = returnTypeName.ToDataType();
             Unify(typedBody.Position, returnType, typedBody.Type);
 
-            return new Function(position, returnType, name, parameters, typedBody, declaredType);
+            return new Function(position, returnTypeName, name, parameters, typedBody, declaredType);
         }
 
         public Expression TypeCheck(Expression expression, Scope scope)

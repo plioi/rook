@@ -9,19 +9,19 @@ namespace Rook.Compiling.Syntax
     public class Function : TypedSyntaxTree, Binding
     {
         public Position Position { get; private set; }
-        public NamedType ReturnType { get; private set; }
+        public TypeName ReturnTypeName { get; private set; }
         public Name Name { get; private set; }
         public Vector<Parameter> Parameters { get; private set; }
         public Expression Body { get; private set; }
         public DataType Type { get; private set; }
 
-        public Function(Position position, NamedType returnType, Name name, IEnumerable<Parameter> parameters, Expression body)
-            : this(position, returnType, name, parameters.ToVector(), body, UnknownType.Instance) { }
+        public Function(Position position, TypeName returnTypeName, Name name, IEnumerable<Parameter> parameters, Expression body)
+            : this(position, returnTypeName, name, parameters.ToVector(), body, UnknownType.Instance) { }
 
-        public Function(Position position, NamedType returnType, Name name, Vector<Parameter> parameters, Expression body, DataType type)
+        public Function(Position position, TypeName returnTypeName, Name name, Vector<Parameter> parameters, Expression body, DataType type)
         {
             Position = position;
-            ReturnType = returnType;
+            ReturnTypeName = returnTypeName;
             Name = name;
             Parameters = parameters;
             Body = body;
@@ -39,7 +39,7 @@ namespace Rook.Compiling.Syntax
             {
                 var parameterTypes = Parameters.Select(p => p.Type).ToArray();
 
-                return NamedType.Function(parameterTypes, ReturnType);
+                return NamedType.Function(parameterTypes, ReturnTypeName.ToDataType());
             }
         }
 

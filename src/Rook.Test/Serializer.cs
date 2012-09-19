@@ -31,7 +31,7 @@ namespace Rook
         public string Visit(Function function)
         {
             return String.Format("{0} {1}({2}) {3}",
-                                 function.ReturnType,
+                                 Translate(function.ReturnTypeName),
                                  Translate(function.Name),
                                  Translate(function.Parameters, ", "),
                                  Translate(function.Body));
@@ -142,6 +142,14 @@ namespace Rook
         private string Translate<T>(IEnumerable<T> items, string separator) where T : SyntaxTree
         {
             return String.Join(separator, items.Select(Translate));
+        }
+
+        private static string Translate(TypeName typeName)
+        {
+            return typeName.ToString()
+                .Replace("System.Boolean", "bool")
+                .Replace("System.Int32", "int")
+                .Replace("System.String", "string");
         }
 
         private string Translate<T>(T item) where T : SyntaxTree
