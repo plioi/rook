@@ -35,5 +35,13 @@ namespace Rook.Compiling.Syntax
             type.GetHashCode().ShouldEqual(new TypeName("B", new TypeName("A")).GetHashCode());
             type.GetHashCode().ShouldNotEqual(new TypeName("B").GetHashCode());
         }
+
+        public void HasStaticEmptyValueRepresentingTheAbsenseOfAName()
+        {
+            TypeName.Empty.Name.ShouldEqual("");
+            TypeName.Empty.GenericArguments.ShouldBeEmpty();
+            TypeName.Empty.ToString().ShouldEqual("");
+            TypeName.Empty.ShouldEqual(TypeName.Empty);
+        }
     }
 }

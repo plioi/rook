@@ -8,9 +8,18 @@ namespace Rook.Compiling.Syntax
 {
     public class TypeName : Value<TypeName>
     {
+        public static readonly TypeName Empty = new TypeName();
+
         private readonly string name;
         private readonly TypeName[] genericArguments;
         private readonly string fullName;
+
+        private TypeName()
+        {
+            name = "";
+            genericArguments = new TypeName[] {};
+            fullName = "";
+        }
 
         public TypeName(string name, params TypeName[] genericArguments)
         {
