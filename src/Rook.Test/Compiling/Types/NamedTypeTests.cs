@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rook.Compiling.Syntax;
 using Should;
 
 namespace Rook.Compiling.Types

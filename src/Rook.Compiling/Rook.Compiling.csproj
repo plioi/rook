@@ -89,6 +89,7 @@
     <Compile Include="Syntax\MethodInvocation.cs" />
     <Compile Include="Syntax\New.cs" />
     <Compile Include="Syntax\RookLexer.cs" />
+    <Compile Include="Syntax\StringExtensions.cs" />
     <Compile Include="Syntax\StringLiteral.cs" />
     <Compile Include="Syntax\TypeChecker.cs" />
     <Compile Include="Syntax\TypeName.cs" />

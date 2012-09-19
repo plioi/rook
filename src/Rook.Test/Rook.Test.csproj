@@ -127,7 +127,6 @@
     <Compile Include="Compiling\Types\NamedTypeTests.cs" />
     <Compile Include="Compiling\Types\TypeUnifierTests.cs" />
     <Compile Include="Compiling\Types\TypeVariableTests.cs" />
-    <Compile Include="StringExtensions.cs" />
     <Compile Include="TestDiscoveryCommand.cs" />
   </ItemGroup>
   <ItemGroup>

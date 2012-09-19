@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Parsley;
 using Rook.Compiling.CodeGeneration;
 using Rook.Compiling.Syntax;
@@ -39,8 +40,8 @@ namespace Rook.Compiling
 
         private static Reply<CompilationUnit> Parse(string rookCode)
         {
-            var tokens = new RookLexer().Tokenize(rookCode);
-            return new RookGrammar().CompilationUnit.Parse(new TokenStream(tokens));
+            var tokens = rookCode.Tokenize();
+            return new RookGrammar().CompilationUnit.Parse(tokens);
         }
 
         private string Translate(CompilationUnit typedCompilationUnit)

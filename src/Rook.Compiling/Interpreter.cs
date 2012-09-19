@@ -25,7 +25,7 @@ namespace Rook.Compiling
 
         public bool CanParse(string code)
         {
-            var tokens = new TokenStream(new RookLexer().Tokenize(code));
+            var tokens = code.Tokenize();
             Class @class;
             Function function;
             Expression expression;
@@ -37,7 +37,7 @@ namespace Rook.Compiling
 
         public InterpreterResult Interpret(string code)
         {
-            var tokens = new TokenStream(new RookLexer().Tokenize(code));
+            var tokens = code.Tokenize();
             var pos = tokens.Position;
             
             Expression expression;
@@ -194,7 +194,7 @@ namespace Rook.Compiling
 
             var trustedReturnType = (NamedType)typedExpression.Type;
 
-            var tokens = new TokenStream(new RookLexer().Tokenize(trustedReturnType.ToString()));
+            var tokens = trustedReturnType.ToString().Tokenize();
 
             TypeName trustedReturnTypeName;
             if (TryParse(tokens, grammar.TypeName, out trustedReturnTypeName))
