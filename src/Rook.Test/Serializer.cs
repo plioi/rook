@@ -44,10 +44,10 @@ namespace Rook
 
         public string Visit(Parameter parameter)
         {
-            if (parameter.IsImplicitlyTyped())
+            if (parameter.IsImplicitlyTyped)
                 return String.Format("{0}", parameter.Identifier);
 
-            return String.Format("{0} {1}", parameter.Type, parameter.Identifier);
+            return String.Format("{0} {1}", Translate(parameter.DeclaredTypeName), parameter.Identifier);
         }
 
         public string Visit(Block block)

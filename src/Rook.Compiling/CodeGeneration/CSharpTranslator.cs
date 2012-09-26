@@ -55,7 +55,7 @@ namespace Rook.Compiling.CodeGeneration
 
         public WriteAction Visit(Parameter parameter)
         {
-            return Format("@ @", Translate(parameter.Type), Literal(parameter.Identifier));
+            return Format("@ @", Translate(parameter.DeclaredTypeName), Literal(parameter.Identifier));
         }
 
         public WriteAction Visit(Block block)

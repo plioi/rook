@@ -1,3 +1,4 @@
+using System;
 using Rook.Compiling.Types;
 
 namespace Rook.Compiling.Syntax
@@ -10,6 +11,7 @@ namespace Rook.Compiling.Syntax
 
     public static class BindingExtensions
     {
+        [Obsolete]
         public static bool IsImplicitlyTyped(this Binding binding)
         {
             return binding.Type == UnknownType.Instance;

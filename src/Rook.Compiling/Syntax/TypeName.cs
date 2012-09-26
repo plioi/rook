@@ -52,9 +52,12 @@ namespace Rook.Compiling.Syntax
         }
 
         [Obsolete]
-        public NamedType ToDataType()
+        public DataType ToDataType()
         {
-            return new NamedType(name, genericArguments.Select(x => (DataType)x.ToDataType()).ToArray());
+            if (this == Empty)
+                return UnknownType.Instance;
+
+            return new NamedType(name, genericArguments.Select(x => x.ToDataType()).ToArray());
         }
     }
 }

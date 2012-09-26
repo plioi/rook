@@ -37,7 +37,7 @@ namespace Rook.Compiling.Syntax
         {
             get
             {
-                var parameterTypes = Parameters.Select(p => p.Type).ToArray();
+                var parameterTypes = Parameters.Select(p => p.DeclaredTypeName.ToDataType()).ToArray();
 
                 return NamedType.Function(parameterTypes, ReturnTypeName.ToDataType());
             }

@@ -60,14 +60,16 @@ namespace Rook.Compiling.Syntax
             var body = function.Body;
             var declaredType = function.DeclaredType;
 
-            var localScope = CreateLocalScope(scope, parameters);
+            var typedParameters = GetTypedParameters(parameters).ToVector();
+
+            var localScope = CreateLocalScope(scope, typedParameters);
 
             var typedBody = TypeCheck(body, localScope);
 
             var returnType = returnTypeName.ToDataType();
             Unify(typedBody.Position, returnType, typedBody.Type);
 
-            return new Function(position, returnTypeName, name, parameters, typedBody, declaredType);
+            return new Function(position, returnTypeName, name, typedParameters, typedBody, declaredType);
         }
 
         public Expression TypeCheck(Expression expression, Scope scope)
@@ -127,7 +129,7 @@ namespace Rook.Compiling.Syntax
             var parameters = lambda.Parameters;
             var body = lambda.Body;
 
-            var typedParameters = ReplaceImplicitTypesWithNewNonGenericTypeVariables(parameters).ToVector();
+            var typedParameters = GetTypedParameters(parameters).ToVector();
 
             var localScope = CreateLocalScope(scope, typedParameters);
 
@@ -140,18 +142,18 @@ namespace Rook.Compiling.Syntax
             return new Lambda(position, normalizedParameters, typedBody, NamedType.Function(parameterTypes, typedBody.Type));
         }
 
-        private static IEnumerable<Parameter> ReplaceImplicitTypesWithNewNonGenericTypeVariables(IEnumerable<Parameter> parameters)
+        private static IEnumerable<Parameter> GetTypedParameters(IEnumerable<Parameter> parameters)
         {
             foreach (var parameter in parameters)
-                if (parameter.IsImplicitlyTyped())
-                    yield return new Parameter(parameter.Position, TypeVariable.CreateNonGeneric(), parameter.Identifier);
+                if (parameter.IsImplicitlyTyped)
+                    yield return parameter.WithType(TypeVariable.CreateNonGeneric());
                 else
-                    yield return parameter;
+                    yield return parameter.WithType(parameter.DeclaredTypeName.ToDataType());
         }
 
         private Vector<Parameter> NormalizeTypes(IEnumerable<Parameter> typedParameters)
         {
-            return typedParameters.Select(p => new Parameter(p.Position, unifier.Normalize(p.Type), p.Identifier)).ToVector();
+            return typedParameters.Select(p => p.WithType(unifier.Normalize(p.Type))).ToVector();
         }
 
         public Expression TypeCheck(If conditional, Scope scope)

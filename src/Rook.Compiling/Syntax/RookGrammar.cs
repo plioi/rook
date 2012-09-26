@@ -105,7 +105,7 @@ namespace Rook.Compiling.Syntax
             ExplicitlyTypedParameter.Rule =
                 from type in TypeName
                 from identifier in Identifier
-                select new Parameter(identifier.Position, type.ToDataType(), identifier.Literal);
+                select new Parameter(identifier.Position, type, identifier.Literal);
 
             ImplicitlyTypedParameter.Rule =
                 from identifier in Identifier

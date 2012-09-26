@@ -70,7 +70,7 @@ namespace Rook.Compiling.Syntax
         public void CanCreateFullyTypedInstance()
         {
             var node = Parse("bool foo(int x, int y, bool z) x+y>0 && z");
-            node.Parameters.ShouldHaveTypes(Integer, Integer, Boolean);
+            node.Parameters.ShouldHaveTypes(Unknown, Unknown, Unknown);
             node.Body.Type.ShouldEqual(Unknown);
             node.Type.ShouldEqual(Unknown);
 
