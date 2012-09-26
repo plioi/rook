@@ -14,17 +14,5 @@ namespace Rook
 
             result.ShouldBeTrue(String.Format("Failed to bind identifier '{0}' to type '{1}'", identifier, type));
         }
-
-        private class StubBinding : Binding
-        {
-            public StubBinding(string identifier, DataType type)
-            {
-                Identifier = identifier;
-                Type = type;
-            }
-
-            public string Identifier { get; private set; }
-            public DataType Type { get; private set; }
-        }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Parsley;
@@ -193,24 +192,6 @@ namespace Rook.Compiling.Syntax
         private static DataType Function(DataType returnType)
         {
             return Function(new DataType[] { }, returnType);
-        }
-
-        private class StubBinding : Binding
-        {
-            public StubBinding(string identifier, DataType type)
-            {
-                Type = type;
-                Identifier = identifier;
-            }
-
-            public Position Position
-            {
-                get { throw new NotImplementedException(); }
-            }
-
-            public string Identifier { get; private set; }
-
-            public DataType Type { get; private set; }
         }
     }
 }

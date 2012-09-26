@@ -96,18 +96,23 @@ namespace Rook.Compiling
 
         public void CanBePopulatedWithAUniqueBinding()
         {
-            global.TryIncludeUniqueBinding(new Parameter(null, Integer, "a")).ShouldBeTrue();
-            global.TryIncludeUniqueBinding(new Parameter(null, Boolean, "b")).ShouldBeTrue();
+            global.TryIncludeUniqueBinding(Binding("a", Integer)).ShouldBeTrue();
+            global.TryIncludeUniqueBinding(Binding("b", Boolean)).ShouldBeTrue();
             AssertType(Integer, global, "a");
             AssertType(Boolean, global, "b");
         }
 
         public void DemandsUniqueBindingsWhenIncludingUniqueBindings()
         {
-            global.TryIncludeUniqueBinding(new Parameter(null, Integer, "a")).ShouldBeTrue();
-            global.TryIncludeUniqueBinding(new Parameter(null, Integer, "a")).ShouldBeFalse();
-            global.TryIncludeUniqueBinding(new Parameter(null, Boolean, "a")).ShouldBeFalse();
+            global.TryIncludeUniqueBinding(Binding("a", Integer)).ShouldBeTrue();
+            global.TryIncludeUniqueBinding(Binding("a", Integer)).ShouldBeFalse();
+            global.TryIncludeUniqueBinding(Binding("a", Boolean)).ShouldBeFalse();
             AssertType(Integer, global, "a");
+        }
+
+        private static Binding Binding(string identifier, DataType type)
+        {
+            return new StubBinding(identifier, type);
         }
 
         private static void AssertType(DataType expectedType, Scope scope, string key)
