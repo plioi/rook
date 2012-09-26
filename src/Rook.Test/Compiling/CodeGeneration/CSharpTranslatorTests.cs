@@ -145,12 +145,12 @@ namespace Rook.Compiling.CodeGeneration
             Expect("{");
             Expect("    int a = 1;");
             Expect("    int b = 2;");
-            Expect("    int c = ((a) + (b));");
+            Expect("    var c = ((a) + (b));");
             Expect("    __evaluate__(((a) + (b)));");
             Expect("    return ((c) == (3));");
             Expect("}");
             Expect(")");
-            AssertTranslation(rookGrammar.Expression, "{ int a = 1; int b = 2; int c = a+b; a+b; c==3; }");
+            AssertTranslation(rookGrammar.Expression, "{ int a = 1; int b = 2; c = a+b; a+b; c==3; }");
         }
         
         public void ShouldTranslateLambdaExpressions()

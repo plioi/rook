@@ -69,10 +69,10 @@ namespace Rook
 
         public string Visit(VariableDeclaration variableDeclaration)
         {
-            if (variableDeclaration.IsImplicitlyTyped())
+            if (variableDeclaration.IsImplicitlyTyped)
                 return String.Format("{0} = {1};", variableDeclaration.Identifier, Translate(variableDeclaration.Value));
 
-            return String.Format("{0} {1} = {2};", variableDeclaration.Type, variableDeclaration.Identifier, Translate(variableDeclaration.Value));
+            return String.Format("{0} {1} = {2};", Translate(variableDeclaration.DeclaredTypeName), variableDeclaration.Identifier, Translate(variableDeclaration.Value));
         }
 
         public string Visit(Call call)

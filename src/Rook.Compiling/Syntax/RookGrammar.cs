@@ -162,7 +162,7 @@ namespace Rook.Compiling.Syntax
                 from assignment in Token("=")
                 from value in Expression
                 from end in EndOfLine
-                select new VariableDeclaration(identifier.Position, type.ToDataType(), identifier.Literal, value);
+                select new VariableDeclaration(identifier.Position, type, identifier.Literal, value);
 
             ImplicitlyTypedVariableDeclaration.Rule =
                 from identifier in Identifier

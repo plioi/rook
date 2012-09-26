@@ -104,16 +104,18 @@ namespace Rook.Compiling.Syntax
             {
                 var typedValue = TypeCheck(variable.Value, localScope);
 
-                var binding = variable;
-                if (variable.IsImplicitlyTyped())
-                    binding = new VariableDeclaration(variable.Position, /*Replaces implicit type.*/ typedValue.Type, variable.Identifier, variable.Value);
+                var bindingType = variable.IsImplicitlyTyped
+                    ? typedValue.Type /*Replaces implicit type.*/
+                    : variable.DeclaredTypeName.ToDataType();
+
+                var binding = new VariableDeclaration(variable.Position, variable.DeclaredTypeName, variable.Identifier, typedValue, bindingType);
 
                 if (!localScope.TryIncludeUniqueBinding(binding))
                     LogError(CompilerError.DuplicateIdentifier(binding.Position, binding));
 
-                typedVariableDeclarations.Add(new VariableDeclaration(variable.Position, binding.Type, variable.Identifier, typedValue));
+                Unify(typedValue.Position, bindingType, typedValue.Type);
 
-                Unify(typedValue.Position, binding.Type, typedValue.Type);
+                typedVariableDeclarations.Add(binding);
             }
 
             var typedInnerExpressions = TypeCheck(innerExpressions, localScope);

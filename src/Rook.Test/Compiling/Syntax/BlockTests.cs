@@ -62,7 +62,7 @@ namespace Rook.Compiling.Syntax
         public void CanCreateFullyTypedInstance()
         {
             var block = (Block)Parse("{ int x = y; int z = 0; xz = x>z; x; z; xz; }");
-            block.VariableDeclarations.ShouldHaveTypes(Integer, Integer, Unknown/*Implicitly typed.*/);
+            block.VariableDeclarations.ShouldHaveTypes(Unknown, Unknown, Unknown/*Implicitly typed.*/);
             block.VariableDeclarations.Select(x => x.Value).ShouldHaveTypes(Unknown, Unknown, Unknown);
             block.InnerExpressions.ShouldHaveTypes(Unknown, Unknown, Unknown);
             block.Type.ShouldEqual(Unknown);

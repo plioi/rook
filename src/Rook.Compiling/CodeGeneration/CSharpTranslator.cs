@@ -94,8 +94,12 @@ namespace Rook.Compiling.CodeGeneration
 
         public WriteAction Visit(VariableDeclaration variableDeclaration)
         {
+            var declaredType = variableDeclaration.IsImplicitlyTyped
+                                   ? Literal("var")
+                                   : Translate(variableDeclaration.DeclaredTypeName);
+
             return Format("@ @ = @;",
-                          Translate(variableDeclaration.Type),
+                          declaredType,
                           Literal(variableDeclaration.Identifier),
                           Translate(variableDeclaration.Value));
         }
