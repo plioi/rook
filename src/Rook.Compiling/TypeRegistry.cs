@@ -6,11 +6,11 @@ namespace Rook.Compiling
 {
     public class TypeRegistry
     {
-        private readonly IDictionary<string, DataType> types;
+        private readonly IDictionary<string, NamedType> types;
 
         public TypeRegistry()
         {
-            types = new Dictionary<string, DataType>();
+            types = new Dictionary<string, NamedType>();
         }
 
         public void Add(Class @class)
@@ -18,7 +18,7 @@ namespace Rook.Compiling
             types.Add(@class.Name.Identifier, new NamedType(@class));
         }
 
-        public DataType TypeOf(string name)
+        public NamedType TypeOf(string name)
         {
             return types[name];
         }
