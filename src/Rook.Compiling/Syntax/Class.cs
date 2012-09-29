@@ -13,14 +13,19 @@ namespace Rook.Compiling.Syntax
         public DataType Type { get; private set; }
 
         public Class(Position position, Name name, IEnumerable<Function> methods)
-            : this(position, name, methods.ToVector(), ConstructorFunctionType(name)) { }
+            : this(position, name, methods.ToVector(), UnknownType.Instance) { }
 
-        private Class(Position position, Name name, Vector<Function> methods, DataType type)
+        public Class(Position position, Name name, Vector<Function> methods, DataType type)
         {
             Position = position;
             Name = name;
             Methods = methods;
             Type = type;
+        }
+
+        public Class WithType(DataType type)
+        {
+            return new Class(Position, Name, Methods, type);
         }
 
         public TResult Visit<TResult>(Visitor<TResult> visitor)
@@ -31,11 +36,6 @@ namespace Rook.Compiling.Syntax
         public Class WithTypes(TypeChecker visitor, Scope scope)
         {
             return visitor.TypeCheck(this, scope);
-        }
-
-        private static NamedType ConstructorFunctionType(Name name)
-        {
-            return NamedType.Constructor.MakeGenericType(new NamedType(name.Identifier));
         }
 
         string Binding.Identifier

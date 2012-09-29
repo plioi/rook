@@ -179,7 +179,7 @@ namespace Rook.Compiling
                 typeChecker.TypeMemberRegistry.Register(c);
 
             foreach (var c in relevantClasses)
-                scope.TryIncludeUniqueBinding(c);
+                scope.TryIncludeUniqueBinding(c.WithType(TypeChecker.ConstructorFunctionType(c.Name)));
 
             foreach (var f in relevantFunctions)
                 scope.TryIncludeUniqueBinding(f);

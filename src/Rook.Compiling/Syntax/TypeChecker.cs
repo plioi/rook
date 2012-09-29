@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Parsley;
@@ -26,6 +27,11 @@ namespace Rook.Compiling.Syntax
         //rephrase unit test usages of this so they don't have to manually prepare the TypeMemberRegistry.
         public TypeMemberRegistry TypeMemberRegistry { get { return typeMemberRegistry; } }
 
+        public static NamedType ConstructorFunctionType(Name name)
+        {
+            return NamedType.Constructor.MakeGenericType(new NamedType(name.Identifier));
+        }
+
         public CompilationUnit TypeCheck(CompilationUnit compilationUnit)
         {
             var position = compilationUnit.Position;
@@ -35,9 +41,11 @@ namespace Rook.Compiling.Syntax
             foreach (var @class in classes)//TODO: Test coverage.
                 typeMemberRegistry.Register(@class);
 
-            var scope = CreateGlobalScope(classes, functions);
+            var typedClasses = classes.Select(@class => @class.WithType(ConstructorFunctionType(@class.Name))).ToVector();
 
-            return new CompilationUnit(position, TypeCheck(classes, scope), TypeCheck(functions, scope));
+            var scope = CreateGlobalScope(typedClasses, functions);
+
+            return new CompilationUnit(position, TypeCheck(typedClasses, scope), TypeCheck(functions, scope));
         }
 
         public Class TypeCheck(Class @class, Scope scope)
@@ -48,7 +56,10 @@ namespace Rook.Compiling.Syntax
 
             var localScope = CreateLocalScope(scope, methods);
 
-            return new Class(position, name, TypeCheck(methods, localScope));
+            //If we are coming here from TypeCheck(CompilationUnit), then we already applied a type to each Class.
+            var constructorType = @class.Type == UnknownType.Instance ? ConstructorFunctionType(@class.Name) : @class.Type;
+
+            return new Class(position, name, TypeCheck(methods, localScope), constructorType);
         }
 
         public Function TypeCheck(Function function, Scope scope)
@@ -321,7 +332,7 @@ namespace Rook.Compiling.Syntax
 
             int value;
 
-            if (int.TryParse(digits, out value))
+            if (Int32.TryParse(digits, out value))
                 return new IntegerLiteral(position, digits, NamedType.Integer);
 
             LogError(CompilerError.InvalidConstant(position, digits));

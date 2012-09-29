@@ -68,7 +68,7 @@ namespace Rook.Compiling.Syntax
                     test.Type.ShouldEqual(Unknown);
                     test.Body.Type.ShouldEqual(Unknown);
                 });
-            @class.Type.ShouldEqual(constructorReturningFoo);
+            @class.Type.ShouldEqual(Unknown);
 
             var typeChecker = new TypeChecker();
             var typedClass = typeChecker.TypeCheck(@class, Scope());

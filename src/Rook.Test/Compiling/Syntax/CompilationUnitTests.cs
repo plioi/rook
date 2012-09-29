@@ -53,8 +53,8 @@ namespace Rook.Compiling.Syntax
             var typedCompilationUnit = typeChecker.TypeCheck(compilationUnit);
 
             compilationUnit.Classes.ShouldList(
-                foo => foo.Type.ShouldEqual(fooConstructorType),
-                bar => bar.Type.ShouldEqual(barConstructorType));
+                foo => foo.Type.ShouldEqual(Unknown),
+                bar => bar.Type.ShouldEqual(Unknown));
 
             compilationUnit.Functions.ShouldList(
                 even =>
