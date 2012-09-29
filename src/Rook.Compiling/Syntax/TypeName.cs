@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rook.Compiling.Types;
 using Rook.Core;
 
 namespace Rook.Compiling.Syntax
@@ -49,15 +48,6 @@ namespace Rook.Compiling.Syntax
         public override string ToString()
         {
             return fullName;
-        }
-
-        [Obsolete]
-        public DataType ToDataType()
-        {
-            if (this == Empty)
-                return UnknownType.Instance;
-
-            return new NamedType(name, genericArguments.Select(x => x.ToDataType()).ToArray());
         }
     }
 }

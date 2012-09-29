@@ -71,7 +71,7 @@ namespace Rook.Compiling.Syntax
 
             var typedBody = TypeCheck(body, localScope);
 
-            var returnType = returnTypeName.ToDataType();
+            var returnType = TypeOf(returnTypeName);
             Unify(typedBody.Position, returnType, typedBody.Type);
 
             return new Function(position, returnTypeName, name, typedParameters, typedBody, DeclaredType(function));
@@ -79,9 +79,9 @@ namespace Rook.Compiling.Syntax
 
         public static DataType DeclaredType(Function function)
         {
-            var parameterTypes = function.Parameters.Select(p => p.DeclaredTypeName.ToDataType()).ToArray();
+            var parameterTypes = function.Parameters.Select(p => TypeOf(p.DeclaredTypeName)).ToArray();
 
-            return NamedType.Function(parameterTypes, function.ReturnTypeName.ToDataType());
+            return NamedType.Function(parameterTypes, TypeOf(function.ReturnTypeName));
         }
 
         public Expression TypeCheck(Expression expression, Scope scope)
@@ -118,7 +118,7 @@ namespace Rook.Compiling.Syntax
 
                 var bindingType = variable.IsImplicitlyTyped
                     ? typedValue.Type /*Replaces implicit type.*/
-                    : variable.DeclaredTypeName.ToDataType();
+                    : TypeOf(variable.DeclaredTypeName);
 
                 var binding = new VariableDeclaration(variable.Position, variable.DeclaredTypeName, variable.Identifier, typedValue, bindingType);
 
@@ -162,7 +162,7 @@ namespace Rook.Compiling.Syntax
                 if (parameter.IsImplicitlyTyped)
                     yield return parameter.WithType(TypeVariable.CreateNonGeneric());
                 else
-                    yield return parameter.WithType(parameter.DeclaredTypeName.ToDataType());
+                    yield return parameter.WithType(TypeOf(parameter.DeclaredTypeName));
         }
 
         private Vector<Parameter> NormalizeTypes(IEnumerable<Parameter> typedParameters)
@@ -445,6 +445,14 @@ namespace Rook.Compiling.Syntax
                     LogError(CompilerError.DuplicateIdentifier(parameter.Position, parameter));
 
             return locals;
+        }
+
+        private static DataType TypeOf(TypeName typeName)
+        {
+            if (typeName == TypeName.Empty)
+                return UnknownType.Instance;
+
+            return new NamedType(typeName.Name, typeName.GenericArguments.Select(TypeOf).ToArray());
         }
     }
 }
