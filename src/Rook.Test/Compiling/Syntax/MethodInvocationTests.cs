@@ -10,11 +10,11 @@ namespace Rook.Compiling.Syntax
     [Facts]
     public class MethodInvocationTests : ExpressionTests
     {
-        private readonly Class knownClass;
+        private readonly Class mathClass;
 
         public MethodInvocationTests()
         {
-            knownClass = @"class Math
+            mathClass = @"class Math
             {
                 int Zero() 0;
                 int Square(int x) x*x;
@@ -59,7 +59,7 @@ namespace Rook.Compiling.Syntax
 
         public void FailsTypeCheckingForUndefinedInstanceType()
         {
-            ShouldFailTypeChecking("math.Square(2)", math => new NamedType("Math")).WithError("Type is undefined: Math", 1, 1);
+            ShouldFailTypeChecking("math.Square(2)", math => new NamedType(mathClass)).WithError("Type is undefined: Math", 1, 1);
         }
         public void TypeChecksAsExtensionMethodCallWhenPossibleForUndefinedInstanceType()
         {
@@ -70,18 +70,18 @@ namespace Rook.Compiling.Syntax
 
             var typeChecker = new TypeChecker();
 
-            var typedCall = (Call)typeChecker.TypeCheck(node, Scope(math => new NamedType("Math"),
-                                                                    Square => Function(new[] {new NamedType("Math"), Integer}, Integer)));
-            typedCall.Callable.Type.ShouldEqual(Function(new[] { new NamedType("Math"), Integer }, Integer));
-            typedCall.Arguments.ShouldHaveTypes(new NamedType("Math"), Integer);
+            var typedCall = (Call)typeChecker.TypeCheck(node, Scope(math => new NamedType(mathClass),
+                                                                    Square => Function(new[] {new NamedType(mathClass), Integer}, Integer)));
+            typedCall.Callable.Type.ShouldEqual(Function(new[] { new NamedType(mathClass), Integer }, Integer));
+            typedCall.Arguments.ShouldHaveTypes(new NamedType(mathClass), Integer);
             typedCall.Type.ShouldEqual(Integer);
         }
 
         public void HasATypeEqualToTheReturnTypeOfTheMethod()
         {
-            Type("math.Zero()", knownClass, math => new NamedType("Math")).ShouldEqual(Integer);
-            Type("math.Even(1)", knownClass, math => new NamedType("Math")).ShouldEqual(Boolean);
-            Type("math.Max(1, 2)", knownClass, math => new NamedType("Math")).ShouldEqual(Integer);
+            Type("math.Zero()", mathClass, math => new NamedType(mathClass)).ShouldEqual(Integer);
+            Type("math.Even(1)", mathClass, math => new NamedType(mathClass)).ShouldEqual(Boolean);
+            Type("math.Max(1, 2)", mathClass, math => new NamedType(mathClass)).ShouldEqual(Integer);
         }
 
         public void HasATypeEqualToTheInferredReturnTypeOfGenericMethods()
@@ -97,12 +97,12 @@ namespace Rook.Compiling.Syntax
 
         public void TypeChecksArgumentExpressionsAgainstTheSurroundingScope()
         {
-            Type("math.Max(zero, one)", knownClass, math => new NamedType("Math"), zero => Integer, one => Integer).ShouldEqual(Integer);
+            Type("math.Max(zero, one)", mathClass, math => new NamedType(mathClass), zero => Integer, one => Integer).ShouldEqual(Integer);
         }
 
         public void DoesNotTypeCheckMethodNameAgainstTheSurroundingScope()
         {
-            Type("math.Max(zero, one)", knownClass, math => new NamedType("Math"), zero => Integer, one => Integer, Max => Boolean).ShouldEqual(Integer);
+            Type("math.Max(zero, one)", mathClass, math => new NamedType(mathClass), zero => Integer, one => Integer, Max => Boolean).ShouldEqual(Integer);
         }
 
         public void CanCreateFullyTypedInstance()
@@ -113,8 +113,8 @@ namespace Rook.Compiling.Syntax
             node.Arguments.Single().Type.ShouldEqual(Unknown);
             node.Type.ShouldEqual(Unknown);
 
-            var typedNode = WithTypes(node, knownClass, math => new NamedType("Math"), two => Integer);
-            typedNode.Instance.Type.ShouldEqual(new NamedType("Math"));
+            var typedNode = WithTypes(node, mathClass, math => new NamedType(mathClass), two => Integer);
+            typedNode.Instance.Type.ShouldEqual(new NamedType(mathClass));
             typedNode.MethodName.Type.ShouldEqual(NamedType.Function(new[] { Integer }, Boolean));
             typedNode.Arguments.Single().Type.ShouldEqual(Integer);
             typedNode.Type.ShouldEqual(Boolean);
@@ -122,33 +122,33 @@ namespace Rook.Compiling.Syntax
         public void TypeChecksAsExtensionMethodCallWhenInstanceTypeDoesNotContainMethodWithExpectedName()
         {
             var typeChecker = new TypeChecker();
-            typeChecker.TypeMemberRegistry.Register(knownClass);
+            typeChecker.TypeMemberRegistry.Register(mathClass);
 
             var node = (MethodInvocation)Parse("math.SomeExtensionMethod(false)");
 
-            var typedCall = (Call)typeChecker.TypeCheck(node, Scope(math => new NamedType("Math"),
-                                                                    SomeExtensionMethod => Function(new[] { new NamedType("Math"), Boolean }, Integer)));
+            var typedCall = (Call)typeChecker.TypeCheck(node, Scope(math => new NamedType(mathClass),
+                                                                    SomeExtensionMethod => Function(new[] { new NamedType(mathClass), Boolean }, Integer)));
 
-            typedCall.Callable.Type.ShouldEqual(Function(new[] { new NamedType("Math"), Boolean }, Integer));
-            typedCall.Arguments.ShouldHaveTypes(new NamedType("Math"), Boolean);
+            typedCall.Callable.Type.ShouldEqual(Function(new[] { new NamedType(mathClass), Boolean }, Integer));
+            typedCall.Arguments.ShouldHaveTypes(new NamedType(mathClass), Boolean);
             typedCall.Type.ShouldEqual(Integer);
         }
 
         public void FailsTypeCheckingForIncorrectNumberOfArguments()
         {
-            ShouldFailTypeChecking("math.Zero(false)", knownClass, math => new NamedType("Math")).WithError(
+            ShouldFailTypeChecking("math.Zero(false)", mathClass, math => new NamedType(mathClass)).WithError(
                 "Type mismatch: expected System.Func<int>, found System.Func<bool, int>.", 1, 5);
 
-            ShouldFailTypeChecking("math.Square(1, true)", knownClass, math => new NamedType("Math")).WithError(
+            ShouldFailTypeChecking("math.Square(1, true)", mathClass, math => new NamedType(mathClass)).WithError(
                 "Type mismatch: expected System.Func<int, int>, found System.Func<int, bool, int>.", 1, 5);
 
-            ShouldFailTypeChecking("math.Max(1, 2, 3)", knownClass, math => new NamedType("Math")).WithError(
+            ShouldFailTypeChecking("math.Max(1, 2, 3)", mathClass, math => new NamedType(mathClass)).WithError(
                 "Type mismatch: expected System.Func<int, int, int>, found System.Func<int, int, int, int>.", 1, 5);
         }
 
         public void FailsTypeCheckingForMismatchedArgumentTypes()
         {
-            ShouldFailTypeChecking("math.Square(true)", knownClass, math => new NamedType("Math")).WithError(
+            ShouldFailTypeChecking("math.Square(true)", mathClass, math => new NamedType(mathClass)).WithError(
                 "Type mismatch: expected int, found bool.", 1, 5);
         }
 
