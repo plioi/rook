@@ -4,7 +4,8 @@
     {
         public static void Main()
         {
-            new Interactive().Run();
+            //TODO: Accept *.rook file name as single required argument, compile and execute.
+            //TODO: If --translate flag is present, dump out C# tranlation instead of executing.
         }
     }
 }

@@ -80,8 +80,6 @@
     <Compile Include="Compiling\CompilerTests.cs" />
     <Compile Include="Compiling\CSharpCompilerTests.cs" />
     <Compile Include="Compiling\Fail.cs" />
-    <Compile Include="Compiling\InterpreterResultTests.cs" />
-    <Compile Include="Compiling\InterpreterTests.cs" />
     <Compile Include="Compiling\RookCompilerTests.cs" />
     <Compile Include="Compiling\CodeGeneration\CSharpTranslatorTests.cs" />
     <Compile Include="Compiling\Syntax\ClassTests.cs" />
