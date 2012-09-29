@@ -32,14 +32,10 @@ namespace Rook.Compiling
 
         public void Register(Class @class)
         {
-            var typeKey = new NamedType(@class.Name.Identifier);
+            var typeKey = new NamedType(@class);
+            var memberBindings = typeKey.Methods;
 
-            if (!typeMembers.ContainsKey(typeKey))
-                typeMembers[typeKey] = new List<Binding>();
-
-            var typeMemberBindings = typeMembers[typeKey];
-            typeMemberBindings.AddRange(@class.Methods.Select(m => new MethodBinding(m.Name.Identifier, TypeChecker.DeclaredType(m))));
-
+            Register(typeKey, memberBindings.ToArray());
         }
 
         //TODO: Deprecated.
