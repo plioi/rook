@@ -42,6 +42,7 @@ namespace Rook.Compiling.Types
         private readonly bool isGenericTypeDefinition;
         private readonly Binding[] methods;
 
+        [Obsolete]
         public NamedType(string name, params DataType[] genericArguments)
         {
             this.name = name;
@@ -53,7 +54,7 @@ namespace Rook.Compiling.Types
         public NamedType(Class @class)
             : this(@class.Name.Identifier)
         {
-            methods = @class.Methods.Cast<Binding>().ToArray();
+            methods = @class.Methods.Select(m => (Binding)new MethodBinding(m.Name.Identifier, TypeChecker.DeclaredType(m))).ToArray();
         }
 
         public NamedType(Type type)

@@ -182,7 +182,7 @@ namespace Rook.Compiling
                 scope.TryIncludeUniqueBinding(c.Name.Identifier, TypeChecker.ConstructorType(c.Name));
 
             foreach (var f in relevantFunctions)
-                scope.TryIncludeUniqueBinding(f);
+                scope.TryIncludeUniqueBinding(f.Name.Identifier, TypeChecker.DeclaredType(f));
 
             return scope;
         }

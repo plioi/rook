@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rook.Compiling.Syntax;
@@ -6,6 +7,20 @@ using Rook.Core.Collections;
 
 namespace Rook.Compiling
 {
+    [Obsolete]
+    public class MethodBinding : Binding
+    {
+        public MethodBinding(string identifier, DataType type)
+        {
+            Identifier = identifier;
+            Type = type;
+        }
+
+        public string Identifier { get; private set; }
+        public DataType Type { get; private set; }
+    }
+
+    [Obsolete]
     public class TypeMemberRegistry
     {
         private readonly IDictionary<NamedType, List<Binding>> typeMembers;
@@ -19,7 +34,12 @@ namespace Rook.Compiling
         {
             var typeKey = new NamedType(@class.Name.Identifier);
 
-            Register(typeKey, @class.Methods.Cast<Binding>().ToArray());
+            if (!typeMembers.ContainsKey(typeKey))
+                typeMembers[typeKey] = new List<Binding>();
+
+            var typeMemberBindings = typeMembers[typeKey];
+            typeMemberBindings.AddRange(@class.Methods.Select(m => new MethodBinding(m.Name.Identifier, TypeChecker.DeclaredType(m))));
+
         }
 
         //TODO: Deprecated.

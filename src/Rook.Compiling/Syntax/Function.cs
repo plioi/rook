@@ -41,10 +41,5 @@ namespace Rook.Compiling.Syntax
         {
             get { return Name.Identifier; }
         }
-
-        DataType Binding.Type
-        {
-            get { return TypeChecker.DeclaredType(this); }
-        }
     }
 }

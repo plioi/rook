@@ -419,7 +419,7 @@ namespace Rook.Compiling.Syntax
                     LogError(CompilerError.DuplicateIdentifier(@class.Position, @class));
 
             foreach (var function in functions)
-                if (!globals.TryIncludeUniqueBinding(function))
+                if (!globals.TryIncludeUniqueBinding(function.Name.Identifier, DeclaredType(function)))
                     LogError(CompilerError.DuplicateIdentifier(function.Position, function));
 
             return globals;
@@ -430,7 +430,7 @@ namespace Rook.Compiling.Syntax
             var locals = new LocalScope(parent);
 
             foreach (var method in methods)
-                if (!locals.TryIncludeUniqueBinding(method))
+                if (!locals.TryIncludeUniqueBinding(method.Name.Identifier, DeclaredType(method)))
                     LogError(CompilerError.DuplicateIdentifier(method.Position, method));
 
             return locals;
