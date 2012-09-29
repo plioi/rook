@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
 
 namespace Rook.Compiling
@@ -18,12 +17,12 @@ namespace Rook.Compiling
             set { bindings[identifier] = value; }
         }
 
-        public bool TryIncludeUniqueBinding(Binding binding)
+        public bool TryIncludeUniqueBinding(string identifier, DataType type)
         {
-            if (Contains(binding.Identifier))
+            if (Contains(identifier))
                 return false;
 
-            bindings[binding.Identifier] = binding.Type;
+            bindings[identifier] = type;
             return true;
         }
 

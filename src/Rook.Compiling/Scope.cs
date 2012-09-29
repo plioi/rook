@@ -4,11 +4,16 @@ using Rook.Core.Collections;
 
 namespace Rook.Compiling
 {
-    public interface Scope
+    public abstract class Scope
     {
-        bool TryIncludeUniqueBinding(Binding binding);
-        bool TryGet(string identifier, out DataType type);
-        bool Contains(string identifier);
+        public bool TryIncludeUniqueBinding(Binding binding)
+        {
+            return TryIncludeUniqueBinding(binding.Identifier, binding.Type);
+        }
+
+        public abstract bool TryIncludeUniqueBinding(string identifier, DataType type);
+        public abstract bool TryGet(string identifier, out DataType type);
+        public abstract bool Contains(string identifier);
     }
 
     public class GlobalScope : Scope
@@ -67,17 +72,17 @@ namespace Rook.Compiling
             globals["With"] = NamedType.Function(new[] { vectorT, @int, T }, vectorT);
         }
 
-        public bool TryIncludeUniqueBinding(Binding binding)
+        public override bool TryIncludeUniqueBinding(string identifier, DataType type)
         {
-            return globals.TryIncludeUniqueBinding(binding);
+            return globals.TryIncludeUniqueBinding(identifier, type);
         }
 
-        public bool TryGet(string identifier, out DataType type)
+        public override bool TryGet(string identifier, out DataType type)
         {
             return globals.TryGet(identifier, out type);
         }
 
-        public bool Contains(string identifier)
+        public override bool Contains(string identifier)
         {
             return globals.Contains(identifier);
         }
@@ -94,17 +99,17 @@ namespace Rook.Compiling
                 TryIncludeUniqueBinding(member);
         }
 
-        public bool TryIncludeUniqueBinding(Binding binding)
+        public override bool TryIncludeUniqueBinding(string identifier, DataType type)
         {
-            return members.TryIncludeUniqueBinding(binding);
+            return members.TryIncludeUniqueBinding(identifier, type);
         }
 
-        public bool TryGet(string identifier, out DataType type)
+        public override bool TryGet(string identifier, out DataType type)
         {
             return members.TryGet(identifier, out type);
         }
 
-        public bool Contains(string identifier)
+        public override bool Contains(string identifier)
         {
             return members.Contains(identifier);
         }
@@ -121,20 +126,20 @@ namespace Rook.Compiling
             locals  = new BindingDictionary();
         }
 
-        public bool TryIncludeUniqueBinding(Binding binding)
+        public override bool TryIncludeUniqueBinding(string identifier, DataType type)
         {
-            if (Contains(binding.Identifier))
+            if (Contains(identifier))
                 return false;
 
-            return locals.TryIncludeUniqueBinding(binding);
+            return locals.TryIncludeUniqueBinding(identifier, type);
         }
 
-        public bool TryGet(string identifier, out DataType type)
+        public override bool TryGet(string identifier, out DataType type)
         {
             return locals.TryGet(identifier, out type) || parent.TryGet(identifier, out type);
         }
 
-        public bool Contains(string identifier)
+        public override bool Contains(string identifier)
         {
             return locals.Contains(identifier) || parent.Contains(identifier);
         }
