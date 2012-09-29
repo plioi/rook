@@ -64,7 +64,6 @@ namespace Rook.Compiling.Syntax
             var name = function.Name;
             var parameters = function.Parameters;
             var body = function.Body;
-            var declaredType = function.DeclaredType;
 
             var typedParameters = GetTypedParameters(parameters).ToVector();
 
@@ -75,7 +74,14 @@ namespace Rook.Compiling.Syntax
             var returnType = returnTypeName.ToDataType();
             Unify(typedBody.Position, returnType, typedBody.Type);
 
-            return new Function(position, returnTypeName, name, typedParameters, typedBody, declaredType);
+            return new Function(position, returnTypeName, name, typedParameters, typedBody, DeclaredType(function));
+        }
+
+        public static DataType DeclaredType(Function function)
+        {
+            var parameterTypes = function.Parameters.Select(p => p.DeclaredTypeName.ToDataType()).ToArray();
+
+            return NamedType.Function(parameterTypes, function.ReturnTypeName.ToDataType());
         }
 
         public Expression TypeCheck(Expression expression, Scope scope)
@@ -409,7 +415,7 @@ namespace Rook.Compiling.Syntax
             var globals = new GlobalScope();
 
             foreach (var @class in classes)
-                if (!globals.TryIncludeUniqueBinding(@class.WithType(ConstructorType(@class.Name))))
+                if (!globals.TryIncludeUniqueBinding(@class.Name.Identifier, ConstructorType(@class.Name)))
                     LogError(CompilerError.DuplicateIdentifier(@class.Position, @class));
 
             foreach (var function in functions)

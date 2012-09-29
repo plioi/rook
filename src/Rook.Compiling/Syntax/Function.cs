@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
@@ -33,16 +32,6 @@ namespace Rook.Compiling.Syntax
             return visitor.Visit(this);
         }
 
-        public DataType DeclaredType
-        {
-            get
-            {
-                var parameterTypes = Parameters.Select(p => p.DeclaredTypeName.ToDataType()).ToArray();
-
-                return NamedType.Function(parameterTypes, ReturnTypeName.ToDataType());
-            }
-        }
-
         public Function WithTypes(TypeChecker visitor, Scope scope)
         {
             return visitor.TypeCheck(this, scope);
@@ -55,7 +44,7 @@ namespace Rook.Compiling.Syntax
 
         DataType Binding.Type
         {
-            get { return DeclaredType; }
+            get { return TypeChecker.DeclaredType(this); }
         }
     }
 }
