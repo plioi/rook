@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Parsley;
-using Rook.Compiling.Syntax;
-using Should;
+﻿using Should;
 
 namespace Rook.Compiling
 {
@@ -32,20 +29,6 @@ namespace Rook.Compiling
             Build("int Main() 123;");
             AssertErrors(0);
             Execute().ShouldEqual(123);
-        }
-
-        public void ShouldBuildAssembliesFromSyntaxTrees()
-        {
-            var tokens = "int Main() 123;".Tokenize();
-            var compilationUnit = new RookGrammar().CompilationUnit.Parse(tokens).Value;
-            Build(compilationUnit);
-            AssertErrors(0);
-            Execute().ShouldEqual(123);
-        }
-
-        private void Build(CompilationUnit compilationUnit)
-        {
-            UseResult(Compiler.Build(compilationUnit));
         }
     }
 }

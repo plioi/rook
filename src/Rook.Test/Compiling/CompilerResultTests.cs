@@ -14,6 +14,7 @@ namespace Rook.Compiling
 
             result.CompiledAssembly.ShouldEqual(assembly);
             result.Errors.ShouldBeEmpty();
+            result.HasErrors.ShouldBeFalse();
             result.Language.ShouldEqual(Language.Rook);
         }
 
@@ -25,6 +26,7 @@ namespace Rook.Compiling
 
             result.CompiledAssembly.ShouldBeNull();
             result.Errors.ShouldList(errorA, errorB);
+            result.HasErrors.ShouldBeTrue();
             result.Language.ShouldEqual(Language.CSharp);
         }
     }

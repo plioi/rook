@@ -26,6 +26,7 @@ namespace Rook.Compiling
 
         public Assembly CompiledAssembly { get; private set; }
         public Vector<CompilerError> Errors { get; private set; }
+        public bool HasErrors { get { return Errors.Any(); } }
         public Language Language { get; private set; }
     }
 }

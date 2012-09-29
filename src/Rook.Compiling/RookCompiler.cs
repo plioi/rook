@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Parsley;
 using Rook.Compiling.CodeGeneration;
 using Rook.Compiling.Syntax;
@@ -18,24 +17,33 @@ namespace Rook.Compiling
 
         public CompilerResult Build(string code)
         {
+            string translation;
+            return Build(code, out translation);
+        }
+
+        public CompilerResult Build(string code, out string translation)
+        {
             var reply = Parse(code);
 
             if (reply.Success)
-                return Build(reply.Value);
+                return Build(reply.Value, out translation);
 
+            translation = "";
             return new CompilerResult(Language.Rook, new CompilerError(reply.UnparsedTokens.Position, reply.ErrorMessages.ToString()));
         }
 
-        public CompilerResult Build(CompilationUnit compilationUnit)
+        private CompilerResult Build(CompilationUnit compilationUnit, out string translation)
         {
+            translation = "";
+
             var typeChecker = new TypeChecker();
             var typedCompilationUnit = typeChecker.TypeCheck(compilationUnit);
 
             if (typeChecker.HasErrors)
                 return new CompilerResult(Language.Rook, typeChecker.Errors);
 
-            string translatedCode = Translate(typedCompilationUnit);
-            return csCompiler.Build(translatedCode);
+            translation = Translate(typedCompilationUnit);
+            return csCompiler.Build(translation);
         }
 
         private static Reply<CompilationUnit> Parse(string rookCode)
