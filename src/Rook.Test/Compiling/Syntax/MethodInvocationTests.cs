@@ -86,13 +86,17 @@ namespace Rook.Compiling.Syntax
 
         public void HasATypeEqualToTheInferredReturnTypeOfGenericMethods()
         {
-            var x = new TypeVariable(123456);
+            var utilityClass = "class Utility { }".ParseClass();
+            var utilityType = new NamedType(utilityClass);
 
             var typeChecker = new TypeChecker();
-            typeChecker.TypeMemberRegistry.Register(new NamedType("Utility"), new StubBinding("Last", Function(new[] { Vector.MakeGenericType(x) }, x)));
 
-            Type("utility.Last([1, 2, 3])", typeChecker, utility => new NamedType("Utility")).ShouldEqual(Integer);
-            Type("utility.Last([true, false])", typeChecker, utility => new NamedType("Utility")).ShouldEqual(Boolean);
+            //Note: Rook methods cannot yet be declared as generic, so stub out a hypothetical method with signature: T Last<T>(Vector<T>)
+            var x = new TypeVariable(123456);
+            typeChecker.TypeMemberRegistry.Register(utilityType, new StubBinding("Last", Function(new[] { Vector.MakeGenericType(x) }, x)));
+
+            Type("utility.Last([1, 2, 3])", typeChecker, utility => utilityType).ShouldEqual(Integer);
+            Type("utility.Last([true, false])", typeChecker, utility => utilityType).ShouldEqual(Boolean);
         }
 
         public void TypeChecksArgumentExpressionsAgainstTheSurroundingScope()
@@ -154,10 +158,15 @@ namespace Rook.Compiling.Syntax
 
         public void FailsTypeCheckingWhenAttemptingToCallANoncallableMember()
         {
-            var typeChecker = new TypeChecker();
-            typeChecker.TypeMemberRegistry.Register(new NamedType("Sample"), new StubBinding("IntegerProperty", Integer));
+            var sampleClass = "class Sample { }".ParseClass();
+            var sampleType = new NamedType(sampleClass);
 
-            ShouldFailTypeChecking("sample.IntegerProperty()", typeChecker, sample => new NamedType("Sample")).WithError("Attempted to call a noncallable object.", 1, 7);
+            var typeChecker = new TypeChecker();
+
+            //Note: Rook classes cannot yet contain fields/properties, so stub out a hypothetical property member binding.
+            typeChecker.TypeMemberRegistry.Register(sampleType, new StubBinding("IntegerProperty", Integer));
+
+            ShouldFailTypeChecking("sample.IntegerProperty()", typeChecker, sample => sampleType).WithError("Attempted to call a noncallable object.", 1, 7);
         }
 
         private DataType Type(string source, Class knownClass, params TypeMapping[] symbols)
