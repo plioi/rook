@@ -27,7 +27,7 @@ namespace Rook.Compiling.Syntax
         //rephrase unit test usages of this so they don't have to manually prepare the TypeMemberRegistry.
         public TypeMemberRegistry TypeMemberRegistry { get { return typeMemberRegistry; } }
 
-        public static NamedType ConstructorFunctionType(Name name)
+        public static NamedType ConstructorType(Name name)
         {
             return NamedType.Constructor.MakeGenericType(new NamedType(name.Identifier));
         }
@@ -41,11 +41,9 @@ namespace Rook.Compiling.Syntax
             foreach (var @class in classes)//TODO: Test coverage.
                 typeMemberRegistry.Register(@class);
 
-            var typedClasses = classes.Select(@class => @class.WithType(ConstructorFunctionType(@class.Name))).ToVector();
+            var scope = CreateGlobalScope(classes, functions);
 
-            var scope = CreateGlobalScope(typedClasses, functions);
-
-            return new CompilationUnit(position, TypeCheck(typedClasses, scope), TypeCheck(functions, scope));
+            return new CompilationUnit(position, TypeCheck(classes, scope), TypeCheck(functions, scope));
         }
 
         public Class TypeCheck(Class @class, Scope scope)
@@ -56,10 +54,7 @@ namespace Rook.Compiling.Syntax
 
             var localScope = CreateLocalScope(scope, methods);
 
-            //If we are coming here from TypeCheck(CompilationUnit), then we already applied a type to each Class.
-            var constructorType = @class.Type == UnknownType.Instance ? ConstructorFunctionType(@class.Name) : @class.Type;
-
-            return new Class(position, name, TypeCheck(methods, localScope), constructorType);
+            return new Class(position, name, TypeCheck(methods, localScope), ConstructorType(@class.Name));
         }
 
         public Function TypeCheck(Function function, Scope scope)
@@ -414,7 +409,7 @@ namespace Rook.Compiling.Syntax
             var globals = new GlobalScope();
 
             foreach (var @class in classes)
-                if (!globals.TryIncludeUniqueBinding(@class))
+                if (!globals.TryIncludeUniqueBinding(@class.WithType(ConstructorType(@class.Name))))
                     LogError(CompilerError.DuplicateIdentifier(@class.Position, @class));
 
             foreach (var function in functions)
