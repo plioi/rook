@@ -22,25 +22,10 @@ namespace Rook.Compiling
 
         public void ShouldGetKeywordTypes()
         {
-            var sample = typeRegistry.TypeOf(TypeName.Integer);
-            sample.Name.ShouldEqual("System.Int32");
-            sample.IsGeneric.ShouldBeFalse();
-            sample.ToString().ShouldEqual("int");
-
-            sample = typeRegistry.TypeOf(TypeName.Boolean);
-            sample.Name.ShouldEqual("System.Boolean");
-            sample.IsGeneric.ShouldBeFalse();
-            sample.ToString().ShouldEqual("bool");
-
-            sample = typeRegistry.TypeOf(TypeName.String);
-            sample.Name.ShouldEqual("System.String");
-            sample.IsGeneric.ShouldBeFalse();
-            sample.ToString().ShouldEqual("string");
-
-            sample = typeRegistry.TypeOf(TypeName.Void);
-            sample.Name.ShouldEqual("Rook.Core.Void");
-            sample.IsGeneric.ShouldBeFalse();
-            sample.ToString().ShouldEqual("Rook.Core.Void");
+            typeRegistry.TypeOf(TypeName.Integer).ShouldEqual("System.Int32", "int");
+            typeRegistry.TypeOf(TypeName.Boolean).ShouldEqual("System.Boolean", "bool");
+            typeRegistry.TypeOf(TypeName.String).ShouldEqual("System.String", "string");
+            typeRegistry.TypeOf(TypeName.Void).ShouldEqual("Rook.Core.Void", "Rook.Core.Void");
         }
 
         public void ShouldGetTypesForRegisteredClasses()

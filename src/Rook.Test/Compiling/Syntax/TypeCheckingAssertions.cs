@@ -10,6 +10,13 @@ namespace Rook.Compiling.Syntax
 {
     public static class TypeCheckingAssertions
     {
+        public static void ShouldEqual(this NamedType actual, string expectedName, string expectedToString)
+        {
+            actual.Name.ShouldEqual(expectedName);
+            actual.IsGeneric.ShouldBeFalse();
+            actual.ToString().ShouldEqual(expectedToString);
+        }
+
         public static void ShouldHaveTypes(this IEnumerable<TypedSyntaxTree> actual, params DataType[] expectedTypes)
         {
             actual.Select(x => x.Type).ShouldList(expectedTypes);

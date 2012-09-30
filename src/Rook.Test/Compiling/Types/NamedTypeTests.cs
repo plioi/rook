@@ -71,10 +71,7 @@ namespace Rook.Compiling.Types
         {
             var @class = "class Foo { }".ParseClass();
 
-            var foo = new NamedType(@class);
-            foo.Name.ShouldEqual("Foo");
-            foo.GenericArguments.ShouldBeEmpty();
-            foo.ToString().ShouldEqual("Foo");
+            new NamedType(@class).ShouldEqual("Foo", "Foo");
         }
 
         public void CanBeConstructedFromRookClassDeclarationsIncludingMethods()
@@ -82,9 +79,7 @@ namespace Rook.Compiling.Types
             var @class = "class Foo { int Square(int x) x*x; }".ParseClass();
 
             var foo = new NamedType(@class);
-            foo.Name.ShouldEqual("Foo");
-            foo.GenericArguments.ShouldBeEmpty();
-            foo.ToString().ShouldEqual("Foo");
+            foo.ShouldEqual("Foo", "Foo");
 
             foo.Methods.ShouldList(
                 method =>
@@ -96,10 +91,7 @@ namespace Rook.Compiling.Types
 
         public void CanBeConstructedFromNongenericClrTypes()
         {
-            var intType = new NamedType(typeof(int));
-            intType.Name.ShouldEqual("System.Int32");
-            intType.GenericArguments.ShouldBeEmpty();
-            intType.ToString().ShouldEqual("int");
+            new NamedType(typeof(int)).ShouldEqual("System.Int32", "int");
         }
 
         public void CanBeConstructedFromOpenGenericClrTypes()
