@@ -17,7 +17,7 @@ namespace Rook.Compiling.Syntax
 
         public void HasATypeEqualToThatOfTheTypeBeingConstructed()
         {
-            var constructedType = new NamedType("Foo");
+            var constructedType = new NamedType("class Foo { }".ParseClass());
             var constructorType = NamedType.Constructor.MakeGenericType(constructedType);
             Type("new Foo()", Foo => constructorType).ShouldEqual(constructedType);
         }
@@ -38,7 +38,7 @@ namespace Rook.Compiling.Syntax
 
         public void CanCreateFullyTypedInstance()
         {
-            var constructedType = new NamedType("Foo");
+            var constructedType = new NamedType("class Foo { }".ParseClass());
             var constructorType = NamedType.Constructor.MakeGenericType(constructedType);
 
             var @new = (New)Parse("new Foo()");

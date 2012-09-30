@@ -24,14 +24,14 @@ namespace Rook.Compiling
 
         public void LooksUpMemberBindingsForKnownClassDefinitions()
         {
-            var foo = new NamedType("Foo");
-            var math = new NamedType("Math");
+            var fooClass = "class Foo { int I() 0; bool B() true; }".ParseClass();
+            var mathClass = "class Math { int Square(int x) x*x; bool Zero(int x) x==0; }".ParseClass();
 
-            var fooBinding = "class Foo { int I() 0; bool B() true; }".ParseClass();
-            var mathBinding = "class Math { int Square(int x) x*x; bool Zero(int x) x==0; }".ParseClass();
+            var foo = new NamedType(fooClass);
+            var math = new NamedType(mathClass);
 
-            typeMemberRegistry.Register(fooBinding);
-            typeMemberRegistry.Register(mathBinding);
+            typeMemberRegistry.Register(fooClass);
+            typeMemberRegistry.Register(mathClass);
 
             AssertMemberType(NamedType.Function(Integer), foo, "I");
             AssertMemberType(NamedType.Function(Boolean), foo, "B");
