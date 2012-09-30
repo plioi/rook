@@ -35,5 +35,55 @@ namespace Rook.Compiling
             typeRegistry.Add(math);
             typeRegistry.TypeOf(new TypeName("Math")).ShouldEqual(new NamedType(math));
         }
+
+        public void ShouldGetClosedEnumerableTypesForKnownItemTypes()
+        {
+            var closedEnumerable = typeRegistry.TypeOf(TypeName.Enumerable(TypeName.Integer));
+
+            closedEnumerable.ShouldEqual("System.Collections.Generic.IEnumerable",
+                                         "System.Collections.Generic.IEnumerable<int>",
+                                         NamedType.Integer);
+        }
+
+        public void ShouldGetClosedVectorTypesForKnownItemTypes()
+        {
+            var closedVector = typeRegistry.TypeOf(TypeName.Vector(TypeName.Integer));
+
+            closedVector.ShouldEqual("Rook.Core.Collections.Vector",
+                                     "Rook.Core.Collections.Vector<int>",
+                                     NamedType.Integer);
+        }
+
+        public void ShouldGetClosedNullableTypesForKnownItemTypes()
+        {
+            var closedNullable = typeRegistry.TypeOf(TypeName.Nullable(TypeName.Integer));
+
+            closedNullable.ShouldEqual("Rook.Core.Nullable",
+                                       "Rook.Core.Nullable<int>",
+                                       NamedType.Integer);
+        }
+
+        public void ShouldGetNestedClosedTypesForWellKnownGenericTypes()
+        {
+            var nestedTypeName =
+                TypeName.Vector(
+                    TypeName.Enumerable(
+                        TypeName.Nullable(TypeName.Integer)));
+
+            var nestedType = typeRegistry.TypeOf(nestedTypeName);
+
+            nestedType.ShouldEqual("Rook.Core.Collections.Vector",
+                                   "Rook.Core.Collections.Vector<System.Collections.Generic.IEnumerable<Rook.Core.Nullable<int>>>",
+                                   NamedType.Enumerable.MakeGenericType(
+                                       NamedType.Nullable.MakeGenericType(
+                                           NamedType.Integer)));
+        }
+
+        public void ShouldGetNullForWellKnownGenericTypesWithUnregisteredGenericTypeArguments()
+        {
+            var vectorOfFoo = TypeName.Vector(new TypeName("Foo"));
+
+            typeRegistry.TypeOf(vectorOfFoo).ShouldBeNull();
+        }
     }
 }
