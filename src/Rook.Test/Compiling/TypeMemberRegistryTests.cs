@@ -41,8 +41,10 @@ namespace Rook.Compiling
 
         public void FailsToLookUpMemberBindingsForUnknownTypes()
         {
+            var unregisteredAndUndiscoverable = "class UnknownType { }".ParseClass();
+
             Vector<Binding> expectedFailure;
-            typeMemberRegistry.TryGetMembers(new NamedType("UnknownType"), out expectedFailure).ShouldBeFalse();
+            typeMemberRegistry.TryGetMembers(new NamedType(unregisteredAndUndiscoverable), out expectedFailure).ShouldBeFalse();
             expectedFailure.ShouldBeNull();
         }
 

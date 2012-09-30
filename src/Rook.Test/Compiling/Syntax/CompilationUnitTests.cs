@@ -1,4 +1,5 @@
-﻿using Parsley;
+﻿using System.Linq;
+using Parsley;
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
 using Should;
@@ -39,15 +40,19 @@ namespace Rook.Compiling.Syntax
 
         public void TypesAllClassesAndFunctions()
         {
-            var fooConstructorType = NamedType.Constructor.MakeGenericType(new NamedType("Foo"));
-            var barConstructorType = NamedType.Constructor.MakeGenericType(new NamedType("Bar"));
-
             var compilationUnit = Parse(
                 @"class Foo { }
                   class Bar { }
                   bool Even(int n) if (n==0) true else Odd(n-1);
                   bool Odd(int n) if (n==0) false else Even(n-1);
                   int Main() if (Even(4)) 0 else 1;");
+
+
+            var fooType = new NamedType(compilationUnit.Classes.Single(c => c.Name.Identifier == "Foo"));
+            var barType = new NamedType(compilationUnit.Classes.Single(c => c.Name.Identifier == "Bar"));
+
+            var fooConstructorType = NamedType.Constructor.MakeGenericType(fooType);
+            var barConstructorType = NamedType.Constructor.MakeGenericType(barType);
 
             var typeChecker = new TypeChecker();
             var typedCompilationUnit = typeChecker.TypeCheck(compilationUnit);

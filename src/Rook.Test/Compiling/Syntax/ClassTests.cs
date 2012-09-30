@@ -32,22 +32,24 @@ namespace Rook.Compiling.Syntax
 
         public void HasATypeCorrespondingWithTheDefaultConstructor()
         {
-            var constructorReturningFoo = NamedType.Constructor.MakeGenericType(new NamedType("Foo"));
+            var fooClass = "class Foo { }".ParseClass();
+            var constructorReturningFoo = NamedType.Constructor.MakeGenericType(new NamedType(fooClass));
 
-            Type("class Foo { }").ShouldEqual(constructorReturningFoo);
+            var typeChecker = new TypeChecker();
+
+            typeChecker.TypeCheck(fooClass, Scope()).Type.ShouldEqual(constructorReturningFoo);
         }
 
         public void CanCreateFullyTypedInstance()
         {
-            var constructorReturningFoo = NamedType.Constructor.MakeGenericType(new NamedType("Foo"));
+            var @class = @"class Foo
+                           {
+                              bool Even(int n) if (n==0) true else Odd(n-1);
+                              bool Odd(int n) if (n==0) false else Even(n-1);
+                              int Test() if (Even(4)) 0 else 1;
+                           }".ParseClass();
 
-            var @class = Parse(
-                @"class Foo
-                  {
-                      bool Even(int n) if (n==0) true else Odd(n-1);
-                      bool Odd(int n) if (n==0) false else Even(n-1);
-                      int Test() if (Even(4)) 0 else 1;
-                  }");
+            var constructorReturningFoo = NamedType.Constructor.MakeGenericType(new NamedType(@class));
 
             @class.Methods.ShouldList(
                 even =>
@@ -122,19 +124,6 @@ namespace Rook.Compiling.Syntax
 
             ShouldFailTypeChecking("class Foo { int A() 0; int Point() 2; }", Point => pointConstructor)
                 .WithError("Duplicate identifier: Point", 1, 28);
-        }
-
-        private DataType Type(string source, params TypeMapping[] symbols)
-        {
-            var @class = Parse(source);
-
-            var typeChecker = new TypeChecker();
-            var typedClass = typeChecker.TypeCheck(@class, Scope(symbols));
-
-            typedClass.ShouldNotBeNull();
-            typeChecker.HasErrors.ShouldBeFalse();
-
-            return typedClass.Type;
         }
 
         private Vector<CompilerError> ShouldFailTypeChecking(string source, params TypeMapping[] symbols)

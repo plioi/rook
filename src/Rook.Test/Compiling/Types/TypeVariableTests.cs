@@ -67,7 +67,7 @@ namespace Rook.Compiling.Types
             a.ShouldEqual(a);
             a.ShouldEqual(new TypeVariable(0));
             a.ShouldNotEqual(b);
-            a.ShouldNotEqual((DataType)new NamedType("A"));
+            a.ShouldNotEqual((DataType)NamedType.Integer);
 
             a.GetHashCode().ShouldEqual(new TypeVariable(0).GetHashCode());
             a.GetHashCode().ShouldNotEqual(b.GetHashCode());
