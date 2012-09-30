@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Parsley;
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
-using Void = Rook.Core.Void;
 
 namespace Rook.Compiling.Syntax
 {
@@ -280,9 +278,9 @@ namespace Rook.Compiling.Syntax
                 return Syntax.TypeName.Enumerable(targetType);
 
             if (modifier.Literal == "[]")
-                return new TypeName(typeof(Vector<>).QualifiedName(), targetType);
+                return Syntax.TypeName.Vector(targetType);
 
-            return new TypeName(typeof(Core.Nullable<>).QualifiedName(), targetType);
+            return Syntax.TypeName.Nullable(targetType);
         }
     }
 

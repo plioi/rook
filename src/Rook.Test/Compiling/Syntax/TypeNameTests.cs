@@ -56,5 +56,15 @@ namespace Rook.Compiling.Syntax
         {
             TypeName.Enumerable(TypeName.Integer).ToString().ShouldEqual("System.Collections.Generic.IEnumerable<System.Int32>");
         }
+
+        public void HasStaticHelperForVectorTypes()
+        {
+            TypeName.Vector(TypeName.Integer).ToString().ShouldEqual("Rook.Core.Collections.Vector<System.Int32>");
+        }
+
+        public void HasStaticHelperForNullableTypes()
+        {
+            TypeName.Nullable(TypeName.Integer).ToString().ShouldEqual("Rook.Core.Nullable<System.Int32>");
+        }
     }
 }
