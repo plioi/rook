@@ -120,10 +120,8 @@ namespace Rook.Compiling.Syntax
 
         public void FailsTypeCheckingWhenMethodNamesShadowSurroundingScope()
         {
-            var pointConstructor = NamedType.Constructor.MakeGenericType(new NamedType("Point"));
-
-            ShouldFailTypeChecking("class Foo { int A() 0; int Point() 2; }", Point => pointConstructor)
-                .WithError("Duplicate identifier: Point", 1, 28);
+            ShouldFailTypeChecking("class Foo { int A() 0; int B() 2; }", B => NamedType.Function(NamedType.Boolean))
+                .WithError("Duplicate identifier: B", 1, 28);
         }
 
         private Vector<CompilerError> ShouldFailTypeChecking(string source, params TypeMapping[] symbols)
