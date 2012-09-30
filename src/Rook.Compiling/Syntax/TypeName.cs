@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Rook.Compiling.Types;
 using Rook.Core;
 
 namespace Rook.Compiling.Syntax
@@ -11,6 +12,11 @@ namespace Rook.Compiling.Syntax
         public static readonly TypeName String = new TypeName(typeof(string).FullName);
         public static readonly TypeName Integer = new TypeName(typeof(int).FullName);
         public static readonly TypeName Void = new TypeName(typeof(Void).FullName);
+
+        public static TypeName Enumerable(TypeName itemTypeName)
+        {
+            return new TypeName(typeof(IEnumerable<>).QualifiedName(), itemTypeName);
+        }
 
         private readonly string name;
         private readonly TypeName[] genericArguments;

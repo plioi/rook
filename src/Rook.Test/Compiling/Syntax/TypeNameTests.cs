@@ -51,5 +51,10 @@ namespace Rook.Compiling.Syntax
             TypeName.String.ToString().ShouldEqual("System.String");
             TypeName.Void.ToString().ShouldEqual("Rook.Core.Void");
         }
+
+        public void HasStaticHelperForEnumerableTypes()
+        {
+            TypeName.Enumerable(TypeName.Integer).ToString().ShouldEqual("System.Collections.Generic.IEnumerable<System.Int32>");
+        }
     }
 }

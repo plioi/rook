@@ -99,9 +99,11 @@ namespace Rook.Compiling.Types
             using (TypeVariable.TestFactory())
             {
                 var openEnumerable = new NamedType(typeof(IEnumerable<>));
-                openEnumerable.Name.ShouldEqual("System.Collections.Generic.IEnumerable");
-                openEnumerable.GenericArguments.Single().ShouldEqual(new TypeVariable(0));
-                openEnumerable.ToString().ShouldEqual("System.Collections.Generic.IEnumerable<0>");
+
+                openEnumerable.ShouldEqual(
+                    "System.Collections.Generic.IEnumerable",
+                    "System.Collections.Generic.IEnumerable<0>",
+                    new TypeVariable(0));
             }
         }
 
@@ -126,9 +128,11 @@ namespace Rook.Compiling.Types
         public void CanBeConstructedFromClosedGenericClrTypes()
         {
             var closedEnumerable = new NamedType(typeof(IEnumerable<int>));
-            closedEnumerable.Name.ShouldEqual("System.Collections.Generic.IEnumerable");
-            closedEnumerable.GenericArguments.Single().ShouldEqual(new NamedType(typeof(int)));
-            closedEnumerable.ToString().ShouldEqual("System.Collections.Generic.IEnumerable<int>");
+
+            closedEnumerable.ShouldEqual(
+                "System.Collections.Generic.IEnumerable",
+                "System.Collections.Generic.IEnumerable<int>",
+                NamedType.Integer);
         }
 
         public void CannotBeConstructedFromGenericParameterTypeObjects()

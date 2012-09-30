@@ -277,7 +277,7 @@ namespace Rook.Compiling.Syntax
         private static TypeName ApplyTypeModifier(TypeName targetType, Token modifier)
         {
             if (modifier.Literal == "*")
-                return new TypeName(typeof(IEnumerable<>).QualifiedName(), targetType);
+                return Syntax.TypeName.Enumerable(targetType);
 
             if (modifier.Literal == "[]")
                 return new TypeName(typeof(Vector<>).QualifiedName(), targetType);
