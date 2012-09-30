@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
@@ -12,6 +11,16 @@ namespace Rook.Compiling
         public TypeRegistry()
         {
             types = new Dictionary<TypeName, NamedType>();
+
+            RegisterCommonTypes();
+        }
+
+        private void RegisterCommonTypes()
+        {
+            types.Add(TypeName.Integer, NamedType.Integer);
+            types.Add(TypeName.Boolean, NamedType.Boolean);
+            types.Add(TypeName.String, NamedType.String);
+            types.Add(TypeName.Void, NamedType.Void);
         }
 
         public void Add(Class @class)
@@ -22,23 +31,9 @@ namespace Rook.Compiling
         public NamedType TypeOf(TypeName name)
         {
             if (!types.ContainsKey(name))
-                types.Add(name, ReflectType(name));
-
-            return types[name];
-        }
-
-        private NamedType ReflectType(TypeName name)
-        {
-            //TODO: This relies on Type.GetType(string), which will only work for types referenced by this test
-            //      assembly and types found in Mscorlib.dll, as the strings passed to it will not be assembly-qualified.
-            //      TypeRegistry will eventually need to be configured with the necessary Assemblies to search within.
-
-            var type = Type.GetType(name.ToString());
-
-            if (type == null)
                 return null;
 
-            return new NamedType(type);
+            return types[name];
         }
     }
 }
