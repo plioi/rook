@@ -88,10 +88,10 @@ namespace Rook.Compiling.Syntax
                 Choice(Token("*"), Token("?"), Token("[]"));
 
             KeywordType.Rule =
-                Choice(from _ in Token(RookLexer.@int) select new TypeName(typeof(int).FullName),
-                       from _ in Token(RookLexer.@bool) select new TypeName(typeof(bool).FullName),
-                       from _ in Token(RookLexer.@string) select new TypeName(typeof(string).FullName),
-                       from _ in Token(RookLexer.@void) select new TypeName(typeof(Void).FullName));
+                Choice(from _ in Token(RookLexer.@int) select Syntax.TypeName.Integer,
+                       from _ in Token(RookLexer.@bool) select Syntax.TypeName.Boolean,
+                       from _ in Token(RookLexer.@string) select Syntax.TypeName.String,
+                       from _ in Token(RookLexer.@void) select Syntax.TypeName.Void);
 
             TypeName.Rule =
                 Label(from rootType in Choice(NameType, KeywordType)

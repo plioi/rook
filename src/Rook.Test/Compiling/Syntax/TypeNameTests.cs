@@ -43,5 +43,13 @@ namespace Rook.Compiling.Syntax
             TypeName.Empty.ToString().ShouldEqual("");
             TypeName.Empty.ShouldEqual(TypeName.Empty);
         }
+
+        public void HasStaticHelpersForKeywordTypes()
+        {
+            TypeName.Integer.ToString().ShouldEqual("System.Int32");
+            TypeName.Boolean.ToString().ShouldEqual("System.Boolean");
+            TypeName.String.ToString().ShouldEqual("System.String");
+            TypeName.Void.ToString().ShouldEqual("Rook.Core.Void");
+        }
     }
 }

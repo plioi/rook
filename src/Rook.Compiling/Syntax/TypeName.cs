@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Rook.Core;
 
@@ -8,6 +7,10 @@ namespace Rook.Compiling.Syntax
     public class TypeName : Value<TypeName>
     {
         public static readonly TypeName Empty = new TypeName();
+        public static readonly TypeName Boolean = new TypeName(typeof(bool).FullName);
+        public static readonly TypeName String = new TypeName(typeof(string).FullName);
+        public static readonly TypeName Integer = new TypeName(typeof(int).FullName);
+        public static readonly TypeName Void = new TypeName(typeof(Void).FullName);
 
         private readonly string name;
         private readonly TypeName[] genericArguments;
@@ -26,7 +29,7 @@ namespace Rook.Compiling.Syntax
             this.genericArguments = genericArguments;
 
             fullName = genericArguments.Any()
-                           ? String.Format("{0}<{1}>", name, String.Join(", ", (IEnumerable<TypeName>) genericArguments))
+                           ? System.String.Format("{0}<{1}>", name, System.String.Join(", ", (IEnumerable<TypeName>) genericArguments))
                            : name;
         }
 
