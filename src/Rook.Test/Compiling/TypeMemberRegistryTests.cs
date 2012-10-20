@@ -44,16 +44,14 @@ namespace Rook.Compiling
         {
             var unregisteredAndUndiscoverable = "class UnknownType { }".ParseClass();
 
-            Vector<Binding> expectedFailure;
-            typeMemberRegistry.TryGetMembers(new NamedType(unregisteredAndUndiscoverable), out expectedFailure).ShouldBeFalse();
-            expectedFailure.ShouldBeNull();
+            typeMemberRegistry.TryGetMembers(new NamedType(unregisteredAndUndiscoverable)).ShouldBeNull();
         }
 
         private void AssertMemberType(DataType expectedType, NamedType typeKey, string memberKey)
         {
-            Vector<Binding> memberBindings;
+            Vector<Binding> memberBindings = typeMemberRegistry.TryGetMembers(typeKey);
 
-            if (typeMemberRegistry.TryGetMembers(typeKey, out memberBindings))
+            if (memberBindings != null)
                 AssertMemberType(expectedType, memberBindings, memberKey);
             else
                 throw new Exception("Failed to look up the type of '" + typeKey + "+" + memberKey + "' in the Scope");

@@ -235,8 +235,8 @@ namespace Rook.Compiling.Syntax
                 return methodInvocation;
             }
 
-            Vector<Binding> typeMembers;
-            if (typeMemberRegistry.TryGetMembers(instanceNamedType, out typeMembers))
+            var typeMembers = typeMemberRegistry.TryGetMembers(instanceNamedType);
+            if (typeMembers != null)
             {
                 Scope typeMemberScope = new TypeMemberScope(typeMembers);
 

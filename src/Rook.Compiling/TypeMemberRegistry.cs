@@ -40,28 +40,20 @@ namespace Rook.Compiling
             Register(typeKey, memberBindings.ToArray());
         }
 
-        //TODO: Deprecated.
         public void Register(NamedType typeKey, params Binding[] memberBindings)
         {
             if (!typeMembers.ContainsKey(typeKey))
                 typeMembers[typeKey] = new List<Binding>();
 
-            var typeMemberBindings = typeMembers[typeKey];
-            typeMemberBindings.AddRange(memberBindings);
+            typeMembers[typeKey].AddRange(memberBindings);
         }
 
-        //TODO: Just return empty collection for unknown types?  Is it important to distinguish empty versus unknown?
-        //TODO: Deprecated: instead, ask for a type by string name and generic args, then ask the resulting DataType for its members.
-        public bool TryGetMembers(NamedType typeKey, out Vector<Binding> memberBindings)
+        public Vector<Binding> TryGetMembers(NamedType typeKey)
         {
             if (typeMembers.ContainsKey(typeKey))
-            {
-                memberBindings = typeMembers[typeKey].ToVector();
-                return true;
-            }
+                return typeMembers[typeKey].ToVector();
 
-            memberBindings = null;
-            return false;
+            return null;
         }
     }
 }
