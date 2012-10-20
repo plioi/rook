@@ -70,7 +70,26 @@ namespace Rook.Compiling.Types
 
         private DataType NormalizeNamedType(NamedType named)
         {
-            return new NamedType(named.Name, named.GenericArguments.Select(Normalize).ToArray());
+            if (!named.IsGeneric)
+                return named;
+
+            var normalizedGenericArguments = new List<DataType>();
+
+            bool alreadyNormalized = true;
+            foreach (var genericArgument in named.GenericArguments)
+            {
+                var normalizedGenericArgument = Normalize(genericArgument);
+
+                if (genericArgument != normalizedGenericArgument)
+                    alreadyNormalized = false;
+
+                normalizedGenericArguments.Add(normalizedGenericArgument);
+            }
+
+            if (alreadyNormalized)
+                return named;
+
+            return new NamedType(named.Name, normalizedGenericArguments.ToArray());
         }
 
         private DataType NormalizeVariable(TypeVariable variable)
