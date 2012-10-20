@@ -154,7 +154,7 @@ namespace Rook.Compiling.Syntax
             return new Lambda(position, normalizedParameters, typedBody, NamedType.Function(parameterTypes, typedBody.Type));
         }
 
-        private static IEnumerable<Parameter> GetTypedParameters(IEnumerable<Parameter> parameters)
+        private IEnumerable<Parameter> GetTypedParameters(IEnumerable<Parameter> parameters)
         {
             foreach (var parameter in parameters)
                 if (parameter.IsImplicitlyTyped)
@@ -445,12 +445,9 @@ namespace Rook.Compiling.Syntax
             return locals;
         }
 
-        private static DataType TypeOf(TypeName typeName)
+        private NamedType TypeOf(TypeName typeName)
         {
-            if (typeName == TypeName.Empty)
-                return UnknownType.Instance;
-
-            return new NamedType(typeName.Name, typeName.GenericArguments.Select(TypeOf).ToArray());
+            return typeRegistry.TypeOf(typeName);
         }
     }
 }
