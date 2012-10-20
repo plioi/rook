@@ -64,5 +64,12 @@ namespace Rook.Compiling
 
             return types[name];
         }
+
+        public NamedType DeclaredType(Function function)
+        {
+            var parameterTypes = function.Parameters.Select(p => TypeOf(p.DeclaredTypeName)).ToArray();
+
+            return NamedType.Function(parameterTypes, TypeOf(function.ReturnTypeName));
+        }
     }
 }

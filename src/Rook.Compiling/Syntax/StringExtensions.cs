@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Parsley;
 
 namespace Rook.Compiling.Syntax
@@ -10,8 +7,18 @@ namespace Rook.Compiling.Syntax
     {
         public static Class ParseClass(this string source)
         {
+            return source.Parse(g => g.Class);
+        }
+
+        public static Function ParseFunction(this string source)
+        {
+            return source.Parse(g => g.Function);
+        }
+
+        private static T Parse<T>(this string source, Func<RookGrammar, Parser<T>> getParser)
+        {
             var tokens = Tokenize(source);
-            var parser = new RookGrammar().Class;
+            var parser = getParser(new RookGrammar());
             return parser.Parse(tokens).Value;
         }
 

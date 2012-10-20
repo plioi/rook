@@ -85,5 +85,17 @@ namespace Rook.Compiling
 
             typeRegistry.TypeOf(vectorOfFoo).ShouldBeNull();
         }
+
+        public void ShouldGetDeclaredFuncTypeForFunctionDeclaration()
+        {
+            var function = @"bool FunctionWithIrrelevantBody(int* a, int[] b) false".ParseFunction();
+
+            typeRegistry.DeclaredType(function)
+                .ShouldEqual("System.Func",
+                             "System.Func<System.Collections.Generic.IEnumerable<int>, Rook.Core.Collections.Vector<int>, bool>",
+                             NamedType.Enumerable.MakeGenericType(NamedType.Integer),
+                             NamedType.Vector.MakeGenericType(NamedType.Integer),
+                             NamedType.Boolean);
+        }
     }
 }

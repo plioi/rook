@@ -77,6 +77,7 @@ namespace Rook.Compiling.Syntax
             return new Function(position, returnTypeName, name, typedParameters, typedBody, DeclaredType(function));
         }
 
+        [Obsolete]
         public static DataType DeclaredType(Function function)
         {
             var parameterTypes = function.Parameters.Select(p => TypeOf(p.DeclaredTypeName)).ToArray();
