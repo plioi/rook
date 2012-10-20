@@ -1,4 +1,5 @@
 using Parsley;
+using Rook.Compiling.Types;
 using Should;
 
 namespace Rook.Compiling.Syntax
@@ -29,8 +30,8 @@ namespace Rook.Compiling.Syntax
 
         public void HasVectorTypeBasedOnTheTypeOfItsItemExpressions()
         {
-            Type("[0, 1, 2]").ShouldEqual(Vector.MakeGenericType(Integer));
-            Type("[true, false, true]").ShouldEqual(Vector.MakeGenericType(Boolean));
+            Type("[0, 1, 2]").ShouldEqual(NamedType.Vector(Integer));
+            Type("[true, false, true]").ShouldEqual(NamedType.Vector(Boolean));
         }
 
         public void CanCreateFullyTypedInstance()
@@ -41,7 +42,7 @@ namespace Rook.Compiling.Syntax
 
             var typedVector = WithTypes(vector, foo => Boolean, bar => Boolean);
             typedVector.Items.ShouldHaveTypes(Boolean, Boolean);
-            typedVector.Type.ShouldEqual(Vector.MakeGenericType(Boolean));
+            typedVector.Type.ShouldEqual(NamedType.Vector(Boolean));
         }
     }
 }

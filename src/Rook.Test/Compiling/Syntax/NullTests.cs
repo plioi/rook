@@ -15,7 +15,7 @@ namespace Rook.Compiling.Syntax
         {
             using (TypeVariable.TestFactory())
             {
-                Type("null").ShouldEqual(Nullable.MakeGenericType(new TypeVariable(2)));
+                Type("null").ShouldEqual(NamedType.Nullable(new TypeVariable(6)));
             }
         }
 
@@ -27,7 +27,7 @@ namespace Rook.Compiling.Syntax
                 @null.Type.ShouldEqual(Unknown);
 
                 var typedNull = WithTypes(@null);
-                typedNull.Type.ShouldEqual(Nullable.MakeGenericType(new TypeVariable(2)));
+                typedNull.Type.ShouldEqual(NamedType.Nullable(new TypeVariable(6)));
             }
         }
     }

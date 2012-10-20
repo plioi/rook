@@ -22,12 +22,12 @@ namespace Rook.Compiling.Syntax
         {
             using (TypeVariable.TestFactory())
             {
-                Type("foo", foo => new TypeVariable(0)).ShouldEqual(new TypeVariable(2));
+                Type("foo", foo => new TypeVariable(0)).ShouldEqual(new TypeVariable(6));
             }
 
             using (TypeVariable.TestFactory())
             {
-                var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(2), new TypeVariable(3), new NamedType("B", new TypeVariable(2), new TypeVariable(3)));
+                var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(6), new TypeVariable(7), new NamedType("B", new TypeVariable(6), new TypeVariable(7)));
                 var definedType = new NamedType("A", new TypeVariable(0), new TypeVariable(1), new NamedType("B", new TypeVariable(0), new TypeVariable(1)));
                 Type("foo", foo => definedType).ShouldEqual(expectedTypeAfterLookup);
             }
@@ -41,7 +41,7 @@ namespace Rook.Compiling.Syntax
                 var typeVariable0 = TypeVariable.CreateGeneric();
                 var typeVariable1 = TypeVariable.CreateNonGeneric();
 
-                var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(4), typeVariable1, new NamedType("B", new TypeVariable(4), typeVariable1));
+                var expectedTypeAfterLookup = new NamedType("A", new TypeVariable(8), typeVariable1, new NamedType("B", new TypeVariable(8), typeVariable1));
                 var definedType = new NamedType("A", typeVariable0, typeVariable1, new NamedType("B", typeVariable0, typeVariable1));
 
                 var typeChecker = new TypeChecker();

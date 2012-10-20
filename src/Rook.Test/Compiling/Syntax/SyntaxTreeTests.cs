@@ -9,10 +9,6 @@ namespace Rook.Compiling.Syntax
         protected static DataType Integer { get { return NamedType.Integer; } }
         protected static DataType Boolean { get { return NamedType.Boolean; } }
         protected static DataType Unknown { get { return UnknownType.Instance; } }
-        protected static NamedType Enumerable { get { return NamedType.Enumerable; } }
-        protected static NamedType Vector { get { return NamedType.Vector; } }
-        protected static NamedType Nullable { get { return NamedType.Nullable; } }
-        protected static NamedType Constructor { get { return NamedType.Constructor; } }
 
         protected TSyntax Parse(string source)
         {

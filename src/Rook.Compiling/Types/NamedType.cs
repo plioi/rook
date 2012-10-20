@@ -16,11 +16,25 @@ namespace Rook.Compiling.Types
         public static readonly NamedType String = new NamedType(typeof(string));
         public static readonly NamedType Integer = new NamedType(typeof(int));
 
-        //TODO: Deprecated: statics which cause type variables to be created are brittle for testing purposes.
-        public static readonly NamedType Enumerable = new NamedType(typeof(IEnumerable<>));
-        public static readonly NamedType Vector = new NamedType(typeof(Vector<>));
-        public static readonly NamedType Nullable = new NamedType(typeof(Core.Nullable<>));
-        public static readonly NamedType Constructor = new NamedType(typeof(Constructor<>));
+        public static NamedType Enumerable(DataType itemType)
+        {
+            return new NamedType(typeof(IEnumerable<>)).MakeGenericType(itemType);
+        }
+
+        public static NamedType Vector(DataType itemType)
+        {
+            return new NamedType(typeof(Vector<>)).MakeGenericType(itemType);
+        }
+
+        public static NamedType Nullable(DataType type)
+        {
+            return new NamedType(typeof(Core.Nullable<>)).MakeGenericType(type);
+        }
+
+        public static NamedType Constructor(DataType constructedType)
+        {
+            return new NamedType(typeof(Constructor<>)).MakeGenericType(constructedType);
+        }
 
         public static NamedType Function(IEnumerable<DataType> parameterTypes, DataType returnType)
         {

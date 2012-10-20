@@ -96,7 +96,7 @@ namespace Rook.Compiling.Syntax
 
             //Note: Rook methods cannot yet be declared as generic, so stub out a hypothetical method with signature: T Last<T>(Vector<T>)
             var x = new TypeVariable(123456);
-            typeChecker.TypeMemberRegistry.Register(utilityType, new StubBinding("Last", Function(new[] { Vector.MakeGenericType(x) }, x)));
+            typeChecker.TypeMemberRegistry.Register(utilityType, new StubBinding("Last", Function(new[] { NamedType.Vector(x) }, x)));
 
             Type("utility.Last([1, 2, 3])", typeChecker, utility => utilityType).ShouldEqual(Integer);
             Type("utility.Last([true, false])", typeChecker, utility => utilityType).ShouldEqual(Boolean);

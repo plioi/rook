@@ -33,7 +33,7 @@ namespace Rook.Compiling.Syntax
         public void HasATypeCorrespondingWithTheDefaultConstructor()
         {
             var fooClass = "class Foo { }".ParseClass();
-            var constructorReturningFoo = NamedType.Constructor.MakeGenericType(new NamedType(fooClass));
+            var constructorReturningFoo = NamedType.Constructor(new NamedType(fooClass));
 
             var typeRegistry = new TypeRegistry();
             typeRegistry.Add(fooClass);
@@ -51,7 +51,7 @@ namespace Rook.Compiling.Syntax
                               int Test() if (Even(4)) 0 else 1;
                            }".ParseClass();
 
-            var constructorReturningFoo = NamedType.Constructor.MakeGenericType(new NamedType(@class, new TypeRegistry()));
+            var constructorReturningFoo = NamedType.Constructor(new NamedType(@class, new TypeRegistry()));
 
             @class.Methods.ShouldList(
                 even =>

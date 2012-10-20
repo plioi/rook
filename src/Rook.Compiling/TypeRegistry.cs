@@ -42,21 +42,21 @@ namespace Rook.Compiling
                     var itemType = TypeOf(name.GenericArguments.Single());
                     if (itemType == null)
                         return null;
-                    types.Add(name, NamedType.Enumerable.MakeGenericType(itemType));
+                    types.Add(name, NamedType.Enumerable(itemType));
                 }
                 else if (name.Name == typeof(Vector<>).QualifiedName())
                 {
                     var itemType = TypeOf(name.GenericArguments.Single());
                     if (itemType == null)
                         return null;
-                    types.Add(name, NamedType.Vector.MakeGenericType(itemType));
+                    types.Add(name, NamedType.Vector(itemType));
                 }
                 else if (name.Name == typeof(Nullable<>).QualifiedName())
                 {
                     var itemType = TypeOf(name.GenericArguments.Single());
                     if (itemType == null)
                         return null;
-                    types.Add(name, NamedType.Nullable.MakeGenericType(itemType));
+                    types.Add(name, NamedType.Nullable(itemType));
                 }
                 else
                 {

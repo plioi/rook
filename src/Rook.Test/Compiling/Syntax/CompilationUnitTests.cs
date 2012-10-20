@@ -51,8 +51,8 @@ namespace Rook.Compiling.Syntax
             var fooType = new NamedType(compilationUnit.Classes.Single(c => c.Name.Identifier == "Foo"));
             var barType = new NamedType(compilationUnit.Classes.Single(c => c.Name.Identifier == "Bar"));
 
-            var fooConstructorType = NamedType.Constructor.MakeGenericType(fooType);
-            var barConstructorType = NamedType.Constructor.MakeGenericType(barType);
+            var fooConstructorType = NamedType.Constructor(fooType);
+            var barConstructorType = NamedType.Constructor(barType);
 
             var typeChecker = new TypeChecker();
             var typedCompilationUnit = typeChecker.TypeCheck(compilationUnit);

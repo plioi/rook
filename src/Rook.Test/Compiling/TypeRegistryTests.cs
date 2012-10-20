@@ -74,9 +74,7 @@ namespace Rook.Compiling
 
             nestedType.ShouldEqual("Rook.Core.Collections.Vector",
                                    "Rook.Core.Collections.Vector<System.Collections.Generic.IEnumerable<Rook.Core.Nullable<int>>>",
-                                   NamedType.Enumerable.MakeGenericType(
-                                       NamedType.Nullable.MakeGenericType(
-                                           NamedType.Integer)));
+                                   NamedType.Enumerable(NamedType.Nullable(NamedType.Integer)));
         }
 
         public void ShouldGetNullForWellKnownGenericTypesWithUnregisteredGenericTypeArguments()
@@ -93,8 +91,8 @@ namespace Rook.Compiling
             typeRegistry.DeclaredType(function)
                 .ShouldEqual("System.Func",
                              "System.Func<System.Collections.Generic.IEnumerable<int>, Rook.Core.Collections.Vector<int>, bool>",
-                             NamedType.Enumerable.MakeGenericType(NamedType.Integer),
-                             NamedType.Vector.MakeGenericType(NamedType.Integer),
+                             NamedType.Enumerable(NamedType.Integer),
+                             NamedType.Vector(NamedType.Integer),
                              NamedType.Boolean);
         }
     }

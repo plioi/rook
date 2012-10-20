@@ -50,10 +50,10 @@ namespace Rook.Compiling
             var T = TypeVariable.CreateGeneric(); //TypeVariable 0
             var S = TypeVariable.CreateGeneric(); //TypeVariable 1
 
-            var enumerableT = NamedType.Enumerable.MakeGenericType(T);
-            var nullableT = NamedType.Nullable.MakeGenericType(T);
-            var vectorT = NamedType.Vector.MakeGenericType(T);
-            var enumerableS = NamedType.Enumerable.MakeGenericType(S);
+            var enumerableT = NamedType.Enumerable(T);
+            var nullableT = NamedType.Nullable(T);
+            var vectorT = NamedType.Vector(T);
+            var enumerableS = NamedType.Enumerable(S);
 
             globals["??"] = NamedType.Function(new DataType[] { nullableT, T }, T);
             globals["Print"] = NamedType.Function(new[] { T }, NamedType.Void);
