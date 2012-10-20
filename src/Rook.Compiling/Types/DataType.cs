@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Rook.Core;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling.Types
 {
@@ -8,7 +9,7 @@ namespace Rook.Compiling.Types
     {
         public abstract string Name { get; }
 
-        public abstract IEnumerable<DataType> GenericArguments { get; }
+        public abstract Vector<DataType> GenericArguments { get; }
 
         public abstract bool IsGeneric { get; }
 

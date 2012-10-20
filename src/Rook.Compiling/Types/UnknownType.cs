@@ -1,11 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling.Types
 {
     public class UnknownType : DataType
     {
         public static readonly UnknownType Instance = new UnknownType();
+
+        private static readonly Vector<DataType> sharedEmptyGenericArguments = new ArrayVector<DataType>();
 
         private UnknownType() { }
 
@@ -14,9 +17,9 @@ namespace Rook.Compiling.Types
             get { return "?"; }
         }
 
-        public override IEnumerable<DataType> GenericArguments
+        public override Vector<DataType> GenericArguments
         {
-            get { return Enumerable.Empty<DataType>(); }
+            get { return sharedEmptyGenericArguments; }
         }
 
         public override bool IsGeneric

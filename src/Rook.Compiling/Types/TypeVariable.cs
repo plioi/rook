@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Rook.Core;
+using Rook.Core.Collections;
 
 namespace Rook.Compiling.Types
 {
     public partial class TypeVariable : DataType
     {
+        private static readonly Vector<DataType> sharedEmptyGenericArguments = new ArrayVector<DataType>();
         private readonly ulong name;
         private readonly bool isGeneric;
 
@@ -36,9 +38,9 @@ namespace Rook.Compiling.Types
             get { return false; }
         }
 
-        public override IEnumerable<DataType> GenericArguments
+        public override Vector<DataType> GenericArguments
         {
-            get { return Enumerable.Empty<DataType>(); }
+            get { return sharedEmptyGenericArguments; }
         }
 
         public override bool Contains(TypeVariable typeVariable)

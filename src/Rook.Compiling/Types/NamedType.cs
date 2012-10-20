@@ -8,6 +8,7 @@ using Void = Rook.Core.Void;
 
 namespace Rook.Compiling.Types
 {
+
     public class NamedType : DataType
     {
         public static readonly NamedType Void = new NamedType(typeof(Void));
@@ -39,7 +40,7 @@ namespace Rook.Compiling.Types
         }
 
         private readonly string name;
-        private readonly DataType[] genericArguments;
+        private readonly Vector<DataType> genericArguments;
         private readonly Lazy<string> fullName;
         private readonly bool isGenericTypeDefinition;
         private readonly Binding[] methods;
@@ -48,7 +49,7 @@ namespace Rook.Compiling.Types
         public NamedType(string name, params DataType[] genericArguments)
         {
             this.name = name;
-            this.genericArguments = genericArguments;
+            this.genericArguments = genericArguments.ToVector();
             isGenericTypeDefinition = false;
             fullName = new Lazy<string>(GetFullName);
         }
@@ -80,10 +81,12 @@ namespace Rook.Compiling.Types
             isGenericTypeDefinition = type.IsGenericTypeDefinition;
 
             this.genericArguments = isGenericTypeDefinition
-                ? genericArguments.Select(x => (DataType)TypeVariable.CreateGeneric()).ToArray()
-                : genericArguments.Select(x => (DataType)new NamedType(x)).ToArray();
+                ? genericArguments.Select(x => (DataType)TypeVariable.CreateGeneric()).ToVector()
+                : genericArguments.Select(x => (DataType)new NamedType(x)).ToVector();
 
             fullName = new Lazy<string>(GetFullName);
+
+            methods = new Binding[] { };
         }
 
         public NamedType MakeGenericType(params DataType[] typeArguments)
@@ -91,7 +94,7 @@ namespace Rook.Compiling.Types
             if (!IsGenericTypeDefinition)
                 throw new InvalidOperationException(this + " is not a generic type definition, so it cannot be used to make generic types.");
 
-            if (typeArguments.Length != genericArguments.Length)
+            if (typeArguments.Length != genericArguments.Count)
                 throw new ArgumentException("Invalid number of generic type arguments.");
 
             return new NamedType(name, typeArguments);
@@ -102,7 +105,7 @@ namespace Rook.Compiling.Types
             get { return name; }
         }
 
-        public override IEnumerable<DataType> GenericArguments
+        public override Vector<DataType> GenericArguments
         {
             get { return genericArguments; }
         }
