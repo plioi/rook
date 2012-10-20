@@ -33,7 +33,7 @@ namespace Rook.Compiling
             var math = "class Math { int Square(int x) x*x; bool Zero(int x) x==0; }".ParseClass();
 
             typeRegistry.Add(math);
-            typeRegistry.TypeOf(new TypeName("Math")).ShouldEqual(new NamedType(math));
+            typeRegistry.TypeOf(new TypeName("Math")).ShouldEqual(new NamedType(math, typeRegistry));
         }
 
         public void ShouldGetClosedEnumerableTypesForKnownItemTypes()

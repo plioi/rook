@@ -10,13 +10,15 @@ namespace Rook.Compiling.Syntax
     public class TypeChecker
     {
         private readonly TypeUnifier unifier;
+        private readonly TypeRegistry typeRegistry;
         private readonly TypeMemberRegistry typeMemberRegistry;
         private readonly List<CompilerError> errorLog;
 
         public TypeChecker()
         {
             unifier = new TypeUnifier();
-            typeMemberRegistry = new TypeMemberRegistry();
+            typeRegistry = new TypeRegistry();
+            typeMemberRegistry = new TypeMemberRegistry(typeRegistry);
             errorLog = new List<CompilerError>();
         }
 
@@ -37,6 +39,9 @@ namespace Rook.Compiling.Syntax
             var position = compilationUnit.Position;
             var classes = compilationUnit.Classes;
             var functions = compilationUnit.Functions;
+
+            foreach (var @class in classes)//TODO: Test coverage.
+                typeRegistry.Add(@class);
 
             foreach (var @class in classes)//TODO: Test coverage.
                 typeMemberRegistry.Register(@class);
@@ -74,15 +79,7 @@ namespace Rook.Compiling.Syntax
             var returnType = TypeOf(returnTypeName);
             Unify(typedBody.Position, returnType, typedBody.Type);
 
-            return new Function(position, returnTypeName, name, typedParameters, typedBody, DeclaredType(function));
-        }
-
-        [Obsolete]
-        public static DataType DeclaredType(Function function)
-        {
-            var parameterTypes = function.Parameters.Select(p => TypeOf(p.DeclaredTypeName)).ToArray();
-
-            return NamedType.Function(parameterTypes, TypeOf(function.ReturnTypeName));
+            return new Function(position, returnTypeName, name, typedParameters, typedBody, typeRegistry.DeclaredType(function));
         }
 
         public Expression TypeCheck(Expression expression, Scope scope)
@@ -420,7 +417,7 @@ namespace Rook.Compiling.Syntax
                     LogError(CompilerError.DuplicateIdentifier(@class.Position, @class));
 
             foreach (var function in functions)
-                if (!globals.TryIncludeUniqueBinding(function.Name.Identifier, DeclaredType(function)))
+                if (!globals.TryIncludeUniqueBinding(function.Name.Identifier, typeRegistry.DeclaredType(function)))
                     LogError(CompilerError.DuplicateIdentifier(function.Position, function));
 
             return globals;
@@ -431,7 +428,7 @@ namespace Rook.Compiling.Syntax
             var locals = new LocalScope(parent);
 
             foreach (var method in methods)
-                if (!locals.TryIncludeUniqueBinding(method.Name.Identifier, DeclaredType(method)))
+                if (!locals.TryIncludeUniqueBinding(method.Name.Identifier, typeRegistry.DeclaredType(method)))
                     LogError(CompilerError.DuplicateIdentifier(method.Position, method));
 
             return locals;

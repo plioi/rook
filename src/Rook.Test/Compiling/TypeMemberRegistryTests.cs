@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Parsley;
 using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
@@ -15,11 +14,13 @@ namespace Rook.Compiling
         private static readonly NamedType Integer = NamedType.Integer;
         private static readonly NamedType Boolean = NamedType.Boolean;
 
+        private readonly TypeRegistry typeRegistry;
         private readonly TypeMemberRegistry typeMemberRegistry;
 
         public TypeMemberRegistryTests()
         {
-            typeMemberRegistry = new TypeMemberRegistry();
+            typeRegistry = new TypeRegistry();
+            typeMemberRegistry = new TypeMemberRegistry(typeRegistry);
         }
 
         public void LooksUpMemberBindingsForKnownClassDefinitions()
@@ -27,8 +28,8 @@ namespace Rook.Compiling
             var fooClass = "class Foo { int I() 0; bool B() true; }".ParseClass();
             var mathClass = "class Math { int Square(int x) x*x; bool Zero(int x) x==0; }".ParseClass();
 
-            var foo = new NamedType(fooClass);
-            var math = new NamedType(mathClass);
+            var foo = new NamedType(fooClass, typeRegistry);
+            var math = new NamedType(mathClass, typeRegistry);
 
             typeMemberRegistry.Register(fooClass);
             typeMemberRegistry.Register(mathClass);

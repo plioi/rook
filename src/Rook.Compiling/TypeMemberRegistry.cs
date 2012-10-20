@@ -24,15 +24,17 @@ namespace Rook.Compiling
     public class TypeMemberRegistry
     {
         private readonly IDictionary<NamedType, List<Binding>> typeMembers;
+        private readonly TypeRegistry typeRegistry;
 
-        public TypeMemberRegistry()
+        public TypeMemberRegistry(TypeRegistry typeRegistry)
         {
+            this.typeRegistry = typeRegistry;
             typeMembers = new Dictionary<NamedType, List<Binding>>();
         }
 
         public void Register(Class @class)
         {
-            var typeKey = new NamedType(@class);
+            var typeKey = new NamedType(@class, typeRegistry);
             var memberBindings = typeKey.Methods;
 
             Register(typeKey, memberBindings.ToArray());

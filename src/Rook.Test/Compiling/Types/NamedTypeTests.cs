@@ -78,7 +78,7 @@ namespace Rook.Compiling.Types
         {
             var @class = "class Foo { int Square(int x) x*x; }".ParseClass();
 
-            var foo = new NamedType(@class);
+            var foo = new NamedType(@class, new TypeRegistry());
             foo.ShouldEqual("Foo", "Foo");
 
             foo.Methods.ShouldList(

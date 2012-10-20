@@ -49,7 +49,7 @@ namespace Rook.Compiling.Syntax
                               int Test() if (Even(4)) 0 else 1;
                            }".ParseClass();
 
-            var constructorReturningFoo = NamedType.Constructor.MakeGenericType(new NamedType(@class));
+            var constructorReturningFoo = NamedType.Constructor.MakeGenericType(new NamedType(@class, new TypeRegistry()));
 
             @class.Methods.ShouldList(
                 even =>

@@ -28,7 +28,9 @@ namespace Rook.Compiling
 
         public void Add(Class @class)
         {
-            types.Add(new TypeName(@class.Name.Identifier), new NamedType(@class));
+            var typeName = new TypeName(@class.Name.Identifier);
+
+            types[typeName] = new NamedType(@class, this);
         }
 
         public NamedType TypeOf(TypeName name)

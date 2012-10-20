@@ -56,7 +56,16 @@ namespace Rook.Compiling.Types
         public NamedType(Class @class)
             : this(@class.Name.Identifier)
         {
-            methods = @class.Methods.Select(m => (Binding)new MethodBinding(m.Name.Identifier, TypeChecker.DeclaredType(m))).ToArray();
+            if (@class.Methods.Any())
+                throw new NotSupportedException("Cannot construct a NamedType from a Class that has members, unless a TypeRegistry is provided.");
+
+            methods = new Binding[] {};
+        }
+
+        public NamedType(Class @class, TypeRegistry typeRegistry)
+            : this(@class.Name.Identifier)
+        {
+            methods = @class.Methods.Select(m => (Binding)new MethodBinding(m.Name.Identifier, typeRegistry.DeclaredType(m))).ToArray();
         }
 
         public NamedType(Type type)
