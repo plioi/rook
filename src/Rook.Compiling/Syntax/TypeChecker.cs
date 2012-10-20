@@ -15,9 +15,12 @@ namespace Rook.Compiling.Syntax
         private readonly List<CompilerError> errorLog;
 
         public TypeChecker()
+            : this(new TypeRegistry()) { }
+
+        public TypeChecker(TypeRegistry typeRegistry)
         {
             unifier = new TypeUnifier();
-            typeRegistry = new TypeRegistry();
+            this.typeRegistry = typeRegistry;
             typeMemberRegistry = new TypeMemberRegistry(typeRegistry);
             errorLog = new List<CompilerError>();
         }
@@ -29,9 +32,9 @@ namespace Rook.Compiling.Syntax
         //rephrase unit test usages of this so they don't have to manually prepare the TypeMemberRegistry.
         public TypeMemberRegistry TypeMemberRegistry { get { return typeMemberRegistry; } }
 
-        public static NamedType ConstructorType(Name name)
+        private NamedType ConstructorType(Name name)
         {
-            return NamedType.Constructor.MakeGenericType(new NamedType(name.Identifier));
+            return NamedType.Constructor.MakeGenericType(TypeOf(new TypeName(name.Identifier)));
         }
 
         public CompilationUnit TypeCheck(CompilationUnit compilationUnit)

@@ -35,7 +35,9 @@ namespace Rook.Compiling.Syntax
             var fooClass = "class Foo { }".ParseClass();
             var constructorReturningFoo = NamedType.Constructor.MakeGenericType(new NamedType(fooClass));
 
-            var typeChecker = new TypeChecker();
+            var typeRegistry = new TypeRegistry();
+            typeRegistry.Add(fooClass);
+            var typeChecker = new TypeChecker(typeRegistry);
 
             typeChecker.TypeCheck(fooClass, Scope()).Type.ShouldEqual(constructorReturningFoo);
         }
@@ -72,7 +74,9 @@ namespace Rook.Compiling.Syntax
                 });
             @class.Type.ShouldEqual(Unknown);
 
-            var typeChecker = new TypeChecker();
+            var typeRegistry = new TypeRegistry();
+            typeRegistry.Add(@class);
+            var typeChecker = new TypeChecker(typeRegistry);
             var typedClass = typeChecker.TypeCheck(@class, Scope());
 
             typedClass.Methods.ShouldList(
