@@ -223,6 +223,20 @@ namespace Rook.Compiling.Types
             Create("B", b, a, b).ReplaceTypeVariables(replaceBoth).ShouldEqual(Create("B", a, NamedType.Integer, a));
         }
 
+        public void PerformsTypeVariableSubstitutionsAgainstNonGenericTypesByPerformingNoChanges()
+        {
+            var @class = "class Foo { int Square(int x) x*x; }".ParseClass();
+
+            var foo = new NamedType(@class, new TypeRegistry());
+
+            var a = new TypeVariable(0);
+            var replaceAWithInteger = new Dictionary<TypeVariable, DataType> { { a, NamedType.Integer } };
+
+            var fooAfterSubstitutions = (NamedType)foo.ReplaceTypeVariables(replaceAWithInteger);
+
+            fooAfterSubstitutions.ShouldBeSameAs(foo);
+        }
+
         private static DataType Create(string name, params DataType[] genericArguments)
         {
             return new NamedType(name, genericArguments);

@@ -151,6 +151,15 @@ namespace Rook.Compiling.Types
 
         public override DataType ReplaceTypeVariables(IDictionary<TypeVariable, DataType> substitutions)
         {
+            if (!IsGeneric)
+                return this;
+
+            //TODO: Once generic types can contain methods, this will need to take special care to ensure
+            //      that the resulting type preserves 'this' type's methods, performing subsitutions as
+            //      appropriate within those methods too.
+            if (Methods != null && Methods.Any())
+               throw new NotImplementedException("Cannot replace type variables against generic types that have methods.  The method listing is not yet preserved.");
+
             return new NamedType(name, genericArguments.Select(t => t.ReplaceTypeVariables(substitutions)).ToArray());
         }
 
