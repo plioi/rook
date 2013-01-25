@@ -87,21 +87,6 @@ namespace Rook.Compiling.Syntax
             Type("math.Max(1, 2)", mathClass, math => mathType).ShouldEqual(Integer);
         }
 
-        public void HasATypeEqualToTheInferredReturnTypeOfGenericMethods()
-        {
-            var utilityClass = "class Utility { }".ParseClass();
-            var utilityType = new NamedType(utilityClass);
-
-            var typeChecker = new TypeChecker();
-
-            //Note: Rook methods cannot yet be declared as generic, so stub out a hypothetical method with signature: T Last<T>(Vector<T>)
-            var x = new TypeVariable(123456);
-            typeChecker.TypeMemberRegistry.Register(utilityType, new StubBinding("Last", Function(new[] { NamedType.Vector(x) }, x)));
-
-            Type("utility.Last([1, 2, 3])", typeChecker, utility => utilityType).ShouldEqual(Integer);
-            Type("utility.Last([true, false])", typeChecker, utility => utilityType).ShouldEqual(Boolean);
-        }
-
         public void TypeChecksArgumentExpressionsAgainstTheSurroundingScope()
         {
             Type("math.Max(zero, one)", mathClass, math => mathType, zero => Integer, one => Integer).ShouldEqual(Integer);
@@ -157,19 +142,6 @@ namespace Rook.Compiling.Syntax
         {
             ShouldFailTypeChecking("math.Square(true)", mathClass, math => mathType).WithError(
                 "Type mismatch: expected int, found bool.", 1, 5);
-        }
-
-        public void FailsTypeCheckingWhenAttemptingToCallANoncallableMember()
-        {
-            var sampleClass = "class Sample { }".ParseClass();
-            var sampleType = new NamedType(sampleClass);
-
-            var typeChecker = new TypeChecker();
-
-            //Note: Rook classes cannot yet contain fields/properties, so stub out a hypothetical property member binding.
-            typeChecker.TypeMemberRegistry.Register(sampleType, new StubBinding("IntegerProperty", Integer));
-
-            ShouldFailTypeChecking("sample.IntegerProperty()", typeChecker, sample => sampleType).WithError("Attempted to call a noncallable object.", 1, 7);
         }
 
         private DataType Type(string source, Class knownClass, params TypeMapping[] symbols)
