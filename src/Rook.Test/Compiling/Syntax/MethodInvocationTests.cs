@@ -12,6 +12,7 @@ namespace Rook.Compiling.Syntax
     {
         private readonly Class mathClass;
         private readonly NamedType mathType;
+        private readonly TypeRegistry typeRegistry;
 
         public MethodInvocationTests()
         {
@@ -24,7 +25,9 @@ namespace Rook.Compiling.Syntax
                 int Max(int a, int b) if (a > b) a else b;
             }".ParseClass();
 
-            mathType = new NamedType(mathClass, new TypeRegistry());
+            typeRegistry = new TypeRegistry();
+            typeRegistry.Add(mathClass);
+            mathType = new NamedType(mathClass, typeRegistry);
         }
 
         public void DemandsMethodNameWithOptionalArguments()
@@ -154,7 +157,7 @@ namespace Rook.Compiling.Syntax
 
         private Vector<CompilerError> ShouldFailTypeChecking(string source, Class knownClass, params TypeMapping[] symbols)
         {
-            var typeChecker = new TypeChecker();
+            var typeChecker = new TypeChecker(typeRegistry);
             typeChecker.TypeMemberRegistry.Register(knownClass);
 
             return ShouldFailTypeChecking(source, typeChecker, symbols);
