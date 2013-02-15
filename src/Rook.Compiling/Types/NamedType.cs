@@ -66,6 +66,7 @@ namespace Rook.Compiling.Types
             this.genericArguments = genericArguments.ToVector();
             isGenericTypeDefinition = false;
             fullName = new Lazy<string>(GetFullName);
+            methods = new Binding[] { };
         }
 
         public NamedType(Class @class)
