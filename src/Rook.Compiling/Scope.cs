@@ -1,4 +1,5 @@
-﻿using Rook.Compiling.Syntax;
+﻿using System.Collections.Generic;
+using Rook.Compiling.Syntax;
 using Rook.Compiling.Types;
 using Rook.Core.Collections;
 
@@ -92,7 +93,7 @@ namespace Rook.Compiling
     {
         private readonly BindingDictionary members;
 
-        public TypeMemberScope(Vector<Binding> typeMembers)
+        public TypeMemberScope(IEnumerable<Binding> typeMembers)
         {
             members = new BindingDictionary();
             foreach (var member in typeMembers)

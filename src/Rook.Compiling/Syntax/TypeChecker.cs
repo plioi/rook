@@ -235,71 +235,43 @@ namespace Rook.Compiling.Syntax
                 return methodInvocation;
             }
 
-            var typeMembers = typeMemberRegistry.TryGetMembers(instanceNamedType);
-            if (typeMembers != null)
+            var typeMemberScope = new TypeMemberScope(instanceNamedType.Methods);
+
+            //TODO: This block is suspiciously like Call type checking, but Callable/MethodName is evaluated in a special scope and the successful return is different.
+
+            var Callable = methodName;
+
+            //Attempt to treat this method invocation as an extension method, if we fail to find the method in the type member scope.
+            if (!typeMemberScope.Contains(Callable.Identifier))
             {
-                Scope typeMemberScope = new TypeMemberScope(typeMembers);
+                var extensionMethodCall = TypeCheck(new Call(position, methodName, new[] { instance }.Concat(arguments)), scope);
 
-                //This block is SUSPICIOUSLY like all of TypeCheck(Call, Scope), but Callable/MethodName is evaluated in a special scope and the successful return is different.
-
-                var Callable = methodName;
-
-                //EXPERIMENTAL - TRY EXTENSION METHOD WHEN WE FAILED TO FIND THE METHOD IN THE TYPE MEMBER SCOPE
-                if (!typeMemberScope.Contains(Callable.Identifier))
-                {
-                    var extensionMethodCall = TypeCheck(new Call(position, methodName, new[] { instance }.Concat(arguments)), scope);
-
-                    if (extensionMethodCall != null)
-                        return extensionMethodCall;
-                }
-
-                var typedCallable = TypeCheck(Callable, typeMemberScope);
-                
-                //END EXPERIMENT
-
-                var typedArguments = TypeCheck(arguments, scope);
-
-                var calleeType = typedCallable.Type;
-                var calleeFunctionType = calleeType as NamedType;
-
-                if (calleeFunctionType == null || calleeFunctionType.Name != "System.Func")
-                {
-                    LogError(CompilerError.ObjectNotCallable(position));
-                    return methodInvocation;
-                }
-
-                var returnType = calleeType.GenericArguments.Last();
-                var argumentTypes = typedArguments.Select(x => x.Type).ToVector();
-
-                Unify(position, calleeType, NamedType.Function(argumentTypes, returnType));
-
-                var callType = unifier.Normalize(returnType);
-                //End of suspiciously duplicated code.
-
-                var typedMethodName = (Name)typedCallable;
-                return new MethodInvocation(position, typedInstance, typedMethodName, typedArguments, callType);
+                if (extensionMethodCall != null)
+                    return extensionMethodCall;
             }
-            else
+
+            var typedCallable = TypeCheck(Callable, typeMemberScope);
+                
+            var typedArguments = TypeCheck(arguments, scope);
+
+            var calleeType = typedCallable.Type;
+            var calleeFunctionType = calleeType as NamedType;
+
+            if (calleeFunctionType == null || calleeFunctionType.Name != "System.Func")
             {
-                //HACK: Because TypeMemberRegistry cannot yet look up members for concretions of generic types like int*,
-                //  we have to double-check whether this is an extension method call for a regular built-in generic function.
-                //  Once TypeMemberRegistry lets you look up the members for a type like int*, this block should be removed.
-                if (scope.Contains(methodName.Identifier))
-                {
-                    var typedCallable = TypeCheck(methodName, scope);
-                    if (typedCallable != null)
-                    {
-                        var extensionMethodCall = TypeCheck(new Call(position, methodName, new[] { instance }.Concat(arguments)), scope);
-
-                        if (extensionMethodCall != null)
-                            return extensionMethodCall;
-                    }
-                }
-                //END HACK
-
-                LogError(CompilerError.UndefinedType(instance.Position, instanceNamedType));
+                LogError(CompilerError.ObjectNotCallable(position));
                 return methodInvocation;
             }
+
+            var returnType = calleeType.GenericArguments.Last();
+            var argumentTypes = typedArguments.Select(x => x.Type).ToVector();
+
+            Unify(position, calleeType, NamedType.Function(argumentTypes, returnType));
+
+            var callType = unifier.Normalize(returnType);
+
+            var typedMethodName = (Name)typedCallable;
+            return new MethodInvocation(position, typedInstance, typedMethodName, typedArguments, callType);
         }
 
         public Expression TypeCheck(New @new, Scope scope)

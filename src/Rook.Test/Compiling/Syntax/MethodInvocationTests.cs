@@ -63,26 +63,6 @@ namespace Rook.Compiling.Syntax
             ShouldFailTypeChecking("math.Square(2)", math => new TypeVariable(123456)).WithError("Cannot invoke method against instance of unknown type.", 1, 5);
         }
 
-        public void FailsTypeCheckingForUndefinedInstanceType()
-        {
-            ShouldFailTypeChecking("math.Square(2)", math => mathType).WithError("Type is undefined: Math", 1, 1);
-        }
-        public void TypeChecksAsExtensionMethodCallWhenPossibleForUndefinedInstanceType()
-        {
-            //NOTE: This test covers a temporary hack.  All types should be defined, even if that definition is empty.
-            //      See note at the bottom of TypeChecker.TypeCheck(MethodInvocation methodInvocation, Scope scope).
-
-            var node = (MethodInvocation)Parse("math.Square(2)");
-
-            var typeChecker = new TypeChecker();
-
-            var typedCall = (Call)typeChecker.TypeCheck(node, Scope(math => mathType,
-                                                                    Square => Function(new[] {mathType, Integer}, Integer)));
-            typedCall.Callable.Type.ShouldEqual(Function(new[] { mathType, Integer }, Integer));
-            typedCall.Arguments.ShouldHaveTypes(mathType, Integer);
-            typedCall.Type.ShouldEqual(Integer);
-        }
-
         public void HasATypeEqualToTheReturnTypeOfTheMethod()
         {
             Type("math.Zero()", mathClass, math => mathType).ShouldEqual(Integer);

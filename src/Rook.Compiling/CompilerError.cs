@@ -36,11 +36,6 @@ namespace Rook.Compiling
             return new CompilerError(undefined.Position, "Reference to undefined identifier: " + undefined.Identifier);
         }
 
-        public static CompilerError UndefinedType(Position position, NamedType namedType)
-        {
-            return new CompilerError(position, "Type is undefined: " + namedType);
-        }
-
         public static CompilerError ObjectNotCallable(Position position)
         {
             return new CompilerError(position, "Attempted to call a noncallable object.");
