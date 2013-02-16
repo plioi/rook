@@ -11,7 +11,6 @@ namespace Rook.Compiling.Syntax
     {
         private readonly TypeUnifier unifier;
         private readonly TypeRegistry typeRegistry;
-        private readonly TypeMemberRegistry typeMemberRegistry;
         private readonly List<CompilerError> errorLog;
 
         public TypeChecker()
@@ -21,16 +20,11 @@ namespace Rook.Compiling.Syntax
         {
             unifier = new TypeUnifier();
             this.typeRegistry = typeRegistry;
-            typeMemberRegistry = new TypeMemberRegistry(typeRegistry);
             errorLog = new List<CompilerError>();
         }
 
         public Vector<CompilerError> Errors { get { return errorLog.ToVector(); } }
         public bool HasErrors { get { return errorLog.Any(); } }
-
-        //TODO: This property is deprecated.  Once TypeMemberRegistry can discover .NET types via reflection,
-        //rephrase unit test usages of this so they don't have to manually prepare the TypeMemberRegistry.
-        public TypeMemberRegistry TypeMemberRegistry { get { return typeMemberRegistry; } }
 
         private NamedType ConstructorType(Name name)
         {
@@ -45,9 +39,6 @@ namespace Rook.Compiling.Syntax
 
             foreach (var @class in classes)//TODO: Test coverage.
                 typeRegistry.Add(@class);
-
-            foreach (var @class in classes)//TODO: Test coverage.
-                typeMemberRegistry.Register(@class);
 
             var scope = CreateGlobalScope(classes, functions);
 

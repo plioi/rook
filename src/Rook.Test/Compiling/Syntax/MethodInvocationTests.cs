@@ -97,7 +97,6 @@ namespace Rook.Compiling.Syntax
         public void TypeChecksAsExtensionMethodCallWhenInstanceTypeDoesNotContainMethodWithExpectedName()
         {
             var typeChecker = new TypeChecker();
-            typeChecker.TypeMemberRegistry.Register(mathClass);
 
             var node = (MethodInvocation)Parse("math.SomeExtensionMethod(false)");
 
@@ -130,7 +129,6 @@ namespace Rook.Compiling.Syntax
         private DataType Type(string source, Class knownClass, params TypeMapping[] symbols)
         {
             var typeChecker = new TypeChecker();
-            typeChecker.TypeMemberRegistry.Register(knownClass);
 
             return Type(source, typeChecker, symbols);
         }
@@ -138,7 +136,6 @@ namespace Rook.Compiling.Syntax
         private Vector<CompilerError> ShouldFailTypeChecking(string source, Class knownClass, params TypeMapping[] symbols)
         {
             var typeChecker = new TypeChecker(typeRegistry);
-            typeChecker.TypeMemberRegistry.Register(knownClass);
 
             return ShouldFailTypeChecking(source, typeChecker, symbols);
         }
@@ -146,7 +143,6 @@ namespace Rook.Compiling.Syntax
         private T WithTypes<T>(T syntaxTree, Class knownClass, params TypeMapping[] symbols) where T : Expression
         {
             var typeChecker = new TypeChecker();
-            typeChecker.TypeMemberRegistry.Register(knownClass);
 
             return WithTypes(syntaxTree, typeChecker, symbols);
         }
