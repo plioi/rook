@@ -65,19 +65,19 @@ namespace Rook.Compiling.Syntax
 
         public void HasATypeEqualToTheReturnTypeOfTheMethod()
         {
-            Type("math.Zero()", mathClass, math => mathType).ShouldEqual(Integer);
-            Type("math.Even(1)", mathClass, math => mathType).ShouldEqual(Boolean);
-            Type("math.Max(1, 2)", mathClass, math => mathType).ShouldEqual(Integer);
+            Type("math.Zero()", math => mathType).ShouldEqual(Integer);
+            Type("math.Even(1)", math => mathType).ShouldEqual(Boolean);
+            Type("math.Max(1, 2)", math => mathType).ShouldEqual(Integer);
         }
 
         public void TypeChecksArgumentExpressionsAgainstTheSurroundingScope()
         {
-            Type("math.Max(zero, one)", mathClass, math => mathType, zero => Integer, one => Integer).ShouldEqual(Integer);
+            Type("math.Max(zero, one)", math => mathType, zero => Integer, one => Integer).ShouldEqual(Integer);
         }
 
         public void DoesNotTypeCheckMethodNameAgainstTheSurroundingScope()
         {
-            Type("math.Max(zero, one)", mathClass, math => mathType, zero => Integer, one => Integer, Max => Boolean).ShouldEqual(Integer);
+            Type("math.Max(zero, one)", math => mathType, zero => Integer, one => Integer, Max => Boolean).ShouldEqual(Integer);
         }
 
         public void CanCreateFullyTypedInstance()
@@ -88,7 +88,7 @@ namespace Rook.Compiling.Syntax
             node.Arguments.Single().Type.ShouldEqual(Unknown);
             node.Type.ShouldEqual(Unknown);
 
-            var typedNode = WithTypes(node, mathClass, math => mathType, two => Integer);
+            var typedNode = WithTypes(node, math => mathType, two => Integer);
             typedNode.Instance.Type.ShouldEqual(mathType);
             typedNode.MethodName.Type.ShouldEqual(NamedType.Function(new[] { Integer }, Boolean));
             typedNode.Arguments.Single().Type.ShouldEqual(Integer);
@@ -110,37 +110,37 @@ namespace Rook.Compiling.Syntax
 
         public void FailsTypeCheckingForIncorrectNumberOfArguments()
         {
-            ShouldFailTypeChecking("math.Zero(false)", mathClass, math => mathType).WithError(
+            ShouldFailTypeChecking("math.Zero(false)", math => mathType).WithError(
                 "Type mismatch: expected System.Func<int>, found System.Func<bool, int>.", 1, 5);
 
-            ShouldFailTypeChecking("math.Square(1, true)", mathClass, math => mathType).WithError(
+            ShouldFailTypeChecking("math.Square(1, true)", math => mathType).WithError(
                 "Type mismatch: expected System.Func<int, int>, found System.Func<int, bool, int>.", 1, 5);
 
-            ShouldFailTypeChecking("math.Max(1, 2, 3)", mathClass, math => mathType).WithError(
+            ShouldFailTypeChecking("math.Max(1, 2, 3)", math => mathType).WithError(
                 "Type mismatch: expected System.Func<int, int, int>, found System.Func<int, int, int, int>.", 1, 5);
         }
 
         public void FailsTypeCheckingForMismatchedArgumentTypes()
         {
-            ShouldFailTypeChecking("math.Square(true)", mathClass, math => mathType).WithError(
+            ShouldFailTypeChecking("math.Square(true)", math => mathType).WithError(
                 "Type mismatch: expected int, found bool.", 1, 5);
         }
 
-        private DataType Type(string source, Class knownClass, params TypeMapping[] symbols)
+        private DataType Type(string source, params TypeMapping[] symbols)
         {
             var typeChecker = new TypeChecker();
 
             return Type(source, typeChecker, symbols);
         }
 
-        private Vector<CompilerError> ShouldFailTypeChecking(string source, Class knownClass, params TypeMapping[] symbols)
+        private Vector<CompilerError> ShouldFailTypeChecking(string source, params TypeMapping[] symbols)
         {
             var typeChecker = new TypeChecker(typeRegistry);
 
             return ShouldFailTypeChecking(source, typeChecker, symbols);
         }
 
-        private T WithTypes<T>(T syntaxTree, Class knownClass, params TypeMapping[] symbols) where T : Expression
+        private T WithTypes<T>(T syntaxTree, params TypeMapping[] symbols) where T : Expression
         {
             var typeChecker = new TypeChecker();
 

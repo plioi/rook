@@ -18,8 +18,6 @@ namespace Rook.Core.Collections
                 throw new IndexOutOfRangeException("Index was outside the bounds of the vector.");
         }
 
-        #region IEnumerable<T>
-
         public IEnumerator<T> GetEnumerator()
         {
             for (int i = 0; i < Count; i++)
@@ -30,7 +28,5 @@ namespace Rook.Core.Collections
         {
             return GetEnumerator();
         }
-
-        #endregion
     }
 }

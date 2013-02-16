@@ -78,7 +78,7 @@ namespace Rook.Compiling.Types
             var x = TypeVariable.CreateGeneric();
             var y = TypeVariable.CreateGeneric();
 
-            ulong xName = ulong.Parse(x.Name);
+            var xName = ulong.Parse(x.Name);
 
             x.ShouldEqual(new TypeVariable(xName));
             y.ShouldEqual(new TypeVariable(xName + 1));

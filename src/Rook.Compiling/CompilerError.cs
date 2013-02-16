@@ -1,7 +1,6 @@
 using System;
 using Parsley;
 using Rook.Compiling.Syntax;
-using Rook.Compiling.Types;
 
 namespace Rook.Compiling
 {

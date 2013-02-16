@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Reflection;
-using Rook.Compiling.Syntax;
 using Rook.Core.Collections;
 
 namespace Rook.Compiling

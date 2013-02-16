@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Parsley;
-using Rook.Compiling.Types;
-using Rook.Core.Collections;
 
 namespace Rook.Compiling.Syntax
 {
