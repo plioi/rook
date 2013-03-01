@@ -9,7 +9,7 @@ namespace Rook
     {
         public string Visit(CompilationUnit compilationUnit)
         {
-            var classes = Translate(compilationUnit.Classes, "; ");
+            var classes = Translate(compilationUnit.Classes, " ");
             var functions = Translate(compilationUnit.Functions, "; ");
 
             var list = new List<string>();
@@ -20,7 +20,7 @@ namespace Rook
             if (functions != "")
                 list.Add(functions);
 
-            return String.Join("; ", list);
+            return String.Join(" ", list);
         }
 
         public string Visit(Class @class)

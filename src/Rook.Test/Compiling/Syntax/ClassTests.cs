@@ -105,7 +105,7 @@ namespace Rook.Compiling.Syntax
         {
             ShouldFailTypeChecking("class Foo { int A() 0; int B() true+0; }").WithError("Type mismatch: expected int, found bool.", 1, 36);
 
-            ShouldFailTypeChecking("class Foo { int A() { int x = 0; int x = 1; x; }; }").WithError("Duplicate identifier: x", 1, 38);
+            ShouldFailTypeChecking("class Foo { int A() { int x = 0; int x = 1; x }; }").WithError("Duplicate identifier: x", 1, 38);
 
             ShouldFailTypeChecking("class Foo { int A() (1)(); }").WithError("Attempted to call a noncallable object.", 1, 22);
 

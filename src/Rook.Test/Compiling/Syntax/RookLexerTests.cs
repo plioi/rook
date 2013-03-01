@@ -68,8 +68,9 @@ namespace Rook.Compiling.Syntax
 
         public void ShouldRecognizeOperatorsGreedily()
         {
-            Tokenize("<=>=<>!====*/+-&&||!{}[][,]()???:.")
-                .ShouldList(t => t.ShouldEqual(RookLexer.LessThanOrEqual, "<="),
+            Tokenize(";<=>=<>!====*/+-&&||!{}[][,]()???:.")
+                .ShouldList(t => t.ShouldEqual(RookLexer.Semicolon, ";"),
+                            t => t.ShouldEqual(RookLexer.LessThanOrEqual, "<="),
                             t => t.ShouldEqual(RookLexer.GreaterThanOrEqual, ">="),
                             t => t.ShouldEqual(RookLexer.LessThan, "<"),
                             t => t.ShouldEqual(RookLexer.GreaterThan, ">"),
@@ -97,19 +98,7 @@ namespace Rook.Compiling.Syntax
                             t => t.ShouldEqual(RookLexer.MemberAccess, "."));
         }
 
-        public void ShouldRecognizeEndOfLogicalLine()
-        {
-            //Endlines are \n or semicolons (with optional preceding spaces/tabs and optional trailing whitspace).
-            //Note that Parsley normalizes \r, \n, and \r\n to a single line feed \n.
-
-            Tokenize("\r\n").Single().ShouldEqual(RookLexer.EndOfLine, "\n");
-            Tokenize("\r\n \r\n \t ").Single().ShouldEqual(RookLexer.EndOfLine, "\n \n \t ");
-
-            Tokenize(";").Single().ShouldEqual(RookLexer.EndOfLine, ";");
-            Tokenize("; \r\n \t ").Single().ShouldEqual(RookLexer.EndOfLine, "; \n \t ");
-        }
-
-        public void ShouldRecognizeAndSkipOverIntralineWhitespace()
+        public void ShouldRecognizeAndSkipOverWhitespace()
         {
             //Note that Parsley normalizes \r, \n, and \r\n to a single line feed \n.
 
@@ -117,28 +106,24 @@ namespace Rook.Compiling.Syntax
                 .ShouldList(t => t.ShouldEqual(RookLexer.Identifier, "a"),
                             t => t.ShouldEqual(RookLexer.@if, "if"),
                             t => t.ShouldEqual(RookLexer.Equal, "=="),
-                            t => t.ShouldEqual(RookLexer.EndOfLine, "\n "),
                             t => t.ShouldEqual(RookLexer.Integer, "0"));
 
             Tokenize("\ta\tif\t==\t\r\n\t0\t")
                 .ShouldList(t => t.ShouldEqual(RookLexer.Identifier, "a"),
                             t => t.ShouldEqual(RookLexer.@if, "if"),
                             t => t.ShouldEqual(RookLexer.Equal, "=="),
-                            t => t.ShouldEqual(RookLexer.EndOfLine, "\n\t"),
                             t => t.ShouldEqual(RookLexer.Integer, "0"));
 
             Tokenize(" \t a \t if \t == \t \r\n \t 0 \t ")
                 .ShouldList(t => t.ShouldEqual(RookLexer.Identifier, "a"),
                             t => t.ShouldEqual(RookLexer.@if, "if"),
                             t => t.ShouldEqual(RookLexer.Equal, "=="),
-                            t => t.ShouldEqual(RookLexer.EndOfLine, "\n \t "),
                             t => t.ShouldEqual(RookLexer.Integer, "0"));
 
             Tokenize("\t \ta\t \tif\t \t==\t \t\r\n\t \t0\t \t")
                 .ShouldList(t => t.ShouldEqual(RookLexer.Identifier, "a"),
                             t => t.ShouldEqual(RookLexer.@if, "if"),
                             t => t.ShouldEqual(RookLexer.Equal, "=="),
-                            t => t.ShouldEqual(RookLexer.EndOfLine, "\n\t \t"),
                             t => t.ShouldEqual(RookLexer.Integer, "0"));
         }
     }

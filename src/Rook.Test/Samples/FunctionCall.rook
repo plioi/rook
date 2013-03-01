@@ -1,2 +1,2 @@
-﻿int Square(int x) x*x
+﻿int Square(int x) x*x;
 int Main() Square(3)

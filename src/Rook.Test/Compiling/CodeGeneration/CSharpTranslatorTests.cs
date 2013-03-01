@@ -22,9 +22,9 @@ namespace Rook.Compiling.CodeGeneration
             var compilationUnit = new StringBuilder()
                 .AppendLine("class Foo { }")
                 .AppendLine("class Bar { int I() 0; bool B() false; }")
-                .AppendLine("int Life() 14")
-                .AppendLine("int Universe() 14")
-                .AppendLine("int Everything() 14")
+                .AppendLine("int Life() 14;")
+                .AppendLine("int Universe() 14;")
+                .AppendLine("int Everything() 14;")
                 .AppendLine("int Main() Life()+Universe()+Everything()");
 
             Expect("using System;");
@@ -124,7 +124,7 @@ namespace Rook.Compiling.CodeGeneration
             Expect("    return 0;");
             Expect("}");
             Expect(")");
-            AssertTranslation(rookGrammar.Expression, "{ 0; }");
+            AssertTranslation(rookGrammar.Expression, "{ 0 }");
         }
 
         public void ShouldTranslateBlocksWithMultipleInnerExpressions()
@@ -136,7 +136,7 @@ namespace Rook.Compiling.CodeGeneration
             Expect("    return 0;");
             Expect("}");
             Expect(")");
-            AssertTranslation(rookGrammar.Expression, "{ true; true||false; 0; }");
+            AssertTranslation(rookGrammar.Expression, "{ true; true||false; 0 }");
         }
 
         public void ShouldTranslateBlocksWithLocalVariableDeclarations()
@@ -150,7 +150,7 @@ namespace Rook.Compiling.CodeGeneration
             Expect("    return ((c) == (3));");
             Expect("}");
             Expect(")");
-            AssertTranslation(rookGrammar.Expression, "{ int a = 1; int b = 2; c = a+b; a+b; c==3; }");
+            AssertTranslation(rookGrammar.Expression, "{ int a = 1; int b = 2; c = a+b; a+b; c==3 }");
         }
         
         public void ShouldTranslateLambdaExpressions()

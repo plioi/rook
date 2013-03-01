@@ -7,5 +7,5 @@ void Main()
     Print( 2.Square() == 4 );
 
     Print( Sum(1, 2, 3) == 6 );
-    Print( 1.Sum(2, 3) == 6 );
+    Print( 1.Sum(2, 3) == 6 )
 }

@@ -4,7 +4,7 @@ namespace Rook.Compiling.Syntax
 {
     public class RookLexer : Lexer
     {
-        private static readonly Pattern IntralineWhitespace = new Pattern("intra-line whitespace", @"[ \t]+", skippable: true);
+        private static readonly Pattern Whitespace = new Pattern("whitespace", @"[ \t\n]+", skippable: true);
 
         public static readonly Keyword @int = new Keyword("int");
         public static readonly Keyword @bool = new Keyword("bool");
@@ -41,7 +41,7 @@ namespace Rook.Compiling.Syntax
             ""
         ");
         public static readonly Pattern Identifier = new Pattern("identifier", @"[a-zA-Z]+[a-zA-Z0-9]*");
-        public static readonly Pattern EndOfLine = new Pattern("end of line", @"(\n|;)\s*");
+        public static readonly Operator Semicolon = new Operator(";");
         public static readonly Operator LeftParen = new Operator("(");
         public static readonly Operator RightParen = new Operator(")");
         public static readonly Operator Multiply = new Operator("*");
@@ -70,7 +70,7 @@ namespace Rook.Compiling.Syntax
         public static readonly Operator MemberAccess = new Operator(".");
 
         public RookLexer()
-            :base(IntralineWhitespace,
+            :base(Whitespace,
                   @int, @bool, @string, @void, @null, @if, @else, @fn, @true, @false, @class, @new,
                   Integer, StringLiteral, Identifier,
                   LeftParen, RightParen,
@@ -83,6 +83,6 @@ namespace Rook.Compiling.Syntax
                   LeftBrace, RightBrace,
                   Vector, LeftSquareBrace, RightSquareBrace, Colon,
                   NullCoalesce, Question, MemberAccess,
-                  EndOfLine) { }
+                  Semicolon) { }
     }
 }

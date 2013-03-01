@@ -2,12 +2,12 @@
   if (n==0)
     true
   else
-    Odd(n-1)
+    Odd(n-1);
 
 bool Odd(int n)
   if (n==0)
     false
   else
-    Even(n-1)
+    Even(n-1);
     
 bool Main() Odd(5)

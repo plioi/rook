@@ -16,7 +16,7 @@ namespace Rook.Compiling.Syntax
             Parses("(func)(1)").IntoTree("(func(1))");
             Parses("(func)(1, 2, 3)").IntoTree("(func(1, 2, 3))");
             Parses("(getFunc(true, false))(1)").IntoTree("((getFunc(true, false))(1))");
-            Parses("{func;}(1, 2)").IntoTree("({func;}(1, 2))");
+            Parses("{func}(1, 2)").IntoTree("({func;}(1, 2))");
         }
 
         public void TreatsIndexOperatorsAsCallToIndexFunction()
@@ -27,7 +27,7 @@ namespace Rook.Compiling.Syntax
             Parses("(getVector(true, false))[1+2]").IntoTree("(Index((getVector(true, false)), ((1) + (2))))");
             Parses("[0][0]").IntoTree("(Index([0], 0))");
             Parses("[0, 1][1]").IntoTree("(Index([0, 1], 1))");
-            Parses("{[0, 1];}[1]").IntoTree("(Index({[0, 1];}, 1))");
+            Parses("{[0, 1]}[1]").IntoTree("(Index({[0, 1];}, 1))");
         }
 
         public void TreatsSliceOperatorsAsCallToSliceFunction()
@@ -38,7 +38,7 @@ namespace Rook.Compiling.Syntax
             Parses("(getVector(true, false))[1+2:3+4]").IntoTree("(Slice((getVector(true, false)), ((1) + (2)), ((3) + (4))))");
             Parses("[0][0:0]").IntoTree("(Slice([0], 0, 0))");
             Parses("[0, 1][0:1]").IntoTree("(Slice([0, 1], 0, 1))");
-            Parses("{[0, 1];}[0:1]").IntoTree("(Slice({[0, 1];}, 0, 1))");
+            Parses("{[0, 1]}[0:1]").IntoTree("(Slice({[0, 1];}, 0, 1))");
         }
 
         public void UnaryOperations()

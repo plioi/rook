@@ -2,12 +2,12 @@
 {
 }
 
-int Square(Math math, int x) x*x
-int Cube(Math math, int x) x*x*x
+int Square(Math math, int x) x*x;
+int Cube(Math math, int x) x*x*x;
 
 void Main()
 {
-    math = new Math()
-    Print(math.Square(2))
+    math = new Math();
+    Print(math.Square(2));
     Print(math.Cube(3))
 }

@@ -10,7 +10,7 @@ namespace Rook.Compiling.Syntax
         public readonly GrammarRule<Class> Class = new GrammarRule<Class>();
         public readonly GrammarRule<Function> Function = new GrammarRule<Function>();
         public readonly GrammarRule<TypeName> TypeName = new GrammarRule<TypeName>();
-        public readonly GrammarRule<Token> EndOfLine = new GrammarRule<Token>();
+        public readonly GrammarRule<Token> Semicolon = new GrammarRule<Token>();
         public readonly GrammarRule<Token> Identifier = new GrammarRule<Token>();
         public readonly GrammarRule<Name> Name = new GrammarRule<Name>();
 
@@ -40,8 +40,8 @@ namespace Rook.Compiling.Syntax
             Parameters();
             Expressions();
 
-            EndOfLine.Rule =
-                Label(Choice(Token(RookLexer.EndOfLine), Token(TokenKind.EndOfInput)), "end of line");
+            Semicolon.Rule =
+                Label(Choice(Token(RookLexer.Semicolon), Token(TokenKind.EndOfInput)), ";");
 
             Identifier.Rule =
                 Token(RookLexer.Identifier);
@@ -50,7 +50,6 @@ namespace Rook.Compiling.Syntax
         private void TopLevelConstructs()
         {
             CompilationUnit.Rule =
-                from leadingEndOfLine in Optional(Token(RookLexer.EndOfLine))
                 from classes in ZeroOrMore(Class)
                 from functions in ZeroOrMore(Function)
                 from end in EndOfInput
@@ -58,19 +57,18 @@ namespace Rook.Compiling.Syntax
 
             Class.Rule =
                 from @class in Token(RookLexer.@class)
-                from name in Name.TerminatedBy(Optional(EndOfLine))
-                from open in Token("{").TerminatedBy(Optional(EndOfLine))
+                from name in Name
+                from open in Token("{")
                 from methods in ZeroOrMore(Function)
                 from close in Token("}")
-                from end in EndOfLine
                 select new Class(@class.Position, name, methods);
 
             Function.Rule =
                 from returnType in TypeName
                 from name in Name
-                from parameters in Tuple(ExplicitlyTypedParameter).TerminatedBy(Optional(EndOfLine))
+                from parameters in Tuple(ExplicitlyTypedParameter)
                 from body in Expression
-                from end in EndOfLine
+                from end in Semicolon
                 select new Function(name.Position, returnType, name, parameters, body);
         }
 
@@ -115,16 +113,16 @@ namespace Rook.Compiling.Syntax
 
             If.Rule =
                 from _if_ in Token(RookLexer.@if)
-                from condition in Parenthesized(Expression).TerminatedBy(Optional(EndOfLine))
-                from bodyWhenTrue in Expression.TerminatedBy(Optional(EndOfLine))
-                from _else_ in Token(RookLexer.@else).TerminatedBy(Optional(EndOfLine))
+                from condition in Parenthesized(Expression)
+                from bodyWhenTrue in Expression
+                from _else_ in Token(RookLexer.@else)
                 from bodyWhenFalse in Expression
                 select new If(_if_.Position, condition, bodyWhenTrue, bodyWhenFalse);
 
             Block.Rule =
-                from open in Token("{").TerminatedBy(Optional(EndOfLine))
+                from open in Token("{")
                 from variableDeclarations in ZeroOrMore(Attempt(VariableDeclaration))
-                from innerExpressions in OneOrMore(Expression.TerminatedBy(EndOfLine))
+                from innerExpressions in OneOrMore(Expression, Semicolon)
                 from close in Token("}")
                 select new Block(open.Position, variableDeclarations, innerExpressions);
 
@@ -157,14 +155,14 @@ namespace Rook.Compiling.Syntax
                 from identifier in Identifier
                 from assignment in Token("=")
                 from value in Expression
-                from end in EndOfLine
+                from end in Semicolon
                 select new VariableDeclaration(identifier.Position, type, identifier.Literal, value);
 
             ImplicitlyTypedVariableDeclaration.Rule =
                 from identifier in Identifier
                 from assignment in Token("=")
                 from value in Expression
-                from end in EndOfLine
+                from end in Semicolon
                 select new VariableDeclaration(identifier.Position, identifier.Literal, value);
 
             Atom(RookLexer.@null, token => new Null(token.Position));
@@ -279,20 +277,6 @@ namespace Rook.Compiling.Syntax
                 return Syntax.TypeName.Vector(targetType);
 
             return Syntax.TypeName.Nullable(targetType);
-        }
-    }
-
-    public static class GrammarExtensions
-    {
-        /// <summary>
-        /// goal.TerminatedBy(terminator) parse goal and then terminator.  If goal and terminator both
-        /// succeed, the result of the goal parser is returned.
-        /// </summary>
-        public static Parser<T> TerminatedBy<T, S>(this Parser<T> goal, Parser<S> terminator)
-        {
-            return from G in goal
-                   from _ in terminator
-                   select G;
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿void PrintSum(int a, int b)
-    Print(a + b)
+    Print(a + b);
 
 void Main()
 {
-    PrintSum(1, 2)
-    PrintSum(2, 3)
+    PrintSum(1, 2);
+    PrintSum(2, 3);
     PrintSum(3, 4)
 }

@@ -14,8 +14,8 @@ namespace Rook.Compiling.Syntax
         public void ParsesZeroOrMoreClasses()
         {
             Parses(" \t\r\n").IntoTree("");
-            Parses(" \t\r\n class Foo {}; class Bar {}; class Baz {}; \t\r\n")
-                .IntoTree("class Foo {}; class Bar {}; class Baz {}");
+            Parses(" \t\r\n class Foo {} class Bar {} class Baz {} \t\r\n")
+                .IntoTree("class Foo {} class Bar {} class Baz {}");
         }
 
         public void ParsesZeroOrMoreFunctions()
@@ -27,15 +27,15 @@ namespace Rook.Compiling.Syntax
 
         public void DemandsClassesAppearBeforeFunctions()
         {
-            Parses(" \t\r\n class Foo {}; class Bar {}; int life() 42; int universe() 42; int everything() 42; \t\r\n")
-                .IntoTree("class Foo {}; class Bar {}; int life() 42; int universe() 42; int everything() 42");
+            Parses(" \t\r\n class Foo {} class Bar {} int life() 42; int universe() 42; int everything() 42; \t\r\n")
+                .IntoTree("class Foo {} class Bar {} int life() 42; int universe() 42; int everything() 42");
             FailsToParse("int square(int x) x*x; class Foo { }").LeavingUnparsedTokens("class", "Foo", "{", "}").WithMessage("(1, 24): end of input expected");
         }
 
         public void DemandsEndOfInputAfterLastValidClassOrFunction()
         {
             FailsToParse("int life() 42; int univ").AtEndOfInput().WithMessage("(1, 24): ( expected");
-            FailsToParse("class Foo { }; class").AtEndOfInput().WithMessage("(1, 21): identifier expected");
+            FailsToParse("class Foo { } class").AtEndOfInput().WithMessage("(1, 20): identifier expected");
         }
 
         public void TypesAllClassesAndFunctions()
@@ -110,7 +110,7 @@ namespace Rook.Compiling.Syntax
         {
             ShouldFailTypeChecking("int a() 0; int b() true+0; int Main() 1;").WithError("Type mismatch: expected int, found bool.", 1, 24);
 
-            ShouldFailTypeChecking("int Main() { int x = 0; int x = 1; x; };").WithError("Duplicate identifier: x", 1, 29);
+            ShouldFailTypeChecking("int Main() { int x = 0; int x = 1; x };").WithError("Duplicate identifier: x", 1, 29);
 
             ShouldFailTypeChecking("int Main() (1)();").WithError("Attempted to call a noncallable object.", 1, 13);
 
@@ -126,7 +126,7 @@ namespace Rook.Compiling.Syntax
         {
             ShouldFailTypeChecking("class Foo { int A() 0; int B() true+0; }").WithError("Type mismatch: expected int, found bool.", 1, 36);
 
-            ShouldFailTypeChecking("class Foo { int A() { int x = 0; int x = 1; x; }; }").WithError("Duplicate identifier: x", 1, 38);
+            ShouldFailTypeChecking("class Foo { int A() { int x = 0; int x = 1; x }; }").WithError("Duplicate identifier: x", 1, 38);
 
             ShouldFailTypeChecking("class Foo { int A() (1)(); }").WithError("Attempted to call a noncallable object.", 1, 22);
 
@@ -141,8 +141,8 @@ namespace Rook.Compiling.Syntax
         public void FailsValidationWhenFunctionAndClassNamesAreNotUnique()
         {
             ShouldFailTypeChecking("int a() 0; int b() 1; int a() 2; int Main() 1;").WithError("Duplicate identifier: a", 1, 27);
-            ShouldFailTypeChecking("class Foo { }; class Bar { }; class Foo { }").WithError("Duplicate identifier: Foo", 1, 31);
-            ShouldFailTypeChecking("class Zero { }; int Zero() 0;").WithError("Duplicate identifier: Zero", 1, 21);
+            ShouldFailTypeChecking("class Foo { } class Bar { } class Foo { }").WithError("Duplicate identifier: Foo", 1, 29);
+            ShouldFailTypeChecking("class Zero { } int Zero() 0;").WithError("Duplicate identifier: Zero", 1, 20);
         }
 
         private Vector<CompilerError> ShouldFailTypeChecking(string source)

@@ -1,7 +1,7 @@
 ﻿int Main()
 {
-    int height = 5
-    length = 10
+    int height = 5;
+    length = 10;
     
     height * length
 }

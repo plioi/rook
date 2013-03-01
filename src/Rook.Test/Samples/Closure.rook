@@ -4,13 +4,13 @@
         !b.Any()
     else
         a.Count() == b.Count() && a.First() == b.First() && Equal(a.Skip(1), b.Skip(1))
-}
+};
 
 void Main()
 {
     int quantity = 5;
-    int* digits = Each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-    int* offsets = digits.Select(fn (int x) x + quantity)
+    int* digits = Each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    int* offsets = digits.Select(fn (int x) x + quantity);
 
     Print(Equal(Each([5, 6, 7, 8, 9, 10, 11, 12, 13, 14]), offsets))
 }

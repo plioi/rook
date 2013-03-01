@@ -55,25 +55,5 @@ namespace Rook.Compiling.Syntax
             foreach (string keyword in keywords)
                 identifier.FailsToParse(keyword).LeavingUnparsedTokens(keyword);
         }
-
-        public void ParsesLineEndings()
-        {
-            //Endlines are the end of input, \n, or semicolons (with optional trailing whitespace).
-            //Note that Parsley normalizes \r, \n, and \r\n to a single line feed \n.
-
-            var endOfLine = grammar.EndOfLine;
-
-            endOfLine.Parses("").WithValue(Token(TokenKind.EndOfInput, ""));
-
-            endOfLine.Parses("\r\n").WithValue(Token(RookLexer.EndOfLine, "\n"));
-            endOfLine.Parses("\r\n \t \t").WithValue(Token(RookLexer.EndOfLine, "\n \t \t"));
-            endOfLine.Parses("\r\n \r\n \t ").WithValue(Token(RookLexer.EndOfLine, "\n \n \t "));
-
-            endOfLine.Parses(";").WithValue(Token(RookLexer.EndOfLine, ";"));
-            endOfLine.Parses("; \t \t").WithValue(Token(RookLexer.EndOfLine, "; \t \t"));
-            endOfLine.Parses("; \r\n \t ").WithValue(Token(RookLexer.EndOfLine, "; \n \t "));
-
-            endOfLine.FailsToParse("x").LeavingUnparsedTokens("x").WithMessage("(1, 1): end of line expected");
-        }
     }
 }

@@ -1,6 +1,6 @@
-﻿bool Even(int n) if (n==0) true else Odd(n-1)
-bool Odd(int n) if (n==0) false else Even(n-1)
-int Square(int n) n*n
+﻿bool Even(int n) if (n==0) true else Odd(n-1);
+bool Odd(int n) if (n==0) false else Even(n-1);
+int Square(int n) n*n;
 
 bool Equal(int* a, int* b)
 {
@@ -8,18 +8,18 @@ bool Equal(int* a, int* b)
         !b.Any()
     else
         a.Count() == b.Count() && a.First() == b.First() && Equal(a.Skip(1), b.Skip(1))
-}
+};
 
 void Main()
 {
-    int* digits = Each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-    int* evens = digits.Where(Even)
-    int* odds = digits.Where(Odd)
-    int* squares = digits.Select(Square)
+    int* digits = Each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    int* evens = digits.Where(Even);
+    int* odds = digits.Where(Odd);
+    int* squares = digits.Select(Square);
 
-    Print(Equal(Each([0, 2, 4, 6, 8]), evens))
-    Print(Equal(Each([1, 3, 5, 7, 9]), odds))
-    Print(Equal(Each([0, 1, 4, 9, 16, 25, 36, 49, 64, 81]), squares))
-    Print(Equal(Each([0, 1, 2]), digits.Take(3)))
+    Print(Equal(Each([0, 2, 4, 6, 8]), evens));
+    Print(Equal(Each([1, 3, 5, 7, 9]), odds));
+    Print(Equal(Each([0, 1, 4, 9, 16, 25, 36, 49, 64, 81]), squares));
+    Print(Equal(Each([0, 1, 2]), digits.Take(3)));
     Print(Equal(Each([7, 8, 9]), digits.Skip(7)))
 }
