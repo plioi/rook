@@ -45,7 +45,7 @@ namespace Rook.Compiling.CodeGeneration
                      Translate(function.ReturnTypeName),
                      Translate(function.Name),
                      Translate(function.Parameters, ", ")),
-                Block(Line("return @;", Translate(function.Body))));
+                Translate(function.Body));
         }
 
         public WriteAction Visit(Name name)
@@ -60,23 +60,26 @@ namespace Rook.Compiling.CodeGeneration
 
         public WriteAction Visit(Block block)
         {
+            return Each(
+                Literal(ReservedName.__block__+"(() =>"),
+                EndLine(),
+                Translate(block),
+                Indentation(),
+                Literal(")"));
+        }
+
+        private WriteAction Translate(Block block)
+        {
             var variableDeclarations = block.VariableDeclarations;
             var expressions = block.InnerExpressions.ToArray();
 
             var sideEffectExpressions = expressions.Take(expressions.Length - 1);
             var resultExpression = expressions.Last();
 
-            return Each(
-                Literal(ReservedName.__block__+"(() =>"),
-                EndLine(),
-                Block(
-                    Each(variableDeclarations.Select(declaration => Line("", Translate(declaration)))),
-                    Each(sideEffectExpressions.Select(expression => Line(ReservedName.__evaluate__+"(@);", Translate(expression)))),
-                    Line("return @;", Translate(resultExpression))
-                    ),
-                Indentation(),
-                Literal(")")
-                );
+            return Block(
+                Each(variableDeclarations.Select(declaration => Line("", Translate(declaration)))),
+                Each(sideEffectExpressions.Select(expression => Line(ReservedName.__evaluate__ + "(@);", Translate(expression)))),
+                Line("return @;", Translate(resultExpression)));
         }
 
         public WriteAction Visit(Lambda lambda)

@@ -21,11 +21,11 @@ namespace Rook.Compiling.CodeGeneration
         {
             var compilationUnit = new StringBuilder()
                 .AppendLine("class Foo { }")
-                .AppendLine("class Bar { int I() 0; bool B() false; }")
-                .AppendLine("int Life() 14;")
-                .AppendLine("int Universe() 14;")
-                .AppendLine("int Everything() 14;")
-                .AppendLine("int Main() Life()+Universe()+Everything()");
+                .AppendLine("class Bar { int I() {0} bool B() {false} }")
+                .AppendLine("int Life() {14}")
+                .AppendLine("int Universe() {14}")
+                .AppendLine("int Everything() {14}")
+                .AppendLine("int Main() {Life()+Universe()+Everything()}");
 
             Expect("using System;");
             Expect("using System.Collections.Generic;");
@@ -81,7 +81,7 @@ namespace Rook.Compiling.CodeGeneration
             Expect("        return false;");
             Expect("    }");
             Expect("}");
-            AssertTranslation(rookGrammar.Class, "class Foo { int I() 0; bool B() false; }");
+            AssertTranslation(rookGrammar.Class, "class Foo { int I() {0} bool B() {false} }");
         }
 
         public void ShouldTranslateFunctionsWithoutArguments()
@@ -90,7 +90,7 @@ namespace Rook.Compiling.CodeGeneration
             Expect("{");
             Expect("    return false;");
             Expect("}");
-            AssertTranslation(rookGrammar.Function, "bool Negatory() false");
+            AssertTranslation(rookGrammar.Function, "bool Negatory() {false}");
         }
 
         public void ShouldTranslateFunctionsWithArguments()
@@ -99,7 +99,7 @@ namespace Rook.Compiling.CodeGeneration
             Expect("{");
             Expect("    return ((((a) + (b))) + (c));");
             Expect("}");
-            AssertTranslation(rookGrammar.Function, "int Sum(int a, int b, int c) a+b+c");
+            AssertTranslation(rookGrammar.Function, "int Sum(int a, int b, int c) { a+b+c }");
         }
 
         public void ShouldTranslateVoidFunctions()
@@ -108,7 +108,7 @@ namespace Rook.Compiling.CodeGeneration
             Expect("{");
             Expect("    return (Print(((((a) + (b))) + (c))));");
             Expect("}");
-            AssertTranslation(rookGrammar.Function, "void PrintSum(int a, int b, int c) Print(a+b+c)");
+            AssertTranslation(rookGrammar.Function, "void PrintSum(int a, int b, int c) { Print(a+b+c) }");
         }
 
         public void ShouldTranslateNames()

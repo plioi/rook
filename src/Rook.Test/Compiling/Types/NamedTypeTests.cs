@@ -76,7 +76,7 @@ namespace Rook.Compiling.Types
 
         public void CanBeConstructedFromRookClassDeclarationsIncludingMethods()
         {
-            var @class = "class Foo { int Square(int x) x*x; }".ParseClass();
+            var @class = "class Foo { int Square(int x) {x*x} }".ParseClass();
 
             var foo = new NamedType(@class, new TypeRegistry());
             foo.ShouldEqual("Foo", "Foo");
@@ -225,7 +225,7 @@ namespace Rook.Compiling.Types
 
         public void PerformsTypeVariableSubstitutionsAgainstNonGenericTypesByPerformingNoChanges()
         {
-            var @class = "class Foo { int Square(int x) x*x; }".ParseClass();
+            var @class = "class Foo { int Square(int x) {x*x} }".ParseClass();
 
             var foo = new NamedType(@class, new TypeRegistry());
 

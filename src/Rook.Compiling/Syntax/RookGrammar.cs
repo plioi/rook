@@ -24,7 +24,7 @@ namespace Rook.Compiling.Syntax
         public readonly GrammarRule<Expression> If = new GrammarRule<Expression>();
         public readonly GrammarRule<Expression> Lambda = new GrammarRule<Expression>();
         public readonly GrammarRule<Expression> VectorLiteral = new GrammarRule<Expression>();
-        public readonly GrammarRule<Expression> Block = new GrammarRule<Expression>();
+        public readonly GrammarRule<Block> Block = new GrammarRule<Block>();
         public readonly GrammarRule<Expression> New = new GrammarRule<Expression>();
         public readonly GrammarRule<VariableDeclaration> VariableDeclaration = new GrammarRule<VariableDeclaration>();
         public readonly GrammarRule<VariableDeclaration> ExplicitlyTypedVariableDeclaration = new GrammarRule<VariableDeclaration>();
@@ -67,8 +67,7 @@ namespace Rook.Compiling.Syntax
                 from returnType in TypeName
                 from name in Name
                 from parameters in Tuple(ExplicitlyTypedParameter)
-                from body in Expression
-                from end in Semicolon
+                from body in Block
                 select new Function(name.Position, returnType, name, parameters, body);
         }
 

@@ -1,7 +1,9 @@
 ﻿int Factorial(int n)
+{
   if (n==0)
     1
   else
-    n * Factorial(n-1);
-    
-int Main() Factorial(10)
+    n * Factorial(n-1)
+}
+   
+int Main() { Factorial(10) }

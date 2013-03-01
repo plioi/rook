@@ -12,21 +12,21 @@ namespace Rook.Compiling
 
         public void ShouldReportParseErrors()
         {
-            Build("int Main() $1;");
+            Build("int Main() {$1}");
             AssertErrors(1);
-            AssertError(1, 12, "Parse error.");
+            AssertError(1, 13, "Parse error.");
         }
 
         public void ShouldReportValidationErrors()
         {
-            Build("int Main() x;");
+            Build("int Main() {x}");
             AssertErrors(1);
-            AssertError(1, 12, "Reference to undefined identifier: x");
+            AssertError(1, 13, "Reference to undefined identifier: x");
         }
 
         public void ShouldBuildAssembliesFromSourceCode()
         {
-            Build("int Main() 123;");
+            Build("int Main() {123}");
             AssertErrors(0);
             Execute().ShouldEqual(123);
         }

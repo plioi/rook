@@ -1,11 +1,17 @@
 ﻿bool AnyTrue(bool? first, bool? second, bool? third)
-    (first??false) || (second??false) || (third??false);
+{
+    (first??false) || (second??false) || (third??false)
+}
 
 int Sum(int? first, int? second, int? third)
-    (first??0) + (second??0) + (third??0);
+{
+    (first??0) + (second??0) + (third??0)
+}
 
 int SumFirstItems(int[]? first, int[]? second, int[]? third)
-    Each(first??[0]).First() + Each(second??[0]).First() + Each(third??[0]).First();
+{
+    Each(first??[0]).First() + Each(second??[0]).First() + Each(third??[0]).First()
+}
 
 void Main()
 {

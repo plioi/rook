@@ -68,7 +68,7 @@ namespace Rook.Compiling.Syntax
 
             var localScope = CreateLocalScope(scope, typedParameters);
 
-            var typedBody = TypeCheck(body, localScope);
+            var typedBody = (Block)TypeCheck(body, localScope);
 
             var returnType = TypeOf(returnTypeName);
             Unify(typedBody.Position, returnType, typedBody.Type);

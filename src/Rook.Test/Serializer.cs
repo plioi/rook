@@ -10,7 +10,7 @@ namespace Rook
         public string Visit(CompilationUnit compilationUnit)
         {
             var classes = Translate(compilationUnit.Classes, " ");
-            var functions = Translate(compilationUnit.Functions, "; ");
+            var functions = Translate(compilationUnit.Functions, " ");
 
             var list = new List<string>();
 
@@ -25,7 +25,7 @@ namespace Rook
 
         public string Visit(Class @class)
         {
-            return String.Format("class {0} {{{1}}}", Translate(@class.Name), Translate(@class.Methods, "; "));
+            return String.Format("class {0} {{{1}}}", Translate(@class.Name), Translate(@class.Methods, " "));
         }
  
         public string Visit(Function function)
@@ -54,7 +54,7 @@ namespace Rook
         {
             return String.Format("{{{0}{1}}}",
                                  Translate(block.VariableDeclarations, " ").Trim(),
-                                 Translate(block.InnerExpressions, "; ").Trim() + ";");
+                                 Translate(block.InnerExpressions, "; ").Trim());
         }
 
         public string Visit(Lambda lambda)

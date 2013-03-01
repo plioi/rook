@@ -18,11 +18,11 @@ namespace Rook.Compiling.Syntax
         {
             mathClass = @"class Math
             {
-                int Zero() 0;
-                int Square(int x) x*x;
-                bool Even(int n) if (n==0) true else Odd(n-1);
-                bool Odd(int n) if (n==0) false else Even(n-1);
-                int Max(int a, int b) if (a > b) a else b;
+                int Zero() { 0 }
+                int Square(int x) { x*x }
+                bool Even(int n) { if (n==0) true else Odd(n-1) }
+                bool Odd(int n) { if (n==0) false else Even(n-1) }
+                int Max(int a, int b) { if (a > b) a else b }
             }".ParseClass();
 
             typeRegistry = new TypeRegistry();

@@ -30,7 +30,7 @@ namespace Rook.Compiling
 
         public void ShouldGetTypesForRegisteredClasses()
         {
-            var math = "class Math { int Square(int x) x*x; bool Zero(int x) x==0; }".ParseClass();
+            var math = "class Math { int Square(int x) {x*x} bool Zero(int x) {x==0} }".ParseClass();
 
             typeRegistry.Add(math);
             typeRegistry.TypeOf(new TypeName("Math")).ShouldEqual(new NamedType(math, typeRegistry));
@@ -86,7 +86,7 @@ namespace Rook.Compiling
 
         public void ShouldGetDeclaredFuncTypeForFunctionDeclaration()
         {
-            var function = @"bool FunctionWithIrrelevantBody(int* a, int[] b) false".ParseFunction();
+            var function = @"bool FunctionWithIrrelevantBody(int* a, int[] b) {false}".ParseFunction();
 
             typeRegistry.DeclaredType(function)
                 .ShouldEqual("System.Func",

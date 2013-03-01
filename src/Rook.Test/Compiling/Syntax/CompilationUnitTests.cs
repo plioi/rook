@@ -21,20 +21,20 @@ namespace Rook.Compiling.Syntax
         public void ParsesZeroOrMoreFunctions()
         {
             Parses(" \t\r\n").IntoTree("");
-            Parses(" \t\r\n int life() 42; int universe() 42; int everything() 42; \t\r\n")
-                .IntoTree("int life() 42; int universe() 42; int everything() 42");
+            Parses(" \t\r\n int life() {42} int universe() {42} int everything() {42} \t\r\n")
+                .IntoTree("int life() {42} int universe() {42} int everything() {42}");
         }
 
         public void DemandsClassesAppearBeforeFunctions()
         {
-            Parses(" \t\r\n class Foo {} class Bar {} int life() 42; int universe() 42; int everything() 42; \t\r\n")
-                .IntoTree("class Foo {} class Bar {} int life() 42; int universe() 42; int everything() 42");
-            FailsToParse("int square(int x) x*x; class Foo { }").LeavingUnparsedTokens("class", "Foo", "{", "}").WithMessage("(1, 24): end of input expected");
+            Parses(" \t\r\n class Foo {} class Bar {} int life() {42} int universe() {42} int everything() {42} \t\r\n")
+                .IntoTree("class Foo {} class Bar {} int life() {42} int universe() {42} int everything() {42}");
+            FailsToParse("int square(int x) {x*x} class Foo { }").LeavingUnparsedTokens("class", "Foo", "{", "}").WithMessage("(1, 25): end of input expected");
         }
 
         public void DemandsEndOfInputAfterLastValidClassOrFunction()
         {
-            FailsToParse("int life() 42; int univ").AtEndOfInput().WithMessage("(1, 24): ( expected");
+            FailsToParse("int life() {42} int univ").AtEndOfInput().WithMessage("(1, 25): ( expected");
             FailsToParse("class Foo { } class").AtEndOfInput().WithMessage("(1, 20): identifier expected");
         }
 
@@ -43,9 +43,9 @@ namespace Rook.Compiling.Syntax
             var compilationUnit = Parse(
                 @"class Foo { }
                   class Bar { }
-                  bool Even(int n) if (n==0) true else Odd(n-1);
-                  bool Odd(int n) if (n==0) false else Even(n-1);
-                  int Main() if (Even(4)) 0 else 1;");
+                  bool Even(int n) {if (n==0) true else Odd(n-1)}
+                  bool Odd(int n) {if (n==0) false else Even(n-1)}
+                  int Main() {if (Even(4)) 0 else 1}");
 
 
             var fooType = new NamedType(compilationUnit.Classes.Single(c => c.Name.Identifier == "Foo"));
@@ -108,41 +108,41 @@ namespace Rook.Compiling.Syntax
 
         public void FailsValidationWhenFunctionsFailValidation()
         {
-            ShouldFailTypeChecking("int a() 0; int b() true+0; int Main() 1;").WithError("Type mismatch: expected int, found bool.", 1, 24);
+            ShouldFailTypeChecking("int a() {0} int b() {true+0} int Main() {1}").WithError("Type mismatch: expected int, found bool.", 1, 26);
 
-            ShouldFailTypeChecking("int Main() { int x = 0; int x = 1; x };").WithError("Duplicate identifier: x", 1, 29);
+            ShouldFailTypeChecking("int Main() { int x = 0; int x = 1; x }").WithError("Duplicate identifier: x", 1, 29);
 
-            ShouldFailTypeChecking("int Main() (1)();").WithError("Attempted to call a noncallable object.", 1, 13);
+            ShouldFailTypeChecking("int Main() {(1)()}").WithError("Attempted to call a noncallable object.", 1, 14);
 
-            ShouldFailTypeChecking("int Square(int x) x*x; int Main() Square(1, 2);").WithError("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 35);
+            ShouldFailTypeChecking("int Square(int x) {x*x} int Main() {Square(1, 2)}").WithError("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 37);
 
-            ShouldFailTypeChecking("int Main() Square(2);")
+            ShouldFailTypeChecking("int Main() {Square(2)}")
                 .WithErrors(
-                    error => error.ShouldEqual("Reference to undefined identifier: Square", 1, 12),
-                    error => error.ShouldEqual("Attempted to call a noncallable object.", 1, 12));
+                    error => error.ShouldEqual("Reference to undefined identifier: Square", 1, 13),
+                    error => error.ShouldEqual("Attempted to call a noncallable object.", 1, 13));
         }
 
         public void FailsValidationWhenClassesFailValidation()
         {
-            ShouldFailTypeChecking("class Foo { int A() 0; int B() true+0; }").WithError("Type mismatch: expected int, found bool.", 1, 36);
+            ShouldFailTypeChecking("class Foo { int A() {0} int B() {true+0} }").WithError("Type mismatch: expected int, found bool.", 1, 38);
 
-            ShouldFailTypeChecking("class Foo { int A() { int x = 0; int x = 1; x }; }").WithError("Duplicate identifier: x", 1, 38);
+            ShouldFailTypeChecking("class Foo { int A() { int x = 0; int x = 1; x } }").WithError("Duplicate identifier: x", 1, 38);
 
-            ShouldFailTypeChecking("class Foo { int A() (1)(); }").WithError("Attempted to call a noncallable object.", 1, 22);
+            ShouldFailTypeChecking("class Foo { int A() {(1)()} }").WithError("Attempted to call a noncallable object.", 1, 23);
 
-            ShouldFailTypeChecking("class Foo { int Square(int x) x*x; int Mismatch() Square(1, 2); }").WithError("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 51);
+            ShouldFailTypeChecking("class Foo { int Square(int x) {x*x} int Mismatch() {Square(1, 2)} }").WithError("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 53);
 
-            ShouldFailTypeChecking("class Foo { int A() Square(2); }")
+            ShouldFailTypeChecking("class Foo { int A() {Square(2)} }")
                 .WithErrors(
-                    error => error.ShouldEqual("Reference to undefined identifier: Square", 1, 21),
-                    error => error.ShouldEqual("Attempted to call a noncallable object.", 1, 21));
+                    error => error.ShouldEqual("Reference to undefined identifier: Square", 1, 22),
+                    error => error.ShouldEqual("Attempted to call a noncallable object.", 1, 22));
         }
 
         public void FailsValidationWhenFunctionAndClassNamesAreNotUnique()
         {
-            ShouldFailTypeChecking("int a() 0; int b() 1; int a() 2; int Main() 1;").WithError("Duplicate identifier: a", 1, 27);
+            ShouldFailTypeChecking("int a() {0} int b() {1} int a() {2} int Main() {1}").WithError("Duplicate identifier: a", 1, 29);
             ShouldFailTypeChecking("class Foo { } class Bar { } class Foo { }").WithError("Duplicate identifier: Foo", 1, 29);
-            ShouldFailTypeChecking("class Zero { } int Zero() 0;").WithError("Duplicate identifier: Zero", 1, 20);
+            ShouldFailTypeChecking("class Zero { } int Zero() {0}").WithError("Duplicate identifier: Zero", 1, 20);
         }
 
         private Vector<CompilerError> ShouldFailTypeChecking(string source)

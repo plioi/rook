@@ -21,13 +21,13 @@ namespace Rook.Compiling.Syntax
 
         public void ParsesMethods()
         {
-            Parses("class Hitchhiker {int life() 42; int universe() 42; int everything() 42;}")
-                .IntoTree("class Hitchhiker {int life() 42; int universe() 42; int everything() 42}");
+            Parses("class Hitchhiker {int life() {42} int universe() {42} int everything() {42}}")
+                .IntoTree("class Hitchhiker {int life() {42} int universe() {42} int everything() {42}}");
         }
 
         public void DemandsEndOfClassAfterLastValidMethod()
         {
-            FailsToParse("class Hitchhiker { int life() 42;").AtEndOfInput().WithMessage("(1, 34): } expected");
+            FailsToParse("class Hitchhiker { int life() {42}").AtEndOfInput().WithMessage("(1, 35): } expected");
         }
 
         public void HasATypeCorrespondingWithTheDefaultConstructor()
@@ -46,9 +46,9 @@ namespace Rook.Compiling.Syntax
         {
             var @class = @"class Foo
                            {
-                              bool Even(int n) if (n==0) true else Odd(n-1);
-                              bool Odd(int n) if (n==0) false else Even(n-1);
-                              int Test() if (Even(4)) 0 else 1;
+                              bool Even(int n) { if (n==0) true else Odd(n-1) }
+                              bool Odd(int n) { if (n==0) false else Even(n-1) }
+                              int Test() { if (Even(4)) 0 else 1 }
                            }".ParseClass();
 
             var constructorReturningFoo = NamedType.Constructor(new NamedType(@class, new TypeRegistry()));
@@ -103,29 +103,29 @@ namespace Rook.Compiling.Syntax
 
         public void FailsTypeCheckingWhenMethodsFailTypeChecking()
         {
-            ShouldFailTypeChecking("class Foo { int A() 0; int B() true+0; }").WithError("Type mismatch: expected int, found bool.", 1, 36);
+            ShouldFailTypeChecking("class Foo { int A() {0} int B() {true+0} }").WithError("Type mismatch: expected int, found bool.", 1, 38);
 
-            ShouldFailTypeChecking("class Foo { int A() { int x = 0; int x = 1; x }; }").WithError("Duplicate identifier: x", 1, 38);
+            ShouldFailTypeChecking("class Foo { int A() { int x = 0; int x = 1; x } }").WithError("Duplicate identifier: x", 1, 38);
 
-            ShouldFailTypeChecking("class Foo { int A() (1)(); }").WithError("Attempted to call a noncallable object.", 1, 22);
+            ShouldFailTypeChecking("class Foo { int A() {(1)()} }").WithError("Attempted to call a noncallable object.", 1, 23);
 
-            ShouldFailTypeChecking("class Foo { int Square(int x) x*x; int Mismatch() Square(1, 2); }").WithError("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 51);
+            ShouldFailTypeChecking("class Foo { int Square(int x) {x*x} int Mismatch() {Square(1, 2)} }").WithError("Type mismatch: expected System.Func<int, int>, found System.Func<int, int, int>.", 1, 53);
 
-            ShouldFailTypeChecking("class Foo { int A() Square(2); }")
+            ShouldFailTypeChecking("class Foo { int A() {Square(2)} }")
                 .WithErrors(
-                    error => error.ShouldEqual("Reference to undefined identifier: Square", 1, 21),
-                    error => error.ShouldEqual("Attempted to call a noncallable object.", 1, 21));
+                    error => error.ShouldEqual("Reference to undefined identifier: Square", 1, 22),
+                    error => error.ShouldEqual("Attempted to call a noncallable object.", 1, 22));
         }
 
         public void FailsTypeCheckingWhenMethodNamesAreNotUnique()
         {
-            ShouldFailTypeChecking("class Foo { int A() 0; bool B() true; int A() 1; }").WithError("Duplicate identifier: A", 1, 43);
+            ShouldFailTypeChecking("class Foo { int A() {0} bool B() {true} int A() {1} }").WithError("Duplicate identifier: A", 1, 45);
         }
 
         public void FailsTypeCheckingWhenMethodNamesShadowSurroundingScope()
         {
-            ShouldFailTypeChecking("class Foo { int A() 0; int B() 2; }", B => NamedType.Function(NamedType.Boolean))
-                .WithError("Duplicate identifier: B", 1, 28);
+            ShouldFailTypeChecking("class Foo { int A() {0} int B() {2} }", B => NamedType.Function(NamedType.Boolean))
+                .WithError("Duplicate identifier: B", 1, 29);
         }
 
         private Vector<CompilerError> ShouldFailTypeChecking(string source, params TypeMapping[] symbols)

@@ -11,13 +11,13 @@ namespace Rook.Compiling.Syntax
         public TypeName ReturnTypeName { get; private set; }
         public Name Name { get; private set; }
         public Vector<Parameter> Parameters { get; private set; }
-        public Expression Body { get; private set; }
+        public Block Body { get; private set; }
         public DataType Type { get; private set; }
 
-        public Function(Position position, TypeName returnTypeName, Name name, IEnumerable<Parameter> parameters, Expression body)
+        public Function(Position position, TypeName returnTypeName, Name name, IEnumerable<Parameter> parameters, Block body)
             : this(position, returnTypeName, name, parameters.ToVector(), body, UnknownType.Instance) { }
 
-        public Function(Position position, TypeName returnTypeName, Name name, Vector<Parameter> parameters, Expression body, DataType type)
+        public Function(Position position, TypeName returnTypeName, Name name, Vector<Parameter> parameters, Block body, DataType type)
         {
             Position = position;
             ReturnTypeName = returnTypeName;

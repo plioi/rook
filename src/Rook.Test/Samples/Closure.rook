@@ -4,7 +4,7 @@
         !b.Any()
     else
         a.Count() == b.Count() && a.First() == b.First() && Equal(a.Skip(1), b.Skip(1))
-};
+}
 
 void Main()
 {
