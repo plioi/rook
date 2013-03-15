@@ -126,5 +126,18 @@ namespace Rook.Compiling.Syntax
                             t => t.ShouldEqual(RookLexer.Equal, "=="),
                             t => t.ShouldEqual(RookLexer.Integer, "0"));
         }
+
+        public void ShouldRecognizeAndSkipOverComments()
+        {
+            Tokenize("1 2//3\r4 5//6\n7 8//9\r\n10\n//\n11//")
+                .ShouldList(t => t.ShouldEqual(RookLexer.Integer, "1"),
+                            t => t.ShouldEqual(RookLexer.Integer, "2"),
+                            t => t.ShouldEqual(RookLexer.Integer, "4"),
+                            t => t.ShouldEqual(RookLexer.Integer, "5"),
+                            t => t.ShouldEqual(RookLexer.Integer, "7"),
+                            t => t.ShouldEqual(RookLexer.Integer, "8"),
+                            t => t.ShouldEqual(RookLexer.Integer, "10"),
+                            t => t.ShouldEqual(RookLexer.Integer, "11"));
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿bool EnumerableEqual(int* a, int* b)
+﻿//Enumerable equality helper.
+bool EnumerableEqual(int* a, int* b)
 {
     if (!a.Any())
         !b.Any()
@@ -6,6 +7,7 @@
         a.Count() == b.Count() && a.First() == b.First() && EnumerableEqual(a.Skip(1), b.Skip(1))
 }
 
+//Vector equality helper.
 bool Equal(int[] a, int[] b)
 {
     EnumerableEqual(a.Each(), b.Each())
@@ -13,27 +15,33 @@ bool Equal(int[] a, int[] b)
 
 void Main()
 {
+    //Declare some vectors.
     int[] digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-    int[] firstFive = digits[0:5];
-    int[] lastFive = digits[5:10];
-    int[] interiorFive = digits[3:8];
+    int[] firstFive = digits[0:5]; //Slice/copy the first 5 items: [0, 1, 2, 3, 4]
+    int[] lastFive = digits[5:10]; //Slice/copy the last 5 items: [5, 6, 7, 8, 9]
+    int[] interiorFive = digits[3:8]; //Slice/copy of the middle 5 items: [3, 4, 5, 6, 7]
 
+    //Compare to vector literals.
     Print(Equal([0, 1, 2, 3, 4], firstFive));
     Print(Equal([5, 6, 7, 8, 9], lastFive));
     Print(Equal([3, 4, 5, 6, 7], interiorFive));
 
+    //Appending to a vector produces a new vector.
     Print(Equal([0, 1, 2, 3, 4, 100], firstFive.Append(100)));
     Print(Equal([5, 6, 7, 8, 9, 100], lastFive.Append(100)));
     Print(Equal([3, 4, 5, 6, 7, 100], interiorFive.Append(100)));
 
+    //Replacing items in a vector produces a new vector.
     Print(Equal([100, 1, 2, 3, 4], firstFive.With(0, 100)));
     Print(Equal([5, 6, 7, 8, 100], lastFive.With(4, 100)));
     Print(Equal([3, 4, 100, 6, 7], interiorFive.With(2, 100)));
 
+    //Single-item indexing.
     Print(firstFive[0]);
     Print(lastFive[1]);
     Print(interiorFive[2]);
-
     Print([10, 20, 30, 40][2]);
+
+    //Vector literals can be sliced like any other vector.
     Print(Equal([0, 20, 30, 0][1:3], [1, 20, 30, 1][1:3]))
 }

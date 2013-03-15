@@ -5,6 +5,7 @@ namespace Rook.Compiling.Syntax
     public class RookLexer : Lexer
     {
         private static readonly Pattern Whitespace = new Pattern("whitespace", @"[ \t\n]+", skippable: true);
+        private static readonly Pattern Comment = new Pattern("comment", @"\/\/[^\n]*", skippable: true);
 
         public static readonly Keyword @int = new Keyword("int");
         public static readonly Keyword @bool = new Keyword("bool");
@@ -70,7 +71,7 @@ namespace Rook.Compiling.Syntax
         public static readonly Operator MemberAccess = new Operator(".");
 
         public RookLexer()
-            :base(Whitespace,
+            :base(Whitespace, Comment,
                   @int, @bool, @string, @void, @null, @if, @else, @fn, @true, @false, @class, @new,
                   Integer, StringLiteral, Identifier,
                   LeftParen, RightParen,
