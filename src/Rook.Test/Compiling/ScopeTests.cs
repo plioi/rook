@@ -88,8 +88,8 @@ namespace Rook.Compiling
             AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, System.Func<0, 1>, System.Collections.Generic.IEnumerable<1>>", global, "Select");
             AssertType("System.Func<System.Collections.Generic.IEnumerable<0>, System.Func<0, bool>, System.Collections.Generic.IEnumerable<0>>", global, "Where");
             AssertType("System.Func<Rook.Core.Collections.Vector<0>, System.Collections.Generic.IEnumerable<0>>", global, "Each");
-            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, 0>", global, "Index");
-            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, int, Rook.Core.Collections.Vector<0>>", global, "Slice");
+            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, 0>", global, ReservedName.__index__);
+            AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, int, Rook.Core.Collections.Vector<0>>", global, ReservedName.__slice__);
             AssertType("System.Func<Rook.Core.Collections.Vector<0>, 0, Rook.Core.Collections.Vector<0>>", global, "Append");
             AssertType("System.Func<Rook.Core.Collections.Vector<0>, int, 0, Rook.Core.Collections.Vector<0>>", global, "With");
         }

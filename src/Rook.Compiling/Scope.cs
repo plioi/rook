@@ -67,8 +67,8 @@ namespace Rook.Compiling
             globals["Select"] = NamedType.Function(new[] { enumerableT, NamedType.Function(new[] { T }, S) }, enumerableS);
             globals["Where"] = NamedType.Function(new[] { enumerableT, NamedType.Function(new[] { T }, @bool) }, enumerableT);
             globals["Each"] = NamedType.Function(new[] { vectorT }, enumerableT);
-            globals["Index"] = NamedType.Function(new[] { vectorT, @int }, T);
-            globals["Slice"] = NamedType.Function(new[] { vectorT, @int, @int }, vectorT);
+            globals[ReservedName.__index__] = NamedType.Function(new[] { vectorT, @int }, T);
+            globals[ReservedName.__slice__] = NamedType.Function(new[] { vectorT, @int, @int }, vectorT);
             globals["Append"] = NamedType.Function(new DataType[] { vectorT, T }, vectorT);
             globals["With"] = NamedType.Function(new[] { vectorT, @int, T }, vectorT);
         }

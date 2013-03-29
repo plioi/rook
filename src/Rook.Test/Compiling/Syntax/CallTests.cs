@@ -21,24 +21,24 @@ namespace Rook.Compiling.Syntax
 
         public void TreatsIndexOperatorsAsCallToIndexFunction()
         {
-            Parses("vector[0]").IntoTree("(Index(vector, 0))");
-            Parses("(vector)[0]").IntoTree("(Index(vector, 0))");
-            Parses("(getVector(true, false))[1]").IntoTree("(Index((getVector(true, false)), 1))");
-            Parses("(getVector(true, false))[1+2]").IntoTree("(Index((getVector(true, false)), ((1) + (2))))");
-            Parses("[0][0]").IntoTree("(Index([0], 0))");
-            Parses("[0, 1][1]").IntoTree("(Index([0, 1], 1))");
-            Parses("{[0, 1]}[1]").IntoTree("(Index({[0, 1]}, 1))");
+            Parses("vector[0]").IntoTree("(__index__(vector, 0))");
+            Parses("(vector)[0]").IntoTree("(__index__(vector, 0))");
+            Parses("(getVector(true, false))[1]").IntoTree("(__index__((getVector(true, false)), 1))");
+            Parses("(getVector(true, false))[1+2]").IntoTree("(__index__((getVector(true, false)), ((1) + (2))))");
+            Parses("[0][0]").IntoTree("(__index__([0], 0))");
+            Parses("[0, 1][1]").IntoTree("(__index__([0, 1], 1))");
+            Parses("{[0, 1]}[1]").IntoTree("(__index__({[0, 1]}, 1))");
         }
 
         public void TreatsSliceOperatorsAsCallToSliceFunction()
         {
-            Parses("vector[0:5]").IntoTree("(Slice(vector, 0, 5))");
-            Parses("(vector)[0:5]").IntoTree("(Slice(vector, 0, 5))");
-            Parses("(getVector(true, false))[1:6]").IntoTree("(Slice((getVector(true, false)), 1, 6))");
-            Parses("(getVector(true, false))[1+2:3+4]").IntoTree("(Slice((getVector(true, false)), ((1) + (2)), ((3) + (4))))");
-            Parses("[0][0:0]").IntoTree("(Slice([0], 0, 0))");
-            Parses("[0, 1][0:1]").IntoTree("(Slice([0, 1], 0, 1))");
-            Parses("{[0, 1]}[0:1]").IntoTree("(Slice({[0, 1]}, 0, 1))");
+            Parses("vector[0:5]").IntoTree("(__slice__(vector, 0, 5))");
+            Parses("(vector)[0:5]").IntoTree("(__slice__(vector, 0, 5))");
+            Parses("(getVector(true, false))[1:6]").IntoTree("(__slice__((getVector(true, false)), 1, 6))");
+            Parses("(getVector(true, false))[1+2:3+4]").IntoTree("(__slice__((getVector(true, false)), ((1) + (2)), ((3) + (4))))");
+            Parses("[0][0:0]").IntoTree("(__slice__([0], 0, 0))");
+            Parses("[0, 1][0:1]").IntoTree("(__slice__([0, 1], 0, 1))");
+            Parses("{[0, 1]}[0:1]").IntoTree("(__slice__({[0, 1]}, 0, 1))");
         }
 
         public void UnaryOperations()

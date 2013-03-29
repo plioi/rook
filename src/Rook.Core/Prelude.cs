@@ -73,12 +73,12 @@ namespace Rook.Core
             return vector;
         }
 
-        protected static T Index<T>(Vector<T> vector, int index)
+        protected static T __index__<T>(Vector<T> vector, int index)
         {
             return vector[index];
         }
 
-        protected static Vector<T> Slice<T>(Vector<T> vector, int startIndexInclusive, int endIndexExclusive)
+        protected static Vector<T> __slice__<T>(Vector<T> vector, int startIndexInclusive, int endIndexExclusive)
         {
             return vector.Slice(startIndexInclusive, endIndexExclusive);
         }

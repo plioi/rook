@@ -240,7 +240,7 @@ namespace Rook.Compiling.Syntax
         {
             return from arguments in Between("[", OneOrMore(Expression, Token(":")), "]")
                    select new Call(callable.Position,
-                                   new Name(callable.Position, arguments.Count() == 1 ? "Index" : "Slice"),
+                                   new Name(callable.Position, arguments.Count() == 1 ? ReservedName.__index__ : ReservedName.__slice__),
                                    new[] { callable }.Concat(arguments));
         }
 
