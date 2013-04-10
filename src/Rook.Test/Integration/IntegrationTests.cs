@@ -64,20 +64,32 @@ namespace Rook.Integration
         {
             var stringBuilder = new StringBuilder();
             using (TextWriter writer = new StringWriter(stringBuilder))
+            using (new VirtualConsole(writer))
             {
-                TextWriter standardOut = Console.Out;
-                Console.SetOut(writer);
+                var result = assembly.Execute();
 
-                object result = assembly.Execute();
-
-                Console.SetOut(standardOut);
-
-                string writerResult = stringBuilder.ToString();
+                var writerResult = stringBuilder.ToString();
 
                 if ((result == null || result == Core.Void.Value) && writerResult != "")
                     return writerResult;
 
                 return result;
+            }
+        }
+
+        private class VirtualConsole : IDisposable
+        {
+            private readonly TextWriter standardOut;
+
+            public VirtualConsole(TextWriter writer)
+            {
+                standardOut = Console.Out;
+                Console.SetOut(writer);
+            }
+
+            public void Dispose()
+            {
+                Console.SetOut(standardOut);
             }
         }
 
