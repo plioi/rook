@@ -41,7 +41,7 @@ namespace Rook.Compiling.Syntax
             # Close quote:
             ""
         ");
-        public static readonly Pattern Identifier = new Pattern("identifier", @"[a-zA-Z]+[a-zA-Z0-9]*");
+        public static readonly Pattern Identifier = new Pattern("identifier", @"[_a-zA-Z]+[_a-zA-Z0-9]*");
         public static readonly Operator Semicolon = new Operator(";");
         public static readonly Operator LeftParen = new Operator("(");
         public static readonly Operator RightParen = new Operator(")");

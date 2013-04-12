@@ -64,6 +64,7 @@ namespace Rook.Compiling.Syntax
             Tokenize("a").Single().ShouldEqual(RookLexer.Identifier, "a");
             Tokenize("ab").Single().ShouldEqual(RookLexer.Identifier, "ab");
             Tokenize("a0").Single().ShouldEqual(RookLexer.Identifier, "a0");
+            Tokenize("_true_").Single().ShouldEqual(RookLexer.Identifier, "_true_");
         }
 
         public void ShouldRecognizeOperatorsGreedily()
