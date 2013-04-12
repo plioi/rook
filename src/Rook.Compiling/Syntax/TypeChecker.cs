@@ -51,7 +51,7 @@ namespace Rook.Compiling.Syntax
             var name = @class.Name;
             var methods = @class.Methods;
 
-            var localScope = CreateLocalScope(scope, methods);
+            var localScope = CreateClassScope(scope, methods);
 
             return new Class(position, name, TypeCheck(methods, localScope), ConstructorType(@class.Name));
         }
@@ -389,15 +389,15 @@ namespace Rook.Compiling.Syntax
             return globals;
         }
 
-        private LocalScope CreateLocalScope(Scope parent, Vector<Function> methods)
+        private ClassScope CreateClassScope(Scope parent, Vector<Function> methods)
         {
-            var locals = new LocalScope(parent);
+            var members = new ClassScope(parent);
 
             foreach (var method in methods)
-                if (!locals.TryIncludeUniqueBinding(method.Name.Identifier, typeRegistry.DeclaredType(method)))
+                if (!members.TryIncludeUniqueBinding(method.Name.Identifier, typeRegistry.DeclaredType(method)))
                     LogError(CompilerError.DuplicateIdentifier(method.Position, method));
 
-            return locals;
+            return members;
         }
 
         private LocalScope CreateLocalScope(Scope parent, Vector<Parameter> parameters)

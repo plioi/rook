@@ -33,13 +33,27 @@ namespace Rook.Compiling.Syntax
         public void HasATypeCorrespondingWithTheDefaultConstructor()
         {
             var fooClass = "class Foo { }".ParseClass();
-            var constructorReturningFoo = NamedType.Constructor(new NamedType(fooClass));
 
             var typeRegistry = new TypeRegistry();
+            var constructorReturningFoo = NamedType.Constructor(new NamedType(fooClass, typeRegistry));
             typeRegistry.Add(fooClass);
-            var typeChecker = new TypeChecker(typeRegistry);
 
+            var typeChecker = new TypeChecker(typeRegistry);
             typeChecker.TypeCheck(fooClass, Scope()).Type.ShouldEqual(constructorReturningFoo);
+            typeChecker.HasErrors.ShouldBeFalse();
+        }
+
+        public void PassesTypeCheckingEvenWhenMethodNamesAreTheSameAsNamesInTheSurroundingScope()
+        {
+            var fooClass = "class Foo { int A() {0} int B() {2} }".ParseClass();
+
+            var typeRegistry = new TypeRegistry();
+            var constructorReturningFoo = NamedType.Constructor(new NamedType(fooClass, typeRegistry));
+            typeRegistry.Add(fooClass);
+
+            var typeChecker = new TypeChecker(typeRegistry);
+            typeChecker.TypeCheck(fooClass, Scope(B => NamedType.Function(NamedType.Boolean))).Type.ShouldEqual(constructorReturningFoo);
+            typeChecker.HasErrors.ShouldBeFalse();
         }
 
         public void CanCreateFullyTypedInstance()
@@ -120,12 +134,6 @@ namespace Rook.Compiling.Syntax
         public void FailsTypeCheckingWhenMethodNamesAreNotUnique()
         {
             ShouldFailTypeChecking("class Foo { int A() {0} bool B() {true} int A() {1} }").WithError("Duplicate identifier: A", 1, 45);
-        }
-
-        public void FailsTypeCheckingWhenMethodNamesShadowSurroundingScope()
-        {
-            ShouldFailTypeChecking("class Foo { int A() {0} int B() {2} }", B => NamedType.Function(NamedType.Boolean))
-                .WithError("Duplicate identifier: B", 1, 29);
         }
 
         private Vector<CompilerError> ShouldFailTypeChecking(string source, params TypeMapping[] symbols)

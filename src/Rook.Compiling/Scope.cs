@@ -145,4 +145,31 @@ namespace Rook.Compiling
             return locals.Contains(identifier) || parent.Contains(identifier);
         }
     }
+
+    public class ClassScope : Scope
+    {
+        private readonly Scope parent;
+        private readonly BindingDictionary members;
+
+        public ClassScope(Scope parent)
+        {
+            this.parent = parent;
+            members = new BindingDictionary();
+        }
+
+        public override bool TryIncludeUniqueBinding(string identifier, DataType type)
+        {
+            return members.TryIncludeUniqueBinding(identifier, type);
+        }
+
+        public override bool TryGet(string identifier, out DataType type)
+        {
+            return members.TryGet(identifier, out type) || parent.TryGet(identifier, out type);
+        }
+
+        public override bool Contains(string identifier)
+        {
+            return members.Contains(identifier) || parent.Contains(identifier);
+        }
+    }
 }
