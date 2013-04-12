@@ -239,9 +239,9 @@ namespace Rook.Compiling.Syntax
         private Parser<Expression> Subscript(Expression callable)
         {
             return from arguments in Between("[", OneOrMore(Expression, Token(":")), "]")
-                   select new Call(callable.Position,
-                                   new Name(callable.Position, arguments.Count() == 1 ? ReservedName.__index__ : ReservedName.__slice__),
-                                   new[] { callable }.Concat(arguments));
+                   select new MethodInvocation(callable.Position,
+                                   callable, new Name(callable.Position, arguments.Count() == 1 ? ReservedName.__index__ : ReservedName.__slice__),
+                                   arguments);
         }
 
         private Parser<Expression> MethodInvocation(Expression instance)

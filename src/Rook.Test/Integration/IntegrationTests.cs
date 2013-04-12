@@ -25,6 +25,7 @@ namespace Rook.Integration
         public void Nullable() { Run("Nullable"); }
         public void String() { Run("String"); }
         public void Classes() { Run("Classes"); }
+        public void IndexerOverloading() { Run("IndexerOverloading"); }
 
         #region Integration Test Runner
 

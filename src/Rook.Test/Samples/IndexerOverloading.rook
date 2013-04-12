@@ -1,0 +1,15 @@
+﻿class Digits
+{
+    int __index__(int i)
+    {
+        i
+    }
+}
+
+void Main()
+{
+    digits = new Digits();
+
+    Print(digits.__index__(0));
+    Print(digits[9])
+}

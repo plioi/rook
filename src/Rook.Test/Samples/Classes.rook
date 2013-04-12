@@ -1,8 +1,8 @@
 ﻿class Math
 {
+    int Square(int x) { x*x }
 }
 
-int Square(Math math, int x) {x*x}
 int Cube(Math math, int x) {x*x*x}
 
 void Main()

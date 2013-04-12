@@ -19,26 +19,26 @@ namespace Rook.Compiling.Syntax
             Parses("{func}(1, 2)").IntoTree("({func}(1, 2))");
         }
 
-        public void TreatsIndexOperatorsAsCallToIndexFunction()
+        public void TreatsIndexOperatorsAsCallToIndexMethod()
         {
-            Parses("vector[0]").IntoTree("(__index__(vector, 0))");
-            Parses("(vector)[0]").IntoTree("(__index__(vector, 0))");
-            Parses("(getVector(true, false))[1]").IntoTree("(__index__((getVector(true, false)), 1))");
-            Parses("(getVector(true, false))[1+2]").IntoTree("(__index__((getVector(true, false)), ((1) + (2))))");
-            Parses("[0][0]").IntoTree("(__index__([0], 0))");
-            Parses("[0, 1][1]").IntoTree("(__index__([0, 1], 1))");
-            Parses("{[0, 1]}[1]").IntoTree("(__index__({[0, 1]}, 1))");
+            Parses("vector[0]").IntoTree("vector.__index__(0)");
+            Parses("(vector)[0]").IntoTree("vector.__index__(0)");
+            Parses("(getVector(true, false))[1]").IntoTree("(getVector(true, false)).__index__(1)");
+            Parses("(getVector(true, false))[1+2]").IntoTree("(getVector(true, false)).__index__(((1) + (2)))");
+            Parses("[0][0]").IntoTree("[0].__index__(0)");
+            Parses("[0, 1][1]").IntoTree("[0, 1].__index__(1)");
+            Parses("{[0, 1]}[1]").IntoTree("{[0, 1]}.__index__(1)");
         }
 
         public void TreatsSliceOperatorsAsCallToSliceFunction()
         {
-            Parses("vector[0:5]").IntoTree("(__slice__(vector, 0, 5))");
-            Parses("(vector)[0:5]").IntoTree("(__slice__(vector, 0, 5))");
-            Parses("(getVector(true, false))[1:6]").IntoTree("(__slice__((getVector(true, false)), 1, 6))");
-            Parses("(getVector(true, false))[1+2:3+4]").IntoTree("(__slice__((getVector(true, false)), ((1) + (2)), ((3) + (4))))");
-            Parses("[0][0:0]").IntoTree("(__slice__([0], 0, 0))");
-            Parses("[0, 1][0:1]").IntoTree("(__slice__([0, 1], 0, 1))");
-            Parses("{[0, 1]}[0:1]").IntoTree("(__slice__({[0, 1]}, 0, 1))");
+            Parses("vector[0:5]").IntoTree("vector.__slice__(0, 5)");
+            Parses("(vector)[0:5]").IntoTree("vector.__slice__(0, 5)");
+            Parses("(getVector(true, false))[1:6]").IntoTree("(getVector(true, false)).__slice__(1, 6)");
+            Parses("(getVector(true, false))[1+2:3+4]").IntoTree("(getVector(true, false)).__slice__(((1) + (2)), ((3) + (4)))");
+            Parses("[0][0:0]").IntoTree("[0].__slice__(0, 0)");
+            Parses("[0, 1][0:1]").IntoTree("[0, 1].__slice__(0, 1)");
+            Parses("{[0, 1]}[0:1]").IntoTree("{[0, 1]}.__slice__(0, 1)");
         }
 
         public void UnaryOperations()
