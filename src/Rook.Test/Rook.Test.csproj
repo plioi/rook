@@ -57,6 +57,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Fixie, Version=0.0.1.28, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Fixie.0.0.1.28\lib\net45\Fixie.dll</HintPath>
+    </Reference>
     <Reference Include="Parsley, Version=0.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Parsley.0.0.5.0\lib\net45\Parsley.dll</HintPath>
@@ -67,10 +71,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="xunit, Version=1.9.1.1600, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\xunit.1.9.1\lib\net20\xunit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -104,8 +104,6 @@
     <Compile Include="Core\Collections\SliceVectorTests.cs" />
     <Compile Include="Core\NullableTests.cs" />
     <Compile Include="Core\ValueTests.cs" />
-    <Compile Include="FactsAttribute.cs" />
-    <Compile Include="FactsTestClassCommand.cs" />
     <Compile Include="ScopeExtensions.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="Compiling\ScopeTests.cs" />
@@ -128,7 +126,6 @@
     <Compile Include="Compiling\Types\NamedTypeTests.cs" />
     <Compile Include="Compiling\Types\TypeUnifierTests.cs" />
     <Compile Include="Compiling\Types\TypeVariableTests.cs" />
-    <Compile Include="TestDiscoveryCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rook.Compiling\Rook.Compiling.csproj">

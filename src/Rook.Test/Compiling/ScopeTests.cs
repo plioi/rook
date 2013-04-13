@@ -5,7 +5,6 @@ using Should;
 
 namespace Rook.Compiling
 {
-    [Facts]
     public class ScopeTests
     {
         private static readonly NamedType Integer = NamedType.Integer;

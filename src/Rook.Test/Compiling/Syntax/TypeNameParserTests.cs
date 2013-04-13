@@ -2,7 +2,6 @@
 
 namespace Rook.Compiling.Syntax
 {
-    [Facts]
     public class TypeNameParserTests
     {
         private static readonly TypeName Foo = new TypeName("Foo");

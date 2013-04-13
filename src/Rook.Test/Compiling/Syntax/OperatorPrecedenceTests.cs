@@ -1,6 +1,5 @@
 namespace Rook.Compiling.Syntax
 {
-    [Facts]
     public class OperatorPrecedenceTests : ExpressionTests
     {
         public void RanksFunctionCallsBeforeUnaryOperators()

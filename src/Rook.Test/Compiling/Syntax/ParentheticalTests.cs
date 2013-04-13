@@ -3,7 +3,6 @@ using Should;
 
 namespace Rook.Compiling.Syntax
 {
-    [Facts]
     public class ParentheticalTests : ExpressionTests
     {
         public void ParentheticalExpressions()

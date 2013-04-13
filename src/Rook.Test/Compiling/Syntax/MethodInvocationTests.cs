@@ -7,7 +7,6 @@ using Should;
 
 namespace Rook.Compiling.Syntax
 {
-    [Facts]
     public class MethodInvocationTests : ExpressionTests
     {
         private readonly Class mathClass;

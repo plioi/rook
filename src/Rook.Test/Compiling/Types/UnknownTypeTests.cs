@@ -3,7 +3,6 @@ using Should;
 
 namespace Rook.Compiling.Types
 {
-    [Facts]
     public class UnknownTypeTests
     {
         private static readonly UnknownType Unknown = UnknownType.Instance;

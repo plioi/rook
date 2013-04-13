@@ -5,7 +5,6 @@ using Should;
 
 namespace Rook.Compiling.CodeGeneration
 {
-    [Facts]
     public class CSharpTranslatorTests
     {
         private readonly RookGrammar rookGrammar;

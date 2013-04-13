@@ -2,7 +2,6 @@
 
 namespace Rook.Core
 {
-    [Facts]
     public class ValueTests
     {
         public void AnInstanceShouldAlwaysReturnTheSameHashCode()

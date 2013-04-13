@@ -4,7 +4,6 @@ using Should;
 
 namespace Rook.Compiling.Syntax
 {
-    [Facts]
     public class StringLiteralTests : ExpressionTests
     {
         public void IsIdentifiedByQuotedContentCharacters()

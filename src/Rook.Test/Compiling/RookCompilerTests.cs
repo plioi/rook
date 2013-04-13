@@ -2,7 +2,6 @@
 
 namespace Rook.Compiling
 {
-    [Facts]
     public class RookCompilerTests : CompilerTests<RookCompiler>
     {
         protected override RookCompiler Compiler

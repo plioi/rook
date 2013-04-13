@@ -4,7 +4,6 @@ using Should;
 
 namespace Rook.Compiling.Syntax
 {
-    [Facts]
     public class TokenParserTests
     {
         private static Action<Token> Token(TokenKind expectedKind, string expectedLiteral)

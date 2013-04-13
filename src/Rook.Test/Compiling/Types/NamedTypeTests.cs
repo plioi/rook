@@ -6,7 +6,6 @@ using Should;
 
 namespace Rook.Compiling.Types
 {
-    [Facts]
     public class NamedTypeTests
     {
         public void HasAName()

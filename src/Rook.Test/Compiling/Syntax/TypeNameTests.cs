@@ -2,7 +2,6 @@
 
 namespace Rook.Compiling.Syntax
 {
-    [Facts]
     public class TypeNameTests
     {
         public void HasAName()

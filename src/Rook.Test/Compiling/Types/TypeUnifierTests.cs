@@ -3,7 +3,6 @@ using Should;
 
 namespace Rook.Compiling.Types
 {
-    [Facts]
     public class TypeUnifierTests
     {
         private static readonly NamedType Integer = NamedType.Integer;

@@ -3,7 +3,6 @@ using Should;
 
 namespace Rook.Core.Collections
 {
-    [Facts]
     public class SliceVectorTests
     {
         public void ShouldProvideItemCount()

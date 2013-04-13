@@ -5,7 +5,6 @@ using Should;
 
 namespace Rook.Compiling
 {
-    [Facts]
     public class CSharpCompilerTests : CompilerTests<CSharpCompiler>
     {
         protected override CSharpCompiler Compiler

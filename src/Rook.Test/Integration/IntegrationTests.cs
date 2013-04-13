@@ -8,7 +8,6 @@ using Should;
 
 namespace Rook.Integration
 {
-    [Facts]
     public class IntegrationTests
     {
         public void ArithmeticExpression() { Run("ArithmeticExpression"); }

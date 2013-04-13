@@ -4,7 +4,6 @@ using Should;
 
 namespace Rook.Compiling.Syntax
 {
-    [Facts]
     public class BlockTests : ExpressionTests
     {
         public void ContainsOneOrMoreInnerExpressions()

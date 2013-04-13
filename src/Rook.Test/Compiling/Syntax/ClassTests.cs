@@ -5,7 +5,6 @@ using Should;
 
 namespace Rook.Compiling.Syntax
 {
-    [Facts]
     public class ClassTests : SyntaxTreeTests<Class>
     {
         protected override Parser<Class> Parser { get { return RookGrammar.Class; } }

@@ -4,7 +4,6 @@ using Should;
 
 namespace Rook.Compiling
 {
-    [Facts]
     public class CompilerResultTests
     {
         public void ShouldDescribeSuccessfulCompilation()

@@ -2,7 +2,6 @@ using Should;
 
 namespace Rook.Compiling.Syntax
 {
-    [Facts]
     public class BooleanLiteralTests : ExpressionTests
     {
         public void IsIdentifiedByKeywords()

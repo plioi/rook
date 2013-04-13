@@ -3,7 +3,6 @@ using Should;
 
 namespace Rook.Compiling.Syntax
 {
-    [Facts]
     public class NullTests : ExpressionTests
     {
         public void IsIdentifiedByKeyword()

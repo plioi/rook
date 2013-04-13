@@ -3,7 +3,6 @@ using Should;
 
 namespace Rook.Core
 {
-    [Facts]
     public class NullableTests
     {
         public void CanWrapValueTypes()

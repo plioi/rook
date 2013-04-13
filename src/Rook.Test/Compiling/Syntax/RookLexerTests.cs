@@ -4,7 +4,6 @@ using Parsley;
 
 namespace Rook.Compiling.Syntax
 {
-    [Facts]
     public class RookLexerTests
     {
         private static IEnumerable<Token> Tokenize(string input)

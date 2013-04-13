@@ -4,7 +4,6 @@ using Should;
 
 namespace Rook.Compiling.Syntax
 {
-    [Facts]
     public class LambdaTests : ExpressionTests
     {
         public void HasABodyExpression()
