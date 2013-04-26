@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Rook.Compiling;
 using Should;
@@ -10,27 +11,25 @@ namespace Rook.Integration
 {
     public class IntegrationTests
     {
-        public void ArithmeticExpression() { Run("ArithmeticExpression"); }
-        public void BooleanExpression() { Run("BooleanExpression"); }
-        public void FunctionCall() { Run("FunctionCall"); }
-        public void MethodInvocation() { Run("MethodInvocation"); }
-        public void BlockExpression() { Run("BlockExpression"); }
-        public void Closure() { Run("Closure"); }
-        public void Recursion() { Run("Recursion"); }
-        public void MutualRecursion() { Run("MutualRecursion"); }
-        public void Enumerable() { Run("Enumerable"); }
-        public void Vector() { Run("Vector"); }
-        public void Void() { Run("Void"); }
-        public void Nullable() { Run("Nullable"); }
-        public void String() { Run("String"); }
-        public void Classes() { Run("Classes"); }
-        public void IndexerOverloading() { Run("IndexerOverloading"); }
-
-        #region Integration Test Runner
+        public void ArithmeticExpression() { Run(); }
+        public void BooleanExpression() { Run(); }
+        public void FunctionCall() { Run(); }
+        public void MethodInvocation() { Run(); }
+        public void BlockExpression() { Run(); }
+        public void Closure() { Run(); }
+        public void Recursion() { Run(); }
+        public void MutualRecursion() { Run(); }
+        public void Enumerable() { Run(); }
+        public void Vector() { Run(); }
+        public void Void() { Run(); }
+        public void Nullable() { Run(); }
+        public void String() { Run(); }
+        public void Classes() { Run(); }
+        public void IndexerOverloading() { Run(); }
 
         private const string SampleFolder = "Samples";
 
-        private static void Run(string testName)
+        private static void Run([CallerMemberName] string testName = null)
         {
             ActualOutput(testName).ShouldEqual(ExpectedOutput(testName));
         }
@@ -92,7 +91,5 @@ namespace Rook.Integration
                 Console.SetOut(standardOut);
             }
         }
-
-        #endregion
     }
 }
