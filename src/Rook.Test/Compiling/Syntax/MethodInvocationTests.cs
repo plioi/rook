@@ -26,7 +26,7 @@ namespace Rook.Compiling.Syntax
 
             typeRegistry = new TypeRegistry();
             typeRegistry.Add(mathClass);
-            mathType = new NamedType(mathClass, typeRegistry);
+            mathType = new NamedType(mathClass);
         }
 
         public void DemandsMethodNameWithOptionalArguments()
@@ -127,7 +127,7 @@ namespace Rook.Compiling.Syntax
 
         private DataType Type(string source, params TypeMapping[] symbols)
         {
-            var typeChecker = new TypeChecker();
+            var typeChecker = new TypeChecker(typeRegistry);
 
             return Type(source, typeChecker, symbols);
         }
@@ -141,7 +141,7 @@ namespace Rook.Compiling.Syntax
 
         private T WithTypes<T>(T syntaxTree, params TypeMapping[] symbols) where T : Expression
         {
-            var typeChecker = new TypeChecker();
+            var typeChecker = new TypeChecker(typeRegistry);
 
             return WithTypes(syntaxTree, typeChecker, symbols);
         }
@@ -149,11 +149,6 @@ namespace Rook.Compiling.Syntax
         private static DataType Function(IEnumerable<DataType> parameterTypes, DataType returnType)
         {
             return NamedType.Function(parameterTypes, returnType);
-        }
-
-        private static DataType Function(DataType returnType)
-        {
-            return Function(new DataType[] { }, returnType);
         }
     }
 }

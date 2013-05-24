@@ -34,7 +34,7 @@ namespace Rook.Compiling.Syntax
             var fooClass = "class Foo { }".ParseClass();
 
             var typeRegistry = new TypeRegistry();
-            var constructorReturningFoo = NamedType.Constructor(new NamedType(fooClass, typeRegistry));
+            var constructorReturningFoo = NamedType.Constructor(new NamedType(fooClass));
             typeRegistry.Add(fooClass);
 
             var typeChecker = new TypeChecker(typeRegistry);
@@ -47,7 +47,7 @@ namespace Rook.Compiling.Syntax
             var fooClass = "class Foo { int A() {0} int B() {2} }".ParseClass();
 
             var typeRegistry = new TypeRegistry();
-            var constructorReturningFoo = NamedType.Constructor(new NamedType(fooClass, typeRegistry));
+            var constructorReturningFoo = NamedType.Constructor(new NamedType(fooClass));
             typeRegistry.Add(fooClass);
 
             var typeChecker = new TypeChecker(typeRegistry);
@@ -64,7 +64,7 @@ namespace Rook.Compiling.Syntax
                               int Test() { if (Even(4)) 0 else 1 }
                            }".ParseClass();
 
-            var constructorReturningFoo = NamedType.Constructor(new NamedType(@class, new TypeRegistry()));
+            var constructorReturningFoo = NamedType.Constructor(new NamedType(@class));
 
             @class.Methods.ShouldList(
                 even =>

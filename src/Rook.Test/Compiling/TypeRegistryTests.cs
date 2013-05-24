@@ -32,7 +32,7 @@ namespace Rook.Compiling
             var math = "class Math { int Square(int x) {x*x} bool Zero(int x) {x==0} }".ParseClass();
 
             typeRegistry.Add(math);
-            typeRegistry.TypeOf(new TypeName("Math")).ShouldEqual(new NamedType(math, typeRegistry));
+            typeRegistry.TypeOf(new TypeName("Math")).ShouldEqual(new NamedType(math));
         }
 
         public void ShouldGetClosedEnumerableTypesForKnownItemTypes()
@@ -93,6 +93,33 @@ namespace Rook.Compiling
                              NamedType.Enumerable(NamedType.Integer),
                              NamedType.Vector(NamedType.Integer),
                              NamedType.Boolean);
+        }
+
+        public void ShouldGetMemberBindingsWhenGivenTheNamedTypeOfRegisteredClasses()
+        {
+            var math = "class Math { int Square(int x) {x*x} bool Zero(int x) {x==0} int Max(int* ints) {0} }".ParseClass();
+            var mathType = new NamedType(math);
+
+            typeRegistry.Add(math);
+            var members = typeRegistry.MembersOf(mathType);
+
+            var square = members[0];
+            var zero = members[1];
+            var max = members[2];
+
+            square.Identifier.ShouldEqual("Square");
+            square.Type.ShouldEqual(NamedType.Function(new[] { NamedType.Integer }, NamedType.Integer));
+
+            zero.Identifier.ShouldEqual("Zero");
+            zero.Type.ShouldEqual(NamedType.Function(new[] { NamedType.Integer }, NamedType.Boolean));
+
+            max.Identifier.ShouldEqual("Max");
+            max.Type.ShouldEqual(NamedType.Function(new[] { NamedType.Enumerable(NamedType.Integer) }, NamedType.Integer));
+        }
+
+        public void ShouldGetNoMemberBindingsWhenGivenANamedTypeThatDoesNotCorrespondWithAnyRegisteredClass()
+        {
+            typeRegistry.MembersOf(NamedType.Integer).ShouldBeEmpty();
         }
     }
 }

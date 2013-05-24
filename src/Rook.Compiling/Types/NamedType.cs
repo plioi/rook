@@ -8,7 +8,6 @@ using Void = Rook.Core.Void;
 
 namespace Rook.Compiling.Types
 {
-
     public class NamedType : DataType
     {
         public static readonly NamedType Void = new NamedType(typeof(Void));
@@ -57,7 +56,6 @@ namespace Rook.Compiling.Types
         private readonly Vector<DataType> genericArguments;
         private readonly Lazy<string> fullName;
         private readonly bool isGenericTypeDefinition;
-        private readonly Binding[] methods;
 
         [Obsolete]
         public NamedType(string name, params DataType[] genericArguments)
@@ -66,22 +64,11 @@ namespace Rook.Compiling.Types
             this.genericArguments = genericArguments.ToVector();
             isGenericTypeDefinition = false;
             fullName = new Lazy<string>(GetFullName);
-            methods = new Binding[] { };
         }
 
         public NamedType(Class @class)
             : this(@class.Name.Identifier)
         {
-            if (@class.Methods.Any())
-                throw new NotSupportedException("Cannot construct a NamedType from a Class that has members, unless a TypeRegistry is provided.");
-
-            methods = new Binding[] {};
-        }
-
-        public NamedType(Class @class, TypeRegistry typeRegistry)
-            : this(@class.Name.Identifier)
-        {
-            methods = @class.Methods.Select(m => (Binding)new MethodBinding(m.Name.Identifier, typeRegistry.DeclaredType(m))).ToArray();
         }
 
         public NamedType(Type type)
@@ -100,8 +87,6 @@ namespace Rook.Compiling.Types
                 : genericArguments.Select(x => (DataType)new NamedType(x)).ToVector();
 
             fullName = new Lazy<string>(GetFullName);
-
-            methods = new Binding[] { };
         }
 
         public NamedType MakeGenericType(params DataType[] typeArguments)
@@ -135,11 +120,6 @@ namespace Rook.Compiling.Types
             get { return isGenericTypeDefinition; }
         }
 
-        public IEnumerable<Binding> Methods
-        {
-            get { return methods; }
-        }
-
         public override bool Contains(TypeVariable typeVariable)
         {
             return genericArguments.Any(genericArgument => genericArgument.Contains(typeVariable));
@@ -154,12 +134,6 @@ namespace Rook.Compiling.Types
         {
             if (!IsGeneric)
                 return this;
-
-            //TODO: Once generic types can contain methods, this will need to take special care to ensure
-            //      that the resulting type preserves 'this' type's methods, performing subsitutions as
-            //      appropriate within those methods too.
-            if (Methods != null && Methods.Any())
-               throw new NotImplementedException("Cannot replace type variables against generic types that have methods.  The method listing is not yet preserved.");
 
             return new NamedType(name, genericArguments.Select(t => t.ReplaceTypeVariables(substitutions)).ToArray());
         }

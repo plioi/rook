@@ -226,7 +226,7 @@ namespace Rook.Compiling.Syntax
                 return methodInvocation;
             }
 
-            var typeMemberScope = new TypeMemberScope(instanceNamedType.Methods);
+            var typeMemberScope = new TypeMemberScope(typeRegistry.MembersOf(instanceNamedType));
 
             //TODO: This block is suspiciously like Call type checking, but Callable/MethodName is evaluated in a special scope and the successful return is different.
 

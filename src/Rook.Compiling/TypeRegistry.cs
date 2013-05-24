@@ -10,10 +10,12 @@ namespace Rook.Compiling
     public class TypeRegistry
     {
         private readonly IDictionary<TypeName, NamedType> types;
+        private readonly IDictionary<TypeName, Class> classes;
 
         public TypeRegistry()
         {
             types = new Dictionary<TypeName, NamedType>();
+            classes = new Dictionary<TypeName, Class>();
 
             RegisterCommonTypes();
         }
@@ -30,7 +32,22 @@ namespace Rook.Compiling
         {
             var typeName = new TypeName(@class.Name.Identifier);
 
-            types[typeName] = new NamedType(@class, this);
+            types[typeName] = new NamedType(@class);
+            classes[typeName] = @class;
+        }
+
+        public Binding[] MembersOf(NamedType type)
+        {
+            var typeName = new TypeName(type.Name);
+
+            if (!classes.ContainsKey(typeName))
+                return new Binding[] { };
+
+            var @class = classes[typeName];
+
+            var result = @class.Methods.Select(m => (Binding)new MethodBinding(m.Name.Identifier, DeclaredType(m))).ToArray();
+            //TODO: Cache these results instead of recalculating each time.
+            return result;
         }
 
         public NamedType TypeOf(TypeName name)

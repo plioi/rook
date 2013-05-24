@@ -66,26 +66,11 @@ namespace Rook.Compiling.Types
             NamedType.Constructor(Create("A")).ShouldEqual(Create("Rook.Core.Constructor", Create("A")));
         }
 
-        public void CanBeConstructedFromEmptyRookClassDeclarations()
-        {
-            var @class = "class Foo { }".ParseClass();
-
-            new NamedType(@class).ShouldEqual("Foo", "Foo");
-        }
-
-        public void CanBeConstructedFromRookClassDeclarationsIncludingMethods()
+        public void CanBeConstructedFromRookClassDeclarations()
         {
             var @class = "class Foo { int Square(int x) {x*x} }".ParseClass();
 
-            var foo = new NamedType(@class, new TypeRegistry());
-            foo.ShouldEqual("Foo", "Foo");
-
-            foo.Methods.ShouldList(
-                method =>
-                {
-                    method.Identifier.ShouldEqual("Square");
-                    method.Type.ShouldEqual(NamedType.Function(new[] {NamedType.Integer}, NamedType.Integer));
-                });
+            new NamedType(@class).ShouldEqual("Foo", "Foo");
         }
 
         public void CanBeConstructedFromNongenericClrTypes()
@@ -226,7 +211,7 @@ namespace Rook.Compiling.Types
         {
             var @class = "class Foo { int Square(int x) {x*x} }".ParseClass();
 
-            var foo = new NamedType(@class, new TypeRegistry());
+            var foo = new NamedType(@class);
 
             var a = new TypeVariable(0);
             var replaceAWithInteger = new Dictionary<TypeVariable, DataType> { { a, NamedType.Integer } };
