@@ -57,16 +57,17 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Fixie, Version=0.0.1.28, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Fixie, Version=0.0.1.133, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Fixie.0.0.1.28\lib\net45\Fixie.dll</HintPath>
+      <HintPath>..\packages\Fixie.0.0.1.133\lib\net45\Fixie.dll</HintPath>
     </Reference>
     <Reference Include="Parsley, Version=0.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Parsley.0.0.5.0\lib\net45\Parsley.dll</HintPath>
     </Reference>
-    <Reference Include="Should">
-      <HintPath>..\packages\Should.1.1.12.0\lib\Should.dll</HintPath>
+    <Reference Include="Should, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Should.1.1.20\lib\Should.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
