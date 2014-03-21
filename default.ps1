@@ -15,8 +15,9 @@ properties {
 task default -depends Test
 
 task Test -depends Compile {
-    $fixieRunner = join-path $src "packages\Fixie.0.0.1.133\lib\net45\Fixie.Console.exe"
+    $fixieRunner = join-path $src "packages\Fixie.0.0.1.144\lib\net45\Fixie.Console.exe"
     exec { & $fixieRunner $src\$project.Test\bin\$configuration\$project.Test.dll }
+    exec { & $fixieRunner $src\$project.IntegrationTest\bin\$configuration\$project.IntegrationTest.dll }
 }
 
 task Compile -depends CommonAssemblyInfo {
