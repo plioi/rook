@@ -39,9 +39,9 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
 [assembly: AssemblyProduct(""$project"")]
-[assembly: AssemblyVersion("$assemblyVersion")]
-[assembly: AssemblyFileVersion("$assemblyVersion")]
-[assembly: AssemblyInformationalVersion("$version")]
+[assembly: AssemblyVersion(""$assemblyVersion"")]
+[assembly: AssemblyFileVersion(""$assemblyVersion"")]
+[assembly: AssemblyInformationalVersion(""$version"")]
 [assembly: AssemblyCopyright(""$copyright"")]
 [assembly: AssemblyCompany(""$maintainers"")]
 [assembly: AssemblyDescription(""$description"")]
