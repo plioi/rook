@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Reflection;
-using Fixie;
+using Fixie.Internal;
 using Rook.Compiling;
 using Should;
 
