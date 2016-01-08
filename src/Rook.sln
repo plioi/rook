@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rook.Test", "Rook.Test\Rook.Test.csproj", "{1F93496B-9601-4EA7-86A7-B1615E5847A9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rook.Compiling", "Rook.Compiling\Rook.Compiling.csproj", "{DD4E13B5-E96D-4DBF-9821-9908839ECDD4}"
