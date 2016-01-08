@@ -1,7 +1,7 @@
-_ReSharper.*
-*.ReSharper.user
+bin/
+obj/
+/package/
+/src/.vs/
+/src/packages/
 *.DotSettings.user
-*.suo
-bin
-obj
-src/packages/
+*.csproj.user
