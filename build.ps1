@@ -3,7 +3,6 @@ Framework '4.5.2'
 properties {
     $birthYear = 2007
     $maintainers = "Patrick Lioi"
-    $description = "A .NET programming language"
 
     $configuration = 'Debug'
     $src = resolve-path '.\src'
