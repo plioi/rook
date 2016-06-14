@@ -57,7 +57,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Parsley, Version=0.0.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Parsley.0.0.7-beta-0005\lib\net452\Parsley.dll</HintPath>
+      <HintPath>..\packages\Parsley.0.0.7-beta-0008\lib\net452\Parsley.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
