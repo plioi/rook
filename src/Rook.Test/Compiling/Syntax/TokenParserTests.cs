@@ -8,7 +8,7 @@ namespace Rook.Compiling.Syntax
     {
         private static Action<Token> Token(TokenKind expectedKind, string expectedLiteral)
         {
-            return t => t.ShouldEqual(expectedKind, expectedLiteral);
+            return t => t.ShouldBe(expectedKind, expectedLiteral);
         }
 
         private static Action<Token> Operator(string expectedLiteral)
