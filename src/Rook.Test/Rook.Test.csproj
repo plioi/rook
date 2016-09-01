@@ -56,8 +56,28 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="dotnet-test-fixie, Version=2.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Fixie.2.0.0-alpha-0001\lib\net45\dotnet-test-fixie.exe</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Fixie, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Fixie.2.0.0-alpha-0000\lib\net45\Fixie.dll</HintPath>
+      <HintPath>..\packages\Fixie.2.0.0-alpha-0001\lib\net45\Fixie.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fixie.2.0.0-alpha-0001\lib\net45\Mono.Cecil.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fixie.2.0.0-alpha-0001\lib\net45\Mono.Cecil.Pdb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fixie.2.0.0-alpha-0001\lib\net45\Mono.Cecil.Rocks.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fixie.2.0.0-alpha-0001\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Parsley, Version=0.0.7.0, Culture=neutral, processorArchitecture=MSIL">
